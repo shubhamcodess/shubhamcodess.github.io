@@ -93,7 +93,7 @@ Code: `packages/design/src/components/button`. Prototype: `prototypes/05-button-
 - **Rule:** the main icon line never disappears on hover. Only the fainter second line redraws.
 
 ### Scroll thumb: Approved
-Code: `packages/design/src/components/scroll-thumb`. It replaces the visible scrollbar with one small draggable shape that takes up no width. The shape is passed in: this site uses a small batarang, standing on end. On hover it grows by 1.4 and darkens, softly. It's for pointers, while keyboards, wheels and touch scroll natively.
+Code: `packages/design/src/components/scroll-thumb`. It replaces the visible scrollbar with one small draggable shape that takes up no width. The shape is passed in: this site uses a small batarang, standing on end. It rests at `--scroll-thumb-top`, which this site sets to the bottom of the header. On hover it grows by 1.4 and darkens, softly. It's for pointers, while keyboards, wheels and touch scroll natively.
 
 ### Project card: Approved
 Prototype: `prototypes/06-project-card`, with its detail page at `projects/everything-tech/`.

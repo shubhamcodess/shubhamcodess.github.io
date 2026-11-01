@@ -22,11 +22,15 @@ export function ScrollThumb({ target, children }: ScrollThumbProps) {
   useEffect(() => {
     const scroller = document.querySelector<HTMLElement>(target), el = thumb.current;
     if (!scroller || !el) return;
-    const room = () => window.innerHeight - el.offsetHeight - 16;
+    // The shape travels from --scroll-thumb-top down to just above the bottom edge. The hit area around it is larger.
+    const GAP = 6;
+    const margin = () => (el.offsetHeight - (el.firstElementChild as HTMLElement).offsetHeight) / 2;
+    const start = () => (parseFloat(getComputedStyle(el).getPropertyValue("--scroll-thumb-top")) || 0) + GAP - margin();
+    const room = () => window.innerHeight - GAP - el.offsetHeight + margin() - start();
     const range = () => scroller.scrollHeight - scroller.clientHeight;
     const place = () => {
       el.hidden = range() <= 1;
-      el.style.transform = `translateY(${8 + (scroller.scrollTop / Math.max(1, range())) * room()}px)`;
+      if (!el.hidden) el.style.transform = `translateY(${start() + (scroller.scrollTop / Math.max(1, range())) * room()}px)`;
     };
     // Scrolling keys should work wherever focus is, except inside something that uses them itself.
     const keys = (e: KeyboardEvent) => {
@@ -46,6 +50,7 @@ export function ScrollThumb({ target, children }: ScrollThumbProps) {
 
     const sized = new ResizeObserver(place);
     sized.observe(scroller);
+    window.addEventListener("resize", place);
     if (scroller.firstElementChild) sized.observe(scroller.firstElementChild);
     new MutationObserver(place).observe(scroller, { childList: true, subtree: true });
     scroller.addEventListener("scroll", place, { passive: true });
@@ -57,6 +62,7 @@ export function ScrollThumb({ target, children }: ScrollThumbProps) {
     place();
     return () => {
       sized.disconnect();
+      window.removeEventListener("resize", place);
       scroller.removeEventListener("scroll", place);
       window.removeEventListener("keydown", keys);
     };

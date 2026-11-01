@@ -1,7 +1,7 @@
 /* How the header, the provisional skyline and the page meet. Options come from `scene` in content/site.ts. */
 @property --city-fade { syntax: "<length>"; inherits: true; initial-value: 0px; }
 
-:root { --header-h: 68px; --content-fade: 44px; }
+:root { --header-h: 68px; --content-fade: 44px; --scroll-thumb-top: 68px; }
 [data-content-fade="short"] { --content-fade: 22px; }
 [data-content-fade="long"] { --content-fade: 86px; }
 
