@@ -1,0 +1,8 @@
+{
+  "name": "@portfolio/site",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": { ".": "./site.ts" },
+  "dependencies": { "@portfolio/content": "workspace:*" }
+}

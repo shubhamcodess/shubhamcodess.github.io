@@ -1,0 +1,9 @@
+{
+  "name": "@portfolio/content",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": { ".": "./src/index.ts", "./schema": "./src/schema.ts" },
+  "scripts": { "typecheck": "tsc --noEmit" },
+  "dependencies": { "gray-matter": "^4.0.3", "marked": "latest", "zod": "^4.6.7" }
+}
