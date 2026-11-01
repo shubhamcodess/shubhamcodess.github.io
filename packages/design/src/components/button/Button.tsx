@@ -44,7 +44,7 @@ export function Button({ variant = "primary", size = "md", texture = "hatch", sh
       <i className="bp-link l1" /><i className="bp-link l2" /><i className="bp-link l3" />
       <span className="bp-body">
         <span className="bp-tex"><i className="t" /><i className="b" /><i className="l" /><i className="r" /></span>
-        <span className="bp-crease" />
+        <span className="bp-crease"><i className="t" /><i className="l" /><i className="r" /><i className="b" /></span>
         <span className="bp-frame" />
         {icon && (
           <svg className="bp-icon" viewBox="0 0 24 24" aria-hidden="true">

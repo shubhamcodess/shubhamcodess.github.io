@@ -7,7 +7,7 @@
 @property --bp-p { syntax:"<number>"; inherits:true; initial-value:0; }
 
 .bp {
-  --off:7px; --tex-a:.3; --warp-v:30deg; --warp-h:9deg;
+  --off:7px; --tex-a:.3; --warp-v:58deg; --warp-h:16deg;
   position:relative; display:inline-block; padding:0; margin:0; color:var(--ink); background:none; border:0; cursor:pointer; font:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent;
   transition:--bp-h .5s var(--ease-soft), --bp-p .25s var(--ease-soft);
 }
@@ -33,7 +33,7 @@
 
 /* Clear face. A drawn texture rises from the bottom edge and fades to nothing before it reaches the text.
    It's cut into four triangles meeting at the center, so a press can fold the sheet inward along its creases. */
-.bp-tex { position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity:calc(var(--tex-a) + var(--bp-p) * .35); perspective:90px; transition:--rise var(--dur-texture) var(--ease-soft);
+.bp-tex { position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity:calc(var(--tex-a) + var(--bp-p) * .6); perspective:70px; transition:--rise var(--dur-texture) var(--ease-soft);
   -webkit-mask-image:linear-gradient(to top, #000 0, transparent calc(var(--rise) + var(--bp-p) * 60%)); mask-image:linear-gradient(to top, #000 0, transparent calc(var(--rise) + var(--bp-p) * 60%)); }
 .bp-tex i { position:absolute; inset:0; display:block; }
 .bp-tex .t { clip-path:polygon(0 0, 100% 0, 50% 50%); transform-origin:50% 0; }
@@ -49,10 +49,18 @@
 .bp[data-texture="grid"] .bp-tex i { background:linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 7px 7px, linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 7px 7px; }
 .bp[data-texture="fade"] .bp-tex i { background:var(--line); opacity:.55; }
 
-/* The fold lines of the press, from each corner to the center. */
-.bp-crease { position:absolute; inset:0; pointer-events:none; opacity:0;
+/* The dent: each side of the fold catches the light differently, and fold lines run from each corner to the center. */
+.bp-crease { position:absolute; inset:0; pointer-events:none; opacity:0; }
+.bp[data-press="warp"] .bp-crease { opacity:var(--bp-p); }
+.bp-crease i { position:absolute; inset:0; display:block; background:var(--line); }
+.bp-crease .t { clip-path:polygon(0 0, 100% 0, 50% 50%); opacity:.3; }
+.bp-crease .l { clip-path:polygon(0 0, 0 100%, 50% 50%); opacity:.2; }
+.bp-crease .r { clip-path:polygon(100% 0, 100% 100%, 50% 50%); opacity:.12; }
+.bp-crease .b { clip-path:polygon(0 100%, 100% 100%, 50% 50%); opacity:.05; }
+.bp-crease::after { content:""; position:absolute; inset:0; opacity:.55;
   background:linear-gradient(to top right, transparent calc(50% - .5px), var(--line) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)), linear-gradient(to bottom right, transparent calc(50% - .5px), var(--line) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)); }
-.bp[data-press="warp"] .bp-crease { opacity:calc(var(--bp-p) * .28); }
+/* The label and icon sink with the sheet. */
+.bp[data-press="warp"] :is(.bp-label, .bp-icon) { scale:calc(1 - var(--bp-p) * .07); }
 
 /* What the cap moves against: the far two edges of a second wireframe, and the lines joining the corners. */
 .bp-ghost { position:absolute; inset:0; pointer-events:none; opacity:var(--bp-ghost-a, 0); transform:translate(calc(var(--sx) * var(--off) * var(--bp-ghost-at, 0)), calc(var(--sy) * var(--off) * var(--bp-ghost-at, 0))); }

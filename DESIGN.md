@@ -95,7 +95,7 @@ Code: `packages/design/src/components/button`. The options are listed once in `o
 | Rest | Corner overshoot 4px, texture rises 62% |
 | Hover, `keycap` | Like a key being pushed. The cap sinks 42% of the way onto a wireframe base that stays put, quickly (.17s), and returns more slowly (.5s). Overshoot 6px, texture rises 92%, frame brightens, faint pen line redraws. |
 | Hover, `shadow` | The earlier style: the cap stays still, and the wireframe slides out from it |
-| Press, `warp` | Like pressing a sheet of blueprint. The cap bottoms out, and the texture folds inward along creases from each corner to the center. In over .13s, and released slowly over 1.25s. |
+| Press, `warp` | Like pressing a sheet of blueprint. The cap bottoms out, the texture folds inward along creases from each corner to the center, each side of the fold shades differently, and the label sinks slightly. In over .13s, and released slowly over 1.25s. |
 | Press, `drop` | The cap drops into its shadow, with no fold, and returns quickly |
 | Keyboard focus | Same as hover, plus a dashed amber line 12px clear of the button |
 | Disabled | Dashed frame, no texture or shadow, muted text |
