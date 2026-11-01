@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="light" data-fit="street">
+<html lang="en" data-theme="light" data-fit="street" data-scrollnav="buttons" data-face="fog">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,8 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../06-project-card/bp.css">
 <style>
-  :root { --nav-h:68px; --soft:cubic-bezier(.22,.61,.36,1); }
+  @property --city-fade { syntax:"<length>"; inherits:true; initial-value:0px; }
+  :root { --label:"Barlow Semi Condensed",ui-sans-serif,sans-serif; --track:.09em; --size:15px; --sx:1; --sy:1; --nav-h:68px; --soft:cubic-bezier(.22,.61,.36,1); }
   * { box-sizing:border-box; }
   html { background:var(--sky-3); }
   body { margin:0; min-height:230vh; color:var(--ink); font:400 16px/1.5 ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif; }
@@ -20,7 +22,10 @@
   .grain { opacity:.55; mix-blend-mode:soft-light; background-size:220px 220px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E"); }
 
   /* The city hangs from a fixed line and is clipped there, so it can never run through the nav's text unless Behind is chosen. */
-  .city { position:fixed; z-index:-2; left:0; right:0; top:var(--nav-h); height:min(62vh,600px); overflow:hidden; pointer-events:none; }
+  .city { position:fixed; z-index:-2; left:0; right:0; top:var(--nav-h); height:min(62vh,600px); overflow:hidden; pointer-events:none; transition:--city-fade .7s var(--soft);
+    -webkit-mask-image:linear-gradient(transparent 0, #000 var(--city-fade)); mask-image:linear-gradient(transparent 0, #000 var(--city-fade)); }
+  /* With no street line to end at, the city fades out at the top rather than being cut off. */
+  .as-buttons .city { --city-fade:90px; }
   [data-fit="behind"] .city { top:0; height:min(70vh,660px); }
   .city canvas { position:absolute; left:-40px; top:0; }
   .mist { position:absolute; left:-10%; right:-10%; height:34%; top:22%; background:radial-gradient(50% 50% at 50% 50%, var(--sky-0), transparent 72%); opacity:.5; animation:drift 46s ease-in-out infinite alternate; }
@@ -29,21 +34,29 @@
   @media (prefers-reduced-motion:reduce) { .mist { animation:none; } }
 
   .nav { position:sticky; top:0; z-index:5; height:var(--nav-h); display:flex; align-items:center; gap:clamp(12px,3vw,34px); padding:0 clamp(16px,4vw,48px); transition:background-color .6s var(--soft); }
-  .nav::after { content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:var(--line-rest); }
+  .nav::after { content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:var(--line-rest); transition:opacity .6s var(--soft); }
   [data-fit="behind"] .nav::after { display:none; }
   [data-fit="apart"] .nav { background:var(--paper); }
-  .scrolled .nav { background:color-mix(in srgb, var(--sky-0) 94%, transparent); }
+  .scrolled:not(.as-buttons) .nav { background:color-mix(in srgb, var(--sky-0) 94%, transparent); }
+  /* No-bar mode: once scrolled the bar and line are gone, and each item stands alone as our button. */
+  .as-buttons .nav { background:transparent; }
+  .as-buttons .nav::after { opacity:0; }
+  .bp-frame, .bp-tex { transition-property:--os, --l, --rise, opacity; }
+  :root:not(.as-buttons) .nav .bp-frame, :root:not(.as-buttons) .nav .bp-tex, :root:not(.as-buttons) .nav .bp-ghost, :root:not(.as-buttons) .nav .bp-link { opacity:0 !important; }
+  .nav .bp-body { transition:background-color .6s var(--soft), transform .3s var(--soft); }
+  .as-buttons[data-face="fog"] .nav .bp-body, .as-buttons[data-face="fog"] .logo { background-color:color-mix(in srgb, var(--sky-1) 58%, transparent); -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px); }
+  .as-buttons[data-face="mist"] .nav .bp-body, .as-buttons[data-face="mist"] .logo { background-color:color-mix(in srgb, var(--sky-1) 82%, transparent); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); }
   .logo { display:grid; place-items:center; width:44px; height:44px; flex:none; color:var(--ink); text-decoration:none; font:600 18px/1 "Barlow Semi Condensed",sans-serif; letter-spacing:.04em;
     background:linear-gradient(var(--line),var(--line)) 0 4px / 100% 1px no-repeat, linear-gradient(var(--line),var(--line)) 0 calc(100% - 4px) / 100% 1px no-repeat, linear-gradient(var(--line),var(--line)) 4px 0 / 1px 100% no-repeat, linear-gradient(var(--line),var(--line)) calc(100% - 4px) 0 / 1px 100% no-repeat; }
   .links { display:flex; gap:clamp(4px,1.6vw,20px); margin:0 0 0 auto; padding:0; list-style:none; }
-  .links a, .slot, .menu { display:flex; align-items:center; min-height:44px; padding:0 12px; color:var(--ink); background:none; border:0; cursor:pointer; text-decoration:none; font:600 15px/1 "Barlow Semi Condensed",sans-serif; letter-spacing:.09em; text-transform:uppercase; }
-  .links a { position:relative; }
-  .links a[aria-current] { color:var(--accent); }
+  .links a, .slot, .menu { display:inline-block; color:var(--ink); background:none; border:0; cursor:pointer; text-decoration:none; }
+  .links a[aria-current] .bp-label { color:var(--accent); }
   a:focus-visible, button:focus-visible { outline:1.5px dashed var(--accent); outline-offset:2px; }
-  .slot { color:var(--ink-2); font-weight:500; }
+  .slot .bp-label { color:var(--ink-2); }
   .menu { display:none; margin-left:auto; }
+  .nav .bp-body { padding:8px 14px; }
   @media (max-width:760px) {
-    .menu { display:flex; }
+    .menu { display:inline-block; }
     .links { display:none; position:absolute; top:100%; left:0; right:0; margin:0; padding:8px clamp(16px,4vw,48px) 14px; flex-direction:column; background:var(--paper); border-bottom:1px solid var(--line-rest); }
     .links.open { display:flex; }
     .slot { margin-left:0; }
@@ -51,6 +64,8 @@
 
   .hero { padding:clamp(280px,46vh,440px) clamp(16px,4vw,48px) 0; }
   h1 { margin:0; font:600 clamp(44px,8vw,92px)/.98 "Barlow Semi Condensed",sans-serif; }
+  .filler { columns:3 260px; column-gap:40px; padding:90px clamp(16px,4vw,48px) 160px; color:var(--ink); }
+  .filler p { margin:0 0 16px; }
   .hint { margin:14px 0 0; font:500 12px/1.5 ui-monospace,Menlo,monospace; color:var(--ink-2); }
 
   .controls { position:fixed; z-index:8; left:50%; bottom:12px; transform:translateX(-50%); display:flex; flex-wrap:wrap; justify-content:center; gap:5px 14px; width:max-content; max-width:calc(100vw - 16px); padding:7px 10px; font:12px/1 ui-monospace,Menlo,monospace; color:var(--ink-2); background:var(--paper); border:1px solid var(--line-rest); }
@@ -79,10 +94,13 @@
 <main class="hero">
   <h1>Shubham Prakash</h1>
   <p class="hint">Placeholder logo, links and page. Hover the links, then scroll.</p>
+  <div class="filler" id="filler" aria-hidden="true"></div>
 </main>
 
 <div class="controls" aria-label="Prototype controls">
   <div class="group" data-set="fit"><span>Fit</span><button data-v="street">Street</button><button data-v="apart">Apart</button><button data-v="behind">Behind</button></div>
+  <div class="group" data-set="scrollnav"><span>On scroll</span><button data-v="buttons">Buttons</button><button data-v="bar">Bar</button></div>
+  <div class="group" data-set="face"><span>Face</span><button data-v="clear">Clear</button><button data-v="fog">Fog</button><button data-v="mist">Mist</button></div>
   <div class="group" data-set="strength"><span>City</span><button data-v="faint">Faint</button><button data-v="soft">Soft</button><button data-v="clear">Clear</button></div>
   <div class="group" data-set="palette"><span>Theme</span></div>
 </div>
@@ -91,9 +109,16 @@
 <script>
 (() => {
   const root = document.documentElement, qs = new URLSearchParams(location.search), reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const state = { fit: qs.get('fit') || 'street', strength: qs.get('strength') || 'faint', palette: qs.get('palette') || 'dust' };
+  const state = { scrollnav: qs.get('scrollnav') || 'buttons', face: qs.get('face') || 'fog', fit: qs.get('fit') || 'street', strength: qs.get('strength') || 'faint', palette: qs.get('palette') || 'dust' };
   const STRENGTH = { faint: .55, soft: 1, clear: 1.7 };
   const $ = (id) => document.getElementById(id), city = $('city');
+  // Every nav item is built as the real button, so it can show its button look once the bar is gone.
+  document.querySelectorAll('.links a, .slot, .menu').forEach((el) => {
+    el.classList.add('bp', 'sm', 'secondary');
+    el.innerHTML = `<span class="bp-body"><span class="bp-ghost"><i class="g-h"></i><i class="g-v"></i></span><i class="bp-link l1"></i><i class="bp-link l2"></i><i class="bp-link l3"></i><span class="bp-tex"></span><span class="bp-frame"></span><span class="bp-label">${el.textContent}</span></span>`;
+  });
+  $('filler').innerHTML = Array.from({ length: 14 }, () => '<p>Placeholder text, here only to test how the nav reads when real content scrolls underneath it. It is not going on the site, and it says nothing about the final page.</p>').join('');
+  const syncNav = () => root.classList.toggle('as-buttons', state.scrollnav === 'buttons' && scrollY > 8);
   const hash = (n) => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
   const seeded = (seed) => { let i = 0; return () => hash(seed + i++ * 1.37); };
   let W = 0, H = 0, D = 1, towers = [], colors = {};
@@ -185,7 +210,7 @@
   /* ---------- Motion: slow parallax on the pointer and scroll, all from one loop that sleeps when settled ---------- */
   const ptr = { x: 0, tx: 0 }; let shown = -1, last = 0, raf = 0;
   addEventListener('pointermove', (e) => { if (e.pointerType !== 'touch') { ptr.tx = e.clientX / innerWidth - .5; wake(); } });
-  addEventListener('scroll', () => { root.classList.toggle('scrolled', scrollY > 8); wake(); }, { passive: true });
+  addEventListener('scroll', () => { root.classList.toggle('scrolled', scrollY > 8); syncNav(); wake(); }, { passive: true });
   function frame(now) {
     raf = 0;
     const dt = Math.min(.05, (now - last) / 1000 || .016); last = now;
@@ -207,7 +232,9 @@
     p.sky.forEach((c, i) => s.setProperty(`--sky-${i}`, c));
     Object.entries({ '--glow': p.glow, '--paper': p.paper, '--ink': p.ink, '--ink-2': p.ink2, '--line': p.line, '--line-rest': p.lineRest, '--accent': p.accent }).forEach(([k, v]) => s.setProperty(k, v));
     colors = { line: p.line, accent: p.accent, sky0: p.sky[0] };
-    root.dataset.fit = state.fit;
+    Object.assign(root.dataset, { fit: state.fit, face: state.face, scrollnav: state.scrollnav });
+    syncNav();
+    s.setProperty('--base', p.sky[1]);
     document.querySelectorAll('[data-set]').forEach((g) => g.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === state[g.dataset.set])));
     build(); wake();
   }
