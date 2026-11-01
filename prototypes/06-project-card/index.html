@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-backing="clear">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="bp.css">
+<link rel="stylesheet" href="card.css">
+<style>
+  body { padding:7vh 6vw 130px; }
+  #scene { position:fixed; inset:0; width:100%; height:100%; border:0; z-index:0; pointer-events:none; }
+  .page { position:relative; z-index:1; max-width:1080px; margin:0 auto; }
+  h2 { margin:0 0 30px; font:500 11.5px/1 ui-monospace,Menlo,monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); }
+  section { margin-bottom:76px; }
+  .grid { display:grid; gap:44px 46px; grid-template-columns:repeat(auto-fit, minmax(min(100%, 420px), 1fr)); align-items:stretch; }
+  [data-layout="wide"] .grid { grid-template-columns:1fr; }
+  [data-layout="wide"] .pc.blank { display:none; }
+  /* The tuning bar. Prototype only. */
+  .controls { position:fixed; z-index:3; left:50%; bottom:14px; transform:translateX(-50%); display:flex; flex-wrap:wrap; justify-content:center; gap:6px 16px; width:max-content; max-width:calc(100vw - 20px); padding:9px 12px; font:12px/1 ui-monospace,Menlo,monospace; color:var(--ink-2); background:var(--chrome); border:1px solid var(--chrome-line); backdrop-filter:blur(8px); }
+  .group { display:flex; align-items:center; gap:3px; }
+  .group > span { margin-right:4px; opacity:.75; }
+  .controls button { font:inherit; padding:6px 7px; color:inherit; background:transparent; border:1px solid transparent; cursor:pointer; }
+  .controls button[aria-pressed="true"] { color:var(--ink); border-color:var(--chrome-line); }
+  .controls button:focus-visible { outline:2px solid currentColor; outline-offset:1px; }
+</style>
+</head>
+<body>
+<iframe id="scene" title="" aria-hidden="true" tabindex="-1" hidden></iframe>
+<main class="page">
+  <section>
+    <h2>Hover the card. Click anywhere on it. The buttons go straight to the site.</h2>
+    <div class="grid">
+      <article class="pc" id="card">
+        <span class="pc-face"></span>
+        <span class="pc-ghost"><i class="g-h"></i><i class="g-v"></i></span>
+        <i class="pc-link l1"></i><i class="pc-link l2"></i><i class="pc-link l3"></i>
+        <span class="pc-tex"></span>
+        <span class="pc-frame"></span>
+        <div class="pc-stage" style="--vt-stage:stage-everything-tech">
+          <canvas aria-hidden="true"></canvas>
+          <span class="reg tl"></span><span class="reg tr"></span>
+        </div>
+        <div class="pc-sheet">
+          <p class="pc-meta"><span>SHEET 01</span><span>PYTHON · GITHUB PAGES</span><span class="live">LIVE, DAILY 08:30 IST</span></p>
+          <h3 class="pc-title"><a class="pc-main" href="projects/everything-tech/">EverythingTech</a>
+            <svg class="pc-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.3C8 11.7 15 12.3 20.5 12"/><path d="M14.5 6.1C16.6 8.2 18.6 9.9 20.8 12C18.7 14 16.8 16.1 14.8 18.2"/></svg>
+          </h3>
+          <p class="pc-line">A daily tech newspaper with no human editor. It reads 45+ sources overnight, merges the duplicates and writes each story from the full article.</p>
+          <div class="pc-links">
+            <a class="bp sm" data-icon="link" href="https://shubhamcodess.github.io/everything-tech-newsletter/" target="_blank" rel="noopener">Today's paper</a>
+            <a class="bp sm secondary" data-icon="code" href="https://github.com/shubhamcodess/everything-tech-newsletter" target="_blank" rel="noopener">Code</a>
+            <a class="bp sm secondary" data-icon="rss" href="https://shubhamcodess.github.io/everything-tech-newsletter/feed.xml" target="_blank" rel="noopener">RSS</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="pc blank" aria-label="Empty card template">
+        <span class="pc-face"></span>
+        <span class="pc-tex"></span>
+        <span class="pc-frame"></span>
+        <div class="pc-stage"><p class="slot"><b>stage</b>One live drawing per project, showing what that project does</p></div>
+        <div class="pc-sheet">
+          <p class="slot"><b>sheet, stack, status</b>One small line of facts</p>
+          <p class="slot"><b>title</b>Clicking anywhere on the card opens /projects/&lt;slug&gt;</p>
+          <p class="slot"><b>line</b>What it is, in about two lines</p>
+          <p class="slot"><b>links</b>Up to three. Private projects have none.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<div class="controls" aria-label="Prototype controls">
+  <div class="group" data-set="plays" aria-label="Plays"><span>Plays</span><button data-v="always">Always</button><button data-v="hover">On hover</button></div>
+  <div class="group" data-set="line" aria-label="Pen line"><span>Line</span><button data-v="steady">Steady</button><button data-v="alive">Alive</button></div>
+  <div class="group" data-set="layout" aria-label="Layout"><span>Layout</span><button data-v="grid">Grid</button><button data-v="wide">Wide</button></div>
+  <div class="group" data-set="theme" aria-label="Theme"><button data-v="dark">Night</button><button data-v="light">Day</button></div>
+  <div class="group" data-set="scene" aria-label="Backdrop"><span>Behind</span><button data-v="plain">Plain</button><button data-v="faint">Faint</button><button data-v="scene">Full</button></div>
+  <div class="group" data-set="backing" aria-label="Face"><span>Face</span><button data-v="clear">Clear</button><button data-v="frost">Frost</button></div>
+</div>
+
+<script src="bp.js"></script>
+<script src="newsletter-fold.js"></script>
+<script>
+(() => {
+  const root = document.documentElement, qs = new URLSearchParams(location.search);
+  let savedTheme = null; try { savedTheme = localStorage.getItem('proto-theme'); } catch { /* storage may be blocked */ }
+  const state = { plays: qs.get('plays') || 'always', line: qs.get('line') || 'steady', layout: qs.get('layout') || 'grid', theme: qs.get('theme') || savedTheme || 'dark', scene: qs.get('scene') || 'plain', backing: qs.get('backing') || 'clear' };
+  root.dataset.theme = state.theme;
+
+  const card = document.getElementById('card'), scene = document.getElementById('scene');
+  const graphic = NewsletterFold.mount(card.querySelector('canvas'), { pointerHost: card, plays: state.plays, line: state.line, startAt: qs.has('t') ? +qs.get('t') : 0 });
+  window.__graphic = graphic;
+
+  function apply() {
+    Object.assign(root.dataset, { theme: state.theme, backing: state.backing, layout: state.layout });
+    card.classList.toggle('wide', state.layout === 'wide');
+    graphic.set('line', state.line);
+    if (graphic._plays !== state.plays) { graphic.set('plays', state.plays); graphic._plays = state.plays; }
+    try { localStorage.setItem('proto-theme', state.theme); } catch { /* storage may be blocked */ }
+    document.querySelectorAll('[data-set]').forEach((g) => g.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === state[g.dataset.set])));
+    const want = state.scene === 'plain' ? '' : state.theme === 'light' ? '../01-background/?tex=plan&theme=light' : `../02-batcave-3d/?view=${state.scene === 'scene' ? 'all' : 'mouse'}&theme=dark`;
+    scene.hidden = !want;
+    if (want && scene.dataset.src !== want) { scene.dataset.src = want; scene.src = want; }
+    if (!want) scene.dataset.src = '';
+  }
+  scene.addEventListener('load', () => { try { const d = scene.contentDocument; const st = d.createElement('style'); st.textContent = '.controls,main{display:none!important}'; d.head.append(st); } catch { /* same origin in this prototype */ } });
+  document.querySelectorAll('[data-set] button').forEach((b) => b.onclick = () => { state[b.parentElement.dataset.set] = b.dataset.v; apply(); });
+  apply();
+})();
+</script>
+</body>
+</html>

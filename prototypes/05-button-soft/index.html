@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-tex="hatch" data-dir="br" data-feel="soft" data-font="barlow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blueprint Button, Softer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600&family=Chakra+Petch:wght@500;600&family=Saira+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  @property --os { syntax:"<length>"; inherits:true; initial-value:4px; }
+  @property --rise { syntax:"<percentage>"; inherits:true; initial-value:62%; }
+  @property --l { syntax:"<color>"; inherits:true; initial-value:transparent; }
+
+  [data-theme="dark"]  { --base:#0b0e15; --ink:#e4e8ef; --ink-2:#99a4b6; --line:#a9bfdf; --line-rest:rgba(169,191,223,.72); --accent:#e6b044; --chrome:rgba(17,21,31,.9); --chrome-line:rgba(157,180,214,.2); }
+  [data-theme="light"] { --base:#e6e8ed; --ink:#141a26; --ink-2:#4b5566; --line:#1f3355; --line-rest:rgba(31,51,85,.68); --accent:#94650a; --chrome:rgba(245,246,249,.92); --chrome-line:rgba(36,56,90,.2); }
+  [data-font="barlow"] { --label:"Barlow Semi Condensed",ui-sans-serif,sans-serif; --track:.09em; --size:16px; }
+  [data-font="chakra"] { --label:"Chakra Petch",ui-sans-serif,sans-serif; --track:.05em; --size:14.5px; }
+  [data-font="saira"]  { --label:"Saira Semi Condensed",ui-sans-serif,sans-serif; --track:.07em; --size:14.5px; }
+  [data-dir="br"] { --sx:1; --sy:1; }  [data-dir="bl"] { --sx:-1; --sy:1; }
+  [data-dir="tr"] { --sx:1; --sy:-1; } [data-dir="tl"] { --sx:-1; --sy:-1; }
+
+  * { box-sizing:border-box; }
+  html,body { margin:0; min-height:100%; background:var(--base); color:var(--ink); }
+  body { font:400 15px/1.5 ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif; padding:7vh 6vw 130px; }
+  #scene { position:fixed; inset:0; width:100%; height:100%; border:0; z-index:0; pointer-events:none; }
+  .page { position:relative; z-index:1; max-width:1040px; margin:0 auto; }
+  h2 { margin:0 0 26px; font:500 11.5px/1 ui-monospace,Menlo,monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); }
+  section { margin-bottom:64px; }
+  .row { display:flex; flex-wrap:wrap; gap:30px 34px; align-items:center; }
+  .cell { display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
+  .cell small { font:500 11px/1 ui-monospace,Menlo,monospace; color:var(--ink-2); }
+
+  /* ---------- The button ---------- */
+  .bp { --off:7px; --tex-a:.3; position:relative; display:inline-block; padding:0; margin:0; color:var(--ink); background:none; border:0; cursor:pointer; font:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent; }
+  .bp:focus { outline:none; }
+  .bp-body { position:relative; display:inline-flex; align-items:center; gap:11px; min-height:46px; padding:12px 22px 12px 18px; font:600 var(--size)/1 var(--label); letter-spacing:var(--track); text-transform:uppercase; white-space:nowrap; transition:transform .3s cubic-bezier(.22,.61,.36,1); }
+  .bp-label, .bp-icon { position:relative; z-index:1; }
+
+  /* The frame is four drafting lines that run slightly past each corner, not a CSS border. */
+  .bp-frame { position:absolute; inset:calc(var(--os) * -1); pointer-events:none; --l:var(--line-rest); transition:--os .6s cubic-bezier(.22,.61,.36,1), --l .6s cubic-bezier(.22,.61,.36,1);
+    background:
+      linear-gradient(var(--l),var(--l)) 0 var(--os) / 100% 1px no-repeat,
+      linear-gradient(var(--l),var(--l)) 0 calc(100% - var(--os)) / 100% 1px no-repeat,
+      linear-gradient(var(--l),var(--l)) var(--os) 0 / 1px 100% no-repeat,
+      linear-gradient(var(--l),var(--l)) calc(100% - var(--os)) 0 / 1px 100% no-repeat; }
+
+  /* Clear face. A drawn texture rises from the bottom edge and fades to nothing before it reaches the text. */
+  .bp-tex { position:absolute; inset:0; pointer-events:none; opacity:var(--tex-a); transition:--rise .85s cubic-bezier(.22,.61,.36,1), opacity .5s;
+    -webkit-mask-image:linear-gradient(to top, #000 0, transparent var(--rise)); mask-image:linear-gradient(to top, #000 0, transparent var(--rise)); }
+  [data-tex="hatch"] .bp-tex { background:repeating-linear-gradient(135deg, var(--line) 0 1px, transparent 1px 5px); }
+  [data-tex="dots"]  .bp-tex { background:radial-gradient(circle at 1px 1px, var(--line) .8px, transparent 1px) 0 0 / 5px 5px; }
+  [data-tex="grid"]  .bp-tex { background:linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 7px 7px, linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 7px 7px; }
+  [data-tex="fade"]  .bp-tex { background:var(--line); opacity:calc(var(--tex-a) * .55); }
+
+  /* The shadow is a second wireframe: only the far two edges, and the lines joining the corners. */
+  .bp-ghost { position:absolute; inset:0; pointer-events:none; opacity:0; transform:translate(0,0); transition:transform .65s cubic-bezier(.22,.61,.36,1), opacity .5s; }
+  .bp-ghost i { position:absolute; display:block; background:var(--line); }
+  .g-h { left:0; width:100%; height:1px; top:calc(50% + var(--sy) * 50%); margin-top:calc(var(--sy) * -.5px - .5px); }
+  .g-v { top:0; height:100%; width:1px; left:calc(50% + var(--sx) * 50%); margin-left:calc(var(--sx) * -.5px - .5px); }
+  .bp-link { position:absolute; width:calc(var(--off) * 1.4142); height:1px; background:var(--line); transform-origin:0 50%; pointer-events:none; opacity:0; transform:rotate(atan2(var(--sy), var(--sx))) scaleX(0); transition:transform .65s cubic-bezier(.22,.61,.36,1), opacity .5s; }
+  .l1 { left:calc(50% + var(--sx) * 50%); top:calc(50% + var(--sy) * 50%); }
+  .l2 { left:calc(50% + var(--sx) * 50%); top:calc(50% - var(--sy) * 50%); }
+  .l3 { left:calc(50% - var(--sx) * 50%); top:calc(50% + var(--sy) * 50%); }
+
+  .bp-icon { width:20px; height:20px; flex:none; overflow:visible; fill:none; stroke:var(--accent); stroke-width:1.25; stroke-linecap:round; stroke-linejoin:round; }
+  .bp-icon .second { opacity:.45; stroke-width:.85; }
+  .bp-icon path { stroke-dasharray:1; stroke-dashoffset:0; }
+
+  :is(.bp:hover, .bp.is-hover, .bp:focus-visible) { --os:6px; }
+  :is(.bp:hover, .bp.is-hover, .bp:focus-visible) .bp-frame { --l:var(--line); }
+  :is(.bp:hover, .bp.is-hover, .bp:focus-visible) .bp-tex { --rise:92%; }
+  :is(.bp:hover, .bp.is-hover, .bp:focus-visible) .bp-ghost { opacity:.5; transform:translate(calc(var(--sx) * var(--off)), calc(var(--sy) * var(--off))); }
+  :is(.bp:hover, .bp.is-hover, .bp:focus-visible) .bp-link { opacity:.38; transform:rotate(atan2(var(--sy), var(--sx))) scaleX(1); }
+
+  /* Press: the button drops into its own shadow. */
+  :is(.bp:active, .bp.is-press):not(:disabled) .bp-body { transform:translate(calc(var(--sx) * var(--off) * .7), calc(var(--sy) * var(--off) * .7)); transition-duration:.18s; }
+  :is(.bp:active, .bp.is-press):not(:disabled) .bp-ghost { opacity:.75; transform:translate(calc(var(--sx) * var(--off) * .3), calc(var(--sy) * var(--off) * .3)); transition-duration:.18s; }
+  :is(.bp:active, .bp.is-press):not(:disabled) .bp-link { opacity:.5; transform:rotate(atan2(var(--sy), var(--sx))) scaleX(.3); transition-duration:.18s; }
+  :is(.bp:active, .bp.is-press):not(:disabled) .bp-tex { --rise:100%; opacity:calc(var(--tex-a) * 1.5); }
+
+  /* Keyboard focus: a dashed construction line in amber, well clear of the frame. */
+  :is(.bp:focus-visible, .bp.is-focus) .bp-body::after { content:""; position:absolute; inset:-12px; border:1.5px dashed var(--accent); pointer-events:none; }
+
+  .bp:disabled { cursor:not-allowed; color:var(--ink-2); }
+  .bp:disabled .bp-frame { background:
+      repeating-linear-gradient(90deg, var(--line-rest) 0 4px, transparent 4px 8px) 0 var(--os) / 100% 1px no-repeat,
+      repeating-linear-gradient(90deg, var(--line-rest) 0 4px, transparent 4px 8px) 0 calc(100% - var(--os)) / 100% 1px no-repeat,
+      repeating-linear-gradient(0deg, var(--line-rest) 0 4px, transparent 4px 8px) var(--os) 0 / 1px 100% no-repeat,
+      repeating-linear-gradient(0deg, var(--line-rest) 0 4px, transparent 4px 8px) calc(100% - var(--os)) 0 / 1px 100% no-repeat; opacity:.6; }
+  .bp:disabled .bp-tex, .bp:disabled .bp-ghost, .bp:disabled .bp-link { display:none; }
+  .bp:disabled .bp-icon { stroke:var(--ink-2); }
+
+  /* Optional backing for busy scenes: the face stays see-through, the lines behind it just soften. */
+  [data-backing="frost"] .bp-body { background:color-mix(in srgb, var(--base) 38%, transparent); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
+  .bp::before { content:""; position:absolute; inset:-4px 0; } /* keeps the small size at a 46px touch target */
+
+  /* Levels */
+  .bp.secondary { --tex-a:.15; }
+  .bp.secondary .bp-icon { stroke:var(--line); }
+  .bp.quiet { --tex-a:0; }
+  .bp.quiet .bp-icon { stroke:var(--line); }
+  .bp.quiet .bp-frame { opacity:0; transition:opacity .5s, --os .6s cubic-bezier(.22,.61,.36,1), --l .6s cubic-bezier(.22,.61,.36,1); }
+  .bp.quiet .bp-body { box-shadow:inset 0 -1px 0 var(--line-rest); }
+  :is(.bp.quiet:hover, .bp.quiet.is-hover, .bp.quiet:focus-visible) .bp-frame { opacity:1; }
+  :is(.bp.quiet:hover, .bp.quiet.is-hover, .bp.quiet:focus-visible) { --tex-a:.14; }
+
+  /* Sizes */
+  .bp.sm .bp-body { min-height:38px; padding:8px 16px 8px 13px; gap:8px; font-size:calc(var(--size) * .88); }
+  .bp.sm { --off:5px; }
+  .bp.sm .bp-icon { width:16px; height:16px; }
+  .bp.lg .bp-body { min-height:60px; padding:16px 30px 16px 24px; gap:14px; font-size:calc(var(--size) * 1.2); }
+  .bp.lg { --off:9px; }
+  .bp.lg .bp-icon { width:24px; height:24px; }
+
+  /* Tuning bar. Prototype only. */
+  .controls { position:fixed; z-index:3; left:50%; bottom:14px; transform:translateX(-50%); display:flex; flex-wrap:wrap; justify-content:center; gap:6px 16px; width:max-content; max-width:calc(100vw - 20px); padding:9px 12px; font:12px/1 ui-monospace,Menlo,monospace; color:var(--ink-2); background:var(--chrome); border:1px solid var(--chrome-line); backdrop-filter:blur(8px); }
+  .group { display:flex; align-items:center; gap:3px; }
+  .group > span { margin-right:4px; opacity:.75; }
+  .controls button { font:inherit; padding:6px 7px; color:inherit; background:transparent; border:1px solid transparent; cursor:pointer; }
+  .controls button[aria-pressed="true"] { color:var(--ink); border-color:var(--chrome-line); }
+  .controls button:focus-visible { outline:2px solid currentColor; outline-offset:1px; }
+  @media (prefers-reduced-motion:reduce) { .bp *, .bp { transition-duration:.01s !important; } }
+</style>
+</head>
+<body>
+<iframe id="scene" title="" aria-hidden="true" tabindex="-1" hidden></iframe>
+<div class="page">
+  <section>
+    <h2>Hover it. Press it. Tab to it.</h2>
+    <div class="row">
+      <a class="bp lg" href="#" data-icon="arrow">View projects</a>
+      <a class="bp lg secondary" href="#" data-icon="code">GitHub</a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Levels</h2>
+    <div class="row">
+      <div class="cell"><a class="bp" href="#" data-icon="arrow">Read the write-up</a><small>Primary: strongest texture, amber sketch</small></div>
+      <div class="cell"><a class="bp secondary" href="#" data-icon="play">Open demo</a><small>Secondary: lighter texture</small></div>
+      <div class="cell"><a class="bp quiet" href="#" data-icon="mail">Email</a><small>Quiet: underline until hovered</small></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>States, frozen</h2>
+    <div class="row">
+      <div class="cell"><button class="bp" data-icon="download">Rest</button><small>Rest</small></div>
+      <div class="cell"><button class="bp is-hover" data-icon="download">Hover</button><small>Hover</small></div>
+      <div class="cell"><button class="bp is-hover is-press" data-icon="download">Press</button><small>Pressed</small></div>
+      <div class="cell"><button class="bp is-focus" data-icon="download">Focus</button><small>Keyboard focus</small></div>
+      <div class="cell"><button class="bp" disabled data-icon="download">Off</button><small>Disabled</small></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sizes and sketched icons</h2>
+    <div class="row">
+      <button class="bp sm" data-icon="link">Small</button>
+      <button class="bp sm secondary" data-icon="bat">Small</button>
+      <button class="bp" data-icon="download">Medium</button>
+      <button class="bp secondary" data-icon="code">Medium</button>
+      <button class="bp lg" data-icon="bat">Large</button>
+    </div>
+  </section>
+</div>
+
+<div class="controls" aria-label="Prototype controls">
+  <div class="group" data-set="tex" aria-label="Texture"><span>Texture</span><button data-v="hatch">Hatch</button><button data-v="dots">Dots</button><button data-v="grid">Grid</button><button data-v="fade">Fade</button></div>
+  <div class="group" data-set="font" aria-label="Font"><span>Font</span><button data-v="barlow">Barlow</button><button data-v="chakra">Chakra</button><button data-v="saira">Saira</button></div>
+  <div class="group" data-set="dir" aria-label="Shadow direction"><span>Shadow</span><button data-v="br">↘</button><button data-v="bl">↙</button><button data-v="tr">↗</button><button data-v="tl">↖</button></div>
+  <div class="group" data-set="feel" aria-label="Feel"><span>Feel</span><button data-v="soft">Soft</button><button data-v="softer">Softer</button><button data-v="still">No sway</button></div>
+  <div class="group" data-set="theme" aria-label="Theme"><button data-v="dark">Night</button><button data-v="light">Day</button></div>
+  <div class="group" data-set="scene" aria-label="Backdrop"><span>Behind</span><button data-v="plain">Plain</button><button data-v="faint">Faint</button><button data-v="scene">Full</button></div>
+  <div class="group" data-set="backing" aria-label="Face"><span>Face</span><button data-v="clear">Clear</button><button data-v="frost">Frost</button></div>
+</div>
+
+<script>
+(() => {
+  const root = document.documentElement, reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const qs = new URLSearchParams(location.search);
+  const state = { tex: qs.get('tex') || 'hatch', font: qs.get('font') || 'barlow', dir: qs.get('dir') || 'br', feel: qs.get('feel') || 'soft', theme: qs.get('theme') || 'dark', scene: qs.get('scene') || 'plain', backing: qs.get('backing') || 'clear' };
+
+  /* ---------- Hand-sketched icons: straight plans, then wobbled and drawn twice like a pen going over a line ---------- */
+  const ICONS = {
+    arrow: [[[3, 12.3], [9, 11.8], [15, 12.1], [20.5, 12]], [[14.5, 6], [20.8, 12], [14.8, 18.2]]],
+    download: [[[12, 3], [12.1, 9], [11.9, 15.4]], [[6.5, 10.4], [12, 15.8], [17.5, 10.2]], [[3.5, 15.5], [3.8, 20.4], [12, 20.6], [20.4, 20.3], [20.5, 15.4]]],
+    code: [[[8, 5.5], [2.8, 12], [8, 18.5]], [[16, 5.5], [21.2, 12], [16, 18.5]], [[13.8, 3.8], [10.2, 20.2]]],
+    play: [[[6, 3.6], [6.2, 12], [5.9, 20.6], [13, 16.4], [20.6, 12], [13, 7.8], [6, 3.6]]],
+    mail: [[[2.8, 5.8], [12, 5.5], [21.2, 5.8], [21, 12], [21.3, 18.4], [12, 18.6], [2.9, 18.3], [3, 12], [2.8, 5.8]], [[3, 6.2], [12, 13], [21, 6.2]]],
+    link: [[[9.5, 5], [4, 5.2], [4.2, 12], [4, 20], [12, 19.8], [19.2, 20], [19, 14.5]], [[13, 11], [20.5, 3.5]], [[14.5, 3.4], [20.6, 3.4], [20.6, 9.5]]],
+    bat: [[[1.8, 8], [4.5, 12.6], [7.2, 11.2], [9.2, 15], [12, 19], [14.8, 15], [16.8, 11.2], [19.5, 12.6], [22.2, 8], [18.6, 8.8], [15.6, 6.6], [13.6, 9.2], [12.9, 6], [12, 8.2], [11.1, 6], [10.4, 9.2], [8.4, 6.6], [5.4, 8.8], [1.8, 8]]],
+  };
+  const seeded = (a) => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  function sketch(points, seed, amp) {
+    const r = seeded(seed), pts = [];
+    for (let i = 0; i + 1 < points.length; i++) {
+      const [a, b] = points.slice(i, i + 2), n = Math.max(1, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / 4));
+      for (let k = 0; k < n; k++) pts.push([a[0] + (b[0] - a[0]) * k / n + (r() - .5) * amp, a[1] + (b[1] - a[1]) * k / n + (r() - .5) * amp]);
+    }
+    const e = points[points.length - 1]; pts.push([e[0] + (r() - .5) * amp, e[1] + (r() - .5) * amp]);
+    let d = `M${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
+    for (let i = 0; i + 1 < pts.length; i++) {
+      const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)], k = .16;
+      d += ` C${(p1[0] + (p2[0] - p0[0]) * k).toFixed(2)} ${(p1[1] + (p2[1] - p0[1]) * k).toFixed(2)} ${(p2[0] - (p3[0] - p1[0]) * k).toFixed(2)} ${(p2[1] - (p3[1] - p1[1]) * k).toFixed(2)} ${p2[0].toFixed(2)} ${p2[1].toFixed(2)}`;
+    }
+    return d;
+  }
+  function iconSVG(name, s) {
+    const paths = ICONS[name].flatMap((pl, i) => [
+      `<path pathLength="1" d="${sketch(pl, s + i * 7, .62)}"/>`,
+      `<path class="second" pathLength="1" d="${sketch(pl, s + i * 13 + 91, .95)}"/>`,
+    ]);
+    return `<svg class="bp-icon" viewBox="0 0 24 24" aria-hidden="true">${paths.join('')}</svg>`;
+  }
+
+  /* ---------- Build each button from one structure ---------- */
+  let seed = 3;
+  document.querySelectorAll('.bp').forEach((el) => {
+    const text = el.textContent, icon = el.dataset.icon;
+    el.innerHTML = `<span class="bp-body"><span class="bp-ghost"><i class="g-h"></i><i class="g-v"></i></span><i class="bp-link l1"></i><i class="bp-link l2"></i><i class="bp-link l3"></i><span class="bp-tex"></span><span class="bp-frame"></span>${iconSVG(icon, seed += 11)}<span class="bp-label">${text}</span></span>`;
+    if (el.tagName === 'A') el.addEventListener('click', (e) => e.preventDefault());
+    const body = el.querySelector('.bp-body'), svgPaths = el.querySelectorAll('.bp-icon path');
+    let running = null;
+    const twitch = () => {
+      if (reduced || el.disabled || state.feel === 'still') return;
+      const soft = state.feel === 'soft', amp = soft ? .7 : .35, duration = soft ? 900 : 1200;
+      if (running) running.cancel();
+      // A slow, fading sway sampled from one curve, so there are no corners in the motion.
+      const frames = Array.from({ length: 19 }, (_, i) => {
+        const u = i / 18, k = amp * Math.exp(-3 * u) * Math.sin(u * Math.PI * 3) * (u / (u + .08)) * (1 - u * u);
+        return { transform: `translate(${(k).toFixed(3)}px,${(-k * .42).toFixed(3)}px)` };
+      });
+      running = body.animate(frames, { duration, easing: 'linear' });
+      // Only the fainter pen line is redrawn. The main icon stays put instead of vanishing.
+      svgPaths.forEach((p, i) => { if (p.classList.contains('second')) p.animate([{ strokeDashoffset: .45, opacity: .12 }, { strokeDashoffset: 0, opacity: .45 }], { duration: 950, delay: i * 18, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' }); });
+    };
+    el.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') twitch(); });
+    el.addEventListener('focusin', () => { if (el.matches(':focus-visible')) twitch(); });
+  });
+
+  /* ---------- Tuning bar ---------- */
+  const scene = document.getElementById('scene');
+  function apply() {
+    Object.assign(root.dataset, { tex: state.tex, font: state.font, dir: state.dir, feel: state.feel, theme: state.theme, backing: state.backing });
+    document.querySelectorAll('[data-set]').forEach((g) => g.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === state[g.dataset.set])));
+    const want = state.scene === 'plain' ? '' : state.theme === 'light' ? '../01-background/?tex=plan&theme=light' : `../02-batcave-3d/?view=${state.scene === 'scene' ? 'all' : 'mouse'}&theme=dark`;
+    scene.hidden = !want;
+    if (want && scene.dataset.src !== want) { scene.dataset.src = want; scene.src = want; }
+    if (!want) scene.dataset.src = '';
+  }
+  scene.addEventListener('load', () => { try { const d = scene.contentDocument; const st = d.createElement('style'); st.textContent = '.controls,main{display:none!important}'; d.head.append(st); } catch { /* same origin in this prototype */ } });
+  document.querySelectorAll('[data-set] button').forEach((b) => b.onclick = () => { state[b.parentElement.dataset.set] = b.dataset.v; apply(); });
+  apply();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+/* The softened button from 05-button-soft. */
+  @property --os { syntax:"<length>"; inherits:true; initial-value:4px; }
+  @property --rise { syntax:"<percentage>"; inherits:true; initial-value:62%; }
+  @property --l { syntax:"<color>"; inherits:true; initial-value:transparent; }
+
+  /* ---------- The button ---------- */
+  .bp { --off:7px; --tex-a:.3; position:relative; display:inline-block; padding:0; margin:0; color:var(--ink); background:none; border:0; cursor:pointer; font:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent; }
+  .bp:focus { outline:none; }
+  .bp-body { position:relative; display:inline-flex; align-items:center; gap:11px; min-height:46px; padding:12px 22px 12px 18px; font:600 var(--size)/1 var(--label); letter-spacing:var(--track); text-transform:uppercase; white-space:nowrap; transition:transform .3s cubic-bezier(.22,.61,.36,1); }
+  .bp-label, .bp-icon { position:relative; z-index:1; }
+
+  /* The frame is four drafting lines that run slightly past each corner, not a CSS border. */
+  .bp-frame { position:absolute; inset:calc(var(--os) * -1); pointer-events:none; --l:var(--line-rest); transition:--os .6s cubic-bezier(.22,.61,.36,1), --l .6s cubic-bezier(.22,.61,.36,1);
+    background:
+      linear-gradient(var(--l),var(--l)) 0 var(--os) / 100% 1px no-repeat,
+      linear-gradient(var(--l),var(--l)) 0 calc(100% - var(--os)) / 100% 1px no-repeat,
+      linear-gradient(var(--l),var(--l)) var(--os) 0 / 1px 100% no-repeat,
+      linear-gradient(var(--l),var(--l)) calc(100% - var(--os)) 0 / 1px 100% no-repeat; }
+
+  /* Clear face. A drawn texture rises from the bottom edge and fades to nothing before it reaches the text. */
+  .bp-tex { position:absolute; inset:0; pointer-events:none; opacity:var(--tex-a); transition:--rise .85s cubic-bezier(.22,.61,.36,1), opacity .5s;
+    -webkit-mask-image:linear-gradient(to top, #000 0, transparent var(--rise)); mask-image:linear-gradient(to top, #000 0, transparent var(--rise)); }
+  [data-tex="hatch"] .bp-tex { background:repeating-linear-gradient(135deg, var(--line) 0 1px, transparent 1px 5px); }
+  [data-tex="dots"]  .bp-tex { background:radial-gradient(circle at 1px 1px, var(--line) .8px, transparent 1px) 0 0 / 5px 5px; }
+  [data-tex="grid"]  .bp-tex { background:linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 7px 7px, linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 7px 7px; }
+  [data-tex="fade"]  .bp-tex { background:var(--line); opacity:calc(var(--tex-a) * .55); }
+
+  /* The shadow is a second wireframe: only the far two edges, and the lines joining the corners. */
+  .bp-ghost { position:absolute; inset:0; pointer-events:none; opacity:0; transform:translate(0,0); transition:transform .65s cubic-bezier(.22,.61,.36,1), opacity .5s; }
+  .bp-ghost i { position:absolute; display:block; background:var(--line); }
+  .g-h { left:0; width:100%; height:1px; top:calc(50% + var(--sy) * 50%); margin-top:calc(var(--sy) * -.5px - .5px); }
+  .g-v { top:0; height:100%; width:1px; left:calc(50% + var(--sx) * 50%); margin-left:calc(var(--sx) * -.5px - .5px); }
+  .bp-link { position:absolute; width:calc(var(--off) * 1.4142); height:1px; background:var(--line); transform-origin:0 50%; pointer-events:none; opacity:0; transform:rotate(atan2(var(--sy), var(--sx))) scaleX(0); transition:transform .65s cubic-bezier(.22,.61,.36,1), opacity .5s; }
+  .l1 { left:calc(50% + var(--sx) * 50%); top:calc(50% + var(--sy) * 50%); }
+  .l2 { left:calc(50% + var(--sx) * 50%); top:calc(50% - var(--sy) * 50%); }
+  .l3 { left:calc(50% - var(--sx) * 50%); top:calc(50% + var(--sy) * 50%); }
+
+  .bp-icon { width:20px; height:20px; flex:none; overflow:visible; fill:none; stroke:var(--accent); stroke-width:1.25; stroke-linecap:round; stroke-linejoin:round; }
+  .bp-icon .second { opacity:.45; stroke-width:.85; }
+  .bp-icon path { stroke-dasharray:1; stroke-dashoffset:0; }
+
+  :is(.bp:hover, .bp.is-hover, .bp:focus-visible) { --os:6px; }
+  :is(.bp:hover, .bp.is-hover, .bp:focus-visible) .bp-frame { --l:var(--line); }
+  :is(.bp:hover, .bp.is-hover, .bp:focus-visible) .bp-tex { --rise:92%; }
+  :is(.bp:hover, .bp.is-hover, .bp:focus-visible) .bp-ghost { opacity:.5; transform:translate(calc(var(--sx) * var(--off)), calc(var(--sy) * var(--off))); }
+  :is(.bp:hover, .bp.is-hover, .bp:focus-visible) .bp-link { opacity:.38; transform:rotate(atan2(var(--sy), var(--sx))) scaleX(1); }
+
+  /* Press: the button drops into its own shadow. */
+  :is(.bp:active, .bp.is-press):not(:disabled) .bp-body { transform:translate(calc(var(--sx) * var(--off) * .7), calc(var(--sy) * var(--off) * .7)); transition-duration:.18s; }
+  :is(.bp:active, .bp.is-press):not(:disabled) .bp-ghost { opacity:.75; transform:translate(calc(var(--sx) * var(--off) * .3), calc(var(--sy) * var(--off) * .3)); transition-duration:.18s; }
+  :is(.bp:active, .bp.is-press):not(:disabled) .bp-link { opacity:.5; transform:rotate(atan2(var(--sy), var(--sx))) scaleX(.3); transition-duration:.18s; }
+  :is(.bp:active, .bp.is-press):not(:disabled) .bp-tex { --rise:100%; opacity:calc(var(--tex-a) * 1.5); }
+
+  /* Keyboard focus: a dashed construction line in amber, well clear of the frame. */
+  :is(.bp:focus-visible, .bp.is-focus) .bp-body::after { content:""; position:absolute; inset:-12px; border:1.5px dashed var(--accent); pointer-events:none; }
+
+  .bp:disabled { cursor:not-allowed; color:var(--ink-2); }
+  .bp:disabled .bp-frame { background:
+      repeating-linear-gradient(90deg, var(--line-rest) 0 4px, transparent 4px 8px) 0 var(--os) / 100% 1px no-repeat,
+      repeating-linear-gradient(90deg, var(--line-rest) 0 4px, transparent 4px 8px) 0 calc(100% - var(--os)) / 100% 1px no-repeat,
+      repeating-linear-gradient(0deg, var(--line-rest) 0 4px, transparent 4px 8px) var(--os) 0 / 1px 100% no-repeat,
+      repeating-linear-gradient(0deg, var(--line-rest) 0 4px, transparent 4px 8px) calc(100% - var(--os)) 0 / 1px 100% no-repeat; opacity:.6; }
+  .bp:disabled .bp-tex, .bp:disabled .bp-ghost, .bp:disabled .bp-link { display:none; }
+  .bp:disabled .bp-icon { stroke:var(--ink-2); }
+
+  /* Optional backing for busy scenes: the face stays see-through, the lines behind it just soften. */
+  [data-backing="frost"] .bp-body { background:color-mix(in srgb, var(--base) 38%, transparent); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
+  .bp::before { content:""; position:absolute; inset:-4px 0; } /* keeps the small size at a 46px touch target */
+
+  /* Levels */
+  .bp.secondary { --tex-a:.15; }
+  .bp.secondary .bp-icon { stroke:var(--line); }
+  .bp.quiet { --tex-a:0; }
+  .bp.quiet .bp-icon { stroke:var(--line); }
+  .bp.quiet .bp-frame { opacity:0; transition:opacity .5s, --os .6s cubic-bezier(.22,.61,.36,1), --l .6s cubic-bezier(.22,.61,.36,1); }
+  .bp.quiet .bp-body { box-shadow:inset 0 -1px 0 var(--line-rest); }
+  :is(.bp.quiet:hover, .bp.quiet.is-hover, .bp.quiet:focus-visible) .bp-frame { opacity:1; }
+  :is(.bp.quiet:hover, .bp.quiet.is-hover, .bp.quiet:focus-visible) { --tex-a:.14; }
+
+  /* Sizes */
+  .bp.sm .bp-body { min-height:38px; padding:8px 16px 8px 13px; gap:8px; font-size:calc(var(--size) * .88); }
+  .bp.sm { --off:5px; }
+  .bp.sm .bp-icon { width:16px; height:16px; }
+  .bp.lg .bp-body { min-height:60px; padding:16px 30px 16px 24px; gap:14px; font-size:calc(var(--size) * 1.2); }
+  .bp.lg { --off:9px; }
+  .bp.lg .bp-icon { width:24px; height:24px; }
+

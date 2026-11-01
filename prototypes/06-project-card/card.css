@@ -1,0 +1,89 @@
+/* The project card and the pieces it shares with the full project page. */
+[data-theme="dark"]  { --base:#0b0e15; --paper:#10141e; --ink:#e4e8ef; --ink-2:#99a4b6; --line:#a9bfdf; --line-rest:rgba(169,191,223,.72); --accent:#e6b044; --chrome:rgba(17,21,31,.9); --chrome-line:rgba(157,180,214,.2); --grid:rgba(169,191,223,.075); }
+[data-theme="light"] { --base:#e6e8ed; --paper:#eef0f4; --ink:#141a26; --ink-2:#4b5566; --line:#1f3355; --line-rest:rgba(31,51,85,.68); --accent:#94650a; --chrome:rgba(245,246,249,.92); --chrome-line:rgba(36,56,90,.2); --grid:rgba(31,51,85,.085); }
+:root { --label:"Barlow Semi Condensed",ui-sans-serif,sans-serif; --track:.09em; --size:16px; --sx:1; --sy:1; --soft:cubic-bezier(.22,.61,.36,1); --mono:ui-monospace,Menlo,monospace; }
+
+* { box-sizing:border-box; }
+html,body { margin:0; min-height:100%; background:var(--base); color:var(--ink); }
+body { font:400 16px/1.55 "Barlow",ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif; }
+@view-transition { navigation:auto; }
+::view-transition-group(*) { animation-duration:.55s; animation-timing-function:var(--soft); }
+
+/* ---------- Card ---------- */
+.pc { --off:9px; --os:6px; --rise:18%; --tex-a:.22; position:relative; isolation:isolate; display:flex; flex-direction:column; min-width:0; color:var(--ink); }
+.pc-face { position:absolute; inset:0; z-index:-1; pointer-events:none; }
+[data-backing="frost"] .pc-face { background:color-mix(in srgb, var(--base) 62%, transparent); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); }
+
+.pc-frame { position:absolute; inset:calc(var(--os) * -1); pointer-events:none; --l:var(--line-rest); transition:--os .7s var(--soft), --l .7s var(--soft);
+  background:
+    linear-gradient(var(--l),var(--l)) 0 var(--os) / 100% 1px no-repeat,
+    linear-gradient(var(--l),var(--l)) 0 calc(100% - var(--os)) / 100% 1px no-repeat,
+    linear-gradient(var(--l),var(--l)) var(--os) 0 / 1px 100% no-repeat,
+    linear-gradient(var(--l),var(--l)) calc(100% - var(--os)) 0 / 1px 100% no-repeat; }
+
+/* Same texture as the button: it rises from the foot of the card and is gone long before the text. */
+.pc-tex { position:absolute; inset:0; pointer-events:none; opacity:var(--tex-a); transition:--rise 1s var(--soft); background:repeating-linear-gradient(135deg, var(--line) 0 1px, transparent 1px 6px);
+  -webkit-mask-image:linear-gradient(to top, #000 0, transparent var(--rise)); mask-image:linear-gradient(to top, #000 0, transparent var(--rise)); }
+
+/* Same shadow as the button: the far two edges and the lines joining the corners. */
+.pc-ghost { position:absolute; inset:0; pointer-events:none; opacity:0; transition:transform .8s var(--soft), opacity .6s; }
+.pc-ghost i { position:absolute; display:block; background:var(--line); }
+.pc-ghost .g-h { left:0; bottom:-.5px; width:100%; height:1px; }
+.pc-ghost .g-v { top:0; right:-.5px; height:100%; width:1px; }
+.pc-link { position:absolute; width:calc(var(--off) * 1.4142); height:1px; background:var(--line); transform-origin:0 50%; pointer-events:none; opacity:0; transform:rotate(45deg) scaleX(0); transition:transform .8s var(--soft), opacity .6s; }
+.pc-link.l1 { left:100%; top:100%; }
+.pc-link.l2 { left:100%; top:0; }
+.pc-link.l3 { left:0; top:100%; }
+
+:is(.pc:hover, .pc:has(.pc-main:focus-visible)) { --os:9px; --rise:34%; }
+:is(.pc:hover, .pc:has(.pc-main:focus-visible)) .pc-frame { --l:var(--line); }
+:is(.pc:hover, .pc:has(.pc-main:focus-visible)) .pc-ghost { opacity:.5; transform:translate(var(--off), var(--off)); }
+:is(.pc:hover, .pc:has(.pc-main:focus-visible)) .pc-link { opacity:.38; transform:rotate(45deg) scaleX(1); }
+.pc:has(.pc-main:focus-visible) .pc-frame::after { content:""; position:absolute; inset:-5px; border:1.5px dashed var(--accent); }
+
+/* Stage: a drafting plate with its drawing. */
+.pc-stage { position:relative; aspect-ratio:16/10.6; overflow:hidden; background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 22px 22px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 22px 22px; view-transition-name:var(--vt-stage, none); }
+.pc-stage::after { content:""; position:absolute; left:calc(var(--os) * -1); right:calc(var(--os) * -1); bottom:0; height:1px; background:var(--line-rest); }
+.pc-stage canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.reg { position:absolute; width:9px; height:9px; pointer-events:none; opacity:.5; background:linear-gradient(var(--line),var(--line)) 50% 50% / 100% 1px no-repeat, linear-gradient(var(--line),var(--line)) 50% 50% / 1px 100% no-repeat; }
+.reg.tl { left:9px; top:9px; } .reg.tr { right:9px; top:9px; }
+
+/* Title block */
+.pc .bp:not(:hover, :focus-visible) { --os:4px; --rise:62%; } /* the card's own values must not leak into its buttons */
+.pc-sheet { display:flex; flex-direction:column; flex:1; gap:9px; padding:18px 20px 20px; }
+.pc-meta { display:flex; flex-wrap:wrap; gap:3px 14px; margin:0; font:500 11px/1.4 var(--mono); letter-spacing:.06em; color:var(--ink-2); }
+.pc-meta .live::before { content:""; display:inline-block; width:6px; height:6px; margin-right:6px; vertical-align:1px; background:var(--accent); animation:breathe 3.6s ease-in-out infinite; }
+@keyframes breathe { 50% { opacity:.3; } }
+.pc-title { display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin:2px 0 0; font:600 27px/1.1 var(--label); letter-spacing:.015em; }
+.pc-main { color:inherit; text-decoration:none; outline:none; }
+.pc-main::after { content:""; position:absolute; inset:0; }
+.pc-card-area { position:static; }
+.pc-go { flex:none; width:22px; height:22px; align-self:center; fill:none; stroke:var(--accent); stroke-width:1.25; stroke-linecap:round; stroke-linejoin:round; overflow:visible; transition:transform .7s var(--soft); }
+.pc:hover .pc-go { transform:translateX(5px); }
+.pc-line { margin:0; color:var(--ink-2); font-size:16px; line-height:1.5; text-wrap:pretty; }
+.pc-links { position:relative; z-index:2; display:flex; flex-wrap:wrap; gap:18px 20px; margin-top:auto; padding-top:16px; }
+
+/* Wide layout: the plate sits beside the title block. */
+@media (min-width:820px) {
+  .pc.wide { flex-direction:row; }
+  .pc.wide .pc-stage { flex:1.25; aspect-ratio:auto; min-height:360px; }
+  .pc.wide .pc-stage::after { left:auto; right:0; top:calc(var(--os) * -1); bottom:calc(var(--os) * -1); width:1px; height:auto; }
+  .pc.wide .pc-sheet { flex:1; padding:26px; justify-content:center; }
+  .pc.wide .pc-title { font-size:34px; }
+  .pc.wide .pc-links { margin-top:12px; }
+}
+
+/* The empty template beside the real card: its slots, not a made-up project. */
+.pc.blank { --tex-a:.1; }
+.pc.blank .pc-frame { opacity:.55; background:
+  repeating-linear-gradient(90deg, var(--line-rest) 0 5px, transparent 5px 10px) 0 var(--os) / 100% 1px no-repeat,
+  repeating-linear-gradient(90deg, var(--line-rest) 0 5px, transparent 5px 10px) 0 calc(100% - var(--os)) / 100% 1px no-repeat,
+  repeating-linear-gradient(0deg, var(--line-rest) 0 5px, transparent 5px 10px) var(--os) 0 / 1px 100% no-repeat,
+  repeating-linear-gradient(0deg, var(--line-rest) 0 5px, transparent 5px 10px) calc(100% - var(--os)) 0 / 1px 100% no-repeat; }
+.pc.blank .pc-stage { display:grid; place-items:center; }
+.slot { font:500 11.5px/1.5 var(--mono); color:var(--ink-2); }
+.slot b { display:block; font-weight:500; color:var(--ink); }
+.pc.blank .pc-sheet { gap:14px; }
+.pc.blank .pc-stage .slot { text-align:center; padding:0 20px; }
+
+@media (prefers-reduced-motion:reduce) { .pc *, .pc { transition-duration:.01s !important; animation:none !important; } ::view-transition-group(*) { animation-duration:.01s; } }

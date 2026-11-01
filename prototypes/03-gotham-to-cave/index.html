@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gotham To Cave</title>
+<style>
+  :root { --x0:50vw; --y0:50vh; --x1:50vw; --y1:50vh; --x2:50vw; --y2:50vh; --reveal:0; --strength:1; }
+  [data-theme="dark"] {
+    --base:#0b0e15; --moon-lit:#1a2233; --edge:#07090e; --ink:#e4e8ef; --ink-2:#99a4b6;
+    --sky-top:#0d1320; --sky-mid:#233650; --sky-low:#161e2d; --moon:min(38vh,28vw); --moon-1:#dfe6f0; --moon-2:#b9c7da; --moon-3:#8fa2bd; --halo:rgba(170,197,235,.28); --halo-2:rgba(120,155,210,.16); --bat:#0a0e16; --mist:rgba(112,142,186,.16); --beam:195,214,242;
+    --glow:rgba(138,165,214,.10); --faint:.2; --lit:.82; --grain:.05; --chrome:rgba(17,21,31,.86); --chrome-line:rgba(157,180,214,.18);
+  }
+  [data-theme="light"] {
+    --base:#e6e8ed; --moon-lit:#f7f8fa; --edge:#d6dae3; --ink:#141a26; --ink-2:#4b5566;
+    --sky-top:#aab6c8; --sky-mid:#e9edf3; --sky-low:#dfe3ea; --moon:min(38vh,28vw); --moon-1:#ffffff; --moon-2:#f3f5f9; --moon-3:#ccd6e4; --halo:rgba(255,255,255,.75); --halo-2:rgba(255,255,255,.4); --bat:#1a2436; --mist:rgba(255,255,255,.5); --beam:255,255,255;
+    --glow:rgba(255,255,255,.72); --faint:.18; --lit:.72; --grain:.035; --chrome:rgba(245,246,249,.9); --chrome-line:rgba(36,56,90,.18);
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; min-height:100%; background:var(--base); color:var(--ink); }
+  body { font:400 16px/1.5 ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif; }
+  #bg { position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 24%); mask-image:linear-gradient(to bottom, transparent 0, #000 24%); }
+  #bg > * { position:absolute; inset:0; width:100%; height:100%; }
+  .wash { background:
+      radial-gradient(90vmax 70vmax at 82% -8%, var(--moon-lit), transparent 68%),
+      radial-gradient(80vmax 60vmax at 4% 108%, var(--edge), transparent 70%); }
+  #faint { opacity:calc(var(--faint) * var(--strength)); }
+  .glow { background:radial-gradient(34vmax circle at var(--x0) var(--y0), var(--glow), transparent 72%); opacity:calc(.35 + .65 * var(--reveal)); }
+  .lit { opacity:calc(var(--lit) * var(--reveal) * var(--strength));
+    -webkit-mask-image:
+      radial-gradient(circle 340px at var(--x0) var(--y0), #000 0, rgba(0,0,0,.5) 42%, transparent 100%),
+      radial-gradient(circle 220px at var(--x1) var(--y1), rgba(0,0,0,.5) 0, transparent 100%),
+      radial-gradient(circle 150px at var(--x2) var(--y2), rgba(0,0,0,.28) 0, transparent 100%);
+    mask-image:
+      radial-gradient(circle 340px at var(--x0) var(--y0), #000 0, rgba(0,0,0,.5) 42%, transparent 100%),
+      radial-gradient(circle 220px at var(--x1) var(--y1), rgba(0,0,0,.5) 0, transparent 100%),
+      radial-gradient(circle 150px at var(--x2) var(--y2), rgba(0,0,0,.28) 0, transparent 100%);
+  }
+  .show-all .lit { -webkit-mask-image:none; mask-image:none; opacity:calc(var(--lit) * var(--strength)); }
+  .lit canvas { position:absolute; inset:0; width:100%; height:100%; }
+  .grain { opacity:var(--grain); mix-blend-mode:overlay; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  /* Sample content only. Type is not a design decision yet. */
+  .hero { position:absolute; inset:0; z-index:9; display:flex; align-items:flex-end; padding:0 8vw 15vh; pointer-events:none; }
+  .sample { max-width:600px; }
+  .sample h1 { margin:0 0 .3em; font-size:clamp(2.4rem,6vw,4.6rem); font-weight:600; line-height:1.02; letter-spacing:-.025em; }
+  .sample p { margin:0; font-size:1.1rem; color:var(--ink-2); }
+  .hide-content .hero { visibility:hidden; }
+
+  .city { position:relative; z-index:1; height:100vh; min-height:620px; overflow-x:clip; overflow-y:visible; background:linear-gradient(to bottom, var(--sky-top) 0, var(--sky-mid) 58%, var(--sky-low) 100%); }
+  .city > * { position:absolute; }
+  .city canvas { position:absolute; left:-40px; top:-30px; will-change:transform; pointer-events:none; }
+  .moon { left:74%; top:65%; width:var(--moon); height:var(--moon); margin:calc(var(--moon) / -2) 0 0 calc(var(--moon) / -2); border-radius:50%; will-change:transform;
+    background:radial-gradient(circle at 36% 34%, var(--moon-1), var(--moon-2) 72%, var(--moon-3)); box-shadow:0 0 calc(var(--moon) * .32) var(--halo), 0 0 calc(var(--moon) * .95) var(--halo-2); }
+  .moon svg { position:absolute; left:12%; top:24%; width:76%; height:52%; fill:var(--bat); }
+  .beam { inset:0; width:100%; height:100%; pointer-events:none; }
+  .mist { left:-30%; top:0; width:160%; height:100%; pointer-events:none; will-change:transform;
+    background:radial-gradient(22% 13% at 18% 44%, var(--mist), transparent), radial-gradient(28% 12% at 44% 60%, var(--mist), transparent), radial-gradient(20% 10% at 66% 38%, var(--mist), transparent), radial-gradient(26% 15% at 88% 72%, var(--mist), transparent); }
+  .wires { inset:0; pointer-events:none; opacity:var(--city-reveal,0);
+    -webkit-mask-image:radial-gradient(circle 300px at var(--cx,50%) var(--cy,50%), #000 0, rgba(0,0,0,.42) 44%, transparent 100%);
+    mask-image:radial-gradient(circle 300px at var(--cx,50%) var(--cy,50%), #000 0, rgba(0,0,0,.42) 44%, transparent 100%); }
+  .descent { position:relative; height:78vh; overflow:hidden; background:linear-gradient(to bottom, var(--sky-low) 0, var(--base) 100%); }
+  .descent svg { position:absolute; left:0; right:0; bottom:-1px; width:100%; height:44%; fill:var(--base); }
+  .cave { position:relative; height:100vh; min-height:620px; overflow:hidden; background:var(--base); }
+
+  .controls { position:fixed; z-index:2; left:50%; bottom:18px; transform:translateX(-50%); display:flex; flex-wrap:wrap; justify-content:center; gap:6px 14px; align-items:center;
+    width:max-content; max-width:calc(100vw - 24px); padding:9px 12px; font:12px/1 ui-monospace,Menlo,monospace; color:var(--ink-2); background:var(--chrome); border:1px solid var(--chrome-line); border-radius:3px; backdrop-filter:blur(8px); }
+  .group { display:flex; align-items:center; gap:4px; }
+  .controls button { font:inherit; padding:6px 8px; color:inherit; background:transparent; border:1px solid transparent; border-radius:2px; cursor:pointer; }
+  .controls button[aria-pressed="true"] { color:var(--ink); border-color:var(--chrome-line); }
+  .controls button:focus-visible, .controls input:focus-visible { outline:2px solid currentColor; outline-offset:2px; }
+  .controls input { width:84px; accent-color:currentColor; }
+</style>
+</head>
+<body class="hide-content">
+<section id="city" class="city" aria-label="Gotham">
+  <div class="moon" id="moon" aria-hidden="true"><svg viewBox="-1.02 -.38 2.04 .88"><polygon id="batlogo"/></svg></div>
+  <canvas id="cFar" aria-hidden="true"></canvas>
+  <div class="mist" id="mist1" aria-hidden="true"></div>
+  <canvas id="cMid" aria-hidden="true"></canvas>
+  <svg class="beam" id="beam" aria-hidden="true"><defs><linearGradient id="beamG" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(var(--beam))" stop-opacity=".32"/><stop offset="1" stop-color="rgb(var(--beam))" stop-opacity=".03"/></linearGradient></defs><polygon id="beamP" fill="url(#beamG)"/></svg>
+  <div class="mist" id="mist2" aria-hidden="true" style="opacity:.6"></div>
+  <canvas id="cNear" aria-hidden="true"></canvas>
+  <canvas id="cLive" aria-hidden="true"></canvas>
+  <canvas id="cBats" aria-hidden="true" style="left:0;top:0"></canvas>
+  <div class="wires" aria-hidden="true"><canvas id="cWireM"></canvas><canvas id="cWireN"></canvas></div>
+  <div class="hero"><div class="sample">
+    <h1>Shubham Prakash</h1>
+    <p>Cloud Full Stack Developer @ IBM. Java, Angular, React, Next.js. Agentic AI &amp; MCP.</p>
+  </div></div>
+</section>
+
+<section class="descent" aria-hidden="true"><svg id="rock" preserveAspectRatio="none" viewBox="0 0 1000 100"><polygon id="rockP"/></svg></section>
+
+<section id="cave" class="cave" aria-label="Batcave">
+  <div id="bg" aria-hidden="true">
+    <div class="wash"></div>
+    <canvas id="faint"></canvas>
+    <div class="glow"></div>
+    <div class="lit"><canvas id="bright"></canvas><canvas id="live"></canvas></div>
+    <div class="grain"></div>
+  </div>
+</section>
+
+<div class="controls" aria-label="Prototype controls">
+  <div class="group" role="group" aria-label="View">
+    <button data-view="all">Whole cave</button><button data-view="mouse">Mouse reveal</button>
+  </div>
+  <div class="group" role="group" aria-label="Theme">
+    <button data-theme-btn="dark">Night</button><button data-theme-btn="light">Day</button>
+  </div>
+  <label class="group">Strength <input id="strength" type="range" min="40" max="220" value="100"></label>
+  <button id="content" aria-pressed="false">Sample text</button>
+</div>
+
+<script>
+(() => {
+  const PALETTE = { dark: { line:'#a9bfdf', accent:'#e6b044' }, light: { line:'#1f3355', accent:'#94650a' } };
+  const qs = new URLSearchParams(location.search);
+  const state = { view: qs.get('view') || 'all', theme: qs.get('theme') || 'dark' };
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const root = document.documentElement, caveEl = document.getElementById('cave'), cityEl = document.getElementById('city');
+  let caveOn = false, cityOn = true;
+  new IntersectionObserver(([e]) => { caveOn = e.isIntersecting; }).observe(caveEl);
+  new IntersectionObserver(([e]) => { cityOn = e.isIntersecting; }).observe(cityEl);
+  const faint = document.getElementById('faint'), bright = document.getElementById('bright'), live = document.getElementById('live');
+  const bctx = bright.getContext('2d'), fctx = faint.getContext('2d'), lctx = live.getContext('2d');
+  let W = 0, H = 0, DPR = 1;
+
+  const rng = (a) => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const r = rng(1939);
+  const rand = (a, b) => a + r() * (b - a);
+
+  /* ---------- Scene: world units are metres. x right, y up, z into the cave. ---------- */
+  const faces = [], screens = [], leds = [];
+  let objectId = 0;
+  const LIGHT = norm([.45, .8, -.4]);
+  function norm(v) { const l = Math.hypot(...v) || 1; return [v[0] / l, v[1] / l, v[2] / l]; }
+  function normal(p) {
+    const a = [p[1][0] - p[0][0], p[1][1] - p[0][1], p[1][2] - p[0][2]], b = [p[2][0] - p[0][0], p[2][1] - p[0][1], p[2][2] - p[0][2]];
+    return norm([a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]);
+  }
+  function face(pts, o = {}) {
+    const n = pts.length > 2 ? normal(pts) : [0, 0, 0];
+    faces.push({ pts, layer: o.layer ?? 2, obj: o.obj ?? objectId, a: o.a ?? .85, w: o.w ?? .7, erase: o.erase !== false && pts.length > 2, closed: pts.length > 2, sh: pts.length > 2 ? Math.abs(n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]) * (o.shade ?? .05) : 0 });
+  }
+  const seg = (a, b, o = {}) => face([a, b], { erase: false, ...o });
+  const obj = () => ++objectId;
+  const place = (ox, oy, oz, rot) => (x, y, z) => [ox + x * Math.cos(rot) + z * Math.sin(rot), oy + y, oz - x * Math.sin(rot) + z * Math.cos(rot)];
+
+  function loft(secs, o = {}) {
+    for (let i = 0; i + 1 < secs.length; i++) {
+      const A = secs[i], B = secs[i + 1];
+      for (let k = 0; k < A.length; k++) { const k2 = (k + 1) % A.length; face([A[k], A[k2], B[k2], B[k]], o); }
+    }
+    if (o.caps !== false) { face([...secs[0]], o); face([...secs[secs.length - 1]], o); }
+  }
+  function prism(poly, y0, y1, P, o = {}) { loft([poly.map(([x, z]) => P(x, y0, z)), poly.map(([x, z]) => P(x, y1, z))], o); }
+  function box(P, x, y, z, w, h, d, o = {}) { prism([[x - w / 2, z - d / 2], [x + w / 2, z - d / 2], [x + w / 2, z + d / 2], [x - w / 2, z + d / 2]], y, y + h, P, o); }
+  const ngon = (n, rad, off = 0) => Array.from({ length: n }, (_, i) => { const a = off + i / n * Math.PI * 2; return [Math.cos(a) * rad, Math.sin(a) * rad]; });
+  const flat = (x, z) => (a, b, c) => [x + a, b, z + c];
+
+  function buildCave() {
+    objectId = 0;
+    const N = 18;
+    const rings = [[-11, 24, 16], [-3, 25, 17], [5, 28, 20], [12, 27, 19], [19, 22, 17], [26, 16, 15], [33, 12, 14]];
+    const sect = rings.map(([z, hw, h], ri) => Array.from({ length: N + 1 }, (_, i) => {
+      const t = i / N, a = Math.PI * (1 - t), j = (i === 0 || i === N) ? 0 : rand(-.14, .14), lean = ri % 2 ? .9 : 1.05;
+      const px = Math.cos(a) * hw * (1 + j), py = Math.sin(a) * h * (1 + j * lean);
+      return [px + (i === 0 || i === N ? 0 : rand(-.7, .7)), Math.max(0, py), z + (i === 0 || i === N ? 0 : rand(-1.1, 1.1))];
+    }));
+    for (let s = 0; s + 1 < sect.length; s++) for (let i = 0; i < N; i++) {
+      const a = sect[s][i], b = sect[s][i + 1], c = sect[s + 1][i + 1], d = sect[s + 1][i];
+      const o = { layer: 0, a: .42, w: .55, shade: .07 };
+      if ((s + i) % 2) { face([a, b, c], o); face([a, c, d], o); } else { face([a, b, d], o); face([b, c, d], o); }
+    }
+    const back = sect[sect.length - 1];
+    // Back wall: concentric broken shells, so the lines never meet at one point.
+    let prev = back;
+    [.68, .36].forEach((k, li) => {
+      const nx = prev.map((p, i) => (i === 0 || i === N) ? [p[0] * k, 0, 34 + li] : [back[i][0] * k + rand(-1.2, 1.2), back[i][1] * k + rand(-1, 1) + (1 - k) * 2.6, 34 + li + rand(-.5, .5)]);
+      for (let i = 0; i < N; i++) { const o = { layer: 0, a: .3, w: .5, shade: .04 }; if (i % 2) { face([prev[i], prev[i + 1], nx[i + 1]], o); face([prev[i], nx[i + 1], nx[i]], o); } else { face([prev[i], prev[i + 1], nx[i]], o); face([prev[i + 1], nx[i + 1], nx[i]], o); } }
+      prev = nx;
+    });
+    for (let i = 0; i < N; i += 2) face([prev[i], prev[Math.min(i + 2, N)], [prev[i + 1][0] * .5 + rand(-.8, .8), prev[i + 1][1] * .55 + 1.5, 36]], { layer: 0, a: .24, w: .45, shade: .03 });
+    for (let s = 0; s + 1 < sect.length; s++) face([sect[s][0], sect[s][N], sect[s + 1][N], sect[s + 1][0]], { layer: 0, a: .22, w: .5, shade: .018 });
+
+    // Stalactites hang from the roof; stalagmites stand near the walls. All sharp.
+    for (let i = 0; i < 34; i++) {
+      obj();
+      const z = rand(-4, 30), hw = 24 * (1 - Math.max(0, z - 12) / 40), x = rand(-hw * .78, hw * .78);
+      const roof = 17.5 * Math.sqrt(Math.max(.1, 1 - (x / (hw * 1.1)) ** 2)) * (1 - Math.max(0, z - 12) / 80);
+      const len = rand(1.6, 5.2), rad = len * rand(.13, .22), base = ngon(Math.random ? 4 + (i % 3) : 5, rad, r() * 6);
+      const tip = [x + rand(-.3, .3), roof - len, z];
+      base.forEach((p, k) => { const q = base[(k + 1) % base.length]; face([[x + p[0], roof + 1, z + p[1]], [x + q[0], roof + 1, z + q[1]], tip], { layer: 1, a: .55, w: .55, shade: .06 }); });
+    }
+    [[-20, 6], [-17, 18], [-11, 27], [13, 27], [19, 16], [22, 3], [-22, -2], [8.5, 31]].forEach(([x, z]) => {
+      obj();
+      const len = rand(1.6, 3.6), base = ngon(5, len * .28, r() * 6), tip = [x, len, z];
+      base.forEach((p, k) => { const q = base[(k + 1) % 5]; face([[x + p[0], 0, z + p[1]], [x + q[0], 0, z + q[1]], tip], { layer: 2, a: .6, w: .55, shade: .06 }); });
+    });
+  }
+
+  function buildDeck() {
+    obj();
+    const P = flat(0, 0);
+    prism([[-8, -6], [6, -6], [10, -2], [10, 9], [6, 12], [-8, 12], [-11, 8], [-11, -3]], 0, .22, P, { layer: 1, a: .9, w: .8, shade: .03 });
+    for (let x = -9.5; x <= 9.5; x += 1.9) seg(P(x, .24, Math.abs(x) > 6 ? -3 : -6), P(x, .24, x < -8 ? 8 : x > 6 ? 9 : 12), { layer: 1, a: .34, w: .45 });
+    for (let z = -4; z <= 11; z += 1.9) seg(P(z > 8 || z < -2 ? -8 : -11, .24, z), P(z > 8 ? 6 : 10, .24, z), { layer: 1, a: .34, w: .45 });
+  }
+
+  function buildTurntable() {
+    obj();
+    const P = flat(.5, 3.2);
+    prism(ngon(24, 4.5), .22, .42, P, { layer: 1, a: 1, w: .9, shade: .05 });
+    ngon(24, 4.05).forEach((p, i, all) => { const q = all[(i + 1) % 24]; seg(P(p[0], .44, p[1]), P(q[0], .44, q[1]), { layer: 1, a: .6, w: .5 }); });
+    ngon(48, 4.5).forEach((p) => seg(P(p[0], .44, p[1]), P(p[0] * .9, .44, p[1] * .9), { layer: 1, a: .55, w: .45 }));
+  }
+
+  // Wedge body, canopy, tail fins, chunky wheels. Lofted from angular cross-sections, no curves.
+  function buildCar() {
+    const P = place(.5, .42, 3.2, -.72);
+    const sec = (z, bot, low, lowY, top, topY, lift = .36) => [[-bot, lift, z], [-low, lowY, z], [-top, topY, z], [top, topY, z], [low, lowY, z], [bot, lift, z]].map((v) => P(...v));
+    const wheel = (x, z, rad, w) => { obj(); const c = ngon(10, rad, .3); loft([c.map(([a, b]) => P(x - w / 2, rad + a * .001 + b, z + a)), c.map(([a, b]) => P(x + w / 2, rad + b, z + a))], { a: 1, w: .8, shade: .05 }); };
+    wheel(-1.32, -1.95, .62, .62); wheel(1.32, -1.95, .62, .62); wheel(-1.2, 1.75, .5, .5); wheel(1.2, 1.75, .5, .5);
+    obj();
+    loft([sec(-2.9, .9, 1.08, .8, .72, 1.28), sec(-1.6, 1.02, 1.2, .74, .62, 1.16), sec(-.2, 1, 1.12, .68, .5, 1.04), sec(.9, .95, 1.05, .6, .52, .86), sec(2, .82, .96, .5, .5, .64), sec(3.3, .3, .36, .42, .16, .46)], { a: 1, w: .85, shade: .09 });
+    obj();
+    const cn = (z, w, y0, y1) => [[-w, y0, z], [-w * .55, y1, z], [w * .55, y1, z], [w, y0, z]].map((v) => P(...v));
+    loft([cn(-1.05, .34, 1.1, 1.13), cn(-.2, .46, 1.03, 1.5), cn(1.05, .42, .83, .9)], { a: 1, w: .8, shade: .12 });
+    for (const sx of [-1, 1]) {
+      obj();
+      const a = [[.0, .92, -1.1], [0, 2.15, -3.95], [0, 1.08, -3.05]];
+      loft([a.map(([, y, z]) => P(sx * 1, y, z)), a.map(([, y, z]) => P(sx * 1.14, y, z))], { a: 1, w: .8, shade: .1 });
+      obj();
+      seg(P(sx * 1.2, .72, -1.2), P(sx * .98, .62, 1.1), { a: .8, w: .5 });
+      seg(P(sx * .72, 1.02, 2.0), P(sx * .22, .62, 3.0), { a: .7, w: .5 });
+    }
+  }
+
+  // One suit: pointed cowl, broad shoulders, scalloped cape. Recognisable from silhouette alone.
+  function buildSuit(ox, oz, rot, scale = 1) {
+    const P0 = place(ox, .22, oz, rot), P = (x, y, z) => P0(x * scale, y * scale, z * scale);
+    obj();
+    prism(ngon(6, .78), 0, .34, P, { a: .95, w: .7, shade: .05 });
+    const S = .34;
+    obj();
+    const hem = [-.72, -.48, -.24, 0, .24, .48, .72];
+    const cape = [P(-.52, 2.12, -.2), P(.52, 2.12, -.2)];
+    hem.slice().reverse().forEach((x, i) => { cape.push(P(x, S + .08, -.34)); if (i < hem.length - 1) cape.push(P(x - .12, S + .42, -.34)); });
+    face(cape, { a: .9, w: .7, shade: .03 });
+    obj();
+    for (const sx of [-1, 1]) box(P, sx * .14, S, 0, .2, 1.02, .2, { a: .9, w: .55, shade: .06 });
+    obj();
+    const torso = (y, w, d) => [[-w, y, -d], [w, y, -d], [w * 1.04, y, d * .6], [w * .4, y, d], [-w * .4, y, d], [-w * 1.04, y, d * .6]].map((v) => P(...v));
+    loft([torso(S + 1, .26, .13), torso(S + 1.38, .28, .15), torso(S + 1.8, .48, .18), torso(S + 1.93, .24, .12)], { a: 1, w: .65, shade: .1 });
+    for (const sx of [-1, 1]) { obj(); loft([[P(sx * .46, S + 1.8, -.08), P(sx * .58, S + 1.7, 0), P(sx * .46, S + 1.8, .1)], [P(sx * .42, S + .96, -.05), P(sx * .55, S + .96, 0), P(sx * .42, S + .96, .06)]], { a: .9, w: .55, shade: .08 }); }
+    obj();
+    const head = (y, w) => ngon(6, w).map(([a, b]) => P(a, y, b * .95));
+    loft([head(S + 1.93, .11), head(S + 2.06, .15), head(S + 2.27, .13)], { a: 1, w: .65, shade: .11 });
+    for (const sx of [-1, 1]) { obj(); const tip = P(sx * .12, S + 2.66, -.01); const b = [P(sx * .02, S + 2.27, -.05), P(sx * .15, S + 2.25, -.05), P(sx * .15, S + 2.25, .05), P(sx * .02, S + 2.27, .05)]; b.forEach((q, k) => face([q, b[(k + 1) % 4], tip], { a: 1, w: .6, shade: .1 })); }
+    // Glass case: edges only, nothing erased, so the suit stays visible.
+    const c = [[-.84, -.7], [.84, -.7], [.84, .7], [-.84, .7]];
+    obj();
+    c.forEach(([x, z], k) => { const [x2, z2] = c[(k + 1) % 4]; seg(P(x, S, z), P(x, 3.3, z), { a: .6, w: .5 }); seg(P(x, 3.3, z), P(x2, 3.3, z2), { a: .7, w: .55 }); seg(P(x, S, z), P(x2, S, z2), { a: .55, w: .5 }); });
+  }
+
+  function buildSuitBay() {
+    obj();
+    const P = flat(0, 0);
+    prism([[-19, 7.2], [-8.4, 6.2], [-7.6, 9], [-8.4, 12], [-18, 13], [-20, 10]], 0, .26, P, { layer: 1, a: .85, w: .7, shade: .04 });
+    [[-16.5, 9.9, 2.86], [-14.2, 9.6, 2.94], [-11.9, 9.3, 3.02], [-9.6, 9, 3.1]].forEach(([x, z, rot]) => buildSuit(x, z, rot, 1.35));
+  }
+
+  // Curved wall of surveillance screens on a raised platform.
+  function buildComputer() {
+    const C = [9.5, 1.15, 7.5], R = 8.3;
+    obj();
+    prism([[3.5, 3], [9, 1], [17.5, 3], [19.5, 9], [18, 16], [11, 18], [5, 15], [3, 9]], 0, 1.15, flat(0, 0), { layer: 1, a: .95, w: .85, shade: .04 });
+    // Stairs up from the deck
+    for (let i = 0; i < 6; i++) { obj(); box(flat(0, 0), 3.2 - i * -.1, 0, 7.2 + i * .0, 1, .2 + i * .19, 2.8, { a: .7, w: .5, shade: .03 }); }
+
+    const place3 = (a, y) => [C[0] + Math.sin(a) * R, C[1] + y, C[2] + Math.cos(a) * R];
+    const rows = [.9, 2.05, 3.2, 4.35];
+    const count = [9, 9, 9, 7];
+    rows.forEach((y, row) => {
+      for (let i = 0; i < count[row]; i++) {
+        const span = 1.74, n = count[row], a0 = -.42 + (i - (n - 1) / 2) * (span / 8);
+        const w = span / 8 * .47;
+        const pt = (da, dy) => place3(a0 + da, y + dy);
+        const q = [pt(-w, 0), pt(w, 0), pt(w, 1), pt(-w, 1)];
+        obj();
+        // screen housing has real depth
+        const inset = (p) => [p[0] + (C[0] - p[0]) * .03, p[1], p[2] + (C[2] - p[2]) * .03];
+        loft([q.map((p) => [p[0] * 1.0 + (p[0] - C[0]) * .035, p[1], p[2] + (p[2] - C[2]) * .035]), q.map(inset)], { a: .95, w: .7, shade: .05 });
+        screens.push({ o: q[0], u: [q[1][0] - q[0][0], q[1][1] - q[0][1], q[1][2] - q[0][2]], v: [q[3][0] - q[0][0], q[3][1] - q[0][1], q[3][2] - q[0][2]], kind: (i * 3 + row * 2) % 6, seed: r() * 100 });
+      }
+    });
+    // Support frame behind the screens
+    for (let i = 0; i <= 4; i++) { obj(); const a = -.42 + (i - 2) * .36; const p = place3(a, 0); box(flat(p[0], p[2]), 0, 1.15, 0, .16, 5.3, .16, { a: .7, w: .5, shade: .03 }); }
+    // Console desk following the arc, and a chair facing it.
+    obj();
+    const desk = (y, inner, outer) => { const pts = []; for (let k = 0; k <= 8; k++) { const a = -.42 + (k - 4) * .17; pts.push([C[0] + Math.sin(a) * outer, C[1] + y, C[2] + Math.cos(a) * outer]); } for (let k = 8; k >= 0; k--) { const a = -.42 + (k - 4) * .17; pts.push([C[0] + Math.sin(a) * inner, C[1] + y, C[2] + Math.cos(a) * inner]); } return pts; };
+    const top = desk(.95, 5.4, 6.3), bot = desk(.0, 5.6, 6.2);
+    loft([bot, top], { a: .9, w: .65, shade: .05 });
+    obj();
+    const P = place(C[0] - 1.1, C[1], C[2] + 3.1, -.42);
+    box(P, 0, .45, 0, .85, .14, .85, { a: 1, w: .65, shade: .07 });
+    box(P, 0, .59, -.38, .85, 1.5, .14, { a: 1, w: .65, shade: .07 });
+    box(P, 0, 0, 0, .18, .45, .18, { a: .9, w: .5 });
+  }
+
+  function buildServers() {
+    const add = (x, z) => {
+      obj();
+      const P = flat(x, z), w = .78, h = 3.1, d = 1.05;
+      box(P, 0, 0, 0, w, h, d, { a: .95, w: .7, shade: .055 });
+      for (let k = 1; k < 7; k++) seg(P(-w / 2, k * h / 7, -d / 2), P(w / 2, k * h / 7, -d / 2), { a: .55, w: .4 });
+      for (let k = 1; k < 7; k++) seg(P(w / 2, k * h / 7, -d / 2), P(w / 2, k * h / 7, d / 2), { a: .4, w: .4 });
+      return { P, w, h, d };
+    };
+    obj();
+    prism([[-14, 14], [-1, 12], [1, 16], [0, 28], [-10, 29], [-15, 24]], 0, .2, flat(0, 0), { layer: 1, a: .75, w: .6, shade: .03 });
+    [-11, -8, -5, -2].forEach((x, row) => {
+      for (let i = 7; i >= 0; i--) {
+        const z = 16.5 + i * 1.3 + row * .4, b = add(x, z);
+        for (let u = 0; u < 7; u++) for (let v = 0; v < 2; v++) leds.push({ p: b.P(-.2 + v * .4, .25 + u * .42, -b.d / 2 - .01), f: .4 + r() * 2.1, o: r() * 7, amber: r() < .1 });
+        if (row === 3) for (let u = 0; u < 7; u++) leds.push({ p: b.P(b.w / 2 + .01, .25 + u * .42, 0), f: .4 + r() * 2.1, o: r() * 7, amber: r() < .1 });
+      }
+    });
+  }
+
+  let fall = [], foam = [], bats = [];
+  function buildWater() {
+    obj();
+    const P = flat(0, 0);
+    const pool = [[-3.2, 29.6], [.6, 26.8], [4.4, 26.2], [7.4, 27.8], [7.8, 31.4], [3, 33.2], [-2.4, 32.4]];
+    prism(pool, 0, .08, P, { layer: 1, a: .7, w: .65, shade: .03 });
+    // Cleft in the rock the water falls out of.
+    obj();
+    face([[-.9, 15, 33], [5.1, 15, 33], [5.9, 11.8, 32.4], [4.5, 11.1, 32], [3.8, 12.4, 31.7], [.7, 12.4, 31.7], [-.1, 11, 32], [-1.7, 11.6, 32.4]], { a: .85, w: .7, shade: .03 });
+    fall = Array.from({ length: 52 }, () => ({ x: rand(-.8, 3.2), speed: rand(.33, .55), phase: r(), len: rand(.12, .26), a: rand(.45, 1) }));
+    foam = Array.from({ length: 16 }, () => ({ x: rand(-2, 4.8), z: rand(29, 31.5), f: rand(.7, 2), o: r() * 7 }));
+    bats = Array.from({ length: 6 }, () => ({ cx: rand(-10, 10), cz: rand(4, 24), rx: rand(3, 8), rz: rand(2, 5), y: rand(9.5, 13), w: rand(.1, .24), ph: r() * 7, f: rand(9, 14) }));
+  }
+
+  function buildScene() {
+    faces.length = 0; screens.length = 0; leds.length = 0;
+    buildCave(); buildDeck(); buildTurntable(); buildCar(); buildSuitBay(); buildServers(); buildWater(); buildComputer();
+  }
+
+  /* ---------- Camera ---------- */
+  const cam = { e: [-1.4, 4.9, -12.5], t: [.6, 4.1, 12], f: 1, sx: 0, sy: 0 };
+  let basis = null;
+  function setCamera(dx = 0, dy = 0) {
+    const e = [cam.e[0] + dx, cam.e[1] + dy, cam.e[2]];
+    const fw = norm([cam.t[0] - e[0], cam.t[1] - e[1], cam.t[2] - e[2]]), rt = norm([fw[2], 0, -fw[0]]);
+    const up = [fw[1] * rt[2] - fw[2] * rt[1], fw[2] * rt[0] - fw[0] * rt[2], fw[0] * rt[1] - fw[1] * rt[0]];
+    basis = { e, fw, rt, up };
+  }
+  function project(p) {
+    const b = basis, x = p[0] - b.e[0], y = p[1] - b.e[1], z = p[2] - b.e[2];
+    const d = x * b.fw[0] + y * b.fw[1] + z * b.fw[2];
+    if (d < .6) return null;
+    const k = cam.f / d;
+    return [cam.sx + (x * b.rt[0] + y * b.rt[1] + z * b.rt[2]) * k, cam.sy - (x * b.up[0] + y * b.up[1] + z * b.up[2]) * k, d];
+  }
+  function sortFaces() {
+    setCamera();
+    const depth = (p) => { const b = basis; return (p[0] - b.e[0]) * b.fw[0] + (p[1] - b.e[1]) * b.fw[1] + (p[2] - b.e[2]) * b.fw[2]; };
+    const objD = new Map();
+    faces.forEach((f) => { f.d = f.pts.reduce((s, p) => s + depth(p), 0) / f.pts.length; const c = objD.get(f.obj) || { s: 0, n: 0 }; c.s += f.d; c.n++; objD.set(f.obj, c); });
+    faces.sort((a, b) => a.layer - b.layer || (objD.get(b.obj).s / objD.get(b.obj).n) - (objD.get(a.obj).s / objD.get(a.obj).n) || (a.obj - b.obj) || (b.d - a.d));
+    // Keep the wash of lines near the camera from dominating.
+    faces.forEach((f) => { f.fog = Math.max(.42, Math.min(1, 1.18 - f.d / 62)); });
+  }
+
+  /* ---------- Rendering ---------- */
+  let renderMs = 0;
+  function render() {
+    const t0 = performance.now(), P = PALETTE[state.theme], c = bctx;
+    c.setTransform(DPR, 0, 0, DPR, 0, 0); c.clearRect(0, 0, W, H);
+    c.lineJoin = 'miter'; c.miterLimit = 3; c.lineCap = 'butt'; c.strokeStyle = P.line; c.fillStyle = P.line;
+    for (const f of faces) {
+      c.beginPath(); let ok = true;
+      for (let i = 0; i < f.pts.length; i++) { const q = project(f.pts[i]); if (!q) { ok = false; break; } i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1]); }
+      if (!ok) continue;
+      if (f.closed) c.closePath();
+      if (f.erase) { c.globalCompositeOperation = 'destination-out'; c.globalAlpha = 1; c.fill(); c.globalCompositeOperation = 'source-over'; }
+      if (f.sh) { c.globalAlpha = f.sh * f.fog; c.fill(); }
+      c.globalAlpha = f.a * f.fog; c.lineWidth = f.w; c.stroke();
+    }
+    c.globalAlpha = 1;
+    fctx.setTransform(1, 0, 0, 1, 0, 0); fctx.clearRect(0, 0, faint.width, faint.height); fctx.drawImage(bright, 0, 0);
+    renderMs = performance.now() - t0; window.__renderMs = renderMs;
+  }
+
+  function resize() {
+    DPR = Math.min(devicePixelRatio || 1, 2); W = caveEl.clientWidth; H = caveEl.clientHeight;
+    if (!W || !H) return;
+    [faint, bright, live].forEach((c) => { c.width = W * DPR; c.height = H * DPR; });
+    cam.f = Math.max(W * .66, H * .98); cam.sx = W * .5; cam.sy = H * .46;
+    setCamera(); render();
+  }
+
+  /* ---------- Live layer: every moving thing is a function of one clock ---------- */
+  function poly3(pts, close) {
+    let first = true;
+    lctx.beginPath();
+    for (const p of pts) { const q = project(p); if (!q) return; first ? lctx.moveTo(q[0], q[1]) : lctx.lineTo(q[0], q[1]); first = false; }
+    if (close) lctx.closePath();
+    lctx.stroke();
+  }
+  function paintScreen(s, t, P) {
+    const at = (u, v) => [s.o[0] + s.u[0] * u + s.v[0] * v, s.o[1] + s.u[1] * u + s.v[1] * v, s.o[2] + s.u[2] * u + s.v[2] * v];
+    const sd = s.seed, c = lctx;
+    c.strokeStyle = P.line; c.lineWidth = .7; c.globalAlpha = .8;
+    if (s.kind === 0) { // city skyline, with a slow scan
+      const pts = [at(.04, .1)]; for (let i = 0; i < 9; i++) { const h = .18 + .55 * Math.abs(Math.sin(sd + i * 2.3)); pts.push(at(.04 + i * .1, h), at(.14 + i * .1, h)); } pts.push(at(.96, .1)); poly3(pts);
+      c.strokeStyle = P.accent; const x = .5 + .46 * Math.sin(t * .4 + sd); poly3([at(x, .08), at(x, .92)]);
+    } else if (s.kind === 1) { // radar sweep
+      const cx = .5, cy = .5, rad = .36, ring = Array.from({ length: 8 }, (_, i) => { const a = i / 8 * 6.283; return at(cx + Math.cos(a) * rad * .62, cy + Math.sin(a) * rad); }); poly3(ring, true);
+      c.strokeStyle = P.accent; const a = t * 1.1 + sd; poly3([at(cx, cy), at(cx + Math.cos(a) * rad * .62, cy + Math.sin(a) * rad)]);
+    } else if (s.kind === 2) { // signal trace
+      c.strokeStyle = P.accent; poly3(Array.from({ length: 16 }, (_, i) => at(.05 + i * .06, .5 + .3 * Math.sin(i * .9 + t * 2.2 + sd) * Math.sin(i * .23 + sd))));
+    } else if (s.kind === 3) { // surveillance scanlines
+      const y = (t * .22 + sd) % 1; for (let i = 0; i < 5; i++) poly3([at(.08, .14 + i * .18), at(.92 - (i % 2) * .3, .14 + i * .18)]); c.strokeStyle = P.accent; poly3([at(.04, .05 + y * .9), at(.96, .05 + y * .9)]);
+    } else if (s.kind === 4) { // tracked target
+      c.strokeStyle = P.line; poly3([at(.08, .1), at(.92, .1), at(.92, .9), at(.08, .9)], true);
+      c.strokeStyle = P.accent; const x = .5 + .3 * Math.sin(t * .37 + sd), y = .5 + .28 * Math.sin(t * .29 + sd * 2), d = .1; poly3([at(x - d, y), at(x + d, y)]); poly3([at(x, y - d * 1.3), at(x, y + d * 1.3)]);
+    } else { // load bars
+      for (let i = 0; i < 6; i++) { const h = .15 + .65 * (.5 + .5 * Math.sin(t * (.7 + i * .17) + sd + i)); poly3([at(.12 + i * .15, .1), at(.12 + i * .15, .1 + h)]); }
+    }
+  }
+  function paintLive(t) {
+    const P = PALETTE[state.theme], c = lctx;
+    c.setTransform(DPR, 0, 0, DPR, 0, 0); c.clearRect(0, 0, W, H); c.lineCap = 'butt'; c.lineJoin = 'miter';
+    screens.forEach((s) => paintScreen(s, t, P));
+    for (const l of leds) {
+      const q = project(l.p); if (!q) continue;
+      c.globalAlpha = (Math.sin(t * l.f + l.o) > .4 ? 1 : .16) * (l.amber ? 1 : .8); c.fillStyle = l.amber ? P.accent : P.line; c.fillRect(q[0] - .8, q[1] - .8, 1.6, 1.6);
+    }
+    // Waterfall: streaks fall under a simple acceleration curve, then break into spray at the pool.
+    c.strokeStyle = P.line; c.lineWidth = .75;
+    for (const f of fall) {
+      const u = (t * f.speed + f.phase) % 1, y0 = 12.3 * (1 - u * u), y1 = Math.max(.1, 12.3 * (1 - Math.min(1, u + f.len) ** 2));
+      const z = 31.4 - u * .9;
+      c.globalAlpha = f.a * .8; poly3([[f.x, y0, z], [f.x, y1, z - f.len * .5]]);
+    }
+    for (const fm of foam) {
+      const k = (Math.sin(t * fm.f + fm.o) + 1) / 2, s = .35 + k * .5; c.globalAlpha = .25 + k * .55;
+      poly3([[fm.x - s, .1, fm.z], [fm.x, .1 + k * .55, fm.z], [fm.x + s, .1, fm.z]]);
+    }
+    // Bats: a body and two wings that flap, circling near the roof.
+    c.strokeStyle = P.line; c.lineWidth = .9; c.globalAlpha = .9;
+    for (const b of bats) {
+      const a = t * b.w + b.ph, x = b.cx + Math.cos(a) * b.rx, y = b.y + Math.sin(a * 2.3) * .8, z = b.cz + Math.sin(a) * b.rz, fl = Math.sin(t * b.f + b.ph) * .26, s = .42;
+      poly3([[x - s, y + fl, z], [x - s * .36, y - .06, z], [x, y + .05, z], [x + s * .36, y - .06, z], [x + s, y + fl, z]]);
+    }
+    c.globalAlpha = 1;
+  }
+
+  /* ---------- Clock, pointer and camera drift ---------- */
+  const p = [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }];
+  const camO = { x: 0, y: 0 };
+  let drawn = { x: 9, y: 9 }, lastRender = 0;
+  let target = null, lastMove = -1e9, reveal = 0, last = performance.now(), seeded = false;
+  addEventListener('pointermove', (e) => { if (e.pointerType === 'touch') return; const b = caveEl.getBoundingClientRect(); const y = e.clientY - b.top; if (y < 0 || y > b.height) { lastMove = -1e9; return; } target = { x: e.clientX, y }; lastMove = performance.now(); if (!seeded) { p.forEach((q) => { q.x = e.clientX; q.y = y; }); seeded = true; } });
+  root.addEventListener('pointerleave', () => { lastMove = -1e9; });
+
+  function frame(now) {
+    const dt = Math.min((now - last) / 1000, .05); last = now; const t = now / 1000;
+    if (!W || !H || !caveOn) { requestAnimationFrame(frame); return; }
+    const active = target && now - lastMove < 3800;
+    const wander = { x: W * (.62 + .3 * Math.sin(t * .071)), y: H * (.52 + .34 * Math.sin(t * .113 + 1.1)) };
+    const goal = active ? target : wander;
+    const follow = (q, g, rate) => { const k = 1 - Math.exp(-dt * rate); q.x += (g.x - q.x) * k; q.y += (g.y - q.y) * k; };
+    if (!seeded) { p.forEach((q) => { q.x = wander.x; q.y = wander.y; }); seeded = true; }
+    follow(p[0], goal, active ? 9 : .9); follow(p[1], p[0], 3.2); follow(p[2], p[1], 1.5);
+    reveal += ((active ? 1 : .42) - reveal) * (1 - Math.exp(-dt * 1.8));
+    p.forEach((q, i) => { root.style.setProperty(`--x${i}`, q.x.toFixed(1) + 'px'); root.style.setProperty(`--y${i}`, q.y.toFixed(1) + 'px'); });
+    root.style.setProperty('--reveal', reveal.toFixed(3));
+    // The viewer's head moves a little with the cursor, so the depth is felt rather than drawn.
+    const camGoal = { x: (p[0].x / W - .5) * 1.5, y: (.5 - p[0].y / H) * .55 };
+    follow(camO, camGoal, 2.2);
+    setCamera(camO.x, camO.y);
+    if ((Math.abs(camO.x - drawn.x) > .006 || Math.abs(camO.y - drawn.y) > .006) && now - lastRender > Math.max(16, renderMs * 2.2)) { render(); drawn = { x: camO.x, y: camO.y }; lastRender = now; }
+    paintLive(t);
+    requestAnimationFrame(frame);
+  }
+
+  function apply() {
+    root.dataset.theme = state.theme;
+    root.classList.toggle('show-all', state.view === 'all');
+    document.querySelectorAll('[data-view]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.view === state.view));
+    document.querySelectorAll('[data-theme-btn]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.themeBtn === state.theme));
+    if (W && H) render();
+    buildCity();
+  }
+  document.querySelectorAll('[data-view]').forEach((b) => b.onclick = () => { state.view = b.dataset.view; apply(); });
+  document.querySelectorAll('[data-theme-btn]').forEach((b) => b.onclick = () => { state.theme = b.dataset.themeBtn; apply(); });
+  document.getElementById('strength').oninput = (e) => root.style.setProperty('--strength', e.target.value / 100);
+  document.getElementById('content').onclick = (e) => { const off = document.body.classList.toggle('hide-content'); e.target.setAttribute('aria-pressed', !off); };
+  let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { resize(); buildCity(); }, 120); });
+
+
+  /* ---------- Inverted Gotham: everything hangs from the top edge ---------- */
+  const CITY = {
+    dark:  { far:'#172438', farTip:'#2a3e5b', mid:'#101927', midTip:'#1b2a40', near:'#090c13', rim:'#8ea8cc', win:'#e6b044', win2:'#b9cbe6', wire:'#a9bfdf', batFill:'#070a10' },
+    light: { far:'#9ba8bb', farTip:'#dbe1ea', mid:'#6d7a90', midTip:'#a9b5c6', near:'#2c3648', rim:'#ffffff', win:'#f2d48a', win2:'#e8eef7', wire:'#1f3355', batFill:'#1a2436' },
+  };
+  const $ = (id) => document.getElementById(id);
+  const cc = { far: $('cFar'), mid: $('cMid'), near: $('cNear'), live: $('cLive'), wm: $('cWireM'), wn: $('cWireN'), bats: $('cBats') };
+  let cW = 0, cH = 0, cD = 1, sparks = [], flock = [], tower = null, moonPos = null;
+
+  // An original, angular bat mark: straight edges only, to match everything else on the page.
+  const half = [[0,-.13],[.055,-.13],[.075,-.33],[.125,-.12],[.21,-.13],[.3,-.3],[.53,-.35],[.82,-.22],[1,.03],[.84,-.04],[.74,.05],[.66,.22],[.54,.11],[.42,.13],[.34,.32],[.22,.21],[.12,.25],[0,.48]];
+  $('batlogo').setAttribute('points', [...half, ...half.slice(1, -1).reverse().map(([x, y]) => [-x, y])].map((p) => p.join(',')).join(' '));
+
+  const PROFILE = [
+    [[0,0],[0,.72],[.16,.72],[.16,.88],[.32,.88],[.32,1],[.5,1]],
+    [[0,0],[0,.58],[.2,.58],[.2,.76],[.4,.76],[.46,.86],[.5,1]],
+    [[0,0],[0,.82],[.12,.82],[.5,1]],
+    [[0,0],[0,.62],[.1,.62],[.1,.74],[.2,.74],[.2,.84],[.3,.84],[.3,.92],[.42,.92],[.5,1]],
+    [[0,0],[0,.93],[.12,.93],[.12,1],[.38,1],[.38,.93],[.5,.93]],
+  ];
+  function outline(b) {
+    const h = PROFILE[b.type], pts = h.map(([dx, y]) => [b.x + dx * b.w, y * b.L]);
+    for (let i = h.length - 1; i >= 0; i--) pts.push([b.x + (1 - h[i][0]) * b.w, h[i][1] * b.L]);
+    return pts;
+  }
+  function skyline(seed, base, lo, hi) {
+    const q = rng(seed), out = [], env = (u) => (1 - .5 * Math.exp(-(((u - .74) / .17) ** 2))) * (u < .08 ? .84 : 1);
+    for (let x = -60; x < cW + 60;) {
+      const w = Math.max(20, base * (.5 + q() * 1)), type = [1, 1, 3, 3, 1, 0, 2, 4][Math.floor(q() * 8)];
+      out.push({ x, w, type, L: cH * (lo + q() * (hi - lo)) * env((x + w / 2) / cW), ant: q() < .34, q: q() });
+      x += w * (.82 + q() * .28);
+    }
+    return out;
+  }
+  function paintLayer(ctx, list, colors, { fill, rim, rimA, cell, lit, live, wire, wireCtx }) {
+    const q = rng(77);
+    list.forEach((b) => {
+      const pts = outline(b);
+      ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath();
+      ctx.globalAlpha = 1; ctx.fillStyle = fill; ctx.fill();
+      ctx.globalAlpha = rimA; ctx.strokeStyle = rim; ctx.lineWidth = .7; ctx.stroke();
+      if (b.ant) { const cx = b.x + b.w / 2, tip = b.L * PROFILE[b.type][PROFILE[b.type].length - 1][1]; ctx.globalAlpha = 1; ctx.strokeStyle = fill; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(cx, tip - 2); ctx.lineTo(cx, tip + 12 + b.q * cH * .07); ctx.stroke(); }
+      const bodyEnd = b.L * PROFILE[b.type][1][1] - cell * 1.4, rows = Math.floor(bodyEnd / (cell * 1.45)), cols = Math.max(1, Math.floor((b.w - 6) / cell));
+      for (let j = 1; j < rows; j++) for (let i = 0; i < cols; i++) {
+        if (q() > lit) continue;
+        const x = b.x + 4 + i * cell, y = j * cell * 1.45, c = q() < .72 ? colors.win : colors.win2, a = .35 + q() * .6;
+        if (live && q() < .1) { sparks.push({ x, y, s: cell * .38, c, a, f: .05 + q() * .5, o: q() * 7 }); continue; }
+        ctx.globalAlpha = a; ctx.fillStyle = c; ctx.fillRect(x, y, cell * .38, cell * .62);
+      }
+      if (wireCtx) {
+        const w = wireCtx; w.strokeStyle = wire; w.lineWidth = .6;
+        w.globalAlpha = .95; w.beginPath(); pts.forEach(([x, y], i) => i ? w.lineTo(x, y) : w.moveTo(x, y)); w.closePath(); w.stroke();
+        w.globalAlpha = .4; w.beginPath();
+        for (let y = cell * 3; y < bodyEnd; y += cell * 3) { w.moveTo(b.x, y); w.lineTo(b.x + b.w, y); }
+        for (let i = 1; i < 5; i++) { const x = b.x + i / 5 * b.w; w.moveTo(x, 0); w.lineTo(x, bodyEnd); }
+        if (b.q < .4) for (let y = cell * 3; y + cell * 6 < bodyEnd; y += cell * 6) { w.moveTo(b.x, y); w.lineTo(b.x + b.w, y + cell * 6); w.moveTo(b.x + b.w, y); w.lineTo(b.x, y + cell * 6); }
+        w.stroke();
+      }
+    });
+    ctx.globalAlpha = 1;
+  }
+  function buildCity() {
+    cW = cityEl.clientWidth; cH = cityEl.clientHeight; if (!cW || !cH) return;
+    cD = Math.min(devicePixelRatio || 1, 2);
+    const colors = CITY[state.theme];
+    const fit = (c, w, h, ox, oy) => { c.width = w * cD; c.height = h * cD; c.style.width = w + 'px'; c.style.height = h + 'px'; const x = c.getContext('2d'); x.setTransform(cD, 0, 0, cD, ox * cD, oy * cD); x.clearRect(-ox, -oy, w, h); x.lineJoin = 'miter'; x.miterLimit = 4; return x; };
+    const [cx, cy] = [40, 30], w2 = cW + 80, h2 = cH + 60;
+    const far = fit(cc.far, w2, h2, cx, cy), mid = fit(cc.mid, w2, h2, cx, cy), near = fit(cc.near, w2, h2, cx, cy), wm = fit(cc.wm, w2, h2, cx, cy), wn = fit(cc.wn, w2, h2, cx, cy);
+    fit(cc.live, w2, h2, cx, cy); fit(cc.bats, cW, cH, 0, 0);
+    sparks = [];
+    const A = skyline(11, Math.max(30, cW / 34), .26, .58), B = skyline(23, Math.max(40, cW / 24), .2, .46), C = skyline(41, Math.max(58, cW / 15), .11, .29);
+    A.push({ x: cW * .17, w: 44, type: 1, L: cH * .7, ant: true, q: .9 }, { x: cW * .41, w: 38, type: 3, L: cH * .62, ant: true, q: .8 });
+    tower = { x: cW * .56, w: Math.max(72, cW * .058), type: 3, L: cH * .34, ant: false, q: .5 }; C.push(tower);
+    const fade = (x, a, b, end) => { const g2 = x.createLinearGradient(0, 0, 0, end); g2.addColorStop(0, a); g2.addColorStop(1, b); return g2; };
+    paintLayer(far, A, colors, { fill: fade(far, colors.far, colors.farTip, cH * .66), rim: colors.rim, rimA: .1, cell: 6, lit: .05 });
+    paintLayer(mid, B, colors, { fill: fade(mid, colors.mid, colors.midTip, cH * .5), rim: colors.rim, rimA: .14, cell: 7, lit: .1, wire: colors.wire, wireCtx: wm });
+    near.fillStyle = colors.near; near.fillRect(-cx, -cy, w2, cy + cH * .045);
+    paintLayer(near, C, colors, { fill: colors.near, rim: colors.rim, rimA: .22, cell: 8, lit: .15, live: true, wire: colors.wire, wireCtx: wn });
+
+    // The signal: one tower throws a cone of light onto the moon, which is why the mark is there.
+    const mr = Math.min(cH * .38, cW * .28) / 2, mx = cW * .74, my = cH * .65;
+    moonPos = { x: mx, y: my, r: mr };
+    const ax = tower.x + tower.w / 2, ay = tower.L, dx = mx - ax, dy = my - ay, l = Math.hypot(dx, dy), nx = -dy / l, ny = dx / l, spread = mr * .9;
+    $('beamP').setAttribute('points', `${ax - 5},${ay} ${ax + 5},${ay} ${mx + nx * spread},${my + ny * spread} ${mx - nx * spread},${my - ny * spread}`);
+    const g = $('beamG'); g.setAttribute('x1', ax); g.setAttribute('y1', ay); g.setAttribute('x2', mx); g.setAttribute('y2', my);
+
+    const q = rng(5);
+    flock = Array.from({ length: 34 }, () => ({ u: q() * 1.3, v: q(), d: .35 + q() * .65, f: 8 + q() * 7, o: q() * 7, sp: .006 + q() * .012 }));
+    const rq = rng(9), rp = ['0,100']; for (let x = 0; x <= 1000;) { rp.push(`${x},${(30 + rq() * 62).toFixed(1)}`); x += 14 + rq() * 46; } rp.push('1000,100');
+    $('rockP').setAttribute('points', rp.join(' '));
+    paintCity(performance.now() / 1000);
+  }
+  const BAT = [[-1,0],[-.5,-.2],[-.15,-.1],[0,-.3],[.15,-.1],[.5,-.2],[1,0],[.55,.12],[.25,.05],[0,.32],[-.25,.05],[-.55,.12]];
+  const cityPtr = { x: 0, y: 0, tx: 0, ty: 0, r: 0 }; let ptrIn = false, cityLast = 0;
+  addEventListener('pointermove', (e) => { if (e.pointerType === 'touch') return; const b = cityEl.getBoundingClientRect(), y = e.clientY - b.top; ptrIn = y >= 0 && y <= b.height; if (ptrIn) { cityPtr.tx = e.clientX; cityPtr.ty = y; } });
+  function paintCity(t) {
+    const colors = CITY[state.theme], sc = scrollY, l = cc.live.getContext('2d'), bctx2 = cc.bats.getContext('2d');
+    const mx = (cityPtr.x / (cW || 1) - .5) * 2, my = (cityPtr.y / (cH || 1) - .5) * 2;
+    const tr = (el, m, s) => { el.style.transform = `translate3d(${(-mx * m).toFixed(1)}px,${(sc * s - my * m * .6).toFixed(1)}px,0)`; };
+    tr(cc.far, 4, .22); tr(cc.mid, 8, .11); tr($('beam'), 8, .11); tr(cc.near, 14, 0); tr(cc.live, 14, 0); tr(cc.wn, 14, 0); tr(cc.wm, 8, .11); tr($('moon'), 2, .2);
+    $('mist1').style.transform = `translate3d(${(Math.sin(t * .021) * 7).toFixed(2)}%,${(sc * .17).toFixed(1)}px,0)`;
+    $('mist2').style.transform = `translate3d(${(Math.sin(t * .033 + 2) * -9).toFixed(2)}%,${(sc * .06).toFixed(1)}px,0)`;
+    l.clearRect(-40, -30, cW + 80, cH + 60);
+    for (const w of sparks) { l.globalAlpha = Math.sin(t * w.f + w.o) > -.2 ? w.a : .05; l.fillStyle = w.c; l.fillRect(w.x, w.y, w.s, w.s * 1.6); }
+    l.globalAlpha = 1;
+    // Bats drift across the sky, and sink towards the cave as you scroll.
+    bctx2.clearRect(0, 0, cW, cH); bctx2.fillStyle = colors.batFill;
+    for (const b of flock) {
+      const x = (((b.u + t * b.sp) % 1.3) - .15) * cW, y = (.36 + b.v * .44 + Math.sin(t * .4 + b.o) * .02) * cH + sc * (.18 + b.d * .34), s = 3 + b.d * 8, fl = Math.sin(t * b.f + b.o) * .55 - .1;
+      bctx2.beginPath(); BAT.forEach(([px, py], i) => { const wy = Math.abs(px) > .4 ? py + fl * Math.abs(px) : py; const X = x + px * s, Y = y + wy * s; i ? bctx2.lineTo(X, Y) : bctx2.moveTo(X, Y); }); bctx2.closePath(); bctx2.fill();
+    }
+  }
+  function cityFrame(now) {
+    const dt = Math.min((now - cityLast) / 1000, .05); cityLast = now;
+    if (cityOn && cW) {
+      const k = 1 - Math.exp(-dt * 7); cityPtr.x += (cityPtr.tx - cityPtr.x) * k; cityPtr.y += (cityPtr.ty - cityPtr.y) * k;
+      cityPtr.r += ((ptrIn ? 1 : 0) - cityPtr.r) * (1 - Math.exp(-dt * 2.4));
+      cityEl.style.setProperty('--cx', cityPtr.x.toFixed(1) + 'px'); cityEl.style.setProperty('--cy', cityPtr.y.toFixed(1) + 'px'); cityEl.style.setProperty('--city-reveal', (cityPtr.r * .85).toFixed(3));
+      paintCity(now / 1000);
+    }
+    requestAnimationFrame(cityFrame);
+  }
+
+  buildScene(); sortFaces(); resize(); apply();
+  if (!reduced) requestAnimationFrame(cityFrame);
+  if (reduced) {
+    addEventListener('pointermove', (e) => { for (let i = 0; i < 3; i++) { const y = e.clientY - caveEl.getBoundingClientRect().top; root.style.setProperty(`--x${i}`, e.clientX + 'px'); root.style.setProperty(`--y${i}`, y + 'px'); } root.style.setProperty('--reveal', 1); });
+    if (W && H) paintLive(0);
+  } else requestAnimationFrame(frame);
+  window.__faces = faces.length;
+})();
+</script>
+</body>
+</html>

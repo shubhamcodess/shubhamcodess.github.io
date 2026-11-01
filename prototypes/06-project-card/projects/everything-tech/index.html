@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-backing="clear">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EverythingTech</title>
+<script>try { document.documentElement.dataset.theme = new URLSearchParams(location.search).get('theme') || localStorage.getItem('proto-theme') || 'dark'; } catch { /* storage may be blocked */ }</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../bp.css">
+<link rel="stylesheet" href="../../card.css">
+<style>
+  body { padding:34px 6vw 90px; }
+  .page { max-width:1000px; margin:0 auto; }
+  .plate { --os:9px; position:relative; margin:30px 0 38px; }
+  .plate .pc-stage { aspect-ratio:16/8.4; min-height:300px; }
+  .plate .pc-stage::after { display:none; }
+  .meta { display:flex; flex-wrap:wrap; gap:3px 16px; margin:0 0 10px; font:500 11.5px/1.4 var(--mono); letter-spacing:.06em; color:var(--ink-2); }
+  h1 { margin:0; font:600 clamp(40px,7vw,62px)/1.03 var(--label); letter-spacing:.012em; }
+  .lede { max-width:42em; margin:14px 0 26px; font-size:20px; line-height:1.45; color:var(--ink-2); text-wrap:pretty; }
+  .links { display:flex; flex-wrap:wrap; gap:20px 24px; margin-bottom:64px; }
+  h2 { margin:0 0 18px; font:500 11.5px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); }
+  section { margin-bottom:58px; }
+  .steps { display:grid; grid-template-columns:repeat(5,1fr); margin:0; padding:0; list-style:none; border-top:1px solid var(--line-rest); }
+  .steps li { padding:14px 16px 4px 0; }
+  .steps li + li { padding-left:16px; border-left:1px solid var(--chrome-line); }
+  .steps b { display:block; margin-bottom:4px; font:600 19px/1.2 var(--label); letter-spacing:.03em; text-transform:uppercase; }
+  .steps b i { margin-right:7px; font:500 11px/1 var(--mono); color:var(--accent); font-style:normal; }
+  .steps span { font-size:15px; line-height:1.45; color:var(--ink-2); display:block; }
+  .built { max-width:44em; margin:0; padding:0; list-style:none; }
+  .built li { position:relative; padding:0 0 13px 24px; font-size:17px; line-height:1.5; }
+  .built li::before { content:""; position:absolute; left:0; top:.72em; width:13px; height:1px; background:var(--accent); }
+  .stack { font:500 13px/1.7 var(--mono); color:var(--ink-2); margin:0; }
+  .top { display:flex; }
+  @media (max-width:760px) {
+    .steps { grid-template-columns:1fr; border-top:0; }
+    .steps li, .steps li + li { padding:12px 0; border-left:0; border-top:1px solid var(--chrome-line); }
+    .plate .pc-stage { aspect-ratio:16/12; min-height:0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="top"><a class="bp sm quiet" data-icon="back" href="../../">All projects</a></nav>
+
+  <div class="plate pc" id="plate">
+    <span class="pc-frame"></span>
+    <div class="pc-stage" style="--vt-stage:stage-everything-tech">
+      <canvas aria-hidden="true"></canvas>
+      <span class="reg tl"></span><span class="reg tr"></span>
+    </div>
+  </div>
+
+  <p class="meta"><span>SHEET 01</span><span>SEP 2026</span><span>OPEN SOURCE</span><span class="pc-meta"><span class="live">LIVE, DAILY 08:30 IST</span></span></p>
+  <h1>EverythingTech</h1>
+  <p class="lede">A daily tech newspaper with no human editor. It reads 45+ free sources overnight, merges the duplicates and writes each story from the full article. There is no server, database or API key.</p>
+  <div class="links">
+    <a class="bp" data-icon="link" href="https://shubhamcodess.github.io/everything-tech-newsletter/" target="_blank" rel="noopener">Read today's paper</a>
+    <a class="bp secondary" data-icon="code" href="https://github.com/shubhamcodess/everything-tech-newsletter" target="_blank" rel="noopener">Code</a>
+    <a class="bp secondary" data-icon="rss" href="https://shubhamcodess.github.io/everything-tech-newsletter/feed.xml" target="_blank" rel="noopener">RSS</a>
+  </div>
+
+  <section>
+    <h2>How a day's paper is made</h2>
+    <ol class="steps">
+      <li><b><i>1</i>Collect</b><span>Python gathers articles from the sources.</span></li>
+      <li><b><i>2</i>Sort</b><span>Coverage of the same story collapses into one, crediting every outlet.</span></li>
+      <li><b><i>3</i>Write</b><span>A scheduled routine picks, ranks and writes from the full text.</span></li>
+      <li><b><i>4</i>Check</b><span>A validator rejects copied sentences, filler and cut-off prose.</span></li>
+      <li><b><i>5</i>Publish</b><span>CI merges the edition once checks pass, and GitHub Pages serves it.</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>What I built</h2>
+    <ul class="built">
+      <li>Scripts do everything mechanical. The model only picks, ranks and writes, and it never writes HTML.</li>
+      <li>Each day is kept as a Markdown edition. One client-side template renders every date, so a design change updates the whole archive.</li>
+      <li>The context is token-budgeted, so a small model can run the paper reliably.</li>
+      <li>Sources, interests, edition size and site theme are all config, so it can be forked.</li>
+      <li>The paper also comes out as Markdown, JSON and RSS, and the archive prunes itself after 30 days.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Stack</h2>
+    <p class="stack">Python · GitHub Actions · GitHub Pages · Claude Code routines · RSS and HTML scraping · JSON and Markdown</p>
+  </section>
+</div>
+<script src="../../bp.js"></script>
+<script src="../../newsletter-fold.js"></script>
+<script>NewsletterFold.mount(document.querySelector('#plate canvas'), { pointerHost: document.getElementById('plate'), startAt: 4.4 });</script>
+</body>
+</html>
