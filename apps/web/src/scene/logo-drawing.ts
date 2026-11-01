@@ -1,13 +1,11 @@
 import { sketch } from "@portfolio/design/button";
 import { BATARANG_EDGES, BATARANG_OUTLINE } from "./batarang-shape";
+import { LOGO_LETTERS } from "./logo-letters";
 
 /* The logo's line work, worked out once. Everything is pen lines on a skewed plane, so it reads as a drawing of something 3D. */
 type Point = number[];
 
-const S = [[2, 0], [22, 0], [22, 6], [7, 6], [7, 12], [20, 12], [22, 14], [22, 28], [20, 30], [0, 30], [0, 24], [16, 24], [16, 18], [2, 18], [0, 16], [0, 2]];
-const P_OUTER = [[25, 0], [44, 0], [47, 3], [47, 16], [44, 19], [31, 19], [31, 30], [25, 30]];
-const P_INNER = [[31, 6], [41, 6], [41, 13], [31, 13]];
-const SHAPES = [S, P_OUTER, P_INNER];
+const SHAPES = LOGO_LETTERS;
 
 const flat = (pts: Point[]) => `M${pts.map(([x, y]) => `${x} ${y}`).join("L")}Z`;
 

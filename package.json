@@ -11,6 +11,7 @@
     "build": "pnpm --filter @portfolio/web build",
     "typecheck": "pnpm -r --if-present typecheck && tsc --noEmit -p tests",
     "test": "vitest run",
+    "icons": "node --experimental-strip-types --no-warnings scripts/build-icons.mjs",
     "budget": "node scripts/check-budget.mjs",
     "responsive": "node scripts/check-responsive.mjs",
     "check": "pnpm typecheck && pnpm test && pnpm build && pnpm budget && pnpm responsive"
