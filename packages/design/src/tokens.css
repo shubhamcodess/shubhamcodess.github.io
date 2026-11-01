@@ -12,6 +12,7 @@
 }
 :root {
   --ease-soft: cubic-bezier(.22,.61,.36,1);
+  --ease-expo: cubic-bezier(.16,1,.3,1);
   --dur-small-part: .3s;
   --dur-frame: .6s;
   --dur-shadow: .65s;
@@ -19,10 +20,11 @@
   --dur-icon: .95s;
   --dur-press: .18s;
   --dur-theme-fade: 1.4s;
-  --font-note: ui-monospace, Menlo, monospace;
-  --label: var(--font-label, ui-sans-serif), ui-sans-serif, sans-serif;
-  --track: .09em;
-  --size: 16px;
+  --sans: var(--font-sans, ui-sans-serif), ui-sans-serif, system-ui, sans-serif;
+  --font-note: var(--font-mono, ui-monospace), ui-monospace, Menlo, monospace;
+  --label: var(--sans);
+  --track: .07em;
+  --size: 14.5px;
   --sx: 1;
   --sy: 1;
 }

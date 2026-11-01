@@ -13,6 +13,9 @@
 .background-panel button[aria-pressed="true"] { border-color: var(--line); }
 .background-panel button:focus-visible { outline: 1.5px dashed var(--accent); outline-offset: 2px; }
 .background-panel span { min-width: 52px; }
-.test-text { columns: 3 260px; column-gap: 40px; padding: 58vh clamp(18px, 4vw, 48px) 120px; }
-.test-text p { margin: 0 0 16px; }
+.test-text section { max-width: 1240px; margin: 0 auto; padding: 16vh clamp(18px, 4vw, 48px); }
+.test-text h2 { margin: 16px 0 18px; font-size: clamp(30px, 4.2vw, 56px); font-weight: 500; line-height: 1.08; letter-spacing: -.03em; }
+.test-dim { opacity: .55; }
+.test-kicker { font: 500 12px/1 var(--font-note); text-transform: uppercase; letter-spacing: .06em; }
+.test-sheet { height: 32vh; margin-top: 40px; border: 1px solid var(--line-rest); }
 .background-panel hr { width: 100%; margin: 2px 0; border: 0; border-top: 1px solid var(--line-rest); }

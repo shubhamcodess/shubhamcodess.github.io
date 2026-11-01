@@ -24,6 +24,7 @@ describe("tokens.css matches DESIGN.md", () => {
   it("motion", () => {
     const scope = block(":root");
     expect(value(scope, "ease-soft")).toBe(design.motion.soft);
+    expect(value(scope, "ease-expo")).toBe(design.motion.expo);
     for (const name of ["small-part", "frame", "shadow", "texture", "icon", "press", "theme-fade"]) expect(value(scope, `dur-${name}`), name).toBe(design.motion[name]);
   });
 });

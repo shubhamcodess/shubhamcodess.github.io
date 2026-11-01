@@ -19,7 +19,7 @@
 /* The cap: everything that moves when the button is pushed. */
 .bp-body {
   position:relative; display:inline-flex; align-items:center; gap:11px; min-height:46px; padding:12px 22px 12px 18px;
-  font:600 var(--size)/1 var(--label); letter-spacing:var(--track); text-transform:uppercase; white-space:nowrap;
+  font:500 var(--size)/1 var(--label); letter-spacing:var(--track); text-transform:uppercase; white-space:nowrap;
   background-color:var(--bp-face, transparent); -webkit-backdrop-filter:var(--bp-face-filter, none); backdrop-filter:var(--bp-face-filter, none);
   translate:calc(var(--sx) * var(--off) * var(--bp-travel, 0)) calc(var(--sy) * var(--off) * var(--bp-travel, 0));
 }

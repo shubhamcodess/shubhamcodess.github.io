@@ -7,12 +7,13 @@ palettes: packages/design/src/palettes.ts
 colors:
   dark:  { base: "#0b0e15", paper: "#10141e", ink: "#e4e8ef", ink-2: "#99a4b6", line: "#a9bfdf", line-rest: "rgba(169,191,223,.72)", accent: "#e6b044", grid: "rgba(169,191,223,.075)" }
 type:
-  label: { family: "Barlow Semi Condensed", weight: 600, transform: uppercase, tracking: .09em, size: 16px }
-  title: { family: "Barlow Semi Condensed", weight: 600, tracking: .015em }
-  body:  { family: "Barlow", weight: 400, note: "temporary, not chosen yet" }
-  note:  { family: "ui-monospace, Menlo, monospace", weight: 500, size: 11px, tracking: .06em }
+  label: { family: "Geist", weight: 500, transform: uppercase, tracking: .07em, size: 14.5px }
+  title: { family: "Geist", weight: 500, tracking: -.035em }
+  body:  { family: "Geist", weight: 400 }
+  note:  { family: "Geist Mono", weight: 500, size: 11px, tracking: .06em }
 motion:
   soft: "cubic-bezier(.22,.61,.36,1)"
+  expo: "cubic-bezier(.16,1,.3,1)"
   small-part: .3s
   frame: .6s
   shadow: .65s
@@ -63,7 +64,7 @@ The Dark mode colors above are from the prototypes and aren't final.
 - **Clear faces.** Surfaces are outlines, and the page shows through.
 - **Texture rises and fades.** Hatching starts at the bottom edge and is gone before it reaches the text.
 - **Shadows are wireframes.** A shadow is a second outline with lines joining the corners, not a blur.
-- **Hand in the drawing, not in the type.** Icons and drawings wobble slightly. Text is always a clean font.
+- **Hand in the drawing, not in the type.** Icons and drawings wobble slightly. Text is always a clean font: Geist everywhere, Geist Mono for small labels.
 - **Amber is rare.** One or two touches per element, so it keeps its meaning.
 - **Soft motion.** Slow, smooth and without overshoot. Nothing shakes or bounces, and motion is a function of time.
 - **Browser parts belong to the design.** Anything the browser would draw itself gets our own version as it comes up. Done so far: scrollbar, tooltips, text selection. Never use a native `title`.
@@ -121,6 +122,15 @@ A small paper box with four drafting lines running past its corners, and the lab
 
 ### Text selection
 Paper text on the active theme's accent color, set in `tokens.css`. A test keeps it readable in every theme.
+
+### Hero: Draft
+Bottom left, in reading order: "I am", the name, the role, the rotating hook and one CTA. The name is the only large thing. Details are in decision 016.
+
+### Headings and small labels
+Headings are Geist 500 with tight tracking, often two-tone, with the second line dimmed. Small labels are Geist Mono, uppercase, with a small accent square.
+
+### Scroll motion: Approved
+Smooth scroll, content layers that follow a beat late, and reveal and hide. Mark content with `data-block` and `data-layer`, and text with `.rv` or `.ln`. Details are in decision 017.
 
 ### Scroll thumb: Approved
 Code: `packages/design/src/components/scroll-thumb`. It replaces the visible scrollbar with one small draggable shape that takes up no width. The shape is passed in: this site uses a small batarang, standing on end. It rests at `--scroll-thumb-top`, which this site sets to the bottom of the header. On hover it grows by 1.4 and darkens, softly. It's for pointers, while keyboards, wheels and touch scroll natively.

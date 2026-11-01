@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Barlow_Semi_Condensed, Chakra_Petch, Saira_Semi_Condensed } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
+import { ScrollMotion } from "@portfolio/design/scroll-motion";
 import { ScrollThumb } from "@portfolio/design/scroll-thumb";
 import { backgroundBootScript, paletteCss, PALETTE_IDS } from "@portfolio/design";
 import { site } from "@portfolio/site";
@@ -13,11 +14,9 @@ import "@portfolio/design/environment.css";
 import "./globals.css";
 import "@/scene/scene.css";
 
-// Self-hosted at build time. Only the button label font so far: the rest of the type isn't decided.
-const label = Barlow_Semi_Condensed({ weight: ["500", "600", "700"], subsets: ["latin"], variable: "--font-label" });
-// Only for trying options in the control panel. They load only if picked, and go when the panel goes.
-const chakra = Chakra_Petch({ weight: "600", subsets: ["latin"], variable: "--font-chakra", preload: false });
-const saira = Saira_Semi_Condensed({ weight: "600", subsets: ["latin"], variable: "--font-saira", preload: false });
+// Self-hosted at build time. One family everywhere: the page, the buttons and the lettering in the art.
+const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono", preload: false });
 
 export const metadata: Metadata = {
   title: { default: site.name, template: `%s | ${site.name}` },
@@ -35,7 +34,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     // The boot script can change data-palette before React loads, so React shouldn't flag that as a mismatch.
     <html
       lang="en"
-      className={`${label.variable} ${chakra.variable} ${saira.variable}`}
+      className={`${sans.variable} ${mono.variable}`}
+      data-reveal={site.flags.motion ? site.scroll.reveal : undefined}
+      data-hide={site.scroll.hide ? "on" : "off"}
       data-theme="light"
       data-palette={palette}
       data-palette-default={palette}
@@ -62,7 +63,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <div className="environment-sun" />
         </div>
         <GothamScene />
-        <main id="page" className="page" tabIndex={-1}>{children}</main>
+        <main id="page" className="page" tabIndex={-1}><div className="page-inner">{children}</div></main>
+        {site.flags.motion && <ScrollMotion target="#page" content=".page-inner" lerp={site.scroll.lerp} lag={site.scroll.lag} parallax={site.scroll.parallax} />}
         <SiteHeader />
         <ScrollThumb target="#page"><Batarang /></ScrollThumb>
         <div className="environment-vignette" aria-hidden="true" />

@@ -38,6 +38,15 @@ export const siteSchema = z
       iconHover: z.enum(BUTTON_OPTIONS.iconHover),
       textHover: z.enum(BUTTON_OPTIONS.textHover),
     }),
+    hero: z.strictObject({
+      lead: z.string().min(1),
+      nightName: z.string().min(1),
+      role: z.string().min(1),
+      hook: z.strictObject({ prefix: z.string().min(1), lines: z.array(z.string().min(1)).min(2).max(4), seed: z.number().int(), minMs: z.number().min(2000), maxMs: z.number().max(12000) }),
+      cta: z.strictObject({ label: z.string().min(1), href: z.string().min(1) }),
+    }),
+    /** Smooth scroll, content layers and reveals. Set `lerp` to 0 for native scrolling. */
+    scroll: z.strictObject({ lerp: z.number().min(0).max(1), lag: z.number().min(0).max(3), parallax: z.number().min(0).max(3), reveal: z.enum(["none", "fade", "rise", "mask"]), hide: z.boolean() }),
     socials: z.array(z.strictObject({ label: z.string().min(1), href: url })),
     /** Sections hidden until there is something to show. */
     flags: z.strictObject({ writing: z.boolean(), photography: z.boolean(), ask: z.boolean(), motion: z.boolean(), backgroundPanel: z.boolean() }),

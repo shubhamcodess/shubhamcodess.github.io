@@ -7,6 +7,14 @@ const config = {
   background: { default: "oldGotham", onLoad: "config" },
   scene: { face: "clear", contentFade: "mid", depth: "big", sway: "full", haze: "full", dust: "full", density: "normal", reach: "mid", word: "faint" },
   headerButton: { texture: "hatch", shadow: "br", hover: "shadow", press: "keycap", sway: "off" },
+  hero: {
+    lead: "I am",
+    nightName: "Vengeance", // For night mode, to read "I am Vengeance". Not wired up until dark mode exists.
+    role: "Cloud Full Stack Developer",
+    hook: { prefix: "Building", lines: ["tech that matters", "AI products at scale", "for the cloud, end to end", "things worth shipping"], seed: 7, minMs: 3200, maxMs: 5600 },
+    cta: { label: "What I shipped recently", href: "/#projects" },
+  },
+  scroll: { lerp: 0.14, lag: 1, parallax: 1, reveal: "mask", hide: true },
   buttonMotion: { iconHover: "trace", textHover: "grow" },
   socials: [
     { label: "GitHub", href: "https://github.com/shubhamcodess" },

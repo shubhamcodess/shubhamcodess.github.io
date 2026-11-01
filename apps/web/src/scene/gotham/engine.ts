@@ -201,7 +201,9 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
     for (const n of nodes) {
       const near = PERSPECTIVE / (PERSPECTIVE - n.z);
       const depth = Math.max(0, (n.z + 900) / 1050); // 0 far, 1 near
-      const lift = s * (0.12 + depth * 0.62) * (reduced ? 0.4 : 1), side = sway * depth * 46 * k, drift = !reduced && n.fog ? Math.sin(t * 0.05 + n.z) * 34 : 0;
+      // The word sits furthest back but rises with the city, so the skyline keeps it clipped and it's never seen in full.
+      const rise = n.z < -900 ? 0.5 : 0.12 + depth * 0.62;
+      const lift = s * rise * (reduced ? 0.4 : 1), side = sway * depth * 46 * k, drift = !reduced && n.fog ? Math.sin(t * 0.05 + n.z) * 34 : 0;
       const x = (side + drift + n.z * Math.sin(turnY)) * near, y = (-lift - n.z * Math.sin(turnX)) * near;
       const zoom = (PERSPECTIVE - n.z) / (PERSPECTIVE - n.z + dolly);
       n.el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${zoom.toFixed(4)})`;

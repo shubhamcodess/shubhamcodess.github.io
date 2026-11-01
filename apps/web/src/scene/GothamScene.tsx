@@ -19,7 +19,7 @@ export function GothamScene() {
   useEffect(() => {
     const root = document.documentElement, el = host.current, page = document.getElementById("page");
     if (!el || !page) return;
-    const family = getComputedStyle(root).getPropertyValue("--font-label").trim() || "sans-serif";
+    const family = getComputedStyle(root).getPropertyValue("--font-sans").trim() || "sans-serif";
     const read = () => ({ palette: palettes[root.dataset.palette as PaletteId] ?? palettes.oldGotham, font: `${family}, sans-serif`, settings: readSettings() });
     let scene: ReturnType<typeof mountGotham> | undefined, gone = false;
     let watch: MutationObserver | undefined;

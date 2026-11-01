@@ -1,0 +1,13 @@
+/* All lines share one grid cell, so the space never changes. Only the active one shows. */
+.rt { display:block; }
+.rt-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.rt-seen { display:flex; flex-wrap:wrap; column-gap:.28em; }
+.rt-prefix { flex:none; }
+.rt-stage { display:inline-grid; overflow:clip; padding-bottom:.14em; margin-bottom:-.14em; }
+.rt-line {
+  grid-area:1 / 1; white-space:nowrap; opacity:0; transform:translateY(62%);
+  transition:opacity .7s var(--ease-expo),transform .9s var(--ease-expo);
+}
+.rt-line[data-at="on"] { opacity:1; transform:none; transition-delay:.12s; }
+.rt-line[data-at="was"] { transform:translateY(-62%); transition-duration:.45s,.6s; }
+@media (prefers-reduced-motion:reduce) { .rt-line { transition:none; } }

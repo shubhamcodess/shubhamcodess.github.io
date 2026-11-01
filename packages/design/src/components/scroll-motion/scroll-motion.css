@@ -1,0 +1,18 @@
+/* Reveal and hide. A block is below the screen, in view or gone above. Entering is slower and staggered, and leaving is quick.
+   With no script nothing is hidden. It only applies under a root that asks for it, where the script will run. */
+.rv { transition:opacity .8s var(--ease-expo),transform .95s var(--ease-expo); transition-delay:calc(var(--i,0) * 70ms); }
+.ln { display:block; overflow:clip; padding-bottom:.14em; margin-bottom:-.14em; }
+.ln > .rv { display:block; transition:transform 1s var(--ease-expo); transition-delay:calc(var(--i,0) * 70ms); }
+[data-state="above"] .rv, [data-state="above"] .ln > .rv { transition-duration:.42s; transition-delay:0s; }
+
+@media (scripting:enabled) and (prefers-reduced-motion:no-preference) {
+  [data-reveal="fade"] [data-block]:not([data-state="in"]) .rv { opacity:0; }
+  [data-reveal="rise"] [data-block]:not([data-state="in"]) .rv { opacity:0; transform:translateY(34px); }
+  [data-reveal="rise"] [data-state="above"] .rv { transform:translateY(-22px); }
+  [data-reveal="mask"] [data-block]:not([data-state="in"]) .rv { opacity:0; transform:translateY(30px); }
+  [data-reveal="mask"] [data-state="above"] .rv { transform:translateY(-20px); }
+  [data-reveal="mask"] [data-block]:not([data-state="in"]) .ln > .rv { opacity:1; transform:translateY(112%); }
+  [data-reveal="mask"] [data-state="above"] .ln > .rv { transform:translateY(-112%); }
+  [data-hide="off"] [data-state="above"] .rv, [data-hide="off"] [data-state="above"] .ln > .rv { opacity:1; transform:none; }
+}
+@media (prefers-reduced-motion:reduce) { .rv, .ln > .rv { transition:none; } }

@@ -5,7 +5,7 @@
  * To remove it: delete this folder, its one line in app/layout.tsx and the backgroundPanel flag.
  * Its test text is only here so scrolling can be judged. It never goes on the site.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { PALETTE_IDS, pickBackground, selectBackground, type BackgroundMode, type PaletteId } from "@portfolio/design";
 import { SCENE_OPTIONS } from "@portfolio/content/scene-options";
@@ -24,11 +24,6 @@ type ButtonKey = (typeof BUTTON_KEYS)[number];
 const MOTION_KEYS = ["iconHover", "textHover"] as const;
 type MotionKey = (typeof MOTION_KEYS)[number];
 const MOTION_LABEL: Record<MotionKey, string> = { iconHover: "Icon hover (site default)", textHover: "Text hover (site default)" };
-const FONTS = {
-  barlow: ["var(--font-label)", ".09em", "16px"],
-  chakra: ["var(--font-chakra)", ".05em", "14.5px"],
-  saira: ["var(--font-saira)", ".07em", "14.5px"],
-} as const;
 
 export function BackgroundPanel() {
   const [open, setOpen] = useState(true);
@@ -40,14 +35,13 @@ export function BackgroundPanel() {
   const [page, setPage] = useState<HTMLElement | null>(null);
   const [button, setButton] = useState<Partial<Record<ButtonKey, string>>>({});
   const [motion, setMotion] = useState<Partial<Record<MotionKey, string>>>({});
-  const [font, setFont] = useState<keyof typeof FONTS>("barlow");
 
   useEffect(() => {
     const d = document.documentElement.dataset;
     setPalette(d.palette as PaletteId);
     setScene(Object.fromEntries(SCENE_KEYS.map((k) => [k, d[k]])));
     setMotion(Object.fromEntries(MOTION_KEYS.map((k) => [k, d[k]])));
-    setPage(document.getElementById("page"));
+    setPage(document.querySelector<HTMLElement>(".page-inner"));
     const projects = document.querySelector<HTMLElement>(".header-wide .bp");
     setButton(Object.fromEntries(BUTTON_KEYS.map((k) => [k, projects?.dataset[k]])));
   }, []);
@@ -72,14 +66,9 @@ export function BackgroundPanel() {
     document.documentElement.dataset[key] = value;
     setMotion((m) => ({ ...m, [key]: value }));
   };
-  const pickFont = (name: keyof typeof FONTS) => {
-    const [family, track, size] = FONTS[name], { style } = document.querySelector(".site-header") as HTMLElement;
-    style.setProperty("--label", `${family}, sans-serif`); style.setProperty("--track", track); style.setProperty("--size", size);
-    setFont(name);
-  };
 
   return (
-    <aside className="background-panel" aria-label="Background controls, temporary">
+    <aside data-scroll-own className="background-panel" aria-label="Background controls, temporary">
       <button type="button" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Hide" : "Controls"}</button>
       {open && (
         <>
@@ -119,12 +108,6 @@ export function BackgroundPanel() {
               ))}
             </div>
           ))}
-          <div role="group" aria-label="Button font">
-            <span>font</span>
-            {(Object.keys(FONTS) as (keyof typeof FONTS)[]).map((name) => (
-              <button key={name} type="button" aria-pressed={font === name} onClick={() => pickFont(name)}>{name}</button>
-            ))}
-          </div>
           <hr />
           <div role="group" aria-label="Grain">
             <span>Grain</span>
@@ -146,8 +129,13 @@ export function BackgroundPanel() {
       )}
       {text && page && createPortal(
         <div className="test-text">
-          {Array.from({ length: 120 }, (_, i) => (
-            <p key={i}>Test text from the control panel, only to judge how scrolling and the fade behave. It isn&apos;t on the site.</p>
+          {[1, 2, 3, 4].map((n) => (
+            <section key={n} data-block>
+              <p className="test-kicker rv" data-layer="a">{`0${n} / Test section`}</p>
+              <h2 data-layer="b"><span className="ln"><span className="rv" style={{ "--i": 1 } as CSSProperties}>Test heading from the panel.</span></span><span className="ln"><span className="rv test-dim" style={{ "--i": 2 } as CSSProperties}>Only to judge scroll. Not on the site.</span></span></h2>
+              <p className="rv" data-layer="c" style={{ "--i": 4 } as CSSProperties}>Test text from the control panel, only to judge how scrolling and the fade behave. It isn&apos;t on the site.</p>
+              <div className="test-sheet rv" data-layer="d" style={{ "--i": 5 } as CSSProperties} />
+            </section>
           ))}
         </div>,
         page,
