@@ -13,7 +13,8 @@ Keep every prototype here. Don't overwrite or delete one: new ideas get a new nu
 | `07-light-palette` | Three daytime Gotham palettes with film gradient and grain, shown on the real button and card. Uses files from `06-project-card`. |
 | `08-daylight-themes` | Four daytime themes with a rotate switch and a soft fade: Dust, Sodium (5% less saturated), Smog (blue haze, less green) and Storm. Uses files from `06-project-card`. |
 | `10-gotham-skyline` | The cinematic inverted Gotham: real 3D layers, Wayne Tower, bridge, haze, day and night. Candidate for the real site. |
-| `11-gotham-skyline` | The next pass on `10`: varied roofs, weathered upside-down Wayne lettering, grime, pointer-stirred dust, bats and fog, and Old Gotham. Current candidate. |
+| `11-gotham-skyline` | The next pass on `10`: varied roofs, weathered upside-down Wayne lettering, grime, pointer-stirred dust, bats and fog, and Old Gotham. Pointer effects were tried here and removed in `12`. |
+| `12-gotham-skyline` | The user's chosen taste: no pointer effects, varied bats, a better phone composition, Old Gotham by default. Current candidate. |
 | `09-nav-skyline` | Traditional top nav with the daytime inverted skyline, three ways of fitting them together: Street, Apart and Behind. On scroll it keeps a bar, or drops it for floating buttons with a Clear, Fog or Mist face. Logo, links and page text are placeholders. |
 
 The four themes in `08-daylight-themes` are now in the real site, in `packages/design/src/palettes.ts`.

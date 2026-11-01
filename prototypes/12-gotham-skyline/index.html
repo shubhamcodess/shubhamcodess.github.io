@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-fit="behind">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gotham Skyline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="button.css">
+<style>
+  :root { --header-h:68px; --content-fade:44px; --ease-soft:cubic-bezier(.22,.61,.36,1); --dur-frame:.6s; --dur-texture:.85s; --label:"Barlow Semi Condensed",sans-serif; --track:.09em; --size:16px; --sx:1; --sy:1; --base:var(--sky-1); }
+  * { box-sizing:border-box; }
+  html { background:var(--sky-3); }
+  html, body { margin:0; height:100%; overflow:hidden; color:var(--ink); font:400 16px/1.55 ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif; }
+  .env, .env > div { position:fixed; inset:0; pointer-events:none; }
+  .env { z-index:-3; }
+  .sky { background:linear-gradient(172deg, var(--sky-0) 0%, var(--sky-1) 38%, var(--sky-2) 72%, var(--sky-3) 100%); transition:opacity 1s; }
+  .sun { background:radial-gradient(90% 62% at 84% -8%, var(--glow), transparent 68%); }
+
+  /* The scene: real perspective, so layers really do move at different speeds. Its bottom fades, so it belongs to the page. */
+  #scene { position:fixed; z-index:-2; inset:0 0 auto 0; height:min(94vh,1000px); overflow:hidden; pointer-events:none; perspective:1500px; perspective-origin:62% 30%; -webkit-mask-image:linear-gradient(#000 82%, transparent); mask-image:linear-gradient(#000 82%, transparent); }
+  .g-stage { position:absolute; inset:0; transform-style:preserve-3d; will-change:transform; }
+  .g-layer { position:absolute; inset:0; transform-style:flat; will-change:transform; backface-visibility:hidden; }
+  .g-layer canvas { position:absolute; top:0; }
+  .g-near canvas { filter:blur(1.6px); } /* The nearest rooftops sit out of focus, like a long lens. */
+  .g-live { position:absolute; inset:0; width:100%; height:100%; }
+  .g-beacon { position:absolute; width:3px; height:3px; margin:-1.5px; border-radius:50%; background:#ff3b24; box-shadow:0 0 7px 2px rgba(255,59,36,.65); animation:g-blink 3.4s steps(1) infinite; }
+  [data-time="day"] .g-beacon { opacity:.55; box-shadow:0 0 4px 1px rgba(255,59,36,.4); }
+  @keyframes g-blink { 0%,62% { opacity:1; } 63%,100% { opacity:.08; } }
+  @media (prefers-reduced-motion:reduce) { .g-beacon { animation:none; } }
+
+  /* The film: grain over everything and a soft vignette, so city and page share one stock. */
+  .film, .vignette { position:fixed; inset:0; pointer-events:none; z-index:6; }
+  .film { opacity:.42; mix-blend-mode:soft-light; background-size:220px 220px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .vignette { background:radial-gradient(120% 90% at 55% 40%, transparent 55%, var(--vignette)); }
+
+  /* The bat signal, night only. It rises from a roof and lands behind the name. */
+  #signal { position:fixed; inset:0; width:100%; height:100%; z-index:-1; pointer-events:none; opacity:0; transition:opacity 1.6s var(--ease-soft); }
+  [data-time="night"] #signal { opacity:1; }
+
+  .page { position:fixed; inset:0; overflow:hidden auto; outline:none; scrollbar-width:none; -webkit-mask-image:linear-gradient(transparent var(--header-h), #000 calc(var(--header-h) + var(--content-fade))); mask-image:linear-gradient(transparent var(--header-h), #000 calc(var(--header-h) + var(--content-fade))); }
+  .page::-webkit-scrollbar { display:none; }
+  .site-header { position:fixed; z-index:10; top:0; left:0; right:0; height:var(--header-h); display:flex; align-items:center; justify-content:space-between; padding:0 clamp(18px,4vw,48px); }
+  .hero { padding:min(72vh,720px) clamp(18px,4vw,48px) 0; }
+  @media (max-width:760px), (max-width:1100px) and (orientation:portrait) {
+    #scene { height:min(82vh,172vw); }
+    .hero { padding-top:calc(min(82vh,172vw) * .96); } /* the name sits clear below Wayne Tower's spires */
+    .long { columns:1; }
+  }
+  h1 { margin:0; font:600 clamp(44px,8vw,96px)/.98 var(--label); }
+  .hint { margin:12px 0 0; font:500 12px/1.5 ui-monospace,Menlo,monospace; color:var(--ink-2); }
+  .long { height:170vh; padding:90px clamp(18px,4vw,48px) 0; color:var(--ink); columns:3 260px; column-gap:40px; }
+  .long p { margin:0 0 16px; }
+
+  .panel { position:fixed; z-index:20; left:12px; bottom:12px; max-height:calc(100dvh - 90px); overflow:auto; display:flex; flex-direction:column; align-items:flex-start; gap:5px; padding:8px; font:12px/1 ui-monospace,Menlo,monospace; color:var(--ink); background:var(--paper); border:1px solid var(--line-rest); }
+  .panel[hidden] { display:none; }
+  .panel [role=group] { display:flex; flex-wrap:wrap; align-items:center; gap:2px; }
+  .panel span { min-width:58px; margin-right:4px; color:var(--ink-2); }
+  .panel button { min-height:26px; padding:5px 7px; font:inherit; color:inherit; background:none; border:1px solid transparent; cursor:pointer; }
+  .panel button[aria-pressed=true] { border-color:var(--line); }
+  .panel button:focus-visible { outline:1.5px dashed var(--accent); outline-offset:2px; }
+</style>
+</head>
+<body>
+<div class="env" aria-hidden="true"><div class="sky"></div><div class="sun"></div></div>
+<div id="scene" aria-hidden="true"></div>
+<svg id="signal" aria-hidden="true"><defs><linearGradient id="beam" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffe9c4" stop-opacity=".34"/><stop offset="1" stop-color="#ffe9c4" stop-opacity=".05"/></linearGradient><radialGradient id="pool"><stop offset="0" stop-color="#ffe9c4" stop-opacity=".2"/><stop offset=".7" stop-color="#ffe9c4" stop-opacity=".12"/><stop offset="1" stop-color="#ffe9c4" stop-opacity="0"/></radialGradient></defs><filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="9"/></filter><filter id="softer" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.4"/></filter><polygon id="cone" fill="url(#beam)" filter="url(#soft)"/><ellipse id="pool-e" fill="url(#pool)" filter="url(#soft)"/><polygon id="mark" fill="#07080c" fill-opacity=".62" filter="url(#softer)"/></svg>
+<main id="page" class="page" tabindex="-1">
+  <div class="hero"><h1 id="name">Shubham Prakash</h1><p class="hint">Placeholder name. Move the pointer, then scroll.</p></div>
+  <div class="long" id="long"></div>
+</main>
+<header class="site-header">
+  <a class="bp" data-variant="secondary" data-size="sm" data-texture="hatch" data-shadow="br" data-hover="shadow" data-press="keycap" data-sway="off" href="#" aria-label="Home"><span class="bp-ghost"><i class="g-h"></i><i class="g-v"></i></span><i class="bp-link l1"></i><i class="bp-link l2"></i><i class="bp-link l3"></i><span class="bp-body"><span class="bp-tex"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i></span><span class="bp-crease"><i class="t"></i><i class="l"></i><i class="r"></i><i class="b"></i></span><span class="bp-frame"></span><span class="bp-label">SP</span></span></a>
+  <nav aria-label="Main"><a class="bp" data-variant="primary" data-size="sm" data-texture="hatch" data-shadow="br" data-hover="shadow" data-press="keycap" data-sway="off" href="#"><span class="bp-ghost"><i class="g-h"></i><i class="g-v"></i></span><i class="bp-link l1"></i><i class="bp-link l2"></i><i class="bp-link l3"></i><span class="bp-body"><span class="bp-tex"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i></span><span class="bp-crease"><i class="t"></i><i class="l"></i><i class="r"></i><i class="b"></i></span><span class="bp-frame"></span><span class="bp-label">Projects</span></span></a></nav>
+</header>
+<div class="film" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div>
+<aside class="panel" id="panel" aria-label="Prototype controls"></aside>
+
+<script src="palettes.js"></script>
+<script src="gotham.js"></script>
+<script>
+(() => {
+  const root = document.documentElement, qs = new URLSearchParams(location.search), page = document.getElementById('page');
+  const state = { time: qs.get('time') || 'day', palette: qs.get('palette') || 'oldgotham', depth: qs.get('depth') || 'big', sway: 'full', haze: 'full', dust: 'full', density: qs.get('density') || 'normal', reach: 'mid', text: qs.get('text') || 'off', panel: qs.get('panel') || 'on' };
+  const NUM = { depth: { off: 0, low: .5, full: 1, big: 1.7 }, sway: { off: 0, low: .5, full: 1, big: 1.6 }, haze: { low: .55, full: 1, thick: 1.5 }, dust: { off: 0, low: .5, full: 1, big: 1.7 }, density: { sparse: .8, normal: 1, dense: 1.3 }, reach: { short: .8, mid: 1, tall: 1.15 } };
+  document.getElementById('long').innerHTML = '';
+  const paint = () => {
+    const look = Gotham.looks(state.time, PALETTES[state.palette]), s = root.style;
+    look.sky.forEach((c, i) => s.setProperty(`--sky-${i}`, c));
+    Object.entries({ '--glow': look.glow, '--ink': look.ink, '--ink-2': look.ink2, '--line': look.line, '--line-rest': look.lineRest, '--accent': look.accent, '--paper': look.paper, '--vignette': state.time === 'night' ? 'rgba(0,0,0,.6)' : 'rgba(40,28,22,.16)' }).forEach(([k, v]) => s.setProperty(k, v));
+    root.dataset.time = state.time;
+  };
+  paint();
+  const toScene = () => ({ time: state.time, palette: PALETTES[state.palette], depth: NUM.depth[state.depth], sway: NUM.sway[state.sway], haze: NUM.haze[state.haze], dust: NUM.dust[state.dust], density: NUM.density[state.density], reach: NUM.reach[state.reach] });
+  const start = () => {
+    const scene = Gotham.mount(document.getElementById('scene'), { ...toScene(), scrollY: () => page.scrollTop });
+    window.__scene = scene;
+
+    /* The signal: one beam from a roof, landing behind the name. */
+    const half = [[0,-.13],[.055,-.13],[.075,-.33],[.125,-.12],[.21,-.13],[.3,-.3],[.53,-.35],[.82,-.22],[1,.03],[.84,-.04],[.74,.05],[.66,.22],[.54,.11],[.42,.13],[.34,.32],[.22,.21],[.12,.25],[0,.48]];
+    const outline = [...half, ...half.slice(1, -1).reverse().map(([x, y]) => [-x, y])];
+    const aimSignal = () => {
+      const n = document.getElementById('name').getBoundingClientRect(), W = innerWidth, sx = W * .16, sy = Math.min(innerHeight * .3, 300);
+      const tx = n.left + Math.min(n.width, W * .6) * .62, ty = n.top - n.height * .55, spread = Math.min(n.width, W) * .2;
+      const dx = tx - sx, dy = ty - sy, l = Math.hypot(dx, dy) || 1, nx = -dy / l, ny = dx / l;
+      document.getElementById('cone').setAttribute('points', `${sx - 4},${sy} ${sx + 4},${sy} ${tx + nx * spread},${ty + ny * spread * .5} ${tx - nx * spread},${ty - ny * spread * .5}`);
+      const b = document.getElementById('beam'); b.setAttribute('x1', sx); b.setAttribute('y1', sy); b.setAttribute('x2', tx); b.setAttribute('y2', ty);
+      const e = document.getElementById('pool-e'); e.setAttribute('cx', tx); e.setAttribute('cy', ty); e.setAttribute('rx', spread * 1.25); e.setAttribute('ry', spread * .72);
+      document.getElementById('mark').setAttribute('points', outline.map(([x, y]) => `${(tx + x * spread * .82).toFixed(1)},${(ty + y * spread * .62).toFixed(1)}`).join(' '));
+    };
+    aimSignal();
+    page.addEventListener('scroll', aimSignal, { passive: true });
+    addEventListener('resize', aimSignal);
+
+    /* Prototype controls. */
+    const GROUPS = { time: ['day', 'night'], palette: Object.keys(PALETTES), depth: Object.keys(NUM.depth), sway: Object.keys(NUM.sway), haze: Object.keys(NUM.haze), dust: Object.keys(NUM.dust), density: Object.keys(NUM.density), reach: Object.keys(NUM.reach), text: ['off', 'on'] };
+    const panel = document.getElementById('panel');
+    if (state.panel === 'off') panel.hidden = true;
+    let open = true;
+    const render = () => {
+      panel.innerHTML = `<button id="tog">${open ? 'Hide' : 'Controls'}</button>` + (open ? Object.entries(GROUPS).map(([k, opts]) => `<div role="group" aria-label="${k}"><span>${k}</span>${opts.map((v) => `<button data-k="${k}" data-v="${v}" aria-pressed="${state[k] === v}">${k === 'palette' ? PALETTES[v].name : v}</button>`).join('')}</div>`).join('') : '');
+      panel.querySelector('#tog').onclick = () => { open = !open; render(); };
+      panel.querySelectorAll('[data-k]').forEach((b) => b.onclick = () => {
+        state[b.dataset.k] = b.dataset.v;
+        if (b.dataset.k === 'text') document.getElementById('long').innerHTML = state.text === 'on' ? Array.from({ length: 60 }, () => '<p>Test text, only to judge how the scene behaves behind content. It is not going on the site.</p>').join('') : '';
+        paint(); scene.set(toScene()); aimSignal(); render();
+      });
+    };
+    render();
+    if (state.text === 'on') document.getElementById('long').innerHTML = Array.from({ length: 60 }, () => '<p>Test text, only to judge how the scene behaves behind content. It is not going on the site.</p>').join('');
+    document.querySelectorAll('a[href="#"]').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+  };
+  // Wait for the font, because the Wayne sign is drawn into the art.
+  (document.fonts ? Promise.race([document.fonts.load('700 16px "Barlow Semi Condensed"'), new Promise((r) => setTimeout(r, 1500))]) : Promise.resolve()).then(start);
+})();
+</script>
+</body>
+</html>
