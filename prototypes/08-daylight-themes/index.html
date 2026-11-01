@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-backing="clear" data-palette="dust">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daylight Themes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../06-project-card/bp.css">
+<link rel="stylesheet" href="../06-project-card/card.css">
+<style>
+  /* Registered so a theme change fades like a slow change of light, instead of snapping. */
+  @property --sky-0 { syntax:"<color>"; inherits:true; initial-value:#ebdfc8; }
+  @property --sky-1 { syntax:"<color>"; inherits:true; initial-value:#dfd0b9; }
+  @property --sky-2 { syntax:"<color>"; inherits:true; initial-value:#d0c0ae; }
+  @property --sky-3 { syntax:"<color>"; inherits:true; initial-value:#c6b6a8; }
+  @property --glow { syntax:"<color>"; inherits:true; initial-value:transparent; }
+  @property --base { syntax:"<color>"; inherits:true; initial-value:#dfd0b9; }
+  @property --paper { syntax:"<color>"; inherits:true; initial-value:#efe6d4; }
+  @property --ink { syntax:"<color>"; inherits:true; initial-value:#221b17; }
+  @property --ink-2 { syntax:"<color>"; inherits:true; initial-value:#544539; }
+  @property --line { syntax:"<color>"; inherits:true; initial-value:#43352b; }
+  @property --line-rest { syntax:"<color>"; inherits:true; initial-value:#43352b; }
+  @property --accent { syntax:"<color>"; inherits:true; initial-value:#9c4a1b; }
+  @property --grid { syntax:"<color>"; inherits:true; initial-value:transparent; }
+  /* Only after the first paint: a page should open already in its theme, not fade into it. */
+  :root[data-ready] { transition:--sky-0 var(--fade), --sky-1 var(--fade), --sky-2 var(--fade), --sky-3 var(--fade), --glow var(--fade), --base var(--fade), --paper var(--fade), --ink var(--fade), --ink-2 var(--fade), --line var(--fade), --line-rest var(--fade), --accent var(--fade), --grid var(--fade); }
+  :root { --fade:1.4s cubic-bezier(.22,.61,.36,1); }
+  @media (prefers-reduced-motion:reduce) { :root { --fade:.01s; } }
+  html { background:var(--sky-3); }
+  html, body { background-color:transparent; }
+  html { background-color:var(--sky-3); }
+  body { position:relative; min-height:100vh; padding:9vh 6vw 150px; }
+
+  /* The environment: one film stock across the whole page. A low sun, smoke settling downwards, then grain. */
+  .sky, .sun, .grain { position:fixed; inset:0; pointer-events:none; }
+  .sky { z-index:-3; background:linear-gradient(172deg, var(--sky-0) 0%, var(--sky-1) 38%, var(--sky-2) 72%, var(--sky-3) 100%); }
+  .sun { z-index:-2; background:radial-gradient(90% 62% at 84% -8%, var(--glow), transparent 68%); }
+  /* Grey noise in soft-light moves pixels both ways, so the grain doesn't darken the page or lower text contrast. */
+  .grain { z-index:-1; opacity:var(--grain); mix-blend-mode:soft-light; background-size:220px 220px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  [data-film="off"] .grain { display:none; }
+  [data-film="off"] .sun { display:none; }
+
+  .page { max-width:1120px; margin:0 auto; display:grid; grid-template-columns:1fr minmax(0, 480px); gap:50px 64px; align-items:start; }
+  h1 { margin:0; font:600 clamp(48px,7vw,84px)/.98 var(--label); letter-spacing:.008em; color:var(--ink); }
+  .intro p { max-width:32em; margin:20px 0 28px; font-size:19px; line-height:1.5; color:var(--ink-2); }
+  .row { display:flex; flex-wrap:wrap; gap:22px; }
+  .about { margin-top:48px; padding-top:22px; position:relative; border-top:1px solid var(--line-rest); }
+  .about h2 { margin:0 0 10px; font:500 11.5px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); }
+  .about p { margin:0 0 12px; max-width:34em; color:var(--ink); }
+  .about .accent { color:var(--accent); font-weight:500; }
+  .swatches { grid-column:1/-1; display:grid; grid-template-columns:repeat(auto-fit, minmax(128px, 1fr)); gap:18px 14px; margin-top:10px; }
+  .sw { font:500 11px/1.45 var(--mono); color:var(--ink-2); min-width:0; }
+  .sw i { display:block; height:46px; margin-bottom:7px; border:1px solid var(--line-rest); }
+  .sw b { display:block; font-weight:500; color:var(--ink); }
+  .ok::after { content:" pass"; color:var(--ink); }
+  .note { grid-column:1/-1; margin:0; font:500 11.5px/1.5 var(--mono); color:var(--ink-2); }
+  @media (max-width:880px) { .page { grid-template-columns:1fr; } }
+
+  .controls { position:fixed; z-index:3; left:50%; bottom:14px; transform:translateX(-50%); display:flex; flex-wrap:wrap; justify-content:center; gap:6px 16px; width:max-content; max-width:calc(100vw - 20px); padding:9px 12px; font:12px/1 ui-monospace,Menlo,monospace; color:var(--ink-2); background:var(--chrome); border:1px solid var(--chrome-line); backdrop-filter:blur(8px); }
+  .group { display:flex; align-items:center; gap:3px; }
+  .group > span { margin-right:4px; opacity:.75; }
+  .controls button { font:inherit; padding:6px 7px; color:inherit; background:transparent; border:1px solid transparent; cursor:pointer; }
+  .controls button[aria-pressed="true"] { color:var(--ink); border-color:var(--line-rest); }
+  .controls button:focus-visible { outline:2px solid currentColor; outline-offset:1px; }
+</style>
+</head>
+<body>
+<div class="sky"></div><div class="sun"></div><div class="grain"></div>
+<main class="page">
+  <div class="intro">
+    <h1>Shubham Prakash</h1>
+    <p>Placeholder intro, here only to judge how body text reads on this color. The real words come later.</p>
+    <div class="row">
+      <a class="bp" data-icon="arrow" href="#">View projects</a>
+      <a class="bp secondary" data-icon="code" href="#">GitHub</a>
+    </div>
+    <div class="about">
+      <h2>Reading check</h2>
+      <p>Main text in ink. It should feel like print on dusty paper: comfortable, formal, and easy to read for a long time.</p>
+      <p style="color:var(--ink-2)">Secondary text is softer, for dates and small notes.</p>
+      <p class="accent">Accent is used rarely, for one small thing that matters.</p>
+    </div>
+  </div>
+
+  <article class="pc" id="card">
+    <span class="pc-face"></span>
+    <span class="pc-ghost"><i class="g-h"></i><i class="g-v"></i></span>
+    <i class="pc-link l1"></i><i class="pc-link l2"></i><i class="pc-link l3"></i>
+    <span class="pc-tex"></span>
+    <span class="pc-frame"></span>
+    <div class="pc-stage"><canvas aria-hidden="true"></canvas><span class="reg tl"></span><span class="reg tr"></span></div>
+    <div class="pc-sheet">
+      <p class="pc-meta"><span>SHEET 01</span><span>PYTHON · GITHUB PAGES</span><span class="live">LIVE, DAILY 08:30 IST</span></p>
+      <h3 class="pc-title"><a class="pc-main" href="#">EverythingTech</a>
+        <svg class="pc-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.3C8 11.7 15 12.3 20.5 12"/><path d="M14.5 6.1C16.6 8.2 18.6 9.9 20.8 12C18.7 14 16.8 16.1 14.8 18.2"/></svg>
+      </h3>
+      <p class="pc-line">A daily tech newspaper with no human editor. It reads 45+ sources overnight, merges the duplicates and writes each story from the full article.</p>
+      <div class="pc-links"><a class="bp sm" data-icon="link" href="#">Today's paper</a><a class="bp sm secondary" data-icon="code" href="#">Code</a></div>
+    </div>
+  </article>
+
+  <div class="swatches" id="swatches"></div>
+  <p class="note" id="note"></p>
+</main>
+
+<div class="controls" aria-label="Prototype controls">
+  <div class="group" data-set="palette" aria-label="Palette"><span>Theme</span><button data-v="dust">Dust</button><button data-v="sodium">Sodium</button><button data-v="smog">Smog</button><button data-v="storm">Storm</button></div>
+  <div class="group" aria-label="Rotate"><span>Rotate</span><button id="next">Next</button><button id="auto" aria-pressed="false">Auto</button></div>
+  <div class="group" data-set="film" aria-label="Film treatment"><span>Film</span><button data-v="on">On</button><button data-v="off">Off</button></div>
+  <div class="group" data-set="grain" aria-label="Grain"><span>Grain</span><button data-v="low">Low</button><button data-v="mid">Mid</button><button data-v="high">High</button></div>
+</div>
+
+<script src="palettes.js"></script>
+<script src="../06-project-card/bp.js"></script>
+<script src="../06-project-card/newsletter-fold.js"></script>
+<script>
+(() => {
+  const root = document.documentElement, qs = new URLSearchParams(location.search);
+  const state = { palette: qs.get('palette') || 'dust', film: qs.get('film') || 'on', grain: qs.get('grain') || 'mid' };
+  const GRAIN = { low: .3, mid: .55, high: .85 };
+  document.querySelectorAll('a[href="#"]').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+  const graphic = NewsletterFold.mount(document.querySelector('#card canvas'), { pointerHost: document.getElementById('card'), startAt: qs.has('t') ? +qs.get('t') : 4.4, plays: qs.get('plays') || 'always' });
+  window.__graphic = graphic;
+
+  const ORDER = ['dust', 'sodium', 'smog', 'storm'];
+  // While the page fades, the canvas drawing keeps re-reading the colors so it fades with everything else.
+  let fadeUntil = 0, fading = false;
+  const followFade = () => { root.dataset.theme = 'light'; if (performance.now() < fadeUntil) requestAnimationFrame(followFade); else fading = false; };
+  const startFade = () => { fadeUntil = performance.now() + 1500; if (!fading) { fading = true; requestAnimationFrame(followFade); } };
+
+  function apply() {
+    const p = PALETTES[state.palette], s = root.style, worst = p.sky[3];
+    p.sky.forEach((c, i) => s.setProperty(`--sky-${i}`, c));
+    const set = { '--base': p.sky[1], '--glow': p.glow, '--paper': p.paper, '--ink': p.ink, '--ink-2': p.ink2, '--line': p.line, '--line-rest': p.lineRest, '--accent': p.accent, '--grid': p.grid, '--grain': GRAIN[state.grain], '--chrome': `color-mix(in srgb, ${p.paper} 88%, transparent)`, '--chrome-line': p.lineRest };
+    Object.entries(set).forEach(([k, v]) => s.setProperty(k, v));
+    Object.assign(root.dataset, { palette: state.palette, film: state.film, theme: 'light' }); // re-setting the theme makes the drawing re-read its colors
+    const row = (name, hex, min) => { const r = contrast(hex, worst); return `<div class="sw"><i style="background:${hex}"></i><b>${name}</b>${hex}${min ? `<br><span class="${r >= min ? 'ok' : ''}">${r.toFixed(1)}:1, needs ${min}</span>` : ''}</div>`; };
+    document.getElementById('swatches').innerHTML =
+      p.sky.map((c, i) => row(`Sky ${i + 1}`, c)).join('') + row('Paper', p.paper) + row('Ink', p.ink, 7) + row('Ink soft', p.ink2, 4.5) + row('Line', p.line, 3) + row('Accent', p.accent, 3);
+    document.getElementById('note').textContent = `${p.name}: ${p.from}. Contrast is measured against Sky 4, the darkest part of the page. The accent's 3:1 is for icons and marks, not small text.`;
+    document.querySelectorAll('[data-set]').forEach((g) => g.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === state[g.dataset.set])));
+  }
+  document.querySelectorAll('[data-set] button').forEach((b) => b.onclick = () => { state[b.parentElement.dataset.set] = b.dataset.v; apply(); startFade(); });
+  addEventListener('keydown', (e) => { const k = { 1: 'dust', 2: 'sodium', 3: 'smog', 4: 'storm' }[e.key]; if (k) { state.palette = k; apply(); startFade(); } });
+  const next = () => { state.palette = ORDER[(ORDER.indexOf(state.palette) + 1) % ORDER.length]; apply(); startFade(); };
+  document.getElementById('next').onclick = next;
+  let timer = 0; const autoBtn = document.getElementById('auto');
+  autoBtn.onclick = () => { if (timer) { clearInterval(timer); timer = 0; } else timer = setInterval(next, 7000); autoBtn.setAttribute('aria-pressed', !!timer); };
+  apply();
+  requestAnimationFrame(() => requestAnimationFrame(() => { root.dataset.ready = ''; }));
+})();
+</script>
+</body>
+</html>

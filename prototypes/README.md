@@ -11,5 +11,6 @@ Keep every prototype here. Don't overwrite or delete one: new ideas get a new nu
 | `05-button-soft` | The same button with slower, softer hover motion. `04-button` keeps the original feel. |
 | `06-project-card` | Project card with a live folding-newspaper drawing, an empty template and a mock `/projects/everything-tech` page |
 | `07-light-palette` | Three daytime Gotham palettes with film gradient and grain, shown on the real button and card. Uses files from `06-project-card`. |
+| `08-daylight-themes` | Four daytime themes with a rotate switch and a soft fade: Dust, Sodium (5% less saturated), Smog (blue haze, less green) and Storm. Uses files from `06-project-card`. |
 
 The Batcave here is a stand-in. In the final build it needs to be much more realistic, with smoother animation and much better suits.
