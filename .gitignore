@@ -5,4 +5,10 @@ out/
 next-env.d.ts
 .DS_Store
 .env*
-.claude/settings.local.json
+
+# Private: never published. This repo is public, so these stay on this machine only.
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+docs/
+*.local.*
