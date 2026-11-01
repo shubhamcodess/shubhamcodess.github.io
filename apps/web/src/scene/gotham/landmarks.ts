@@ -66,6 +66,43 @@ function wayneSign(x: Ctx, r: Random, st: Style, cx: number, cy: number, w: numb
   x.save(); x.translate(cx, cy); x.rotate(Math.PI); x.globalAlpha = 0.9; x.drawImage(off, -cw / 2, -ch / 2, cw, ch); x.restore();
 }
 
+/* A carved piece of the tower, not a flat shape: ribs, courses of stone, a few slit windows and weather, shaded by which way it faces. */
+function stoneFace(x: Ctx, r: Random, st: Style, pts: readonly (readonly [number, number])[], tone: string) {
+  const xs = pts.map(([a]) => a), ys = pts.map(([, b]) => b);
+  const [l, t, rt, b] = [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)], w = rt - l, h = b - t;
+  x.save(); x.beginPath();
+  pts.forEach(([a, c], i) => (i ? x.lineTo(a, c) : x.moveTo(a, c)));
+  x.closePath(); x.clip();
+  x.fillStyle = tone; x.fillRect(l, t, w, h);
+  // Upright ribs, as on the shaft.
+  x.fillStyle = st.ribC;
+  for (let u = l + 3 + r() * 2; u < rt; u += Math.max(3.5, st.cell * 1.5)) x.fillRect(u, t, 0.7, h);
+  // Slit windows, sparse and mostly dark.
+  const cw = Math.max(1, st.cell * 0.55), ch = cw * 2.6;
+  for (let v = t + 3; v < b; v += ch * 1.7) {
+    for (let u = l + 2; u < rt - cw; u += cw * 3.2) {
+      if (r() > 0.58) continue;
+      const on = r() < st.lit * 0.5;
+      x.fillStyle = on ? st.win : st.pane; x.globalAlpha = on ? 0.8 : 0.6;
+      x.fillRect(u, v, cw, ch);
+    }
+  }
+  x.globalAlpha = 1;
+  // Courses of stone, with a bright ledge every few.
+  let course = 0;
+  for (let v = t + 5; v < b; v += Math.max(5, h * 0.075), course++) {
+    x.fillStyle = course % 3 === 2 ? st.ledge : st.ribC;
+    x.fillRect(l, v, w, course % 3 === 2 ? 1 : 0.6);
+  }
+  // Weather runs towards the ground, up the screen.
+  for (let i = 0; i < Math.max(4, Math.round((w * h) / 320)); i++) {
+    const sx = l + r() * w, top = t + r() * h, len = Math.min(top - t, 8 + r() * 34), g = x.createLinearGradient(0, top, 0, top - len);
+    g.addColorStop(0, alpha(r() < 0.7 ? st.grime : st.stain, 0.14 + r() * 0.3)); g.addColorStop(1, alpha(st.grime, 0));
+    x.fillStyle = g; x.fillRect(sx, top - len, 0.7 + r() * 1.6, len);
+  }
+  x.restore();
+}
+
 /* On a narrow screen the tower keeps its proportions rather than shrinking with the width. */
 const wayneSize = (c: LandmarkContext) => {
   const H = c.H * 0.92 * c.reach;
@@ -95,11 +132,13 @@ export const LANDMARKS = {
         const w = W * wf, h = H * hf;
         wall(x, r, st, cx, y, w, h, i ? 1.3 : 1);
         y += h;
-        // Buttress fins and small gargoyles at each setback.
-        x.fillStyle = st.body;
+        // Buttress fins and small gargoyles at each setback, carved like the wall they grow from.
+        const away = st.sunX > cx ? -1 : 1;
         for (const s of [-1, 1]) {
-          tri(x, cx + s * w * 0.5, y - h * 0.6, cx + s * w * 0.5, y, cx + s * (w * 0.5 + W * 0.045), y - h * 0.02);
-          if (i < 3) tri(x, cx + s * w * 0.5, y, cx + s * w * 0.32, y, cx + s * w * 0.47, y + H * 0.028);
+          const tone = s === away ? st.side : st.body, edge = cx + s * w * 0.5;
+          stoneFace(x, r, st, [[edge, y - h * 0.6], [edge, y], [edge + s * W * 0.045, y - h * 0.02]], tone);
+          x.strokeStyle = st.ledge; x.lineWidth = 0.8; x.beginPath(); x.moveTo(edge, y - h * 0.6); x.lineTo(edge + s * W * 0.045, y - h * 0.02); x.stroke();
+          if (i < 3) stoneFace(x, r, st, [[edge, y], [cx + s * w * 0.32, y], [cx + s * w * 0.47, y + H * 0.028]], tone);
         }
       });
       // Long lancet windows run up the shaft: the tower's vertical drama.
@@ -110,14 +149,24 @@ export const LANDMARKS = {
       }
       // The crown: a lit core, two tall horns, and a low gable between them.
       const { top, sh, cw } = crown(H, W);
-      x.fillStyle = st.body;
-      x.fillRect(cx - cw / 2, top, cw, sh * 0.3);
-      tri(x, cx - cw * 0.5, top + sh * 0.3 - 1, cx - cw * 0.14, top + sh * 0.3 - 1, cx - cw * 0.4, top + sh);
-      tri(x, cx + cw * 0.5, top + sh * 0.3 - 1, cx + cw * 0.14, top + sh * 0.3 - 1, cx + cw * 0.4, top + sh);
-      tri(x, cx - cw * 0.2, top + sh * 0.3 - 1, cx + cw * 0.2, top + sh * 0.3 - 1, cx, top + sh * 0.5);
-      x.fillStyle = st.side;
-      const away = st.sunX > cx ? -1 : 1;
-      tri(x, cx + away * cw * 0.5, top + sh * 0.3 - 1, cx + away * cw * 0.32, top + sh * 0.3 - 1, cx + away * cw * 0.4, top + sh);
+      const spring = top + sh * 0.3, away = st.sunX > cx ? -1 : 1;
+      wall(x, r, st, cx, top, cw, sh * 0.3, 1.3);
+      // Each horn has two faces meeting at a ridge, one in the light and one in shade, tapering through courses of stone.
+      for (const s of [-1, 1]) {
+        const tip: readonly [number, number] = [cx + s * cw * 0.4, top + sh], outer = cx + s * cw * 0.5, inner = cx + s * cw * 0.14, ridge = cx + s * cw * 0.33;
+        stoneFace(x, r, st, [[outer, spring - 1], [ridge, spring - 1], tip], s === away ? st.side : st.body);
+        stoneFace(x, r, st, [[inner, spring - 1], [ridge, spring - 1], tip], s === away ? st.body : st.side);
+        x.strokeStyle = st.ledge; x.lineWidth = 0.7; x.beginPath(); x.moveTo(ridge, spring - 1); x.lineTo(tip[0], tip[1]); x.stroke();
+      }
+      // The gable between them, with a louvred vent.
+      stoneFace(x, r, st, [[cx - cw * 0.2, spring - 1], [cx + cw * 0.2, spring - 1], [cx, top + sh * 0.5]], st.body);
+      x.strokeStyle = st.slot; x.lineWidth = 0.8; x.beginPath();
+      for (let i = 1; i < 5; i++) { const v = spring + (sh * 0.13 * i) / 5, half = cw * 0.1 * (1 - i / 5.5); x.moveTo(cx - half, v); x.lineTo(cx + half, v); }
+      x.stroke();
+      // A heavy cornice where the horns spring from the core, with brackets under it.
+      x.fillStyle = st.ledge; x.fillRect(cx - cw * 0.53, spring - 1.5, cw * 1.06, 2);
+      x.fillStyle = st.slot;
+      for (let u = -0.48; u <= 0.48; u += 0.08) x.fillRect(cx + u * cw - 0.6, spring - 4.5, 1.2, 3);
       c.beacon(cx - cw * 0.4, top + sh); c.beacon(cx + cw * 0.4, top + sh);
     },
     after(x, r, st, c) {
@@ -163,13 +212,36 @@ export const LANDMARKS = {
     reserve(c) { const { a, b, span } = bridgeAt(c); return [a - span * 0.05, b + span * 0.05, 0.5]; },
     draw(x, _r, st, c) {
       const { cx, span, a, b } = bridgeAt(c), th = c.H * 0.64 * c.reach, deck = th * 0.5;
-      const tower = (tx: number) => {
-        x.fillStyle = st.body;
-        for (const s of [-1, 1]) x.fillRect(tx + s * span * 0.03 - 2.5, 0, 5, th);
-        x.strokeStyle = st.body; x.lineWidth = 1.6; x.beginPath();
-        for (let y = deck * 0.25; y < th - 20; y += th * 0.15) { x.moveTo(tx - span * 0.03, y); x.lineTo(tx + span * 0.03, y + th * 0.15); x.moveTo(tx + span * 0.03, y); x.lineTo(tx - span * 0.03, y + th * 0.15); }
+      // The legs thin out into the haze as they go down, so the towers don't stab at what's below.
+      const fade = x.createLinearGradient(0, deck, 0, th * 1.07);
+      fade.addColorStop(0, st.body); fade.addColorStop(1, alpha(st.body, 0.42));
+      const leg = span * 0.03;
+      const tower = (tx: number, end: (tx: number) => void) => {
+        x.fillStyle = fade; x.strokeStyle = fade;
+        for (const s of [-1, 1]) x.fillRect(tx + s * leg - 2, 0, 4, th);
+        x.lineWidth = 1.3; x.beginPath();
+        for (let y = deck * 0.25; y < th - 20; y += th * 0.15) { x.moveTo(tx - leg, y); x.lineTo(tx + leg, y + th * 0.15); x.moveTo(tx + leg, y); x.lineTo(tx - leg, y + th * 0.15); }
         x.stroke();
-        tri(x, tx - span * 0.04, th, tx + span * 0.04, th, tx, th + th * 0.1);
+        end(tx);
+      };
+      // Two different engineers. One ends in an open saddle frame with a thin mast.
+      const saddleFrame = (tx: number) => {
+        x.fillRect(tx - leg - 4, th - 1, leg * 2 + 8, 3);
+        x.lineWidth = 1; x.beginPath();
+        x.moveTo(tx - leg, th + 2); x.lineTo(tx, th + th * 0.035); x.lineTo(tx + leg, th + 2);
+        x.moveTo(tx, th + th * 0.035); x.lineTo(tx, th + th * 0.075);
+        x.stroke();
+      };
+      // The other ends in a short lantern: a little open box between its legs, and two uneven pinnacles.
+      const lantern = (tx: number) => {
+        const h = th * 0.028;
+        x.lineWidth = 1; x.strokeRect(tx - leg * 0.55, th - h * 0.2, leg * 1.1, h);
+        x.beginPath();
+        x.moveTo(tx - leg * 0.55, th + h * 0.8); x.lineTo(tx + leg * 0.55, th - h * 0.2);
+        x.moveTo(tx - leg, th); x.lineTo(tx - leg, th + th * 0.03);
+        x.moveTo(tx + leg, th); x.lineTo(tx + leg, th + th * 0.05);
+        x.stroke();
+        x.fillRect(tx - leg - 3.5, th - 1, 7, 2); x.fillRect(tx + leg - 3.5, th - 1, 7, 2);
       };
       const crest = deck * 1.02 - (th - deck) * 0.96;
       x.fillStyle = st.body; x.fillRect(a - span * 0.32, deck, span * 1.64, 5);
@@ -179,7 +251,7 @@ export const LANDMARKS = {
       x.lineWidth = 0.6; x.beginPath();
       for (let i = 1; i < 26; i++) { const u = i / 26; x.moveTo(a + span * u, deck + 3); x.lineTo(a + span * u, th + (crest - th) * 2 * u * (1 - u)); }
       x.stroke();
-      tower(a); tower(b);
+      tower(a, saddleFrame); tower(b, lantern);
     },
   },
   /* A crane on an unfinished tower: Gotham is always half-built. */
