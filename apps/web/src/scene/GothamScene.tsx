@@ -24,7 +24,8 @@ export function GothamScene() {
     let scene: ReturnType<typeof mountGotham> | undefined, gone = false;
     let watch: MutationObserver | undefined;
     // The name on Wayne Tower and the word GOTHAM are drawn into the art, so wait for the font.
-    const ready = Promise.race([document.fonts.load(`700 40px ${family}`), new Promise((done) => setTimeout(done, 1500))]);
+    // Not forever, and a font that fails to load must never stop the city: the lettering just uses the fallback.
+    const ready = Promise.race([document.fonts.load(`700 40px ${family}`).catch(() => undefined), new Promise((done) => setTimeout(done, 1500))]);
     void ready.then(() => {
       if (gone) return;
       scene = mountGotham(el, page, read);

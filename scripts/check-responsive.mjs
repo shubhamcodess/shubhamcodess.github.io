@@ -46,6 +46,16 @@ for (const [width, height] of WIDTHS) {
   }
   await page.close();
 }
+// A font that fails to load must not stop the city. This once left phones with a plain background.
+{
+  const page = await browser.newPage({ viewport: { width: 375, height: 812 } });
+  await page.route("**/*.woff2", (route) => route.abort());
+  await page.goto(`${base}/`);
+  const drawn = await page.waitForSelector("#scene .g-hero canvas", { timeout: 5000 }).then(() => true, () => false);
+  if (!drawn) failures.push("fonts blocked: the scene didn't draw");
+  console.log(`${drawn ? "ok  " : "FAIL"} fonts blocked  /`);
+  await page.close();
+}
 await browser.close();
 server.close();
 if (failures.length) { console.error(failures.join("\n")); process.exit(1); }
