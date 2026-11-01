@@ -26,7 +26,7 @@ type MotionKey = (typeof MOTION_KEYS)[number];
 const MOTION_LABEL: Record<MotionKey, string> = { iconHover: "Icon hover (site default)", textHover: "Text hover (site default)" };
 
 export function BackgroundPanel() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [palette, setPalette] = useState<PaletteId | null>(null);
   const [grain, setGrain] = useState<keyof typeof GRAIN>("Theme");
   const [sun, setSun] = useState(true);
