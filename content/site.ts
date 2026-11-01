@@ -4,8 +4,8 @@ import { siteSchema, type SiteConfig } from "@portfolio/content/schema";
 const config = {
   name: "Shubham Prakash",
   description: "Shubham Prakash's corner of the internet.",
-  background: { default: "storm", onLoad: "random" },
-  flags: { writing: false, photography: false, ask: false, motion: true },
+  background: { default: "dust", onLoad: "config" },
+  flags: { writing: false, photography: false, ask: false, motion: true, backgroundPanel: true },
 } satisfies SiteConfig;
 
 export const site = siteSchema.parse(config);

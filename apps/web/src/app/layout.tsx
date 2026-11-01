@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { backgroundBootScript, paletteCss } from "@portfolio/design";
 import { site } from "@portfolio/site";
+import { BackgroundPanel } from "@/dev/BackgroundPanel";
 import "@portfolio/design/tokens.css";
 import "@portfolio/design/environment.css";
 import "./globals.css";
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <div className="environment-grain" />
         </div>
         {children}
+        {site.flags.backgroundPanel && <BackgroundPanel />}
       </body>
     </html>
   );

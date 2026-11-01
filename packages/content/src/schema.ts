@@ -10,7 +10,7 @@ export const siteSchema = z
     /** Light mode's background selection. onLoad: use the default, or one random pick per visit. */
     background: z.strictObject({ default: z.enum(PALETTE_IDS), onLoad: z.enum(["config", "random"]) }),
     /** Sections hidden until there is something to show. */
-    flags: z.strictObject({ writing: z.boolean(), photography: z.boolean(), ask: z.boolean(), motion: z.boolean() }),
+    flags: z.strictObject({ writing: z.boolean(), photography: z.boolean(), ask: z.boolean(), motion: z.boolean(), backgroundPanel: z.boolean() }),
   })
   .strict();
 export type SiteConfig = z.input<typeof siteSchema>;

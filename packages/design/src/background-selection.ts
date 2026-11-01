@@ -32,7 +32,16 @@ export type BackgroundMode = keyof typeof selectors;
 
 const STORAGE_KEY = "background-selection";
 
-/** Run a selector and show the result. For a future switch in the UI; nothing calls this yet. */
+function show(id: PaletteId, remember: boolean): PaletteId {
+  document.documentElement.dataset.palette = id;
+  try {
+    if (remember) localStorage.setItem(STORAGE_KEY, id);
+    else localStorage.removeItem(STORAGE_KEY);
+  } catch { /* storage can be blocked; the choice then lasts for this page only */ }
+  return id;
+}
+
+/** Run a selector and show the result. For a future switch in the UI. */
 export function selectBackground(mode: BackgroundMode): PaletteId {
   const root = document.documentElement;
   const id = selectors[mode]({
@@ -40,13 +49,11 @@ export function selectBackground(mode: BackgroundMode): PaletteId {
     configured: root.dataset.paletteDefault as PaletteId,
     list: PALETTE_IDS,
   });
-  root.dataset.palette = id;
-  try {
-    if (mode === "config") localStorage.removeItem(STORAGE_KEY);
-    else localStorage.setItem(STORAGE_KEY, id);
-  } catch { /* storage can be blocked; the choice then lasts for this page only */ }
-  return id;
+  return show(id, mode !== "config");
 }
+
+/** Show one named palette, for when someone chooses it directly. */
+export const pickBackground = (id: PaletteId): PaletteId => show(id, true);
 
 /**
  * Runs in <head> before the first paint, so the page opens in the right palette with no flash.

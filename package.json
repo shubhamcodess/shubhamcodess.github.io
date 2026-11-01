@@ -12,7 +12,8 @@
     "typecheck": "pnpm -r --if-present typecheck && tsc --noEmit -p tests",
     "test": "vitest run",
     "budget": "node scripts/check-budget.mjs",
-    "check": "pnpm typecheck && pnpm test && pnpm build && pnpm budget"
+    "responsive": "node scripts/check-responsive.mjs",
+    "check": "pnpm typecheck && pnpm test && pnpm build && pnpm budget && pnpm responsive"
   },
   "devDependencies": {
     "@portfolio/content": "workspace:*",
@@ -20,6 +21,7 @@
     "@portfolio/site": "workspace:*",
     "@types/node": "^26.6.6",
     "gray-matter": "^4.0.3",
+    "playwright": "^1.64.1",
     "typescript": "^7.0.2",
     "vitest": "^5.0.5"
   }

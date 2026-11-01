@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { backgroundBootScript, PALETTE_IDS, selectors, type BackgroundContext } from "@portfolio/design";
+import { backgroundBootScript, PALETTE_IDS, pickBackground, selectBackground, selectors, type BackgroundContext } from "@portfolio/design";
 
 const context: BackgroundContext = { current: "dust", configured: "smog", list: ["dust", "sodium", "smog", "storm"] };
 
@@ -53,5 +53,32 @@ describe("boot script", () => {
     const session = store();
     expect(run("random", store(), session, 0.99)).toBe(PALETTE_IDS[PALETTE_IDS.length - 1]);
     expect(run("random", store(), session, 0)).toBe(PALETTE_IDS[PALETTE_IDS.length - 1]);
+  });
+});
+
+describe("showing a palette", () => {
+  const setup = () => {
+    const data = new Map<string, string>();
+    const root = { dataset: { palette: "dust", paletteDefault: "smog" } };
+    vi.stubGlobal("document", { documentElement: root });
+    vi.stubGlobal("localStorage", { setItem: (k: string, v: string) => data.set(k, v), removeItem: (k: string) => data.delete(k) });
+    return { root, data };
+  };
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("a pick shows that palette and remembers it", () => {
+    const { root, data } = setup();
+    expect(pickBackground("storm")).toBe("storm");
+    expect(root.dataset.palette).toBe("storm");
+    expect(data.get("background-selection")).toBe("storm");
+  });
+
+  it("returning to the default forgets the stored choice", () => {
+    const { root, data } = setup();
+    selectBackground("next");
+    expect(data.has("background-selection")).toBe(true);
+    selectBackground("config");
+    expect(root.dataset.palette).toBe("smog");
+    expect(data.has("background-selection")).toBe(false);
   });
 });
