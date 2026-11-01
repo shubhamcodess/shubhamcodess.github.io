@@ -65,6 +65,7 @@ The Dark mode colors above are from the prototypes and aren't final.
 - **Hand in the drawing, not in the type.** Icons and drawings wobble slightly. Text is always a clean font.
 - **Amber is rare.** One or two touches per element, so it keeps its meaning.
 - **Soft motion.** Slow, smooth and without overshoot. Nothing shakes or bounces, and motion is a function of time.
+- **Browser parts belong to the design.** Anything the browser would draw itself gets our own version as it comes up. Done so far: scrollbar, tooltips, text selection. Never use a native `title`.
 - **Real facts only.** Every word and number on a component is true.
 
 **Never use:** rounded corners, drop-shadow blurs, purple or blue gradients, tag-pill clusters, stock icon sets, emoji as icons, fade-up on every element, or copy with no fact behind it.
@@ -109,6 +110,12 @@ Code: `packages/design/src/components/button`. The options are listed once in `o
 
 ### Header logo and theme button: Draft
 The logo is a blueprint drawing: SP in thin ink pen lines on a skewed plane, with a rust line-work batarang, faintly hatched inside, lodged in the top of the P. The throw plays on load. The theme button is the sm `Button` with one sun that shifts per theme. Details are in decision 015. Both live in the site, not the library, because they're Batman scenes.
+
+### Tooltip: Draft
+A small paper box with four drafting lines running past its corners, and the label font in ink. It appears after a short beat on mouse hover or keyboard focus, stays while the pointer is on it, and Escape dismisses it. `open` holds it open, for example to confirm a tap. It's only visual, so what it points at keeps its own accessible name. The header's menus use the same box.
+
+### Text selection
+Paper text on the active theme's accent color, set in `tokens.css`. A test keeps it readable in every theme.
 
 ### Scroll thumb: Approved
 Code: `packages/design/src/components/scroll-thumb`. It replaces the visible scrollbar with one small draggable shape that takes up no width. The shape is passed in: this site uses a small batarang, standing on end. It rests at `--scroll-thumb-top`, which this site sets to the bottom of the header. On hover it grows by 1.4 and darkens, softly. It's for pointers, while keyboards, wheels and touch scroll natively.

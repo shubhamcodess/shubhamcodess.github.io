@@ -20,7 +20,11 @@ html, body { height: 100%; overflow: hidden; }
 
 .header-nav, .header-wide { display: flex; align-items: center; gap: clamp(12px, 1.6vw, 22px); }
 .header-menu { position: relative; display: inline-block; }
-.header-menu-list { position: absolute; top: calc(100% + 12px); right: 0; min-width: 170px; margin: 0; padding: 6px; list-style: none; background: var(--paper); border: 1px solid var(--line-rest); }
+.header-menu-list { position: absolute; z-index: 20; top: calc(100% + 16px); right: 0; min-width: 170px; margin: 0; padding: 6px; list-style: none; background: var(--paper); }
+/* Same blueprint box as the tooltip: four lines running past the corners. */
+.header-menu-list::before, .header-menu-list::after { content: ""; position: absolute; pointer-events: none; }
+.header-menu-list::before { inset: 0 -6px; border-block: 1px solid var(--line); }
+.header-menu-list::after { inset: -6px 0; border-inline: 1px solid var(--line); }
 .header-menu-list a { display: flex; align-items: center; min-height: 44px; padding: 0 12px; color: var(--ink); font: 600 calc(var(--size) * .88)/1 var(--label); letter-spacing: var(--track); text-transform: uppercase; text-decoration: none; transition: background-color var(--dur-small-part) var(--ease-soft); }
 .header-menu-list a:hover { background: color-mix(in srgb, var(--line) 10%, transparent); }
 .header-menu-list a:focus-visible { outline: 1.5px dashed var(--accent); outline-offset: -3px; }
@@ -45,9 +49,9 @@ html, body { height: 100%; overflow: hidden; }
 
 /* The theme button: every theme's sun is here, stacked, and the active one shows, so it's right from the first paint.
    Changing theme shifts the old sun away and brings the new one in. */
-.theme-button .bp-body { padding-left: 11px; padding-right: 11px; }
-.theme-icons { position: relative; display: block; width: 20px; height: 20px; z-index: 1; }
-.theme-icons .bp-icon { position: absolute; inset: 0; width: 20px; height: 20px; opacity: 0; transform: translate(-4px, 3px) rotate(-22deg); transition: opacity var(--dur-frame) var(--ease-soft), transform var(--dur-frame) var(--ease-soft); }
+.site-header .bp.theme-button .bp-body { padding:8px 11px; }
+.theme-icons { position: relative; display: block; width: 22px; height: 22px; z-index: 1; }
+.site-header .bp.theme-button .theme-icons .bp-icon { position: absolute; inset: 0; width: 22px; height: 22px; stroke: var(--ink); stroke-width: 1.5; opacity: 0; transform: translate(-4px, 3px) rotate(-22deg); transition: opacity var(--dur-frame) var(--ease-soft), transform var(--dur-frame) var(--ease-soft); }
 
 /* The scene. Its foot fades, so it belongs to the page. */
 #scene {

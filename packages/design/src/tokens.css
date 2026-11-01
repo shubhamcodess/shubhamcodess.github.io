@@ -25,3 +25,6 @@
   --sx: 1;
   --sy: 1;
 }
+
+/* Browser parts follow the design as well: selected text uses the active theme's color. */
+::selection { background: var(--accent); color: var(--paper); }

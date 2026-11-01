@@ -1,0 +1,17 @@
+/* A small blueprint box: paper, with four drafting lines that run past the corners. Colors come only from tokens. */
+.bp-tip-anchor { position:relative; display:inline-block; }
+.bp-tip {
+  position:absolute; z-index:20; top:calc(100% + 16px); padding:8px 12px; background:var(--paper); color:var(--ink);
+  font:600 calc(var(--size, 16px) * .76)/1 var(--label); letter-spacing:var(--track, .1em); text-transform:uppercase; white-space:nowrap; user-select:none;
+  opacity:0; visibility:hidden; pointer-events:none; translate:0 -3px;
+  transition:opacity var(--dur-small-part) var(--ease-soft), translate var(--dur-small-part) var(--ease-soft), visibility 0s linear var(--dur-small-part);
+}
+.bp-tip::before, .bp-tip::after { content:""; position:absolute; pointer-events:none; }
+.bp-tip::before { inset:0 -6px; border-block:1px solid var(--line); }
+.bp-tip::after { inset:-6px 0; border-inline:1px solid var(--line); }
+.bp-tip[data-align="start"] { left:0; }
+.bp-tip[data-align="center"] { left:50%; transform:translateX(-50%); }
+.bp-tip[data-align="end"] { right:0; }
+/* A beat before it appears, so passing over a button doesn't flash it. */
+.bp-tip[data-open] { opacity:1; visibility:visible; pointer-events:auto; translate:0 0; transition:opacity var(--dur-small-part) var(--ease-soft) .18s, translate var(--dur-small-part) var(--ease-soft) .18s, visibility 0s linear .18s; }
+@media (prefers-reduced-motion: reduce) { .bp-tip, .bp-tip[data-open] { translate:0 0; transition-duration:.01s; } }

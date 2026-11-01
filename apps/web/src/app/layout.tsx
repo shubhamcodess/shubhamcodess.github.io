@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 // Shows the theme button's icon for the active theme, from the first paint and for any theme added later.
-const themeIconCss = PALETTE_IDS.map((id) => `[data-palette="${id}"] .theme-icon-${id}{opacity:1;transform:none}`).join("");
+const themeIconCss = PALETTE_IDS.map((id) => `[data-palette="${id}"] .site-header .bp.theme-button .theme-icons .theme-icon-${id}{opacity:1;transform:none}`).join("");
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const { default: palette, onLoad } = site.background;

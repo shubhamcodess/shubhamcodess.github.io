@@ -7,6 +7,7 @@
     ".": "./src/index.ts",
     "./palettes": "./src/palettes.ts",
     "./button": "./src/components/button/Button.tsx",
+    "./tooltip": "./src/components/tooltip/Tooltip.tsx",
     "./scroll-thumb": "./src/components/scroll-thumb/ScrollThumb.tsx",
     "./tokens.css": "./src/tokens.css",
     "./environment.css": "./src/environment.css",

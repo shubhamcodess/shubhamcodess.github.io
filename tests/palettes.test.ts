@@ -21,6 +21,10 @@ describe.each(PALETTE_IDS)("palette %s", (id) => {
     for (const stop of [...p.sky, p.paper]) expect(contrast(p[name], stop), `${name} on ${stop}`).toBeGreaterThanOrEqual(needed);
   });
 
+  it("keeps selected text readable", () => {
+    expect(contrast(p.paper, p.accent)).toBeGreaterThanOrEqual(4.5);
+  });
+
   it("has a name to show people", () => {
     expect(p.name.length).toBeGreaterThan(0);
   });
