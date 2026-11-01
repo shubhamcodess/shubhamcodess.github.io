@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@portfolio/content": "workspace:*",
+    "@portfolio/design": "workspace:*",
     "@portfolio/site": "workspace:*",
     "@types/node": "^26.6.6",
     "gray-matter": "^4.0.3",

@@ -1,10 +1,11 @@
 ---
 name: Blueprint
 status: growing
-modes: [dark, light]
+modes: [light, dark]
+default-mode: light
+palettes: packages/design/src/palettes.ts
 colors:
   dark:  { base: "#0b0e15", paper: "#10141e", ink: "#e4e8ef", ink-2: "#99a4b6", line: "#a9bfdf", line-rest: "rgba(169,191,223,.72)", accent: "#e6b044", grid: "rgba(169,191,223,.075)" }
-  light: { base: "#e6e8ed", paper: "#eef0f4", ink: "#141a26", ink-2: "#4b5566", line: "#1f3355", line-rest: "rgba(31,51,85,.68)", accent: "#94650a", grid: "rgba(31,51,85,.085)" }
 type:
   label: { family: "Barlow Semi Condensed", weight: 600, transform: uppercase, tracking: .09em, size: 16px }
   title: { family: "Barlow Semi Condensed", weight: 600, tracking: .015em }
@@ -17,6 +18,7 @@ motion:
   shadow: .65s
   texture: .85s
   press: .18s
+  theme-fade: 1.4s
   sway: { amplitude: .7px, duration: 900ms }
 drawing:
   hatch: "135deg, 1px line, 5px gap (6px on cards)"
@@ -39,6 +41,19 @@ The user does not maintain this file. Claude does, as part of building.
 5. **If a rule or token changes,** update this file first, then every production use of it. Old prototypes stay as they were, as a record.
 
 Each entry has a status: **Draft** (being tried), **Approved** (the user said yes, small tweaks expected) or **Locked** (changes only by decision).
+
+## Daylight environment: Locked
+
+Light mode is the default. Its colors are not in this file: they're in `packages/design/src/palettes.ts`, the one list of themes, currently Dust, Sodium, Smog and Storm. Every theme has the same structure.
+
+- **Sky:** a four-stop gradient, lightest at the top, running slightly off vertical.
+- **Sun:** a soft glow at the top right.
+- **Grain:** film grain that lightens and darkens equally, so it never lowers contrast.
+- **Switching themes:** a slow fade over `theme-fade`, never a snap. A page opens in its theme without fading into it.
+
+Components read colors only from the tokens (`--ink`, `--line`, `--accent` and so on), so they work in every theme. To add or change a theme, use the `blueprint-palette` skill.
+
+The Dark mode colors above are from the prototypes and aren't final.
 
 ## Principles
 
@@ -103,6 +118,7 @@ A mock exists in `prototypes/06-project-card/projects/everything-tech/`: back li
 ## Not decided yet
 
 - Fonts: the shortlist is in `docs/decisions/008-type.md`.
+- Background motion for light mode.
 - Header, navigation, theme toggle, panels, rows, inputs, footer.
 - Page grid and spacing scale.
 
@@ -110,4 +126,4 @@ A mock exists in `prototypes/06-project-card/projects/everything-tech/`: back li
 
 Keep this file free of personal facts, so it can be reused elsewhere. The Batman scene (Gotham, the cave) belongs to this site rather than to the system, and lives in `docs/decisions/`.
 
-In code, the tokens are in `packages/design/src/tokens.css`, and a test fails if that file and this one disagree. Change this file first, then that one. Making it a shareable package comes after the site ships.
+In code, the tokens are in `packages/design/src/tokens.css`, and a test fails if that file and this one disagree. Change this file first, then that one. Daylight colors are in `palettes.ts`, where a test checks every theme's contrast. Making it a shareable package comes after the site ships.

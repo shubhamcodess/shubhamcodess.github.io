@@ -12,6 +12,7 @@ const config = {
     { id: "now", enabled: true },
     { id: "contact", enabled: true },
   ],
+  background: { default: "dust", onLoad: "config" },
   flags: { writing: false, photography: false, ask: false, motion: true },
   social: [
     { label: "GitHub", href: "https://github.com/shubhamcodess" },

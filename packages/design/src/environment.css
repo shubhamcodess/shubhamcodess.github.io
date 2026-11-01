@@ -1,0 +1,41 @@
+/* The daylight environment: one film stock behind the whole site. Colors come from the active palette. */
+
+/* Registered so a palette change fades like a slow change of light. */
+@property --sky-0 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --sky-1 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --sky-2 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --sky-3 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --glow { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --base { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --paper { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ink { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ink-2 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --line { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --line-rest { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --accent { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --grid { syntax: "<color>"; inherits: true; initial-value: transparent; }
+
+[data-theme="light"] {
+  background: var(--sky-3);
+  transition-property: --sky-0, --sky-1, --sky-2, --sky-3, --glow, --base, --paper, --ink, --ink-2, --line, --line-rest, --accent, --grid;
+  transition-duration: var(--dur-theme-fade);
+  transition-timing-function: var(--ease-soft);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="light"] { transition-duration: .01s; }
+}
+
+.environment, .environment > * { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+[data-theme="dark"] .environment { display: none; }
+
+/* A low sun, with smoke settling downwards. */
+.environment-sky { background: linear-gradient(172deg, var(--sky-0) 0%, var(--sky-1) 38%, var(--sky-2) 72%, var(--sky-3) 100%); }
+.environment-sun { background: radial-gradient(90% 62% at 84% -8%, var(--glow), transparent 68%); }
+
+/* Grey noise in soft-light moves pixels both ways, so grain never darkens the page or lowers text contrast. */
+.environment-grain {
+  opacity: var(--grain);
+  mix-blend-mode: soft-light;
+  background-size: 220px 220px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
+}

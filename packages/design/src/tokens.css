@@ -1,4 +1,5 @@
-/* Copied from DESIGN.md, which is the source. tests/tokens.test.ts fails if the two disagree. */
+/* Copied from DESIGN.md, which is the source. tests/tokens.test.ts fails if the two disagree.
+   Light-mode colors come from palettes.ts. */
 [data-theme="dark"] {
   --base: #0b0e15;
   --paper: #10141e;
@@ -9,16 +10,6 @@
   --accent: #e6b044;
   --grid: rgba(169,191,223,.075);
 }
-[data-theme="light"] {
-  --base: #e6e8ed;
-  --paper: #eef0f4;
-  --ink: #141a26;
-  --ink-2: #4b5566;
-  --line: #1f3355;
-  --line-rest: rgba(31,51,85,.68);
-  --accent: #94650a;
-  --grid: rgba(31,51,85,.085);
-}
 :root {
   --ease-soft: cubic-bezier(.22,.61,.36,1);
   --dur-small-part: .3s;
@@ -26,5 +17,6 @@
   --dur-shadow: .65s;
   --dur-texture: .85s;
   --dur-press: .18s;
+  --dur-theme-fade: 1.4s;
   --font-note: ui-monospace, Menlo, monospace;
 }

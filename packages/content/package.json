@@ -5,5 +5,5 @@
   "type": "module",
   "exports": { ".": "./src/index.ts", "./schema": "./src/schema.ts" },
   "scripts": { "typecheck": "tsc --noEmit" },
-  "dependencies": { "gray-matter": "^4.0.3", "marked": "latest", "zod": "^4.6.7" }
+  "dependencies": { "@portfolio/design": "workspace:*", "gray-matter": "^4.0.3", "marked": "latest", "zod": "^4.6.7" }
 }

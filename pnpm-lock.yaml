@@ -169,6 +169,9 @@ importers:
       '@portfolio/content':
         specifier: workspace:*
         version: link:packages/content
+      '@portfolio/design':
+        specifier: workspace:*
+        version: link:packages/design
       '@portfolio/site':
         specifier: workspace:*
         version: link:content
@@ -224,6 +227,9 @@ importers:
 
   packages/content:
     dependencies:
+      '@portfolio/design':
+        specifier: workspace:*
+        version: link:../design
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3

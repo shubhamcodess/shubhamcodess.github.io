@@ -7,7 +7,7 @@ const config: NextConfig = {
   output: "export", // a plain static folder, for GitHub Pages or Firebase
   trailingSlash: true, // /projects/x/index.html needs no server rewrites
   images: { unoptimized: true },
-  transpilePackages: ["@portfolio/content", "@portfolio/site"],
+  transpilePackages: ["@portfolio/content", "@portfolio/design", "@portfolio/site"],
   outputFileTracingRoot: root,
   turbopack: { root },
 };

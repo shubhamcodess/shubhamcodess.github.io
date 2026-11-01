@@ -1,3 +1,4 @@
+import { PALETTE_IDS } from "@portfolio/design";
 import { z } from "zod";
 
 /** The six locked sections (docs/decisions/007). The order in site.ts is the order on the page. */
@@ -15,6 +16,8 @@ export const siteSchema = z
       .refine((list) => new Set(list.map((s) => s.id)).size === SECTION_IDS.length && list.length === SECTION_IDS.length, {
         message: "List each of the six sections exactly once",
       }),
+    /** Light mode's background selection. onLoad: use the default, or one random pick per visit. */
+    background: z.strictObject({ default: z.enum(PALETTE_IDS), onLoad: z.enum(["config", "random"]) }),
     /** Sections hidden until there is something to show. */
     flags: z.strictObject({ writing: z.boolean(), photography: z.boolean(), ask: z.boolean(), motion: z.boolean() }),
     social: z.array(z.strictObject({ label: z.string().min(1), href: url })),

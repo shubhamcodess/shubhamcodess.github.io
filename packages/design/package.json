@@ -2,5 +2,11 @@
   "name": "@portfolio/design",
   "private": true,
   "version": "0.0.0",
-  "exports": { "./tokens.css": "./src/tokens.css" }
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./src/tokens.css",
+    "./environment.css": "./src/environment.css"
+  },
+  "scripts": { "typecheck": "tsc --noEmit" }
 }
