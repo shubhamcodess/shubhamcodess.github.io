@@ -17,7 +17,7 @@ html, body { height: 100%; overflow: hidden; }
 .hero {
   --name: clamp(42px, min(7vw, 13.5svh), 118px);
   min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; overflow-x: clip;
-  padding: calc(var(--header-h) + 24px) clamp(18px, 4vw, 48px) clamp(24px, 5svh, 64px);
+  padding: calc(var(--header-h) + 24px) clamp(18px, 4vw, 48px) clamp(24px, 13svh, 150px);
 }
 /* The plate: slightly turned, hinged on its left edge, and following the pointer a little. All measures come from the name. */
 .hero-plate {
@@ -71,7 +71,7 @@ html, body { height: 100%; overflow: hidden; }
 @keyframes hero-draw { from { transform: scaleX(0); } }
 @keyframes hero-wire-in { from { opacity: 0; translate: 0 0; } }
 @media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
-  .hero { --name: clamp(33px, 10.9vw, 84px); }
+  .hero { --name: clamp(33px, 10.9vw, 84px); padding-bottom: clamp(24px, 8svh, 90px); }
   .hero-plate { --deep: calc(var(--name) * .05); }
   .hero-row { flex-direction: column; align-items: flex-start; gap: 18px; }
   .hero-wire-line .hero-char { -webkit-text-stroke-width: .7px; }
