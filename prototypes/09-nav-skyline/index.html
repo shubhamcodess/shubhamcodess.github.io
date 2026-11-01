@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-fit="street">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nav and Skyline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --nav-h:68px; --soft:cubic-bezier(.22,.61,.36,1); }
+  * { box-sizing:border-box; }
+  html { background:var(--sky-3); }
+  body { margin:0; min-height:230vh; color:var(--ink); font:400 16px/1.5 ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif; }
+
+  .env, .env > div { position:fixed; inset:0; pointer-events:none; }
+  .env { z-index:-3; }
+  .sky { background:linear-gradient(172deg, var(--sky-0) 0%, var(--sky-1) 38%, var(--sky-2) 72%, var(--sky-3) 100%); }
+  .sun { background:radial-gradient(90% 62% at 84% -8%, var(--glow), transparent 68%); }
+  .grain { opacity:.55; mix-blend-mode:soft-light; background-size:220px 220px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E"); }
+
+  /* The city hangs from a fixed line and is clipped there, so it can never run through the nav's text unless Behind is chosen. */
+  .city { position:fixed; z-index:-2; left:0; right:0; top:var(--nav-h); height:min(62vh,600px); overflow:hidden; pointer-events:none; }
+  [data-fit="behind"] .city { top:0; height:min(70vh,660px); }
+  .city canvas { position:absolute; left:-40px; top:0; }
+  .mist { position:absolute; left:-10%; right:-10%; height:34%; top:22%; background:radial-gradient(50% 50% at 50% 50%, var(--sky-0), transparent 72%); opacity:.5; animation:drift 46s ease-in-out infinite alternate; }
+  .mist.two { top:44%; height:26%; opacity:.42; animation-duration:71s; animation-direction:alternate-reverse; }
+  @keyframes drift { from { transform:translateX(-7%); } to { transform:translateX(7%); } }
+  @media (prefers-reduced-motion:reduce) { .mist { animation:none; } }
+
+  .nav { position:sticky; top:0; z-index:5; height:var(--nav-h); display:flex; align-items:center; gap:clamp(12px,3vw,34px); padding:0 clamp(16px,4vw,48px); transition:background-color .6s var(--soft); }
+  .nav::after { content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:var(--line-rest); }
+  [data-fit="behind"] .nav::after { display:none; }
+  [data-fit="apart"] .nav { background:var(--paper); }
+  .scrolled .nav { background:color-mix(in srgb, var(--sky-0) 94%, transparent); }
+  .logo { display:grid; place-items:center; width:44px; height:44px; flex:none; color:var(--ink); text-decoration:none; font:600 18px/1 "Barlow Semi Condensed",sans-serif; letter-spacing:.04em;
+    background:linear-gradient(var(--line),var(--line)) 0 4px / 100% 1px no-repeat, linear-gradient(var(--line),var(--line)) 0 calc(100% - 4px) / 100% 1px no-repeat, linear-gradient(var(--line),var(--line)) 4px 0 / 1px 100% no-repeat, linear-gradient(var(--line),var(--line)) calc(100% - 4px) 0 / 1px 100% no-repeat; }
+  .links { display:flex; gap:clamp(4px,1.6vw,20px); margin:0 0 0 auto; padding:0; list-style:none; }
+  .links a, .slot, .menu { display:flex; align-items:center; min-height:44px; padding:0 12px; color:var(--ink); background:none; border:0; cursor:pointer; text-decoration:none; font:600 15px/1 "Barlow Semi Condensed",sans-serif; letter-spacing:.09em; text-transform:uppercase; }
+  .links a { position:relative; }
+  .links a[aria-current] { color:var(--accent); }
+  a:focus-visible, button:focus-visible { outline:1.5px dashed var(--accent); outline-offset:2px; }
+  .slot { color:var(--ink-2); font-weight:500; }
+  .menu { display:none; margin-left:auto; }
+  @media (max-width:760px) {
+    .menu { display:flex; }
+    .links { display:none; position:absolute; top:100%; left:0; right:0; margin:0; padding:8px clamp(16px,4vw,48px) 14px; flex-direction:column; background:var(--paper); border-bottom:1px solid var(--line-rest); }
+    .links.open { display:flex; }
+    .slot { margin-left:0; }
+  }
+
+  .hero { padding:clamp(280px,46vh,440px) clamp(16px,4vw,48px) 0; }
+  h1 { margin:0; font:600 clamp(44px,8vw,92px)/.98 "Barlow Semi Condensed",sans-serif; }
+  .hint { margin:14px 0 0; font:500 12px/1.5 ui-monospace,Menlo,monospace; color:var(--ink-2); }
+
+  .controls { position:fixed; z-index:8; left:50%; bottom:12px; transform:translateX(-50%); display:flex; flex-wrap:wrap; justify-content:center; gap:5px 14px; width:max-content; max-width:calc(100vw - 16px); padding:7px 10px; font:12px/1 ui-monospace,Menlo,monospace; color:var(--ink-2); background:var(--paper); border:1px solid var(--line-rest); }
+  .group { display:flex; flex-wrap:wrap; align-items:center; gap:2px; }
+  .group span { margin-right:4px; }
+  .controls button { font:inherit; padding:6px 7px; color:inherit; background:none; border:1px solid transparent; cursor:pointer; }
+  .controls button[aria-pressed="true"] { color:var(--ink); border-color:var(--line-rest); }
+</style>
+</head>
+<body>
+<div class="env" aria-hidden="true"><div class="sky"></div><div class="sun"></div><div class="grain"></div></div>
+<div class="city" id="city" aria-hidden="true">
+  <canvas id="far"></canvas><div class="mist"></div><canvas id="mid"></canvas><div class="mist two"></div><canvas id="near"></canvas><canvas id="towers"></canvas>
+</div>
+<nav class="nav" aria-label="Main">
+  <a class="logo" href="#" aria-label="Home">SP</a>
+  <button class="menu" id="menu" aria-expanded="false" aria-controls="links">Menu</button>
+  <ul class="links" id="links">
+    <li><a href="#" aria-current="page">Projects</a></li>
+    <li><a href="#">Research</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <button class="slot" aria-label="Theme switch placeholder">Theme</button>
+</nav>
+<main class="hero">
+  <h1>Shubham Prakash</h1>
+  <p class="hint">Placeholder logo, links and page. Hover the links, then scroll.</p>
+</main>
+
+<div class="controls" aria-label="Prototype controls">
+  <div class="group" data-set="fit"><span>Fit</span><button data-v="street">Street</button><button data-v="apart">Apart</button><button data-v="behind">Behind</button></div>
+  <div class="group" data-set="strength"><span>City</span><button data-v="faint">Faint</button><button data-v="soft">Soft</button><button data-v="clear">Clear</button></div>
+  <div class="group" data-set="palette"><span>Theme</span></div>
+</div>
+
+<script src="../08-daylight-themes/palettes.js"></script>
+<script>
+(() => {
+  const root = document.documentElement, qs = new URLSearchParams(location.search), reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const state = { fit: qs.get('fit') || 'street', strength: qs.get('strength') || 'faint', palette: qs.get('palette') || 'dust' };
+  const STRENGTH = { faint: .55, soft: 1, clear: 1.7 };
+  const $ = (id) => document.getElementById(id), city = $('city');
+  const hash = (n) => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
+  const seeded = (seed) => { let i = 0; return () => hash(seed + i++ * 1.37); };
+  let W = 0, H = 0, D = 1, towers = [], colors = {};
+
+  const PROFILE = [
+    [[0,0],[0,.72],[.16,.72],[.16,.88],[.32,.88],[.32,1],[.5,1]],
+    [[0,0],[0,.58],[.2,.58],[.2,.76],[.4,.76],[.46,.86],[.5,1]],
+    [[0,0],[0,.82],[.12,.82],[.5,1]],
+    [[0,0],[0,.62],[.1,.62],[.1,.74],[.2,.74],[.2,.84],[.3,.84],[.3,.92],[.42,.92],[.5,1]],
+    [[0,0],[0,.93],[.12,.93],[.12,1],[.38,1],[.38,.93],[.5,.93]],
+  ];
+  const outline = (b, L = b.L) => {
+    const h = PROFILE[b.type], pts = h.map(([dx, y]) => [b.x + dx * b.w, y * L]);
+    for (let i = h.length - 1; i >= 0; i--) pts.push([b.x + (1 - h[i][0]) * b.w, h[i][1] * L]);
+    return pts;
+  };
+  // Tallest towards the right, so the city leaves room for a name on the left.
+  const skyline = (seed, base, lo, hi) => {
+    const q = seeded(seed), out = [], env = (u) => .55 + .45 * Math.min(1, Math.max(0, (u - .18) / .5));
+    for (let x = -60; x < W + 60;) {
+      const w = Math.max(20, base * (.5 + q())), type = [1, 1, 3, 3, 1, 0, 2, 4][Math.floor(q() * 8)];
+      out.push({ x, w, type, L: H * (lo + q() * (hi - lo)) * env((x + w / 2) / W), q: q() });
+      x += w * (.82 + q() * .28);
+    }
+    return out;
+  };
+  const fit = (c) => { c.width = (W + 80) * D; c.height = H * D; c.style.width = W + 80 + 'px'; c.style.height = H + 'px'; const x = c.getContext('2d'); x.setTransform(D, 0, 0, D, 40 * D, 0); x.clearRect(-40, 0, W + 80, H); x.lineJoin = 'miter'; return x; };
+  const path = (x, pts) => { x.beginPath(); pts.forEach(([a, b], i) => (i ? x.lineTo(a, b) : x.moveTo(a, b))); x.closePath(); };
+
+  function paintBuilding(x, b, { fill, fillA, lineA, grid }, L = b.L) {
+    const pts = outline(b, L);
+    path(x, pts);
+    if (fillA) { x.globalAlpha = fillA; x.fillStyle = fill; x.fill(); }
+    if (lineA) { x.globalAlpha = lineA; x.strokeStyle = colors.line; x.lineWidth = .8; x.stroke(); }
+    if (grid) {
+      const end = L * PROFILE[b.type][1][1], step = 15;
+      x.globalAlpha = grid; x.lineWidth = .6; x.beginPath();
+      for (let y = step; y < end - 6; y += step) { x.moveTo(b.x, y); x.lineTo(b.x + b.w, y); }
+      const cols = Math.max(2, Math.round(b.w / 16));
+      for (let i = 1; i < cols; i++) { const px = b.x + i / cols * b.w; x.moveTo(px, 0); x.lineTo(px, end); }
+      x.stroke();
+    }
+    x.globalAlpha = 1;
+  }
+  // The tips dissolve into the haze, so the city never ends in a hard edge across the page.
+  const dissolve = (x) => { const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#000'); g.addColorStop(.55, 'rgba(0,0,0,.72)'); g.addColorStop(1, 'transparent'); x.globalCompositeOperation = 'destination-in'; x.fillStyle = g; x.fillRect(-40, 0, W + 80, H); x.globalCompositeOperation = 'source-over'; };
+
+  function measureTowers() {
+    if (state.fit !== 'street' || innerWidth <= 760) return [];
+    const box = city.getBoundingClientRect(), q = seeded(61);
+    return [...document.querySelectorAll('.links a')].map((a, i) => {
+      const r = a.getBoundingClientRect(), w = Math.max(56, r.width * .9);
+      return { el: a, x: r.left + r.width / 2 - w / 2 - box.left, w, type: [3, 1, 3, 1][i], L: H * (.34 + q() * .16), grow: 0, target: a.hasAttribute('aria-current') ? .35 : 0 };
+    });
+  }
+  function paintTowers() {
+    const x = $('towers').getContext('2d'), k = STRENGTH[state.strength];
+    x.clearRect(-40, 0, W + 80, H);
+    for (const t of towers) {
+      const L = t.L * (1 + t.grow * .22);
+      paintBuilding(x, t, { fill: colors.sky0, fillA: .75, lineA: Math.min(1, (.34 + t.grow * .6) * k + t.grow * .25), grid: Math.min(.5, (.08 + t.grow * .2) * k) }, L);
+      if (t.grow > .02) { // A slow amber mark at the tip of the tower you're pointing at.
+        const tip = L * PROFILE[t.type][PROFILE[t.type].length - 1][1], cx = t.x + t.w / 2;
+        x.globalAlpha = t.grow; x.strokeStyle = colors.accent; x.lineWidth = 1.2; x.beginPath(); x.moveTo(cx, tip); x.lineTo(cx, tip + 18 * t.grow); x.stroke(); x.globalAlpha = 1;
+      }
+    }
+  }
+
+  function build() {
+    W = city.clientWidth; H = city.clientHeight; D = Math.min(devicePixelRatio || 1, 2);
+    if (!W || !H) return;
+    const k = STRENGTH[state.strength], far = fit($('far')), mid = fit($('mid')), near = fit($('near'));
+    fit($('towers'));
+    const scale = W < 760 ? 1.4 : 1;
+    skyline(11, Math.max(30, W / 30) * scale, .42, .9).forEach((b) => paintBuilding(far, b, { fill: colors.line, fillA: .05 * k }));
+    skyline(23, Math.max(40, W / 22) * scale, .3, .66).forEach((b) => paintBuilding(mid, b, { fill: colors.line, fillA: .05 * k, lineA: .12 * k }));
+    towers = measureTowers();
+    const taken = towers.map((t) => [t.x - 8, t.x + t.w + 8]);
+    skyline(41, Math.max(58, W / 14) * scale, .14, .36).filter((b) => !taken.some(([a, z]) => b.x < z && b.x + b.w > a)).forEach((b) => paintBuilding(near, b, { fill: colors.sky0, fillA: .6, lineA: .26 * k, grid: .06 * k }));
+    [far, mid, near].forEach(dissolve);
+    towers.forEach((t) => {
+      const on = (v) => () => { t.target = v; wake(); }, rest = t.target;
+      t.el.onpointerenter = on(1); t.el.onpointerleave = on(rest); t.el.onfocus = on(1); t.el.onblur = on(rest);
+    });
+    towers.forEach((t) => { t.grow = t.target; });
+    paintTowers();
+  }
+
+  /* ---------- Motion: slow parallax on the pointer and scroll, all from one loop that sleeps when settled ---------- */
+  const ptr = { x: 0, tx: 0 }; let shown = -1, last = 0, raf = 0;
+  addEventListener('pointermove', (e) => { if (e.pointerType !== 'touch') { ptr.tx = e.clientX / innerWidth - .5; wake(); } });
+  addEventListener('scroll', () => { root.classList.toggle('scrolled', scrollY > 8); wake(); }, { passive: true });
+  function frame(now) {
+    raf = 0;
+    const dt = Math.min(.05, (now - last) / 1000 || .016); last = now;
+    const k = reduced ? 1 : 1 - Math.exp(-dt * 2.6);
+    ptr.x += (ptr.tx - ptr.x) * k;
+    const sc = scrollY, move = (id, m, s) => { $(id).style.transform = `translate3d(${(-ptr.x * m).toFixed(2)}px,${(-sc * s).toFixed(1)}px,0)`; };
+    if (!reduced) { move('far', 6, .16); move('mid', 12, .26); move('near', 20, .4); move('towers', 20, .4); }
+    else ['far', 'mid', 'near', 'towers'].forEach((id) => { $(id).style.transform = `translateY(${-sc * .3}px)`; });
+    let moving = Math.abs(ptr.tx - ptr.x) > .0005 || shown !== sc; shown = sc;
+    let redraw = false;
+    for (const t of towers) if (Math.abs(t.target - t.grow) > .002) { t.grow += (t.target - t.grow) * (reduced ? 1 : 1 - Math.exp(-dt * 3.4)); redraw = moving = true; }
+    if (redraw) paintTowers();
+    if (moving) wake();
+  }
+  function wake() { if (!raf) raf = requestAnimationFrame(frame); }
+
+  function apply() {
+    const p = PALETTES[state.palette], s = root.style;
+    p.sky.forEach((c, i) => s.setProperty(`--sky-${i}`, c));
+    Object.entries({ '--glow': p.glow, '--paper': p.paper, '--ink': p.ink, '--ink-2': p.ink2, '--line': p.line, '--line-rest': p.lineRest, '--accent': p.accent }).forEach(([k, v]) => s.setProperty(k, v));
+    colors = { line: p.line, accent: p.accent, sky0: p.sky[0] };
+    root.dataset.fit = state.fit;
+    document.querySelectorAll('[data-set]').forEach((g) => g.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === state[g.dataset.set])));
+    build(); wake();
+  }
+  const pg = document.querySelector('[data-set="palette"]');
+  Object.keys(PALETTES).forEach((id) => { const b = document.createElement('button'); b.dataset.v = id; b.textContent = PALETTES[id].name; pg.append(b); });
+  document.querySelectorAll('[data-set] button').forEach((b) => b.onclick = () => { state[b.parentElement.dataset.set] = b.dataset.v; apply(); });
+  document.querySelectorAll('a[href="#"]').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+  $('menu').onclick = () => { const open = $('links').classList.toggle('open'); $('menu').setAttribute('aria-expanded', open); };
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 120); });
+  if (document.fonts) document.fonts.ready.then(build);
+  apply();
+  window.__nav = { towers: () => towers, setGrow: (i, v) => { towers[i].target = towers[i].grow = v; paintTowers(); } };
+})();
+</script>
+</body>
+</html>

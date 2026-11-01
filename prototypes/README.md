@@ -12,6 +12,7 @@ Keep every prototype here. Don't overwrite or delete one: new ideas get a new nu
 | `06-project-card` | Project card with a live folding-newspaper drawing, an empty template and a mock `/projects/everything-tech` page |
 | `07-light-palette` | Three daytime Gotham palettes with film gradient and grain, shown on the real button and card. Uses files from `06-project-card`. |
 | `08-daylight-themes` | Four daytime themes with a rotate switch and a soft fade: Dust, Sodium (5% less saturated), Smog (blue haze, less green) and Storm. Uses files from `06-project-card`. |
+| `09-nav-skyline` | Traditional top nav with the daytime inverted skyline, three ways of fitting them together: Street, Apart and Behind. Logo and links are placeholders. |
 
 The four themes in `08-daylight-themes` are now in the real site, in `packages/design/src/palettes.ts`.
 
