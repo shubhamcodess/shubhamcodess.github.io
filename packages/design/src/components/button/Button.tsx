@@ -1,7 +1,8 @@
 import type { CSSProperties, ElementType, HTMLAttributes, ReactNode } from "react";
 import { iconStrokes, type IconName } from "./icons";
+import { PressLatch } from "./press";
 
-export { sketch } from "./icons";
+export { ICON_NAMES, iconStrokes, sketch } from "./icons";
 
 export type { IconName };
 import type { ButtonStyle } from "./options";
@@ -35,7 +36,7 @@ export function SketchIcon({ name, className }: { name: IconName; className?: st
   return (
     <svg className={className ? `bp-icon ${className}` : "bp-icon"} viewBox="0 0 24 24" aria-hidden="true">
       {iconStrokes(name, seedOf(name)).map((stroke, i) => (
-        <g key={i}>
+        <g key={i} style={{ "--bp-from": stroke.from, "--bp-span": stroke.span } as CSSProperties}>
           <path pathLength={1} d={stroke.main} />
           <path className="second" pathLength={1} d={stroke.second} />
         </g>
@@ -66,6 +67,7 @@ export function Button({ variant = "primary", size = "md", texture = "hatch", sh
       {...behaviour}
       {...rest}
     >
+      <PressLatch />
       <span className="bp-ghost"><i className="g-h" /><i className="g-v" /></span>
       <i className="bp-link l1" /><i className="bp-link l2" /><i className="bp-link l3" />
       <span className="bp-body">

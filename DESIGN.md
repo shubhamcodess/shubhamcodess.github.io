@@ -77,7 +77,7 @@ The Dark mode colors above are from the prototypes and aren't final.
 ## Components
 
 ### Button: Approved
-Code: `packages/design/src/components/button`. The options are listed once in `options.ts`, and the types, config and control panel all read that list. It runs on CSS alone. Prototype: `prototypes/05-button-soft`, whose press has since been replaced, and whose hover movement is now optional.
+Code: `packages/design/src/components/button`. The options are listed once in `options.ts`, and the types, config and control panel all read that list. Everything runs on CSS, except one small page-wide listener (`press.tsx`) that keeps a quick press on screen, which CSS can't do. Prototype: `prototypes/05-button-soft`, whose press has since been replaced, and whose hover movement is now optional.
 
 - **Parts:** base wireframe, three corner lines, and the cap, which holds the texture, fold lines, frame, sketched icon and label.
 
@@ -91,8 +91,8 @@ Code: `packages/design/src/components/button`. The options are listed once in `o
 | `press` | warp, keycap, drop, none | warp |
 | `sway` | off, soft, softer | off |
 | `face` | clear, frost. Leave it out to inherit `--bp-face` and `--bp-face-filter` from around the button. | clear |
-| `iconHover` | none, redraw (only the faint second pen line), trace (also visible but soft: the second line redraws further and each stroke sways a hair, while the main line only breathes a little heavier). Leave it out to inherit the site's default. | trace |
-| `textHover` | none, glitch (a quick, settling flicker), grow (a soft scale up and back). Leave it out to inherit the site's default. | grow |
+| `iconHover` | none, redraw (the pen draws the main line again over the faint second line, which stays as the sketch), trace (the whole icon goes and is drawn again, main line first and the second pass a beat behind). Leave it out to inherit the site's default. | trace |
+| `textHover` | none, glitch (a quick, settling flicker, on the label only), grow (a soft scale up and back). Leave it out to inherit the site's default. | grow |
 | `icon`, `href`, `as`, `disabled`, `className`, `style` | Icon name, link target, link component, disabled state, and one-place changes | |
 
 | State | What happens |
@@ -100,17 +100,20 @@ Code: `packages/design/src/components/button`. The options are listed once in `o
 | Rest | Corner overshoot 4px, texture rises 62% |
 | Hover | The cap stays still. Overshoot 6px, texture rises 92%, frame brightens. `iconHover` and `textHover` (below) add their own motion. |
 | Hover, `shadow` | Also, the wireframe slides out from the still cap |
-| Press, `keycap` | Like a key going down. The cap sinks onto a wireframe base that appears under it, in .13s, and comes back over .55s. |
+| Press, `keycap` | Like a key going down. The cap sinks onto a wireframe base that appears under it, in `press` (.18s), and comes back over .55s. A press shows for at least .24s, however quick the click. |
 | Press, `warp` | The same keycap sink, while the texture folds inward like a pressed sheet of blueprint, along creases from each corner to the center. Each side of the fold shades differently, and the label sinks slightly. Released slowly over 1.25s. |
 | Press, `drop` | The cap drops into its shadow, with no fold, and returns quickly |
 | Keyboard focus | Same as hover, plus a dashed amber line 12px clear of the button |
 | Disabled | Dashed frame, no texture or shadow, muted text |
 
-- **Rule:** the main icon line never disappears on hover, whichever `iconHover` is chosen.
-- **Rule:** hover and press are separate values, so each moves at its own speed.
+- **Rule:** the redraw is a real draw-on, so the main line does go for a moment, but an icon never ends up blank. At rest every line is whole, whatever the pen was doing. If the hover ends part way, the unfinished strokes finish themselves over `small-part`. A browser that can't animate the values skips the motion and keeps the whole line.
+- **The pen:** the ink lifts over `press`, then the pen draws for `icon`, one stroke at a time in the order they're listed in `icons.ts`, at a steady pace set by each stroke's length. Each stroke eases on its own, there's a small beat between strokes, and a short mark still gets enough time to read. It works on a button and on a `SketchIcon` on its own, which redraws when hovered itself. Nothing shakes or sways the icon.
+- **Rule:** `textHover` only ever touches the label.
+- **Rule:** a press has to show on any click. `:active` alone misses a trackpad tap or a short click on a busy page, so `press.tsx` adds `data-pressing` for .24s. It responds to pointer down for a mouse or pen, and to the click for touch (so a scroll doesn't press) and for the keyboard.
+- **Rule:** hover and press are separate values, so each moves at its own speed. All of them share one `transition` list, and options change speeds through `--bp-p-dur` and `--bp-p-ease`, so an option can't drop a value from it.
 - **Rule:** the label's `textHover` grow is a transform (`scale`), never `font-size`, so it can't shift a neighbouring button.
 - **Icon and text hover motion:** `iconHover` and `textHover` ease with the motion tokens, on and off, never a linear jump. Both run only on `hover:hover` pointers; keyboard focus gets the label motion too, since it isn't tied to a pointer. The site sets one default for every button (`buttonMotion` in `content/site.ts`, as a data attribute on the page's root); any button can still set its own.
-- **Reduced motion:** state changes are instant and the texture doesn't fold. The icon and text hover motion don't run at all, rather than just losing their animation.
+- **Reduced motion:** state changes are instant and the texture doesn't fold, and a press still shows. The icon and text hover motion don't run at all, rather than just losing their animation.
 
 **Own icon:** `glyph` takes any icon in place of a sketched `icon`. A button with no text needs an `aria-label`. `SketchIcon` draws a sketched icon on its own.
 

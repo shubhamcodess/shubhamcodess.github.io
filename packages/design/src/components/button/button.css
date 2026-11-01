@@ -7,11 +7,15 @@
 @property --bp-p { syntax:"<number>"; inherits:true; initial-value:0; }
 /* How far into the label's hover response we are, eased both on arrival and on leaving. */
 @property --bp-th { syntax:"<number>"; inherits:true; initial-value:0; }
+/* The icon's pen: how much ink is lifted off the line, and how far along the drawing the pen has got. */
+@property --bp-lift { syntax:"<number>"; inherits:true; initial-value:0; }
+@property --bp-pen { syntax:"<number>"; inherits:true; initial-value:0; }
 
 .bp {
   --off:7px; --tex-a:.3; --warp-v:58deg; --warp-h:16deg;
   position:relative; display:inline-block; padding:0; margin:0; color:var(--ink); background:none; border:0; cursor:pointer; font:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent;
-  transition:--bp-h .5s var(--ease-soft), --bp-p .25s var(--ease-soft), --bp-th var(--dur-small-part) var(--ease-soft);
+  /* The one transition list for these values. Options change the speeds through --bp-p-*, so none of them can drop a value from the list. */
+  transition:--bp-h var(--dur-shadow) var(--ease-soft), --bp-p var(--bp-p-dur, .25s) var(--bp-p-ease, var(--ease-soft)), --bp-th var(--dur-small-part) var(--ease-soft);
 }
 .bp:focus { outline:none; }
 .bp::before { content:""; position:absolute; inset:-4px 0; } /* keeps the small size at a 46px touch target */
@@ -24,16 +28,18 @@
   translate:calc(var(--sx) * var(--off) * var(--bp-travel, 0)) calc(var(--sy) * var(--off) * var(--bp-travel, 0));
 }
 .bp-label, .bp-icon { position:relative; z-index:1; }
+.bp-icon { scale:calc(1 - var(--bp-sink, 0) * var(--bp-p)); }
 
-/* textHover: the label's own hover response, on and off. Transform only, so growing it never moves a neighbouring button.
-   Either this button's own choice, or (when it hasn't made one) the site-wide default set on the page's root. */
-:is(.bp[data-text-hover="grow"] .bp-label, :root[data-text-hover="grow"] .bp:not([data-text-hover]) .bp-label) {
-  transform-origin:left center; scale:calc(1 + var(--bp-th) * .08);
+/* textHover: the label's own hover response, on and off, and only ever the label. It's a transform, so it never moves a neighbouring button.
+   Either this button's own choice, or (when it hasn't made one) the site-wide default set on the page's root.
+   The label's scale also carries the warp press's sink, so the two can't override each other. */
+.bp-label {
+  scale:calc((1 + var(--bp-grow, 0) * var(--bp-th)) * (1 - var(--bp-sink, 0) * var(--bp-p)));
+  translate:calc(sin(var(--bp-th) * 1080deg) * var(--bp-th) * (1 - var(--bp-th)) * var(--bp-glitch, 0px)) 0;
 }
+:is(.bp[data-text-hover="grow"], :root[data-text-hover="grow"] .bp:not([data-text-hover])) .bp-label { --bp-grow:.08; transform-origin:left center; }
 /* A quick, settling glitch: a small sideways flicker that's loudest mid-transition and at rest, hovered or not, sits still. */
-:is(.bp[data-text-hover="glitch"] .bp-label, :root[data-text-hover="glitch"] .bp:not([data-text-hover]) .bp-label) {
-  translate:calc(sin(var(--bp-th) * 1080deg) * var(--bp-th) * (1 - var(--bp-th)) * 5.6px) 0;
-}
+:is(.bp[data-text-hover="glitch"], :root[data-text-hover="glitch"] .bp:not([data-text-hover])) .bp-label { --bp-glitch:5.6px; }
 
 /* The frame is four drafting lines that run slightly past each corner, not a CSS border. */
 .bp-frame { position:absolute; inset:calc(var(--os) * -1); pointer-events:none; --l:var(--line-rest); transition:--os var(--dur-frame) var(--ease-soft), --l var(--dur-frame) var(--ease-soft);
@@ -72,7 +78,7 @@
 .bp-crease::after { content:""; position:absolute; inset:0; opacity:.55;
   background:linear-gradient(to top right, transparent calc(50% - .5px), var(--line) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)), linear-gradient(to bottom right, transparent calc(50% - .5px), var(--line) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)); }
 /* The label and icon sink with the sheet. */
-.bp[data-press="warp"] :is(.bp-label, .bp-icon) { scale:calc(1 - var(--bp-p) * .07); }
+.bp[data-press="warp"] { --bp-sink:.07; }
 
 /* What the cap moves against: the far two edges of a second wireframe, and the lines joining the corners. */
 .bp-ghost { position:absolute; inset:0; pointer-events:none; opacity:var(--bp-ghost-a, 0); transform:translate(calc(var(--sx) * var(--off) * var(--bp-ghost-at, 0)), calc(var(--sy) * var(--off) * var(--bp-ghost-at, 0))); }
@@ -94,7 +100,7 @@
 /* Press is a keycap: the cap sinks onto a base that appears under it. With "shadow", hover slides that base out first. */
 .bp { --bp-travel:calc(var(--bp-p) * .92); --bp-ghost-at:1; --bp-ghost-a:calc(var(--bp-p) * .6); }
 .bp[data-press="drop"] { --bp-travel:calc(var(--bp-p) * .7); }
-.bp[data-hover="shadow"] { --bp-travel:calc(var(--bp-p) * .7); --bp-ghost-at:max(var(--bp-h), var(--bp-p)); --bp-ghost-a:max(calc(var(--bp-h) * .5), calc(var(--bp-p) * .6)); }
+.bp[data-hover="shadow"] { --bp-ghost-at:max(var(--bp-h), var(--bp-p)); --bp-ghost-a:max(calc(var(--bp-h) * .5), calc(var(--bp-p) * .6)); }
 
 @media (hover:hover) {
   .bp:not(:disabled, [aria-disabled="true"], [data-hover="none"]):hover { --bp-h:1; }
@@ -114,10 +120,12 @@
   .bp:not(:disabled, [aria-disabled="true"]):focus-visible { --bp-th:1; }
 }
 
-/* Press: a key goes down fast. A plain key comes back fairly slowly, and a fold eases out like a dent in a sheet of paper. */
-.bp[data-press="keycap"] { transition:--bp-h .5s var(--ease-soft), --bp-p .55s var(--ease-soft); }
-.bp[data-press="warp"] { transition:--bp-h .5s var(--ease-soft), --bp-p 1.25s var(--ease-soft); }
-.bp.bp:not([data-press="none"], :disabled, [aria-disabled="true"]):active { --bp-p:1; transition:--bp-h .5s var(--ease-soft), --bp-p .13s cubic-bezier(.3,.7,.3,1); }
+/* Press: a key goes down fast. A plain key comes back fairly slowly, and a fold eases out like a dent in a sheet of paper.
+   :active alone can't show a quick click: a tap on a trackpad is over before the browser paints a frame, so nothing ever moves.
+   data-pressing (press.tsx) keeps the press on long enough to be seen, and :active still covers holding it down, and pages without script. */
+.bp[data-press="keycap"] { --bp-p-dur:.55s; }
+.bp[data-press="warp"] { --bp-p-dur:1.25s; }
+.bp.bp:not([data-press="none"], :disabled, [aria-disabled="true"]):is(:active, [data-pressing]) { --bp-p:1; --bp-p-dur:var(--dur-press); --bp-p-ease:cubic-bezier(.3,.7,.3,1); }
 
 /* Keyboard focus: a dashed construction line in amber, well clear of the frame. */
 .bp:focus-visible .bp-body::after { content:""; position:absolute; inset:-12px; border:1.5px dashed var(--accent); pointer-events:none; }
@@ -126,7 +134,30 @@
 
 .bp-icon { width:20px; height:20px; flex:none; overflow:visible; fill:none; stroke:var(--accent); stroke-width:1.25; stroke-linecap:round; stroke-linejoin:round; }
 .bp-icon .second { opacity:.45; stroke-width:.85; }
-.bp-icon path { stroke-dasharray:1; stroke-dashoffset:0; }
+
+/* iconHover: on hover the pen draws the icon again, stroke by stroke, and at rest the line is always whole.
+   A path's dash covers its whole length (pathLength is 1). Lifting the ink slides the dash off into its gap, and the pen brings it back.
+   The offset is multiplied by --bp-lift, which is 0 at rest, so whatever the pen is doing the line can't stay blank: a browser that
+   can't animate these values skips the motion, and a hover that ends part way lets the unfinished strokes finish themselves.
+   Each stroke eases on its own part of the pen's run (--bp-from and --bp-span, worked out in icons.ts), so the pen moves at a steady pace with a soft start and stop on every stroke. */
+.bp-icon path {
+  --bp-v:clamp(0, (var(--bp-at) - var(--bp-from, 0)) / var(--bp-span, 1), 1);
+  stroke-dasharray:1 1.2;
+  stroke-dashoffset:calc((1 - var(--bp-v) * var(--bp-v) * (3 - 2 * var(--bp-v))) * var(--bp-gone) * 1.02px);
+}
+.bp-icon path:not(.second) { --bp-at:calc(var(--bp-pen) * 1.25); --bp-gone:var(--bp-lift); }
+/* The second pass follows the main line a beat behind. With "redraw" it stays where it is, as the sketch the pen goes over. */
+.bp-icon .second { --bp-at:calc((var(--bp-pen) - .2) * 1.25); --bp-gone:calc(var(--bp-lift) * var(--bp-under, 1)); }
+/* Leaving: the ink comes back softly, and only then does the pen go back to its start. These live on the strokes, not the svg, so a page can style the svg's own transition. */
+.bp-icon > g { transition:--bp-lift var(--dur-small-part) var(--ease-soft), --bp-pen 0s linear var(--dur-small-part); }
+
+/* Which pen: the site-wide default on the page's root, then a button's own choice. Left unset, an icon traces. */
+:root[data-icon-hover="none"] .bp-icon { --bp-lift-to:0; }
+:root[data-icon-hover="redraw"] .bp-icon { --bp-lift-to:1; --bp-under:0; }
+:root[data-icon-hover="trace"] .bp-icon { --bp-lift-to:1; --bp-under:1; }
+.bp[data-icon-hover="none"] .bp-icon { --bp-lift-to:0; }
+.bp[data-icon-hover="redraw"] .bp-icon { --bp-lift-to:1; --bp-under:0; }
+.bp[data-icon-hover="trace"] .bp-icon { --bp-lift-to:1; --bp-under:1; }
 
 .bp:is(:disabled, [aria-disabled="true"]) { cursor:not-allowed; color:var(--ink-2); }
 .bp:is(:disabled, [aria-disabled="true"]) .bp-frame { background:
@@ -202,32 +233,16 @@
   94.4% { transform:translate(0.001px,-0.000px); }
   100.0% { transform:translate(0.000px,-0.000px); }
 }
-/* iconHover: "redraw" only redraws the fainter second pen line, as before. "trace" is clearly visible but soft:
-   the second line redraws further, the main line never disappears (it only breathes a little heavier) and each
-   stroke sways a hair, as if the pen had just passed over it again. Either this button's own choice, or (when
-   it hasn't made one) the site-wide default set on the page's root. The main icon line never disappears either way. */
-@keyframes bp-redraw { from { stroke-dashoffset:.45; opacity:.12; } to { stroke-dashoffset:0; opacity:.45; } }
-@keyframes bp-trace-second { from { stroke-dashoffset:.78; opacity:.04; } to { stroke-dashoffset:0; opacity:.45; } }
-@keyframes bp-trace-main { 0%, 100% { stroke-width:1.25px; } 45% { stroke-width:1.7px; } }
-@keyframes bp-trace-stroke {
-  0% { transform:translate(0,0); }
-  22% { transform:translate(.55px,-.38px); }
-  48% { transform:translate(-.42px,.3px); }
-  74% { transform:translate(.18px,-.13px); }
-  100% { transform:translate(0,0); }
-}
 @media (hover:hover) and (prefers-reduced-motion:no-preference) {
   .bp[data-sway="soft"]:not(:disabled, [aria-disabled="true"]):hover .bp-body { animation:bp-sway-soft .9s linear; }
   .bp[data-sway="softer"]:not(:disabled, [aria-disabled="true"]):hover .bp-body { animation:bp-sway-softer 1.2s linear; }
 
-  :is(.bp[data-icon-hover="redraw"], :root[data-icon-hover="redraw"] .bp:not([data-icon-hover])):not(:disabled, [aria-disabled="true"]):hover .bp-icon .second { animation:bp-redraw var(--dur-icon) var(--ease-soft); }
-
-  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])):not(:disabled, [aria-disabled="true"]):hover .bp-icon .second { animation:bp-trace-second var(--dur-icon) var(--ease-soft); }
-  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])):not(:disabled, [aria-disabled="true"]):hover .bp-icon path:not(.second) { animation:bp-trace-main var(--dur-icon) var(--ease-soft); }
-  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])):not(:disabled, [aria-disabled="true"]):hover .bp-icon > g { animation:bp-trace-stroke var(--dur-icon) var(--ease-soft); }
-  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])) .bp-icon > g:nth-child(2) { animation-delay:.05s; }
-  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])) .bp-icon > g:nth-child(3) { animation-delay:.1s; }
-  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])) .bp-icon > g:nth-child(4) { animation-delay:.15s; }
+  /* On a button, or on a sketched icon standing on its own. */
+  :is(.bp:not(:disabled, [aria-disabled="true"]):hover .bp-icon, .bp-icon:not(.bp .bp-icon):hover) > g {
+    --bp-lift:var(--bp-lift-to, 1); --bp-pen:1;
+    /* The ink lifts first and the pen starts after it, or a short first stroke would be drawn while it's still lifting and never seem to go. */
+    transition:--bp-lift var(--dur-press) var(--ease-soft), --bp-pen var(--dur-icon) linear var(--dur-press);
+  }
 }
 @media (prefers-reduced-motion:reduce) {
   .bp, .bp * { transition-duration:.01s !important; }

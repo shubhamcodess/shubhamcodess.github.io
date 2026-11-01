@@ -62,6 +62,27 @@ export function sketch(points: number[][], seed: number, amp: number): string {
   return d;
 }
 
-/** Each stroke of the icon as a main pen line and a fainter second pass, for a button or anywhere else that wants the same pen. */
-export const iconStrokes = (name: IconName, seed: number) =>
-  (ICONS[name] as number[][][]).map((plan, i) => ({ main: sketch(plan, seed + i * 7, 0.62), second: sketch(plan, seed + i * 13 + 91, 0.95) }));
+const lengthOf = (plan: number[][]) => plan.slice(1).reduce((sum, [x, y], i) => sum + Math.hypot((x as number) - (plan[i]?.[0] as number), (y as number) - (plan[i]?.[1] as number)), 0);
+const third = (v: number) => Number(v.toFixed(3));
+
+/** Which part of the pen's run (0 to 1) each stroke takes: in order, by length, with a beat between strokes and enough time for even a short mark to read. */
+const penRuns = (plans: number[][][]) => {
+  const lengths = plans.map(lengthOf), total = lengths.reduce((a, b) => a + b, 0);
+  const shares = lengths.map((l) => Math.max(l, total * 0.1)), beat = total * 0.06;
+  const run = shares.reduce((a, b) => a + b, 0) + beat * (plans.length - 1);
+  let at = 0;
+  return shares.map((share) => {
+    const part = { from: third(at / run), span: third(share / run) };
+    at += share + beat;
+    return part;
+  });
+};
+
+/** Each stroke of the icon as a main pen line and a fainter second pass, with when the pen draws it, for a button or anywhere else that wants the same pen. */
+export const iconStrokes = (name: IconName, seed: number) => {
+  const plans = ICONS[name] as number[][][], runs = penRuns(plans);
+  return plans.map((plan, i) => ({ main: sketch(plan, seed + i * 7, 0.62), second: sketch(plan, seed + i * 13 + 91, 0.95), ...(runs[i] as { from: number; span: number }) }));
+};
+
+/** Every sketched icon's name. */
+export const ICON_NAMES = Object.keys(ICONS) as IconName[];
