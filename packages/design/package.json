@@ -5,8 +5,20 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./palettes": "./src/palettes.ts",
+    "./button": "./src/components/button/Button.tsx",
+    "./scroll-thumb": "./src/components/scroll-thumb/ScrollThumb.tsx",
     "./tokens.css": "./src/tokens.css",
     "./environment.css": "./src/environment.css"
   },
-  "scripts": { "typecheck": "tsc --noEmit" }
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "react": "^19"
+  }
 }

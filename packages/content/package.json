@@ -3,7 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "exports": { ".": "./src/index.ts", "./schema": "./src/schema.ts" },
-  "scripts": { "typecheck": "tsc --noEmit" },
-  "dependencies": { "@portfolio/design": "workspace:*", "gray-matter": "^4.0.3", "marked": "latest", "zod": "^4.6.7" }
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./scene-options": "./src/scene-options.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@portfolio/design": "workspace:*",
+    "gray-matter": "^4.0.3",
+    "marked": "latest",
+    "zod": "^4.6.7"
+  }
 }

@@ -19,4 +19,9 @@
   --dur-press: .18s;
   --dur-theme-fade: 1.4s;
   --font-note: ui-monospace, Menlo, monospace;
+  --label: var(--font-label, ui-sans-serif), ui-sans-serif, sans-serif;
+  --track: .09em;
+  --size: 16px;
+  --sx: 1;
+  --sy: 1;
 }

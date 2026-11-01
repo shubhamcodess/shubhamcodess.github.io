@@ -1,5 +1,8 @@
-import { PALETTE_IDS } from "@portfolio/design";
+import { PALETTE_IDS } from "@portfolio/design/palettes";
 import { z } from "zod";
+import { SCENE_OPTIONS } from "./scene-options";
+
+export { SCENE_OPTIONS };
 
 const url = z.url({ protocol: /^https?$/ });
 
@@ -9,6 +12,16 @@ export const siteSchema = z
     description: z.string().min(1),
     /** Light mode's background selection. onLoad: use the default, or one random pick per visit. */
     background: z.strictObject({ default: z.enum(PALETTE_IDS), onLoad: z.enum(["config", "random"]) }),
+    /** How the header and the background art meet. The art itself isn't locked. */
+    scene: z.strictObject({
+      fit: z.enum(SCENE_OPTIONS.fit),
+      face: z.enum(SCENE_OPTIONS.face),
+      density: z.enum(SCENE_OPTIONS.density),
+      reach: z.enum(SCENE_OPTIONS.reach),
+      strength: z.enum(SCENE_OPTIONS.strength),
+      contentFade: z.enum(SCENE_OPTIONS.contentFade),
+      parallax: z.enum(SCENE_OPTIONS.parallax),
+    }),
     /** Sections hidden until there is something to show. */
     flags: z.strictObject({ writing: z.boolean(), photography: z.boolean(), ask: z.boolean(), motion: z.boolean(), backgroundPanel: z.boolean() }),
   })

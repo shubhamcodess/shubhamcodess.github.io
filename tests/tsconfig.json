@@ -1,1 +1,1 @@
-{ "extends": "../tsconfig.base.json", "include": ["."], "compilerOptions": { "types": ["node"] } }
+{ "extends": "../tsconfig.base.json", "include": [".", "../packages/design/src/css.d.ts"], "compilerOptions": { "types": ["node", "react"] } }

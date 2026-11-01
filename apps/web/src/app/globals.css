@@ -1,3 +1,5 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; color: var(--ink); }
+/* A plain system font until the type is decided. */
+body { font: 400 16px/1.55 ui-sans-serif, -apple-system, "Helvetica Neue", Arial, sans-serif; }
 [data-theme="dark"] { background: var(--base); }

@@ -31,8 +31,10 @@ for (const [width, height] of WIDTHS) {
     await page.goto(base + path, { waitUntil: "networkidle" });
     const overflow = await page.evaluate(() => {
       const limit = document.documentElement.clientWidth;
-      const wide = [...document.querySelectorAll("body *")].find((el) => { const r = el.getBoundingClientRect(); return r.width > 0 && (r.right > limit + 0.5 || r.left < -0.5); });
-      return { scroll: document.documentElement.scrollWidth > limit, wide: wide ? wide.tagName + "." + wide.className : null };
+      // Decorative art may run past the edge, because it's clipped. Everything else has to fit.
+      const wide = [...document.querySelectorAll("body *")].find((el) => { if (el.closest('[aria-hidden="true"]')) return false; const r = el.getBoundingClientRect(); return r.width > 0 && (r.right > limit + 0.5 || r.left < -0.5); });
+      const page = document.getElementById("page");
+      return { scroll: document.documentElement.scrollWidth > limit || (page ? page.scrollWidth > page.clientWidth : false), wide: wide ? wide.tagName + "." + wide.className : null };
     });
     const ok = !overflow.scroll && !overflow.wide && !errors.length;
     if (!ok) failures.push(`${width}x${height} ${path}: ${JSON.stringify(overflow)} ${errors.join("; ")}`);

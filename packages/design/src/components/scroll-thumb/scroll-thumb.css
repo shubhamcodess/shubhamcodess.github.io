@@ -1,0 +1,7 @@
+/* The hit area is larger than the shape, so a small thumb is still easy to grab. */
+.scroll-thumb { position: fixed; z-index: 50; top: 0; right: 0; width: 28px; height: 44px; display: grid; place-items: center; cursor: grab; touch-action: none; user-select: none; }
+.scroll-thumb[hidden] { display: none; }
+.scroll-thumb[data-dragging] { cursor: grabbing; }
+.scroll-thumb-shape { color: var(--ink); opacity: .5; transition: transform var(--dur-frame) var(--ease-soft), opacity var(--dur-frame) var(--ease-soft); }
+.scroll-thumb:hover .scroll-thumb-shape, .scroll-thumb[data-dragging] .scroll-thumb-shape { opacity: .9; transform: scale(1.4); }
+@media (prefers-reduced-motion: reduce) { .scroll-thumb-shape { transition-duration: .01s; } }

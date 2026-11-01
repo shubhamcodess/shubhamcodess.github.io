@@ -69,12 +69,12 @@ The Dark mode colors above are from the prototypes and aren't final.
 
 **Never use:** rounded corners, drop-shadow blurs, purple or blue gradients, tag-pill clusters, stock icon sets, emoji as icons, fade-up on every element, or copy with no fact behind it.
 
-**Frost** (blurring what's behind a surface) is the one allowed glass effect, and only where a component sits over the busy cave.
+**Frost** (blurring what's behind a surface) is the one allowed glass effect, and only where a component sits over the busy cave or floats in the header. It should look like smoke in the air, not like a glass panel.
 
 ## Components
 
 ### Button: Approved
-Prototype: `prototypes/05-button-soft`. It replaces the feel of `04-button`, which is kept for comparison.
+Code: `packages/design/src/components/button`. Prototype: `prototypes/05-button-soft`, which replaced the feel of `04-button`.
 
 - **Parts:** body, wireframe shadow, three corner lines, texture, frame, sketched icon, label.
 - **Levels:** primary (texture .3, amber icon), secondary (texture .15, line-colored icon), quiet (no texture, underline until hovered).
@@ -89,8 +89,11 @@ Prototype: `prototypes/05-button-soft`. It replaces the feel of `04-button`, whi
 | Disabled | Dashed frame, no texture or shadow, muted text |
 
 - **Shadow direction:** bottom right.
-- **Over the cave:** use Frost (38% base tint, 3px blur).
+- **Face:** clear by default. A use can set `--bp-face` and `--bp-face-filter` to tint and blur what's behind it, for example over the cave, or in the header.
 - **Rule:** the main icon line never disappears on hover. Only the fainter second line redraws.
+
+### Scroll thumb: Approved
+Code: `packages/design/src/components/scroll-thumb`. It replaces the visible scrollbar with one small draggable shape that takes up no width. The shape is passed in: this site uses a small batarang, standing on end. On hover it grows by 1.4 and darkens, softly. It's for pointers, while keyboards, wheels and touch scroll natively.
 
 ### Project card: Approved
 Prototype: `prototypes/06-project-card`, with its detail page at `projects/everything-tech/`.

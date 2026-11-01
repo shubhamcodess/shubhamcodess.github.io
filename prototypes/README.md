@@ -16,4 +16,6 @@ Keep every prototype here. Don't overwrite or delete one: new ideas get a new nu
 
 The four themes in `08-daylight-themes` are now in the real site, in `packages/design/src/palettes.ts`.
 
+The header, skyline and floating buttons from `09-nav-skyline` went into the real site, with Street and Behind kept as settings.
+
 The Batcave here is a stand-in. In the final build it needs to be much more realistic, with smoother animation and much better suits.
