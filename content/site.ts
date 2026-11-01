@@ -21,7 +21,7 @@ const config = {
     { label: "GitHub", href: "https://github.com/shubhamcodess" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/shubham-prakash-dev/" },
   ],
-  flags: { writing: false, photography: false, ask: false, motion: true, backgroundPanel: true },
+  flags: { writing: false, photography: false, ask: false, motion: true, backgroundPanel: false },
 } satisfies SiteConfig;
 
 export const site = siteSchema.parse(config);
