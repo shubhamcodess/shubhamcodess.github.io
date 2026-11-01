@@ -39,8 +39,9 @@ html, body { height: 100%; overflow: hidden; }
 }
 
 /* The logo sits free of any frame. It's allowed to overhang, because the batarang flies in from outside its box. */
-.site-logo { display: block; flex: none; color: inherit; border-radius: 0; }
+.site-logo { position: relative; display: block; flex: none; color: inherit; border-radius: 0; }
 .site-logo svg { display: block; overflow: visible; }
+.site-logo::before { content: ""; position: absolute; inset: -4px 0; } /* the same touch target as a small button */
 /* Where the throw will play, the batarang stays out of sight until it starts, so it never shows lodged and then jumps away. */
 @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
   .site-logo:not([data-thrown]) .logo-hit { visibility: hidden; }

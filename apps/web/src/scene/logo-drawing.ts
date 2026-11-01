@@ -1,63 +1,77 @@
 import { sketch } from "@portfolio/design/button";
 import { BATARANG_EDGES, BATARANG_OUTLINE } from "./batarang-shape";
-import { LOGO_LETTERS } from "./logo-letters";
 
-/* The logo's line work, worked out once. Everything is pen lines on a skewed plane, so it reads as a drawing of something 3D. */
+/* The logo's line work, worked out once: a blueprint plate the same height as a header button, with a batarang driven into its face. */
 type Point = number[];
 
-const SHAPES = LOGO_LETTERS;
+export const PLATE = { w: 62, h: 38, past: 5, shadow: 4 };
 
+const at = (shape: Point[], dx: number, dy: number) => shape.map(([x, y]) => [x! + dx, y! + dy]);
 const flat = (pts: Point[]) => `M${pts.map(([x, y]) => `${x} ${y}`).join("L")}Z`;
-
-/* `past` runs an edge beyond its corners, the way a draughtsman's lines cross. The faint second pass does this; the main line stays clean. */
-function edges(shape: Point[], past: number): Point[][] {
-  return shape.map((a, i) => {
-    const b = shape[(i + 1) % shape.length]!, len = Math.hypot(b[0]! - a[0]!, b[1]! - a[1]!);
-    const ux = ((b[0]! - a[0]!) / len) * past, uy = ((b[1]! - a[1]!) / len) * past;
-    return [[a[0]! - ux, a[1]! - uy], [b[0]! + ux, b[1]! + uy]];
-  });
-}
 const pen = (lines: Point[][], seed: number, amp: number) => lines.map((l, i) => sketch(l, seed + i * 11, amp)).join(" ");
 
+const S = at([[2, 0], [20, 0], [20, 5], [5, 5], [5, 10.5], [18, 10.5], [20, 12.5], [20, 24], [18, 26], [0, 26], [0, 21], [15, 21], [15, 15.5], [2, 15.5], [0, 13.5], [0, 2]], 7, 6);
+const P_OUT = at([[0, 0], [15, 0], [18, 3], [18, 13], [15, 16], [5, 16], [5, 26], [0, 26]], 30, 6);
+const P_IN = at([[5, 5], [13, 5], [13, 11], [5, 11]], 30, 6);
+const LETTERS = [S, P_OUT, P_IN];
+
+const { w, h, past, shadow } = PLATE;
+const hatch: Point[][] = [];
+for (let c = -h; c < w + h; c += 4) hatch.push([[c, h], [c + h, 0]]);
 
 export const LOGO = {
-  /** The solid letters, used only to hide what's behind them. */
-  face: SHAPES.map(flat).join(""),
-  front: pen(SHAPES.flatMap((s) => edges(s, 0)), 5, 0.2),
-  frontSecond: pen(SHAPES.flatMap((s) => edges(s, 1.9)), 61, 0.42),
-  back: pen(SHAPES.flatMap((s) => edges(s, 0)), 23, 0.3),
-  /** Light guide lines the letters sit on, like the crop lines on a button. */
-  guides: pen([[[-7, 30], [55, 30]], [[-7, 0], [23.4, 0]], [[3, -5], [3, 35]]], 41, 0.12),
+  letterFill: LETTERS.map(flat).join(""),
+  // Four drafting lines that run past the corners, as on a button.
+  frame: pen([[[-past, 0], [w + past, 0]], [[-past, h], [w + past, h]], [[0, -past], [0, h + past]], [[w, -past], [w, h + past]]], 17, 0.1),
+  // A wireframe shadow, not a blur: a second outline, joined at the corners.
+  shadow: pen([[[w + shadow, shadow], [w + shadow, h + shadow], [shadow, h + shadow]], [[w, 0], [w + shadow, shadow]], [[w, h], [w + shadow, h + shadow]], [[0, h], [shadow, h + shadow]]], 29, 0.1),
+  hatch: pen(hatch, 41, 0.1),
 };
 
-/** How far the letters' back face sits behind the front. */
-export const LOGO_DEPTH = { x: 2.8, y: 2 };
-
-/* The batarang: its own tilt, so it reads as a flat blade turned in the air. */
-export const BATARANG_R = 20;
-const scaled = (pts: Point[]) => pts.map(([x, y]) => [x! * BATARANG_R, y! * BATARANG_R]);
-const blade = BATARANG_EDGES.map(scaled);
-// The bevel on the reference: the same outline again, a little inside the first.
-const bevel = blade.map((edge) => edge.map(([x, y]) => [x! * 0.84, y! * 0.84 + 0.5]));
-
-// Hatching across the blade, kept inside it by a clip.
-const hatch: Point[][] = [];
-for (let c = -BATARANG_R * 1.5; c < BATARANG_R * 1.5; c += 1.5) hatch.push([[c - 5, -6], [c + 5, 10]]);
+/* The batarang, with its own slight tilt so it reads as a blade turned towards you. */
+export const BATARANG_R = 18;
+const blade = BATARANG_EDGES.map((edge) => edge.map(([x, y]) => [x! * BATARANG_R, y! * BATARANG_R]));
+const bladeHatch: Point[][] = [];
+for (let c = -BATARANG_R * 1.4; c < BATARANG_R * 1.4; c += 1.8) bladeHatch.push([[c - 5, -6], [c + 5, 10]]);
 
 export const BLADE = {
-  outline: BATARANG_OUTLINE.map(([x, y]) => `${(x! * BATARANG_R).toFixed(2)} ${(y! * BATARANG_R).toFixed(2)}`).join("L"),
-  edge: pen(blade, 7, 0.2),
-  edgeSecond: pen(blade, 71, 0.36),
-  bevel: pen(bevel, 31, 0.16),
-  hatch: pen(hatch, 53, 0.3),
+  shape: `M${BATARANG_OUTLINE.map(([x, y]) => `${(x! * BATARANG_R).toFixed(2)} ${(y! * BATARANG_R).toFixed(2)}`).join("L")}Z`,
+  edge: pen(blade, 7, 0.08),
+  // The bevel on the reference: the same outline again, a little inside the first.
+  bevel: pen(blade.map((edge) => edge.map(([x, y]) => [x! * 0.82, y! * 0.82 + 0.5])), 31, 0.08),
+  hatch: pen(bladeHatch, 53, 0.12),
 };
 
-/* Tilt, then the angle it's lodged at. All of this is one plane, so the spin in flight stays in that plane too. */
-export const BLADE_TILT = [1, -0.04, -0.14, 0.9] as const;
-export const BLADE_ANGLE = -20;
+export const BLADE_TILT = [1, -0.03, -0.1, 0.9] as const;
+export const BLADE_ANGLE = -28;
 
-const rad = (BLADE_ANGLE * Math.PI) / 180;
-const [tx, ty] = [-BATARANG_R, -0.22 * BATARANG_R] as [number, number];
-const [rx, ry] = [tx * Math.cos(rad) - ty * Math.sin(rad), tx * Math.sin(rad) + ty * Math.cos(rad)];
-/** The wing tip, measured from the batarang's centre, once it's tilted and turned. */
-export const BLADE_TIP = { x: BLADE_TILT[0] * rx + BLADE_TILT[2] * ry, y: BLADE_TILT[1] * rx + BLADE_TILT[3] * ry };
+const rad = (BLADE_ANGLE * Math.PI) / 180, cos = Math.cos(rad), sin = Math.sin(rad);
+const place = (x: number, y: number) => {
+  const rx = x * cos - y * sin, ry = x * sin + y * cos;
+  return { x: BLADE_TILT[0] * rx + BLADE_TILT[2] * ry, y: BLADE_TILT[1] * rx + BLADE_TILT[3] * ry };
+};
+const f = (v: number) => v.toFixed(2);
+
+// Where the wing tip ends up, inside the plate, right of the P.
+const TIP_AT = { x: 50.5, y: 13.5 };
+const tip = place(-BATARANG_R, -0.22 * BATARANG_R), along = place(1, 0), len = Math.hypot(along.x, along.y);
+const u = { x: along.x / len, y: along.y / len }; // along the wing, away from the tip
+const n = { x: -u.y, y: u.x };
+
+/** Where the batarang's centre sits once lodged. */
+export const LODGED = { x: TIP_AT.x - tip.x, y: TIP_AT.y - tip.y };
+
+// Everything before this line along the wing has gone into the plate.
+const SLIT = { x: TIP_AT.x + u.x * 3.2, y: TIP_AT.y + u.y * 3.2 };
+const big = 200;
+/** What stays visible of the batarang: all but its buried tip. */
+export const BLADE_VISIBLE = [
+  [SLIT.x - n.x * big, SLIT.y - n.y * big], [SLIT.x + n.x * big, SLIT.y + n.y * big],
+  [SLIT.x + n.x * big + u.x * big, SLIT.y + n.y * big + u.y * big], [SLIT.x - n.x * big + u.x * big, SLIT.y - n.y * big + u.y * big],
+].map(([x, y]) => `${f(x!)},${f(y!)}`).join(" ");
+
+/** The mark the blade made, and the splits running from it, measured along and across the wing. */
+const from = (a: number, b: number) => `${f(SLIT.x + u.x * a + n.x * b)} ${f(SLIT.y + u.y * a + n.y * b)}`;
+export const SLIT_LINE = `M${from(0, -2.1)}L${from(0, 2.1)}`;
+export const CRACKS = [`M${from(0, -2.1)}L${from(-4, -4.6)}`, `M${from(0, 2.1)}L${from(-3.4, 5)}`, `M${from(-1, 0)}L${from(-5.2, 0.4)}`];
+export const FLECK = `M${from(0, -0.6)}L${from(0.9, 0.3)}`;
