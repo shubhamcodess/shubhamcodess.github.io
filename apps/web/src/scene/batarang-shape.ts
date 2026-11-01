@@ -26,4 +26,4 @@ export const BATARANG_OUTLINE: Point[] = [...right, ...left];
 
 /** How it sits once lodged: its slight tilt, then its angle in degrees. The logo and the site icons share this. */
 export const BLADE_TILT = [1, -0.03, -0.1, 0.9] as const;
-export const BLADE_ANGLE = -28;
+export const BLADE_ANGLE = -44;

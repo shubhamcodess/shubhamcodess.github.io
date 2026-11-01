@@ -110,7 +110,6 @@ html, body { height: 100%; overflow: hidden; }
 @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
   .site-logo:not([data-thrown]) .logo-hit { visibility: hidden; }
 }
-.site-logo-text { fill: var(--ink); stroke: none; font: 500 28px/1 var(--sans); letter-spacing: -.04em; }
 .site-logo:focus-visible { outline: 1.5px dashed var(--accent); outline-offset: 4px; }
 
 /* The theme button: every theme's sun is here, stacked, and the active one shows, so it's right from the first paint.

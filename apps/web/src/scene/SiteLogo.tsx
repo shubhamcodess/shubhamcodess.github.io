@@ -4,13 +4,13 @@ import Link from "next/link";
 import { domAnimation, LazyMotion, m, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 
-import { BLADE, BLADE_ANGLE, BLADE_TILT, BLADE_VISIBLE, CRACKS, FLECK, LODGED, LOGO, PLATE, SLIT_LINE } from "./logo-drawing";
+import { BLADE, BLADE_ANGLE, BLADE_TILT, BLADE_TIP, BLADE_VISIBLE, CRACKS, FLECK, LODGED, LOGO, PLATE, SLIT_LINE } from "./logo-drawing";
 
-/* The logo: SP on a blueprint plate the same height as a header button, with a batarang thrown into its face from a short way off.
+/* The logo: SP in pen strokes on a square blueprint plate, the same height as a header button, with a batarang thrown into its face from a short way off.
    The svg's box is just the plate, so the header lines up, and the batarang hangs outside it. */
 
 // It flies along its own wing line, tip first.
-const FLIGHT = { x: 26, y: -18 };
+const FLIGHT = { x: 18, y: -18 };
 const CHIPS = [[-5, -7], [1, -9], [6, -6], [-8, -2]] as const;
 const HIT = 0.46; // seconds until it strikes
 
@@ -51,7 +51,8 @@ export function SiteLogo() {
               <path d={LOGO.hatch} stroke="var(--line)" strokeWidth=".6" opacity=".55" />
             </g>
             <path d={LOGO.frame} stroke="var(--line)" strokeWidth="1" />
-            <text className="site-logo-text" x="7" y="28.4">SP</text>
+            <path d={LOGO.lettersSecond} stroke="var(--ink)" strokeWidth=".55" opacity=".45" strokeLinecap="round" />
+            <path d={LOGO.letters} stroke="var(--ink)" strokeWidth="1.75" strokeLinecap="round" />
             {/* The mark it leaves, drawn on the instant it lands. */}
             <g className="logo-hit">
               <m.path key={`slit-${take}`} d={SLIT_LINE} stroke="var(--ink)" strokeWidth="1.2" initial={playing ? { opacity: 0 } : false} animate={{ opacity: 1 }} transition={{ delay: HIT, duration: 0.05 }} />
@@ -63,14 +64,14 @@ export function SiteLogo() {
 
           <g className="logo-hit" clipPath="url(#logo-visible)">
             <g transform={`translate(${LODGED.x.toFixed(2)} ${LODGED.y.toFixed(2)})`}>
-              {/* It quivers from its buried tip. The tip is about a wing's length from the centre, and this group turns about its own middle. */}
+              {/* It quivers from its buried tip. The empty square centres this group on the tip, because motion turns a group about its middle. */}
               <m.g
                 key={`quiver-${take}`}
                 initial={false}
                 animate={playing ? { rotate: [0, -5, 3.5, -2, 1, 0] } : undefined}
                 transition={{ delay: HIT, duration: 0.6, ease: "easeOut" }}
               >
-                <rect x={-16 - 70} y={7 - 70} width="140" height="140" />
+                <rect x={BLADE_TIP.x - 70} y={BLADE_TIP.y - 70} width="140" height="140" />
                 <m.g
                   key={`flight-${take}`}
                   initial={playing ? { x: FLIGHT.x, y: FLIGHT.y, opacity: 0 } : false}
@@ -92,8 +93,8 @@ export function SiteLogo() {
                         <g clipPath="url(#logo-blade)">
                           <path d={BLADE.hatch} stroke="var(--accent)" strokeWidth=".35" opacity=".3" />
                         </g>
-                        <path d={BLADE.bevel} stroke="var(--accent)" strokeWidth=".45" opacity=".65" />
-                        <path d={BLADE.edge} stroke="var(--accent)" strokeWidth="1.2" />
+                        <path d={BLADE.bevel} stroke="var(--accent)" strokeWidth=".35" opacity=".45" />
+                        <path d={BLADE.edge} stroke="var(--accent)" strokeWidth="1" />
                       </g>
                     </m.g>
                   </g>
