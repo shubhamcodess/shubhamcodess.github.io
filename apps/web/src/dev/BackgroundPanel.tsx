@@ -9,12 +9,22 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { PALETTE_IDS, pickBackground, selectBackground, type BackgroundMode, type PaletteId } from "@portfolio/design";
 import { SCENE_OPTIONS } from "@portfolio/content/scene-options";
+import { BUTTON_OPTIONS } from "@portfolio/design/button-options";
 import "./background-panel.css";
 
 const GRAIN = { Theme: null, Off: "0", Low: ".3", High: ".85" };
 type SceneKey = keyof typeof SCENE_OPTIONS;
 const SCENE_KEYS = Object.keys(SCENE_OPTIONS) as SceneKey[];
 const LABEL: Record<SceneKey, string> = { fit: "Fit", face: "Face", density: "Density", reach: "Reach", strength: "City", contentFade: "Fade", parallax: "Parallax" };
+
+// Variant and size change only the Projects button, so the logo stays as it is.
+const BUTTON_KEYS = ["variant", "size", "texture", "shadow", "hover", "press", "sway"] as const;
+type ButtonKey = (typeof BUTTON_KEYS)[number];
+const FONTS = {
+  barlow: ["var(--font-label)", ".09em", "16px"],
+  chakra: ["var(--font-chakra)", ".05em", "14.5px"],
+  saira: ["var(--font-saira)", ".07em", "14.5px"],
+} as const;
 
 export function BackgroundPanel() {
   const [open, setOpen] = useState(true);
@@ -24,12 +34,16 @@ export function BackgroundPanel() {
   const [text, setText] = useState(true);
   const [scene, setScene] = useState<Partial<Record<SceneKey, string>>>({});
   const [page, setPage] = useState<HTMLElement | null>(null);
+  const [button, setButton] = useState<Partial<Record<ButtonKey, string>>>({});
+  const [font, setFont] = useState<keyof typeof FONTS>("barlow");
 
   useEffect(() => {
     const d = document.documentElement.dataset;
     setPalette(d.palette as PaletteId);
     setScene(Object.fromEntries(SCENE_KEYS.map((k) => [k, d[k]])));
     setPage(document.getElementById("page"));
+    const projects = document.querySelector<HTMLElement>("[data-tower]");
+    setButton(Object.fromEntries(BUTTON_KEYS.map((k) => [k, projects?.dataset[k]])));
   }, []);
 
   const override = (name: string, value: string | null) => {
@@ -41,6 +55,18 @@ export function BackgroundPanel() {
   const setSceneOption = (key: SceneKey, value: string) => {
     document.documentElement.dataset[key] = value;
     setScene((s) => ({ ...s, [key]: value }));
+  };
+
+  const setButtonOption = (key: ButtonKey, value: string) => {
+    const one = key === "variant" || key === "size";
+    document.querySelectorAll<HTMLElement>(one ? "[data-tower]" : ".site-header .bp").forEach((el) => { el.dataset[key] = value; });
+    setButton((b) => ({ ...b, [key]: value }));
+    if (key === "size") document.documentElement.dataset.fit = document.documentElement.dataset.fit; // the tower follows the button's new width
+  };
+  const pickFont = (name: keyof typeof FONTS) => {
+    const [family, track, size] = FONTS[name], { style } = document.querySelector(".site-header") as HTMLElement;
+    style.setProperty("--label", `${family}, sans-serif`); style.setProperty("--track", track); style.setProperty("--size", size);
+    setFont(name);
   };
 
   return (
@@ -66,6 +92,22 @@ export function BackgroundPanel() {
               ))}
             </div>
           ))}
+          <hr />
+          {BUTTON_KEYS.map((key) => (
+            <div key={key} role="group" aria-label={`Button ${key}`}>
+              <span>{key}</span>
+              {BUTTON_OPTIONS[key].map((value) => (
+                <button key={value} type="button" aria-pressed={button[key] === value} onClick={() => setButtonOption(key, value)}>{value}</button>
+              ))}
+            </div>
+          ))}
+          <div role="group" aria-label="Button font">
+            <span>font</span>
+            {(Object.keys(FONTS) as (keyof typeof FONTS)[]).map((name) => (
+              <button key={name} type="button" aria-pressed={font === name} onClick={() => pickFont(name)}>{name}</button>
+            ))}
+          </div>
+          <hr />
           <div role="group" aria-label="Grain">
             <span>Grain</span>
             {(Object.keys(GRAIN) as (keyof typeof GRAIN)[]).map((level) => (

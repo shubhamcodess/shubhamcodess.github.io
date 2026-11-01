@@ -74,23 +74,35 @@ The Dark mode colors above are from the prototypes and aren't final.
 ## Components
 
 ### Button: Approved
-Code: `packages/design/src/components/button`. Prototype: `prototypes/05-button-soft`, which replaced the feel of `04-button`.
+Code: `packages/design/src/components/button`. The options are listed once in `options.ts`, and the types, config and control panel all read that list. It runs on CSS alone. Prototype: `prototypes/05-button-soft`, whose hover and press have since been replaced.
 
-- **Parts:** body, wireframe shadow, three corner lines, texture, frame, sketched icon, label.
-- **Levels:** primary (texture .3, amber icon), secondary (texture .15, line-colored icon), quiet (no texture, underline until hovered).
-- **Sizes:** small 38px, medium 46px, large 60px high, with a 46px minimum touch area.
+- **Parts:** base wireframe, three corner lines, and the cap, which holds the texture, fold lines, frame, sketched icon and label.
+
+| Input | Options | Default |
+|---|---|---|
+| `variant` | primary (texture .3, amber icon), secondary (texture .15), quiet (no texture, underline until hovered) | primary |
+| `size` | sm 38px, md 46px, lg 60px, all with a 46px minimum touch area | md |
+| `texture` | hatch, dots, grid, fade | hatch |
+| `shadow` | Which way the cap sinks: br, bl, tr, tl | br |
+| `hover` | keycap, shadow, none | keycap |
+| `press` | warp, drop, none | warp |
+| `sway` | off, soft, softer | off |
+| `face` | clear, frost. Leave it out to inherit `--bp-face` and `--bp-face-filter` from around the button. | clear |
+| `icon`, `href`, `as`, `disabled`, `className`, `style` | Icon name, link target, link component, disabled state, and one-place changes | |
 
 | State | What happens |
 |---|---|
 | Rest | Corner overshoot 4px, texture rises 62% |
-| Hover | Overshoot 6px, texture rises 92%, shadow slides out 7px (5px small, 9px large) at .5 opacity, frame line brightens, slow sway, faint pen line redraws |
-| Press | The button drops into its shadow over .18s |
-| Keyboard focus | Dashed amber line 12px clear of the button |
+| Hover, `keycap` | Like a key being pushed. The cap sinks 42% of the way onto a wireframe base that stays put, quickly (.17s), and returns more slowly (.5s). Overshoot 6px, texture rises 92%, frame brightens, faint pen line redraws. |
+| Hover, `shadow` | The earlier style: the cap stays still, and the wireframe slides out from it |
+| Press, `warp` | Like pressing a sheet of blueprint. The cap bottoms out, and the texture folds inward along creases from each corner to the center. In over .13s, and released slowly over 1.25s. |
+| Press, `drop` | The cap drops into its shadow, with no fold, and returns quickly |
+| Keyboard focus | Same as hover, plus a dashed amber line 12px clear of the button |
 | Disabled | Dashed frame, no texture or shadow, muted text |
 
-- **Shadow direction:** bottom right.
-- **Face:** clear by default. A use can set `--bp-face` and `--bp-face-filter` to tint and blur what's behind it, for example over the cave, or in the header.
 - **Rule:** the main icon line never disappears on hover. Only the fainter second line redraws.
+- **Rule:** hover and press are separate values, so a press releases slowly even while the pointer stays on the button.
+- **Reduced motion:** state changes are instant and the texture doesn't fold.
 
 ### Scroll thumb: Approved
 Code: `packages/design/src/components/scroll-thumb`. It replaces the visible scrollbar with one small draggable shape that takes up no width. The shape is passed in: this site uses a small batarang, standing on end. It rests at `--scroll-thumb-top`, which this site sets to the bottom of the header. On hover it grows by 1.4 and darkens, softly. It's for pointers, while keyboards, wheels and touch scroll natively.

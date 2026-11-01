@@ -6,6 +6,7 @@ const config = {
   description: "Shubham Prakash's corner of the internet.",
   background: { default: "dust", onLoad: "config" },
   scene: { fit: "street", face: "mist", density: "normal", reach: "mid", strength: "faint", contentFade: "mid", parallax: "low" },
+  headerButton: { texture: "hatch", shadow: "br", hover: "keycap", press: "warp", sway: "off" },
   flags: { writing: false, photography: false, ask: false, motion: true, backgroundPanel: true },
 } satisfies SiteConfig;
 

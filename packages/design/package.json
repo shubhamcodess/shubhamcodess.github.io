@@ -9,7 +9,8 @@
     "./button": "./src/components/button/Button.tsx",
     "./scroll-thumb": "./src/components/scroll-thumb/ScrollThumb.tsx",
     "./tokens.css": "./src/tokens.css",
-    "./environment.css": "./src/environment.css"
+    "./environment.css": "./src/environment.css",
+    "./button-options": "./src/components/button/options.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

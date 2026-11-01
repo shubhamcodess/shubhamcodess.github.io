@@ -1,91 +1,140 @@
-/* The approved blueprint button (prototype 05-button-soft). Colors come only from tokens. */
-  @property --os { syntax:"<length>"; inherits:true; initial-value:4px; }
-  @property --rise { syntax:"<percentage>"; inherits:true; initial-value:62%; }
-  @property --l { syntax:"<color>"; inherits:true; initial-value:transparent; }
+/* The blueprint button. Colors come only from tokens, and each option is a data attribute set by Button.tsx. */
+@property --os { syntax:"<length>"; inherits:true; initial-value:4px; }
+@property --rise { syntax:"<percentage>"; inherits:true; initial-value:62%; }
+@property --l { syntax:"<color>"; inherits:true; initial-value:transparent; }
+/* Hover and press are separate values, so each can move at its own speed. Press releases slowly whatever hover is doing. */
+@property --bp-h { syntax:"<number>"; inherits:true; initial-value:0; }
+@property --bp-p { syntax:"<number>"; inherits:true; initial-value:0; }
 
-  /* ---------- The button ---------- */
-  .bp { --off:7px; --tex-a:.3; position:relative; display:inline-block; padding:0; margin:0; color:var(--ink); background:none; border:0; cursor:pointer; font:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent; }
-  .bp:focus { outline:none; }
-  .bp-body { position:relative; display:inline-flex; align-items:center; gap:11px; min-height:46px; padding:12px 22px 12px 18px; font:600 var(--size)/1 var(--label); letter-spacing:var(--track); text-transform:uppercase; white-space:nowrap; transition:transform .3s var(--ease-soft); }
-  .bp-body { background-color:var(--bp-face, transparent); -webkit-backdrop-filter:var(--bp-face-filter, none); backdrop-filter:var(--bp-face-filter, none); }
-  .bp-label, .bp-icon { position:relative; z-index:1; }
+.bp {
+  --off:7px; --tex-a:.3; --warp-v:30deg; --warp-h:9deg;
+  position:relative; display:inline-block; padding:0; margin:0; color:var(--ink); background:none; border:0; cursor:pointer; font:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent;
+  transition:--bp-h .5s var(--ease-soft), --bp-p .25s var(--ease-soft);
+}
+.bp:focus { outline:none; }
+.bp::before { content:""; position:absolute; inset:-4px 0; } /* keeps the small size at a 46px touch target */
 
-  /* The frame is four drafting lines that run slightly past each corner, not a CSS border. */
-  .bp-frame { position:absolute; inset:calc(var(--os) * -1); pointer-events:none; --l:var(--line-rest); transition:--os .6s var(--ease-soft), --l .6s var(--ease-soft);
-    background:
-      linear-gradient(var(--l),var(--l)) 0 var(--os) / 100% 1px no-repeat,
-      linear-gradient(var(--l),var(--l)) 0 calc(100% - var(--os)) / 100% 1px no-repeat,
-      linear-gradient(var(--l),var(--l)) var(--os) 0 / 1px 100% no-repeat,
-      linear-gradient(var(--l),var(--l)) calc(100% - var(--os)) 0 / 1px 100% no-repeat; }
+/* The cap: everything that moves when the button is pushed. */
+.bp-body {
+  position:relative; display:inline-flex; align-items:center; gap:11px; min-height:46px; padding:12px 22px 12px 18px;
+  font:600 var(--size)/1 var(--label); letter-spacing:var(--track); text-transform:uppercase; white-space:nowrap;
+  background-color:var(--bp-face, transparent); -webkit-backdrop-filter:var(--bp-face-filter, none); backdrop-filter:var(--bp-face-filter, none);
+  translate:calc(var(--sx) * var(--off) * var(--bp-travel, 0)) calc(var(--sy) * var(--off) * var(--bp-travel, 0));
+}
+.bp-label, .bp-icon { position:relative; z-index:1; }
 
-  /* Clear face. A drawn texture rises from the bottom edge and fades to nothing before it reaches the text. */
-  .bp-tex { position:absolute; inset:0; pointer-events:none; opacity:var(--tex-a); transition:--rise .85s var(--ease-soft), opacity .5s;
-    -webkit-mask-image:linear-gradient(to top, #000 0, transparent var(--rise)); mask-image:linear-gradient(to top, #000 0, transparent var(--rise)); }
-  [data-tex="hatch"] .bp-tex { background:repeating-linear-gradient(135deg, var(--line) 0 1px, transparent 1px 5px); }
-  [data-tex="dots"]  .bp-tex { background:radial-gradient(circle at 1px 1px, var(--line) .8px, transparent 1px) 0 0 / 5px 5px; }
-  [data-tex="grid"]  .bp-tex { background:linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 7px 7px, linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 7px 7px; }
-  [data-tex="fade"]  .bp-tex { background:var(--line); opacity:calc(var(--tex-a) * .55); }
+/* The frame is four drafting lines that run slightly past each corner, not a CSS border. */
+.bp-frame { position:absolute; inset:calc(var(--os) * -1); pointer-events:none; --l:var(--line-rest); transition:--os var(--dur-frame) var(--ease-soft), --l var(--dur-frame) var(--ease-soft);
+  background:
+    linear-gradient(var(--l),var(--l)) 0 var(--os) / 100% 1px no-repeat,
+    linear-gradient(var(--l),var(--l)) 0 calc(100% - var(--os)) / 100% 1px no-repeat,
+    linear-gradient(var(--l),var(--l)) var(--os) 0 / 1px 100% no-repeat,
+    linear-gradient(var(--l),var(--l)) calc(100% - var(--os)) 0 / 1px 100% no-repeat; }
 
-  /* The shadow is a second wireframe: only the far two edges, and the lines joining the corners. */
-  .bp-ghost { position:absolute; inset:0; pointer-events:none; opacity:0; transform:translate(0,0); transition:transform .65s var(--ease-soft), opacity .5s; }
-  .bp-ghost i { position:absolute; display:block; background:var(--line); }
-  .g-h { left:0; width:100%; height:1px; top:calc(50% + var(--sy) * 50%); margin-top:calc(var(--sy) * -.5px - .5px); }
-  .g-v { top:0; height:100%; width:1px; left:calc(50% + var(--sx) * 50%); margin-left:calc(var(--sx) * -.5px - .5px); }
-  .bp-link { position:absolute; width:calc(var(--off) * 1.4142); height:1px; background:var(--line); transform-origin:0 50%; pointer-events:none; opacity:0; transform:rotate(atan2(var(--sy), var(--sx))) scaleX(0); transition:transform .65s var(--ease-soft), opacity .5s; }
-  .l1 { left:calc(50% + var(--sx) * 50%); top:calc(50% + var(--sy) * 50%); }
-  .l2 { left:calc(50% + var(--sx) * 50%); top:calc(50% - var(--sy) * 50%); }
-  .l3 { left:calc(50% - var(--sx) * 50%); top:calc(50% + var(--sy) * 50%); }
+/* Clear face. A drawn texture rises from the bottom edge and fades to nothing before it reaches the text.
+   It's cut into four triangles meeting at the center, so a press can fold the sheet inward along its creases. */
+.bp-tex { position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity:calc(var(--tex-a) + var(--bp-p) * .35); perspective:90px; transition:--rise var(--dur-texture) var(--ease-soft);
+  -webkit-mask-image:linear-gradient(to top, #000 0, transparent calc(var(--rise) + var(--bp-p) * 60%)); mask-image:linear-gradient(to top, #000 0, transparent calc(var(--rise) + var(--bp-p) * 60%)); }
+.bp-tex i { position:absolute; inset:0; display:block; }
+.bp-tex .t { clip-path:polygon(0 0, 100% 0, 50% 50%); transform-origin:50% 0; }
+.bp-tex .b { clip-path:polygon(0 100%, 100% 100%, 50% 50%); transform-origin:50% 100%; }
+.bp-tex .l { clip-path:polygon(0 0, 0 100%, 50% 50%); transform-origin:0 50%; }
+.bp-tex .r { clip-path:polygon(100% 0, 100% 100%, 50% 50%); transform-origin:100% 50%; }
+.bp[data-press="warp"] .bp-tex .t { transform:rotateX(calc(var(--bp-p) * var(--warp-v) * -1)); }
+.bp[data-press="warp"] .bp-tex .b { transform:rotateX(calc(var(--bp-p) * var(--warp-v))); }
+.bp[data-press="warp"] .bp-tex .l { transform:rotateY(calc(var(--bp-p) * var(--warp-h))); }
+.bp[data-press="warp"] .bp-tex .r { transform:rotateY(calc(var(--bp-p) * var(--warp-h) * -1)); }
+.bp[data-texture="hatch"] .bp-tex i { background:repeating-linear-gradient(135deg, var(--line) 0 1px, transparent 1px 5px); }
+.bp[data-texture="dots"] .bp-tex i { background:radial-gradient(circle at 1px 1px, var(--line) .8px, transparent 1px) 0 0 / 5px 5px; }
+.bp[data-texture="grid"] .bp-tex i { background:linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 7px 7px, linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 7px 7px; }
+.bp[data-texture="fade"] .bp-tex i { background:var(--line); opacity:.55; }
 
-  .bp-icon { width:20px; height:20px; flex:none; overflow:visible; fill:none; stroke:var(--accent); stroke-width:1.25; stroke-linecap:round; stroke-linejoin:round; }
-  .bp-icon .second { opacity:.45; stroke-width:.85; }
-  .bp-icon path { stroke-dasharray:1; stroke-dashoffset:0; }
+/* The fold lines of the press, from each corner to the center. */
+.bp-crease { position:absolute; inset:0; pointer-events:none; opacity:0;
+  background:linear-gradient(to top right, transparent calc(50% - .5px), var(--line) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)), linear-gradient(to bottom right, transparent calc(50% - .5px), var(--line) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)); }
+.bp[data-press="warp"] .bp-crease { opacity:calc(var(--bp-p) * .28); }
 
-  :is(.bp:hover, .bp:focus-visible) { --os:6px; }
-  :is(.bp:hover, .bp:focus-visible) .bp-frame { --l:var(--line); }
-  :is(.bp:hover, .bp:focus-visible) .bp-tex { --rise:92%; }
-  :is(.bp:hover, .bp:focus-visible) .bp-ghost { opacity:.5; transform:translate(calc(var(--sx) * var(--off)), calc(var(--sy) * var(--off))); }
-  :is(.bp:hover, .bp:focus-visible) .bp-link { opacity:.38; transform:rotate(atan2(var(--sy), var(--sx))) scaleX(1); }
+/* What the cap moves against: the far two edges of a second wireframe, and the lines joining the corners. */
+.bp-ghost { position:absolute; inset:0; pointer-events:none; opacity:var(--bp-ghost-a, 0); transform:translate(calc(var(--sx) * var(--off) * var(--bp-ghost-at, 0)), calc(var(--sy) * var(--off) * var(--bp-ghost-at, 0))); }
+.bp-ghost i { position:absolute; display:block; background:var(--line); }
+.g-h { left:0; width:100%; height:1px; top:calc(50% + var(--sy) * 50%); margin-top:calc(var(--sy) * -.5px - .5px); }
+.g-v { top:0; height:100%; width:1px; left:calc(50% + var(--sx) * 50%); margin-left:calc(var(--sx) * -.5px - .5px); }
+.bp-link { position:absolute; width:calc(var(--off) * 1.4142); height:1px; background:var(--line); transform-origin:0 50%; pointer-events:none; opacity:calc(var(--bp-ghost-a, 0) * .76);
+  translate:calc(var(--sx) * var(--off) * var(--bp-travel, 0)) calc(var(--sy) * var(--off) * var(--bp-travel, 0));
+  transform:rotate(atan2(var(--sy), var(--sx))) scaleX(max(0, calc(var(--bp-ghost-at, 0) - var(--bp-travel, 0)))); }
+.l1 { left:calc(50% + var(--sx) * 50%); top:calc(50% + var(--sy) * 50%); }
+.l2 { left:calc(50% + var(--sx) * 50%); top:calc(50% - var(--sy) * 50%); }
+.l3 { left:calc(50% - var(--sx) * 50%); top:calc(50% + var(--sy) * 50%); }
 
-  /* Press: the button drops into its own shadow. */
-  .bp:active:not(:disabled, [aria-disabled="true"]) .bp-body { transform:translate(calc(var(--sx) * var(--off) * .7), calc(var(--sy) * var(--off) * .7)); transition-duration:.18s; }
-  .bp:active:not(:disabled, [aria-disabled="true"]) .bp-ghost { opacity:.75; transform:translate(calc(var(--sx) * var(--off) * .3), calc(var(--sy) * var(--off) * .3)); transition-duration:.18s; }
-  .bp:active:not(:disabled, [aria-disabled="true"]) .bp-link { opacity:.5; transform:rotate(atan2(var(--sy), var(--sx))) scaleX(.3); transition-duration:.18s; }
-  .bp:active:not(:disabled, [aria-disabled="true"]) .bp-tex { --rise:100%; opacity:calc(var(--tex-a) * 1.5); }
+.bp[data-shadow="br"] { --sx:1; --sy:1; }
+.bp[data-shadow="bl"] { --sx:-1; --sy:1; }
+.bp[data-shadow="tr"] { --sx:1; --sy:-1; }
+.bp[data-shadow="tl"] { --sx:-1; --sy:-1; }
 
-  /* Keyboard focus: a dashed construction line in amber, well clear of the frame. */
-  .bp:focus-visible .bp-body::after { content:""; position:absolute; inset:-12px; border:1.5px dashed var(--accent); pointer-events:none; }
+/* Hover styles. Keycap: the cap sinks part of the way onto a base that stays put, then bottoms out on press.
+   Shadow: the wireframe slides out from a still cap, and press drops the cap into it. */
+.bp[data-hover="keycap"] { --bp-travel:calc(var(--bp-h) * .42 + var(--bp-p) * .5); --bp-ghost-at:1; --bp-ghost-a:calc(var(--bp-h) * .5 + var(--bp-p) * .3); }
+.bp[data-hover="shadow"] { --bp-travel:calc(var(--bp-p) * .7); --bp-ghost-at:var(--bp-h); --bp-ghost-a:calc(var(--bp-h) * .5); }
+.bp[data-hover="none"] { --bp-travel:calc(var(--bp-p) * .4); }
 
-  .bp:is(:disabled, [aria-disabled="true"]) { cursor:not-allowed; color:var(--ink-2); }
-  .bp:is(:disabled, [aria-disabled="true"]) .bp-frame { background:
-      repeating-linear-gradient(90deg, var(--line-rest) 0 4px, transparent 4px 8px) 0 var(--os) / 100% 1px no-repeat,
-      repeating-linear-gradient(90deg, var(--line-rest) 0 4px, transparent 4px 8px) 0 calc(100% - var(--os)) / 100% 1px no-repeat,
-      repeating-linear-gradient(0deg, var(--line-rest) 0 4px, transparent 4px 8px) var(--os) 0 / 1px 100% no-repeat,
-      repeating-linear-gradient(0deg, var(--line-rest) 0 4px, transparent 4px 8px) calc(100% - var(--os)) 0 / 1px 100% no-repeat; opacity:.6; }
-  .bp:is(:disabled, [aria-disabled="true"]) .bp-tex, .bp:is(:disabled, [aria-disabled="true"]) .bp-ghost, .bp:is(:disabled, [aria-disabled="true"]) .bp-link { display:none; }
-  .bp:is(:disabled, [aria-disabled="true"]) .bp-icon { stroke:var(--ink-2); }
+@media (hover:hover) {
+  /* A key goes down quickly and comes back more slowly. */
+  .bp:not(:disabled, [aria-disabled="true"], [data-hover="none"]):hover { --bp-h:1; transition:--bp-h .17s cubic-bezier(.3,.7,.3,1), --bp-p .25s var(--ease-soft); }
+  .bp:not(:disabled, [aria-disabled="true"]):hover { --os:6px; --rise:92%; }
+  .bp:not(:disabled, [aria-disabled="true"]):hover .bp-frame { --l:var(--line); }
+}
+.bp:not(:disabled, [aria-disabled="true"], [data-hover="none"]):focus-visible { --bp-h:1; }
+.bp:focus-visible { --os:6px; --rise:92%; }
+.bp:focus-visible .bp-frame { --l:var(--line); }
 
-  .bp::before { content:""; position:absolute; inset:-4px 0; } /* keeps the small size at a 46px touch target */
+/* Press: in fast, out slowly, like a dent easing out of a sheet of paper. */
+.bp[data-press="warp"] { transition:--bp-h .5s var(--ease-soft), --bp-p 1.25s var(--ease-soft); }
+@media (hover:hover) { .bp[data-press="warp"]:not(:disabled, [aria-disabled="true"], [data-hover="none"]):hover { transition:--bp-h .17s cubic-bezier(.3,.7,.3,1), --bp-p 1.25s var(--ease-soft); } }
+/* Doubled class: this has to beat the hover rules above, or the press comes in at the slow release speed. */
+.bp.bp.bp:not([data-press="none"], :disabled, [aria-disabled="true"]):active { --bp-p:1; transition:--bp-h .17s cubic-bezier(.3,.7,.3,1), --bp-p .13s cubic-bezier(.3,.7,.3,1); }
 
-  /* Levels */
-  .bp.secondary { --tex-a:.15; }
-  .bp.secondary .bp-icon { stroke:var(--line); }
-  .bp.quiet { --tex-a:0; }
-  .bp.quiet .bp-icon { stroke:var(--line); }
-  .bp.quiet .bp-frame { opacity:0; transition:opacity .5s, --os .6s var(--ease-soft), --l .6s var(--ease-soft); }
-  .bp.quiet .bp-body { box-shadow:inset 0 -1px 0 var(--line-rest); }
-  :is(.bp.quiet:hover, .bp.quiet:focus-visible) .bp-frame { opacity:1; }
-  :is(.bp.quiet:hover, .bp.quiet:focus-visible) { --tex-a:.14; }
+/* Keyboard focus: a dashed construction line in amber, well clear of the frame. */
+.bp:focus-visible .bp-body::after { content:""; position:absolute; inset:-12px; border:1.5px dashed var(--accent); pointer-events:none; }
 
-  /* Sizes */
-  .bp.sm .bp-body { min-height:38px; padding:8px 16px 8px 13px; gap:8px; font-size:calc(var(--size) * .88); }
-  .bp.sm { --off:5px; }
-  .bp.sm .bp-icon { width:16px; height:16px; }
-  .bp.lg .bp-body { min-height:60px; padding:16px 30px 16px 24px; gap:14px; font-size:calc(var(--size) * 1.2); }
-  .bp.lg { --off:9px; }
-  .bp.lg .bp-icon { width:24px; height:24px; }
+.bp[data-face="frost"] { --bp-face:color-mix(in srgb, var(--base) 38%, transparent); --bp-face-filter:blur(3px); }
 
-/* A slow, fading sway when the pointer arrives, sampled from one curve so there are no corners in it. No JavaScript needed. */
-@keyframes bp-sway {
+.bp-icon { width:20px; height:20px; flex:none; overflow:visible; fill:none; stroke:var(--accent); stroke-width:1.25; stroke-linecap:round; stroke-linejoin:round; }
+.bp-icon .second { opacity:.45; stroke-width:.85; }
+.bp-icon path { stroke-dasharray:1; stroke-dashoffset:0; }
+
+.bp:is(:disabled, [aria-disabled="true"]) { cursor:not-allowed; color:var(--ink-2); }
+.bp:is(:disabled, [aria-disabled="true"]) .bp-frame { background:
+    repeating-linear-gradient(90deg, var(--line-rest) 0 4px, transparent 4px 8px) 0 var(--os) / 100% 1px no-repeat,
+    repeating-linear-gradient(90deg, var(--line-rest) 0 4px, transparent 4px 8px) 0 calc(100% - var(--os)) / 100% 1px no-repeat,
+    repeating-linear-gradient(0deg, var(--line-rest) 0 4px, transparent 4px 8px) var(--os) 0 / 1px 100% no-repeat,
+    repeating-linear-gradient(0deg, var(--line-rest) 0 4px, transparent 4px 8px) calc(100% - var(--os)) 0 / 1px 100% no-repeat; opacity:.6; }
+.bp:is(:disabled, [aria-disabled="true"]) :is(.bp-tex, .bp-ghost, .bp-link, .bp-crease) { display:none; }
+.bp:is(:disabled, [aria-disabled="true"]) .bp-icon { stroke:var(--ink-2); }
+
+/* Levels */
+.bp[data-variant="secondary"] { --tex-a:.15; }
+.bp[data-variant="secondary"] .bp-icon { stroke:var(--line); }
+.bp[data-variant="quiet"] { --tex-a:0; }
+.bp[data-variant="quiet"] .bp-icon { stroke:var(--line); }
+.bp[data-variant="quiet"] .bp-frame { opacity:0; transition:opacity .5s, --os var(--dur-frame) var(--ease-soft), --l var(--dur-frame) var(--ease-soft); }
+.bp[data-variant="quiet"] .bp-body { box-shadow:inset 0 -1px 0 var(--line-rest); }
+.bp[data-variant="quiet"]:focus-visible .bp-frame { opacity:1; }
+.bp[data-variant="quiet"]:focus-visible { --tex-a:.14; }
+@media (hover:hover) {
+  .bp[data-variant="quiet"]:hover .bp-frame { opacity:1; }
+  .bp[data-variant="quiet"]:hover { --tex-a:.14; }
+}
+
+/* Sizes */
+.bp[data-size="sm"] { --off:5px; }
+.bp[data-size="sm"] .bp-body { min-height:38px; padding:8px 16px 8px 13px; gap:8px; font-size:calc(var(--size) * .88); }
+.bp[data-size="sm"] .bp-icon { width:16px; height:16px; }
+.bp[data-size="lg"] { --off:9px; }
+.bp[data-size="lg"] .bp-body { min-height:60px; padding:16px 30px 16px 24px; gap:14px; font-size:calc(var(--size) * 1.2); }
+.bp[data-size="lg"] .bp-icon { width:24px; height:24px; }
+
+/* Sway: an optional slow, fading drift when the pointer arrives, sampled from one curve so there are no corners in it. */
+@keyframes bp-sway-soft {
   0.0% { transform:translate(0.000px,-0.000px); }
   5.6% { transform:translate(0.121px,-0.051px); }
   11.1% { transform:translate(0.249px,-0.105px); }
@@ -106,12 +155,35 @@
   94.4% { transform:translate(0.002px,-0.001px); }
   100.0% { transform:translate(0.000px,-0.000px); }
 }
+@keyframes bp-sway-softer {
+  0.0% { transform:translate(0.000px,-0.000px); }
+  5.6% { transform:translate(0.061px,-0.025px); }
+  11.1% { transform:translate(0.125px,-0.052px); }
+  16.7% { transform:translate(0.139px,-0.059px); }
+  22.2% { transform:translate(0.109px,-0.046px); }
+  27.8% { transform:translate(0.054px,-0.023px); }
+  33.3% { transform:translate(0.000px,-0.000px); }
+  38.9% { transform:translate(-0.038px,0.016px); }
+  44.4% { transform:translate(-0.054px,0.023px); }
+  50.0% { transform:translate(-0.050px,0.021px); }
+  55.6% { transform:translate(-0.035px,0.015px); }
+  61.1% { transform:translate(-0.016px,0.007px); }
+  66.7% { transform:translate(-0.000px,0.000px); }
+  72.2% { transform:translate(0.009px,-0.004px); }
+  77.8% { transform:translate(0.011px,-0.004px); }
+  83.3% { transform:translate(0.008px,-0.003px); }
+  88.9% { transform:translate(0.004px,-0.002px); }
+  94.4% { transform:translate(0.001px,-0.000px); }
+  100.0% { transform:translate(0.000px,-0.000px); }
+}
 /* Only the fainter pen line is redrawn. The main icon line never disappears. */
 @keyframes bp-redraw { from { stroke-dashoffset:.45; opacity:.12; } to { stroke-dashoffset:0; opacity:.45; } }
 @media (hover:hover) and (prefers-reduced-motion:no-preference) {
-  .bp:not(:disabled, [aria-disabled="true"]):is(:hover, :focus-visible) .bp-body { animation:bp-sway .9s linear; }
-  .bp:not(:disabled, [aria-disabled="true"]):is(:hover, :focus-visible) .bp-icon .second { animation:bp-redraw .95s var(--ease-soft); }
+  .bp[data-sway="soft"]:not(:disabled, [aria-disabled="true"]):hover .bp-body { animation:bp-sway-soft .9s linear; }
+  .bp[data-sway="softer"]:not(:disabled, [aria-disabled="true"]):hover .bp-body { animation:bp-sway-softer 1.2s linear; }
+  .bp:not(:disabled, [aria-disabled="true"]):hover .bp-icon .second { animation:bp-redraw .95s var(--ease-soft); }
 }
 @media (prefers-reduced-motion:reduce) {
   .bp, .bp * { transition-duration:.01s !important; }
+  .bp-tex i { transform:none !important; }
 }

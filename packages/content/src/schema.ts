@@ -1,4 +1,5 @@
 import { PALETTE_IDS } from "@portfolio/design/palettes";
+import { BUTTON_OPTIONS } from "@portfolio/design/button-options";
 import { z } from "zod";
 import { SCENE_OPTIONS } from "./scene-options";
 
@@ -21,6 +22,14 @@ export const siteSchema = z
       strength: z.enum(SCENE_OPTIONS.strength),
       contentFade: z.enum(SCENE_OPTIONS.contentFade),
       parallax: z.enum(SCENE_OPTIONS.parallax),
+    }),
+    /** How the header's buttons look and move. Any use can still override these. */
+    headerButton: z.strictObject({
+      texture: z.enum(BUTTON_OPTIONS.texture),
+      shadow: z.enum(BUTTON_OPTIONS.shadow),
+      hover: z.enum(BUTTON_OPTIONS.hover),
+      press: z.enum(BUTTON_OPTIONS.press),
+      sway: z.enum(BUTTON_OPTIONS.sway),
     }),
     /** Sections hidden until there is something to show. */
     flags: z.strictObject({ writing: z.boolean(), photography: z.boolean(), ask: z.boolean(), motion: z.boolean(), backgroundPanel: z.boolean() }),

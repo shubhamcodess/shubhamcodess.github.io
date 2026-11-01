@@ -15,3 +15,4 @@
 .background-panel span { min-width: 52px; }
 .test-text { columns: 3 260px; column-gap: 40px; padding: 58vh clamp(18px, 4vw, 48px) 120px; }
 .test-text p { margin: 0 0 16px; }
+.background-panel hr { width: 100%; margin: 2px 0; border: 0; border-top: 1px solid var(--line-rest); }
