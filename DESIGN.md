@@ -34,7 +34,7 @@ This is the single source for how anything on this site looks and moves. The val
 
 The user does not maintain this file. Claude does, as part of building.
 
-1. **Before building any UI,** read this file. Reuse its tokens and rules, so a new component already looks like the rest.
+1. **Before building any UI,** read this file. Reuse its tokens and rules, so a new component already looks like the rest. Also apply `docs/decisions/011-quality-bar.md` and `012-component-library.md`.
 2. **Build it** as a new numbered prototype, and show it to the user.
 3. **When the user approves it,** add an entry under Components in the same piece of work: its parts, states, values and rules.
 4. **If it needs something new,** like a color or a timing, add it to the tokens. Don't leave one-off values in a component.
@@ -126,4 +126,4 @@ A mock exists in `prototypes/06-project-card/projects/everything-tech/`: back li
 
 Keep this file free of personal facts, so it can be reused elsewhere. The Batman scene (Gotham, the cave) belongs to this site rather than to the system, and lives in `docs/decisions/`.
 
-In code, the tokens are in `packages/design/src/tokens.css`, and a test fails if that file and this one disagree. Change this file first, then that one. Daylight colors are in `palettes.ts`, where a test checks every theme's contrast. Making it a shareable package comes after the site ships.
+In code, the tokens are in `packages/design/src/tokens.css`, and a test fails if that file and this one disagree. Change this file first, then that one. Daylight colors are in `palettes.ts`, where a test checks every theme's contrast. Components follow `docs/decisions/012-component-library.md`, so they can become a package of their own.

@@ -1,15 +1,4 @@
-import { site } from "@portfolio/site";
-import { sections } from "@/sections";
-
+/* Nothing goes on the page until it's decided. See "How we work" in CLAUDE.md. */
 export default function HomePage() {
-  return (
-    <main>
-      {site.sections
-        .filter((s) => s.enabled)
-        .map(({ id }) => {
-          const Section = sections[id];
-          return <Section key={id} />;
-        })}
-    </main>
-  );
+  return <main />;
 }

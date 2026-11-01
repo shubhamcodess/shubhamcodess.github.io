@@ -16,7 +16,7 @@ function repoRoot(): string {
   return dir;
 }
 
-/** Every project, valid or the build fails. Includes hidden ones; pages use visibleProjects(). */
+/** Every project, valid or the check fails. Nothing on the site reads this yet. */
 export function allProjects(): Project[] {
   const folder = join(repoRoot(), "content", "projects");
   const projects = readdirSync(folder)
@@ -30,5 +30,3 @@ export function allProjects(): Project[] {
     });
   return projects.sort((a, b) => a.order - b.order);
 }
-
-export const visibleProjects = (): Project[] => allProjects().filter((p) => p.visibility !== "hidden");
