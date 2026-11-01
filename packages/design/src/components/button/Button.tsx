@@ -1,6 +1,8 @@
 import type { CSSProperties, ElementType, HTMLAttributes, ReactNode } from "react";
 import { iconStrokes, type IconName } from "./icons";
 
+export { sketch } from "./icons";
+
 export type { IconName };
 import type { ButtonStyle } from "./options";
 import "./button.css";

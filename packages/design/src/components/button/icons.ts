@@ -36,7 +36,8 @@ const seeded = (start: number) => () => {
   return ((a ^ (a >>> 14)) >>> 0) / 4294967296;
 };
 
-function sketch(points: number[][], seed: number, amp: number): string {
+/** One pen line through these points, wobbled by `amp`. The same seed always gives the same line. */
+export function sketch(points: number[][], seed: number, amp: number): string {
   const r = seeded(seed), pts: [number, number][] = [];
   const jitter = () => (r() - 0.5) * amp;
   for (let i = 0; i + 1 < points.length; i++) {
@@ -55,7 +56,6 @@ function sketch(points: number[][], seed: number, amp: number): string {
   return d;
 }
 
-/** Each stroke of the icon as a main pen line and a fainter second pass. */
-/** The icon's strokes as SVG, for a button or anywhere else that wants the same pen. */
+/** Each stroke of the icon as a main pen line and a fainter second pass, for a button or anywhere else that wants the same pen. */
 export const iconStrokes = (name: IconName, seed: number) =>
   (ICONS[name] as number[][][]).map((plan, i) => ({ main: sketch(plan, seed + i * 7, 0.62), second: sketch(plan, seed + i * 13 + 91, 0.95) }));

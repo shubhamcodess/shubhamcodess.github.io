@@ -108,7 +108,7 @@ Code: `packages/design/src/components/button`. The options are listed once in `o
 **Own icon:** `glyph` takes any icon in place of a sketched `icon`. A button with no text needs an `aria-label`. `SketchIcon` draws a sketched icon on its own.
 
 ### Header logo and theme button: Draft
-The logo is a solid extruded SP in ink with a rust batarang lodged in the top of the P, and the throw plays on load. The theme button is the sm `Button` with one sun that shifts per theme. Details are in decision 015. Both live in the site, not the library, because they're Batman scenes.
+The logo is a blueprint drawing: SP in thin ink pen lines on a skewed plane, with a rust line-work batarang, faintly hatched inside, lodged in the top of the P. The throw plays on load. The theme button is the sm `Button` with one sun that shifts per theme. Details are in decision 015. Both live in the site, not the library, because they're Batman scenes.
 
 ### Scroll thumb: Approved
 Code: `packages/design/src/components/scroll-thumb`. It replaces the visible scrollbar with one small draggable shape that takes up no width. The shape is passed in: this site uses a small batarang, standing on end. It rests at `--scroll-thumb-top`, which this site sets to the bottom of the header. On hover it grows by 1.4 and darkens, softly. It's for pointers, while keyboards, wheels and touch scroll natively.
