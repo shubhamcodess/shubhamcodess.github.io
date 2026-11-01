@@ -6,21 +6,13 @@ type Point = number[];
 
 export const PLATE = { w: 62, h: 38, past: 5, shadow: 4 };
 
-const at = (shape: Point[], dx: number, dy: number) => shape.map(([x, y]) => [x! + dx, y! + dy]);
-const flat = (pts: Point[]) => `M${pts.map(([x, y]) => `${x} ${y}`).join("L")}Z`;
 const pen = (lines: Point[][], seed: number, amp: number) => lines.map((l, i) => sketch(l, seed + i * 11, amp)).join(" ");
-
-const S = at([[2, 0], [20, 0], [20, 5], [5, 5], [5, 10.5], [18, 10.5], [20, 12.5], [20, 24], [18, 26], [0, 26], [0, 21], [15, 21], [15, 15.5], [2, 15.5], [0, 13.5], [0, 2]], 7, 6);
-const P_OUT = at([[0, 0], [15, 0], [18, 3], [18, 13], [15, 16], [5, 16], [5, 26], [0, 26]], 30, 6);
-const P_IN = at([[5, 5], [13, 5], [13, 11], [5, 11]], 30, 6);
-const LETTERS = [S, P_OUT, P_IN];
 
 const { w, h, past, shadow } = PLATE;
 const hatch: Point[][] = [];
 for (let c = -h; c < w + h; c += 4) hatch.push([[c, h], [c + h, 0]]);
 
 export const LOGO = {
-  letterFill: LETTERS.map(flat).join(""),
   // Four drafting lines that run past the corners, as on a button.
   frame: pen([[[-past, 0], [w + past, 0]], [[-past, h], [w + past, h]], [[0, -past], [0, h + past]], [[w, -past], [w, h + past]]], 17, 0.1),
   // A wireframe shadow, not a blur: a second outline, joined at the corners.

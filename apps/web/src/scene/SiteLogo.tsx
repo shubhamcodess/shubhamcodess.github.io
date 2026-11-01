@@ -46,13 +46,12 @@ export function SiteLogo() {
             transition={{ delay: HIT, duration: 0.4, ease: "easeOut" }}
           >
             <path d={LOGO.shadow} stroke="var(--line)" strokeWidth=".75" opacity=".5" />
-            <rect width={PLATE.w} height={PLATE.h} fill="var(--paper)" />
+            <rect width={PLATE.w} height={PLATE.h} fill="var(--bp-face, transparent)" />
             <g mask="url(#logo-texture)">
               <path d={LOGO.hatch} stroke="var(--line)" strokeWidth=".6" opacity=".55" />
             </g>
             <path d={LOGO.frame} stroke="var(--line)" strokeWidth="1" />
-            <path d={LOGO.letterFill} fill="var(--paper)" fillRule="evenodd" />
-            <path d={LOGO.letterFill} stroke="var(--ink)" strokeWidth="1.35" strokeLinejoin="miter" />
+            <text className="site-logo-text" x="7" y="28.4">SP</text>
             {/* The mark it leaves, drawn on the instant it lands. */}
             <g className="logo-hit">
               <m.path key={`slit-${take}`} d={SLIT_LINE} stroke="var(--ink)" strokeWidth="1.2" initial={playing ? { opacity: 0 } : false} animate={{ opacity: 1 }} transition={{ delay: HIT, duration: 0.05 }} />
@@ -87,9 +86,9 @@ export function SiteLogo() {
                     >
                       <rect x="-40" y="-40" width="80" height="80" />
                       <g transform={`rotate(${BLADE_ANGLE})`}>
-                        {/* Its thickness, then the face: paper, faint hatching, a bevel and a clean edge. */}
-                        <path d={BLADE.shape} fill="var(--line)" opacity=".45" transform="translate(.9 1.2)" />
-                        <path d={BLADE.shape} fill="var(--paper)" />
+                        {/* Its thickness, then the face: a faint tint, faint hatching, a bevel and a clean edge. */}
+                        <path d={BLADE.edge} stroke="var(--line)" strokeWidth=".7" opacity=".45" transform="translate(.9 1.2)" />
+                        <path d={BLADE.shape} fill="var(--accent)" opacity=".16" />
                         <g clipPath="url(#logo-blade)">
                           <path d={BLADE.hatch} stroke="var(--accent)" strokeWidth=".35" opacity=".3" />
                         </g>

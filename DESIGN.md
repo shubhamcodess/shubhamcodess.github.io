@@ -115,7 +115,7 @@ Code: `packages/design/src/components/button`. The options are listed once in `o
 **Own icon:** `glyph` takes any icon in place of a sketched `icon`. A button with no text needs an `aria-label`. `SketchIcon` draws a sketched icon on its own.
 
 ### Header logo and theme button: Draft
-The logo is a blueprint plate at button height, with SP in clean ink outlines and a rust line-work batarang, faintly hatched inside, driven into its face. The throw plays on load. The theme button is the sm `Button` with one sun that shifts per theme. Details are in decision 015. Both live in the site, not the library, because they're Batman scenes.
+The logo is a clear blueprint plate at button height, with SP in Geist and solid ink, and a rust line-work batarang, faintly hatched inside, driven into its face. The throw plays on load. The theme button is the sm `Button` with one sun that shifts per theme. Details are in decision 015. Both live in the site, not the library, because they're Batman scenes.
 
 ### Tooltip: Draft
 A small paper box with four drafting lines running past its corners, and the label font in ink. It appears after a short beat on mouse hover or keyboard focus, stays while the pointer is on it, and Escape dismisses it. `open` holds it open, for example to confirm a tap. It's only visual, so what it points at keeps its own accessible name. The header's menus use the same box.
