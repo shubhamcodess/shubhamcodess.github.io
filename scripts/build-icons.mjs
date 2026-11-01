@@ -1,33 +1,37 @@
-/* Draws the site icons from the logo's own shapes. Run `pnpm icons` after changing the letters or the batarang, and commit the results.
-   Thin blueprint lines vanish at tab size, so small sizes are recomposed: bigger, solid and tightly cropped. */
+/* Draws the site icons: the logo's batarang alone, at the angle it's lodged, as big as the square allows.
+   Run `pnpm icons` after changing the shape or its angle, and commit the results. */
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
-import { BATARANG_OUTLINE } from "../apps/web/src/scene/batarang-shape.ts";
-import { LOGO_LETTERS } from "../apps/web/src/scene/logo-letters.ts";
+import { BATARANG_OUTLINE, BLADE_ANGLE, BLADE_TILT } from "../apps/web/src/scene/batarang-shape.ts";
 
 const app = resolve(dirname(fileURLToPath(import.meta.url)), "../apps/web/src/app");
-const INK = "#131c1f", RUST = "#8a4a22", PAPER = "#f2eddf"; // Old Gotham, the default theme. Browsers don't theme an icon.
+const RUST = "#8a4a22", PAPER = "#f2eddf"; // Old Gotham, the default theme. Browsers don't theme an icon.
 
-const letters = LOGO_LETTERS.map((s) => `M${s.map(([x, y]) => `${x} ${y}`).join("L")}Z`).join("");
-const blade = (r) => `M${BATARANG_OUTLINE.map(([x, y]) => `${(x * r).toFixed(2)} ${(y * r).toFixed(2)}`).join("L")}Z`;
+// The outline in place, then scaled and centred to fill the square.
+const rad = (BLADE_ANGLE * Math.PI) / 180, [a, b, c, d] = BLADE_TILT;
+const placed = BATARANG_OUTLINE.map(([x, y]) => {
+  const rx = x * Math.cos(rad) - y * Math.sin(rad), ry = x * Math.sin(rad) + y * Math.cos(rad);
+  return [a * rx + c * ry, b * rx + d * ry];
+});
+const xs = placed.map(([x]) => x), ys = placed.map(([, y]) => y);
+const [minX, maxX, minY, maxY] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
 
-/* Letters low in the square, the batarang large across the top with its wing tip buried in the P. */
-const icon = ({ corner, solid, stroke }) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="${corner}" fill="${PAPER}"/>
-  <defs><clipPath id="outside"><polygon points="-60,-90 170,-90 170,90 47.6,90 47.6,.3 -60,.3"/></clipPath></defs>
-  <g transform="matrix(1 -.08 .16 1 3.6 28)">
-    <path d="${letters}" fill-rule="evenodd" ${solid ? `fill="${INK}"` : `fill="none" stroke="${INK}" stroke-width="${stroke}"`}/>
-    <g clip-path="url(#outside)">
-      <path d="${blade(21)}" transform="translate(39.5 -10.5) rotate(-14)" fill="${RUST}"/>
-    </g>
-  </g>
-</svg>`;
+const icon = ({ margin, tile, edge }) => {
+  const scale = (64 - margin * 2) / Math.max(maxX - minX, maxY - minY);
+  const dx = 32 - ((minX + maxX) / 2) * scale, dy = 32 - ((minY + maxY) / 2) * scale;
+  const shape = `M${placed.map(([x, y]) => `${(x * scale + dx).toFixed(2)} ${(y * scale + dy).toFixed(2)}`).join("L")}Z`;
+  // No tile in a tab, so it stays large. A paper edge keeps it visible on a dark tab bar.
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+    ${tile ? `<rect width="64" height="64" fill="${PAPER}"/>` : ""}
+    <path d="${shape}" fill="${RUST}" stroke="${PAPER}" stroke-width="${edge}" stroke-linejoin="round" paint-order="stroke"/>
+  </svg>`;
+};
 
 const sizes = [
-  { file: "icon1.png", size: 16, corner: 8, solid: true },
-  { file: "icon2.png", size: 32, corner: 9, solid: true },
-  { file: "apple-icon.png", size: 180, corner: 0, solid: false, stroke: 1.5 }, // iOS rounds it itself, and this is big enough for the blueprint lines
+  { file: "icon1.png", size: 16, margin: 1.5, edge: 2.5, tile: false },
+  { file: "icon2.png", size: 32, margin: 1.5, edge: 3, tile: false },
+  { file: "apple-icon.png", size: 180, margin: 8, edge: 0, tile: true }, // phones need a solid background, and round the corners themselves
 ];
 
 const browser = await chromium.launch();

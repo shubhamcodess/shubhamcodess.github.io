@@ -1,5 +1,5 @@
 import { sketch } from "@portfolio/design/button";
-import { BATARANG_EDGES, BATARANG_OUTLINE } from "./batarang-shape";
+import { BATARANG_EDGES, BATARANG_OUTLINE, BLADE_ANGLE, BLADE_TILT } from "./batarang-shape";
 
 /* The logo's line work, worked out once: a blueprint plate the same height as a header button, with a batarang driven into its face. */
 type Point = number[];
@@ -42,8 +42,7 @@ export const BLADE = {
   hatch: pen(bladeHatch, 53, 0.12),
 };
 
-export const BLADE_TILT = [1, -0.03, -0.1, 0.9] as const;
-export const BLADE_ANGLE = -28;
+export { BLADE_ANGLE, BLADE_TILT };
 
 const rad = (BLADE_ANGLE * Math.PI) / 180, cos = Math.cos(rad), sin = Math.sin(rad);
 const place = (x: number, y: number) => {
