@@ -4,9 +4,9 @@ import { siteSchema, type SiteConfig } from "@portfolio/content/schema";
 const config = {
   name: "Shubham Prakash",
   description: "Shubham Prakash's corner of the internet.",
-  background: { default: "dust", onLoad: "config" },
-  scene: { fit: "street", face: "mist", density: "normal", reach: "mid", strength: "faint", contentFade: "mid", parallax: "low" },
-  headerButton: { texture: "hatch", shadow: "br", hover: "none", press: "warp", sway: "off" },
+  background: { default: "storm", onLoad: "config" },
+  scene: { fit: "behind", face: "clear", density: "dense", reach: "mid", strength: "clear", contentFade: "mid", parallax: "low" },
+  headerButton: { texture: "hatch", shadow: "br", hover: "shadow", press: "keycap", sway: "off" },
   flags: { writing: false, photography: false, ask: false, motion: true, backgroundPanel: true },
 } satisfies SiteConfig;
 

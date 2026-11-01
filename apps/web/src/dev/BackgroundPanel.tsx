@@ -31,7 +31,7 @@ export function BackgroundPanel() {
   const [palette, setPalette] = useState<PaletteId | null>(null);
   const [grain, setGrain] = useState<keyof typeof GRAIN>("Theme");
   const [sun, setSun] = useState(true);
-  const [text, setText] = useState(true);
+  const [text, setText] = useState(false);
   const [scene, setScene] = useState<Partial<Record<SceneKey, string>>>({});
   const [page, setPage] = useState<HTMLElement | null>(null);
   const [button, setButton] = useState<Partial<Record<ButtonKey, string>>>({});
