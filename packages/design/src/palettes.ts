@@ -4,6 +4,8 @@
  * Use the blueprint-palette skill to add or adjust one. The order here is the rotation order.
  */
 export type Palette = {
+  /** Shown to people, for example on the theme button. */
+  name: string;
   story: string;
   /** The page gradient, lightest first. Text has to stay readable on all four. */
   sky: readonly [string, string, string, string];
@@ -21,6 +23,7 @@ export type Palette = {
 
 export const palettes = {
   dust: {
+    name: "Dust",
     story: "Midday. Hazy sun fading into smoke.",
     sky: ["#ebdfc8", "#dfd0b9", "#d0c0ae", "#c6b6a8"],
     glow: "rgba(250,214,148,.5)",
@@ -34,6 +37,7 @@ export const palettes = {
     grain: 0.42,
   },
   sodium: {
+    name: "Sodium",
     story: "Low sun. A softened orange haze.",
     sky: ["#f2dcbd", "#e9caa8", "#ddb697", "#cda489"],
     glow: "rgba(252,214,154,.62)",
@@ -47,6 +51,7 @@ export const palettes = {
     grain: 0.42,
   },
   smog: {
+    name: "Smog",
     story: "Hazy morning. Overcast grey with a little blue settling low.",
     sky: ["#dddcd5", "#cfd1ce", "#bfc4c6", "#aeb6bb"],
     glow: "rgba(238,236,222,.5)",
@@ -60,6 +65,7 @@ export const palettes = {
     grain: 0.42,
   },
   storm: {
+    name: "Storm",
     story: "Weather rolling in. Mauve cloud with a trace of yellow sun.",
     sky: ["#e8ded6", "#dbcec8", "#cbbcb8", "#bbaaaa"],
     glow: "rgba(252,215,148,.34)",
@@ -73,6 +79,7 @@ export const palettes = {
     grain: 0.42,
   },
   oldGotham: {
+    name: "Old Gotham",
     story: "Morning over the old city. A low cream sun, cooling to slate where the haze settles.",
     sky: ["#efe9d6", "#d9d6c6", "#c6c9c3", "#b4bcbf"],
     glow: "rgba(252,226,170,.72)",

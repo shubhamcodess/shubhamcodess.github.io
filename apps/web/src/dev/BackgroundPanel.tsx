@@ -42,7 +42,7 @@ export function BackgroundPanel() {
     setPalette(d.palette as PaletteId);
     setScene(Object.fromEntries(SCENE_KEYS.map((k) => [k, d[k]])));
     setPage(document.getElementById("page"));
-    const projects = document.querySelector<HTMLElement>(".site-header nav .bp");
+    const projects = document.querySelector<HTMLElement>(".header-wide .bp");
     setButton(Object.fromEntries(BUTTON_KEYS.map((k) => [k, projects?.dataset[k]])));
   }, []);
 
@@ -59,7 +59,7 @@ export function BackgroundPanel() {
 
   const setButtonOption = (key: ButtonKey, value: string) => {
     const one = key === "variant" || key === "size";
-    document.querySelectorAll<HTMLElement>(one ? ".site-header nav .bp" : ".site-header .bp").forEach((el) => { el.dataset[key] = value; });
+    document.querySelectorAll<HTMLElement>(one ? ".header-wide .bp" : ".site-header .bp").forEach((el) => { el.dataset[key] = value; });
     setButton((b) => ({ ...b, [key]: value }));
   };
   const pickFont = (name: keyof typeof FONTS) => {

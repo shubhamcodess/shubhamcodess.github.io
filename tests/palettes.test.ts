@@ -21,6 +21,10 @@ describe.each(PALETTE_IDS)("palette %s", (id) => {
     for (const stop of [...p.sky, p.paper]) expect(contrast(p[name], stop), `${name} on ${stop}`).toBeGreaterThanOrEqual(needed);
   });
 
+  it("has a name to show people", () => {
+    expect(p.name.length).toBeGreaterThan(0);
+  });
+
   it("is written into the page CSS", () => {
     expect(paletteCss()).toContain(`[data-theme="light"][data-palette="${id}"]{--sky-0:${p.sky[0]}`);
   });

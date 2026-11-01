@@ -33,6 +33,7 @@ export const siteSchema = z
       press: z.enum(BUTTON_OPTIONS.press),
       sway: z.enum(BUTTON_OPTIONS.sway),
     }),
+    socials: z.array(z.strictObject({ label: z.string().min(1), href: url })),
     /** Sections hidden until there is something to show. */
     flags: z.strictObject({ writing: z.boolean(), photography: z.boolean(), ask: z.boolean(), motion: z.boolean(), backgroundPanel: z.boolean() }),
   })

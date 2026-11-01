@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Barlow_Semi_Condensed, Chakra_Petch, Saira_Semi_Condensed } from "next/font/google";
 import type { ReactNode } from "react";
 import { ScrollThumb } from "@portfolio/design/scroll-thumb";
-import { backgroundBootScript, paletteCss } from "@portfolio/design";
+import { backgroundBootScript, paletteCss, PALETTE_IDS } from "@portfolio/design";
 import { site } from "@portfolio/site";
 import { BackgroundPanel } from "@/dev/BackgroundPanel";
 import { Batarang } from "@/scene/Batarang";
@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   title: { default: site.name, template: `%s | ${site.name}` },
   description: site.description,
 };
+
+// Shows the theme button's icon for the active theme, from the first paint and for any theme added later.
+const themeIconCss = PALETTE_IDS.map((id) => `[data-palette="${id}"] .theme-icon-${id}{opacity:1;transform:none}`).join("");
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const { default: palette, onLoad } = site.background;
@@ -47,7 +50,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <head>
-        <style dangerouslySetInnerHTML={{ __html: paletteCss() }} />
+        <style dangerouslySetInnerHTML={{ __html: paletteCss() + themeIconCss }} />
         <script dangerouslySetInnerHTML={{ __html: backgroundBootScript(onLoad) }} />
       </head>
       <body>
