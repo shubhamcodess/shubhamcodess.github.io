@@ -42,7 +42,7 @@ export const siteSchema = z
       lead: z.string().min(1),
       nightName: z.string().min(1),
       role: z.string().min(1),
-      hook: z.strictObject({ prefix: z.string().min(1), lines: z.array(z.string().min(1)).min(2).max(4), seed: z.number().int(), minMs: z.number().min(2000), maxMs: z.number().max(12000) }),
+      hook: z.strictObject({ prefix: z.string().min(1), lines: z.array(z.string().min(1)).min(2).max(6), seed: z.number().int(), minMs: z.number().min(2000), maxMs: z.number().max(12000) }),
       cta: z.strictObject({ label: z.string().min(1), href: z.string().min(1) }),
       tilt: z.strictObject({ y: z.number().min(0).max(14), x: z.number().min(0).max(8), reach: z.number().min(0).max(8) }),
     }),
