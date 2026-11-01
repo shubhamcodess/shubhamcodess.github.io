@@ -44,7 +44,7 @@ Each entry has a status: **Draft** (being tried), **Approved** (the user said ye
 
 ## Daylight environment: Locked
 
-Light mode is the default. Its colors are not in this file: they're in `packages/design/src/palettes.ts`, the one list of themes, currently Dust, Sodium, Smog and Storm. Every theme has the same structure.
+Light mode is the default. Its colors are not in this file: they're in `packages/design/src/palettes.ts`, the one list of themes, currently Dust, Sodium, Smog, Storm and Old Gotham. Every theme has the same structure.
 
 - **Sky:** a four-stop gradient, lightest at the top, running slightly off vertical.
 - **Sun:** a soft glow at the top right.

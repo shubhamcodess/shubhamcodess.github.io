@@ -72,6 +72,19 @@ export const palettes = {
     grid: "rgba(61,49,56,.085)",
     grain: 0.55,
   },
+  oldGotham: {
+    story: "Morning over the old city. A low cream sun, cooling to slate where the haze settles.",
+    sky: ["#efe9d6", "#d9d6c6", "#c6c9c3", "#b4bcbf"],
+    glow: "rgba(252,226,170,.72)",
+    paper: "#f2eddf",
+    ink: "#131c1f",
+    inkSoft: "#37403f",
+    line: "#22292b",
+    lineRest: "rgba(34,41,43,.7)",
+    accent: "#8a4a22",
+    grid: "rgba(34,41,43,.085)",
+    grain: 0.55,
+  },
 } as const satisfies Record<string, Palette>;
 
 export type PaletteId = keyof typeof palettes;
