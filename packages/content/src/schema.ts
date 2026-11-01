@@ -45,7 +45,6 @@ export const siteSchema = z
       hook: z.strictObject({ prefix: z.string().min(1), lines: z.array(z.string().min(1)).min(2).max(4), seed: z.number().int(), minMs: z.number().min(2000), maxMs: z.number().max(12000) }),
       cta: z.strictObject({ label: z.string().min(1), href: z.string().min(1) }),
       tilt: z.strictObject({ y: z.number().min(0).max(14), x: z.number().min(0).max(8), reach: z.number().min(0).max(8) }),
-      bats: z.strictObject({ seed: z.number().int(), count: z.number().int().min(0).max(5), minMs: z.number().min(3000), maxMs: z.number().max(60000) }),
     }),
     /** Smooth scroll, content layers and reveals. Set `lerp` to 0 for native scrolling. */
     scroll: z.strictObject({ lerp: z.number().min(0).max(1), lag: z.number().min(0).max(3), parallax: z.number().min(0).max(3), reveal: z.enum(["none", "fade", "rise", "mask"]), hide: z.boolean() }),

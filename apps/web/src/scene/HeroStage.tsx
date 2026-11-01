@@ -1,18 +1,15 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
-import { startHeroBats, type HeroBatsOptions } from "./hero-bats";
 
 /* The plate the hero sits on: it rests slightly turned, and follows the pointer a little, so the name reads as a thing with depth.
    The pointer also moves the wireframe shadow the other way, as if a light moved. Only CSS variables change. */
-export function HeroStage({ tilt, bats, children }: { tilt: { y: number; x: number; reach: number }; bats: HeroBatsOptions; children: ReactNode }) {
+export function HeroStage({ tilt, children }: { tilt: { y: number; x: number; reach: number }; children: ReactNode }) {
   const plate = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = plate.current;
-    if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const stopBats = startHeroBats(el, bats);
-    if (!matchMedia("(hover: hover)").matches) return stopBats;
+    if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches || !matchMedia("(hover: hover)").matches) return;
 
     let tx = 0, ty = 0, x = 0, y = 0, raf = 0, last = 0;
     const step = (now: number) => {
@@ -28,8 +25,8 @@ export function HeroStage({ tilt, bats, children }: { tilt: { y: number; x: numb
       if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); }
     };
     addEventListener("pointermove", move, { passive: true });
-    return () => { removeEventListener("pointermove", move); cancelAnimationFrame(raf); stopBats(); };
-  }, [bats.seed, bats.count, bats.minMs, bats.maxMs]); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => { removeEventListener("pointermove", move); cancelAnimationFrame(raf); };
+  }, []);
 
   return (
     <div ref={plate} className="hero-plate" style={{ "--tilt-y": `${tilt.y}deg`, "--tilt-x": `${tilt.x}deg`, "--tilt-reach": `${tilt.reach}deg` } as CSSProperties}>
