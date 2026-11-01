@@ -1,6 +1,4 @@
-/* How the header, the provisional skyline and the page meet. Options come from `scene` in content/site.ts. */
-@property --city-fade { syntax: "<length>"; inherits: true; initial-value: 0px; }
-
+/* How the header, the Gotham scene and the page meet. Options come from `scene` in content/site.ts. */
 :root { --header-h: 68px; --content-fade: 44px; --scroll-thumb-top: 68px; }
 [data-content-fade="short"] { --content-fade: 22px; }
 [data-content-fade="long"] { --content-fade: 86px; }
@@ -15,26 +13,24 @@ html, body { height: 100%; overflow: hidden; }
 }
 .page::-webkit-scrollbar { display: none; }
 
+/* No bar: the items stand alone as buttons, with the city running behind them. */
 .site-header { position: fixed; z-index: 10; top: 0; left: 0; right: 0; height: var(--header-h); display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(18px, 4vw, 48px); }
-/* The street: the line the city hangs from. It fades away as soon as the page scrolls. */
-.site-header::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--line-rest); transition: opacity var(--dur-frame) var(--ease-soft); }
-[data-scrolled] .site-header::after, [data-fit="behind"] .site-header::after { opacity: 0; }
-
-/* Button faces: set here for the header only, so the component itself doesn't change. */
 [data-face="fog"] .site-header { --bp-face: color-mix(in srgb, var(--sky-1) 58%, transparent); --bp-face-filter: blur(5px); }
 [data-face="mist"] .site-header { --bp-face: color-mix(in srgb, var(--sky-1) 82%, transparent); --bp-face-filter: blur(12px); }
 
-.city {
-  position: fixed; z-index: -1; left: 0; right: 0; top: var(--header-h); height: min(62vh, 600px); overflow: hidden; pointer-events: none;
-  transition: --city-fade var(--dur-texture) var(--ease-soft);
-  -webkit-mask-image: linear-gradient(transparent 0, #000 var(--city-fade));
-  mask-image: linear-gradient(transparent 0, #000 var(--city-fade));
+/* The scene. Its foot fades, so it belongs to the page. */
+#scene {
+  position: fixed; z-index: -1; inset: 0 0 auto 0; height: min(94vh, 1000px); overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(#000 82%, transparent); mask-image: linear-gradient(#000 82%, transparent);
 }
-[data-fit="behind"] .city { top: 0; height: min(70vh, 660px); }
-/* With no street line to end at, the city fades out at the top rather than being cut off. */
-[data-scrolled][data-fit="street"] .city { --city-fade: 90px; }
-.city canvas { position: absolute; left: -40px; top: 0; }
-.mist { position: absolute; left: -10%; right: -10%; top: 22%; height: 34%; background: radial-gradient(50% 50% at 50% 50%, var(--sky-0), transparent 72%); opacity: .5; animation: city-drift 46s ease-in-out infinite alternate; }
-.mist.two { top: 44%; height: 26%; opacity: .42; animation-duration: 71s; animation-direction: alternate-reverse; }
-@keyframes city-drift { from { transform: translateX(-7%); } to { transform: translateX(7%); } }
-@media (prefers-reduced-motion: reduce) { .mist { animation: none; } }
+@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
+  #scene { height: min(82vh, 172vw); }
+}
+.g-stage { position: absolute; inset: 0; }
+.g-layer { position: absolute; inset: 0; transform-origin: 62% 30%; will-change: transform; backface-visibility: hidden; }
+.g-layer canvas { position: absolute; }
+.g-near canvas { filter: blur(1.6px); } /* the nearest rooftops sit out of focus, like a long lens */
+.g-live { position: absolute; inset: 0; width: 100%; height: 100%; }
+.g-beacon { position: absolute; width: 3px; height: 3px; margin: -1.5px; border-radius: 50%; background: #ff3b24; opacity: .55; box-shadow: 0 0 4px 1px rgba(255, 59, 36, .4); animation: g-blink 3.4s steps(1) infinite; }
+@keyframes g-blink { 0%, 62% { opacity: .55; } 63%, 100% { opacity: .06; } }
+@media (prefers-reduced-motion: reduce) { .g-beacon { animation: none; } }

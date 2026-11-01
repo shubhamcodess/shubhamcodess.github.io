@@ -31,7 +31,7 @@ export const palettes = {
     lineRest: "rgba(67,53,43,.68)",
     accent: "#9c4a1b",
     grid: "rgba(67,53,43,.08)",
-    grain: 0.55,
+    grain: 0.42,
   },
   sodium: {
     story: "Low sun. A softened orange haze.",
@@ -44,7 +44,7 @@ export const palettes = {
     lineRest: "rgba(66,40,28,.7)",
     accent: "#873813",
     grid: "rgba(66,40,28,.085)",
-    grain: 0.55,
+    grain: 0.42,
   },
   smog: {
     story: "Hazy morning. Overcast grey with a little blue settling low.",
@@ -57,7 +57,7 @@ export const palettes = {
     lineRest: "rgba(42,51,56,.7)",
     accent: "#7a4a10",
     grid: "rgba(42,51,56,.085)",
-    grain: 0.55,
+    grain: 0.42,
   },
   storm: {
     story: "Weather rolling in. Mauve cloud with a trace of yellow sun.",
@@ -70,7 +70,7 @@ export const palettes = {
     lineRest: "rgba(61,49,56,.7)",
     accent: "#8f3a1f",
     grid: "rgba(61,49,56,.085)",
-    grain: 0.55,
+    grain: 0.42,
   },
   oldGotham: {
     story: "Morning over the old city. A low cream sun, cooling to slate where the haze settles.",
@@ -83,7 +83,7 @@ export const palettes = {
     lineRest: "rgba(34,41,43,.7)",
     accent: "#8a4a22",
     grid: "rgba(34,41,43,.085)",
-    grain: 0.55,
+    grain: 0.42,
   },
 } as const satisfies Record<string, Palette>;
 

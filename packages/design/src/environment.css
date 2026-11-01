@@ -25,7 +25,7 @@
   [data-theme="light"] { transition-duration: .01s; }
 }
 
-.environment, .environment > * { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.environment, .environment > * { position: fixed; inset: 0; z-index: -2; pointer-events: none; }
 [data-theme="dark"] .environment { display: none; }
 
 /* A low sun, with smoke settling downwards. */
@@ -33,6 +33,10 @@
 .environment-sun { background: radial-gradient(90% 62% at 84% -8%, var(--glow), transparent 68%); }
 
 /* Grey noise in soft-light moves pixels both ways, so grain never darkens the page or lowers text contrast. */
+/* Grain and vignette sit over everything, so the art and the page share one film stock. */
+.environment-grain, .environment-vignette { position: fixed; inset: 0; z-index: 6; pointer-events: none; }
+.environment-vignette { background: radial-gradient(120% 90% at 55% 40%, transparent 55%, color-mix(in srgb, var(--ink) 16%, transparent)); }
+[data-theme="dark"] :is(.environment-grain, .environment-vignette) { display: none; }
 .environment-grain {
   opacity: var(--grain);
   mix-blend-mode: soft-light;

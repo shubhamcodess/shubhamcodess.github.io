@@ -13,15 +13,17 @@ export const siteSchema = z
     description: z.string().min(1),
     /** Light mode's background selection. onLoad: use the default, or one random pick per visit. */
     background: z.strictObject({ default: z.enum(PALETTE_IDS), onLoad: z.enum(["config", "random"]) }),
-    /** How the header and the background art meet. The art itself isn't locked. */
+    /** The Gotham scene and how the page meets it. */
     scene: z.strictObject({
-      fit: z.enum(SCENE_OPTIONS.fit),
       face: z.enum(SCENE_OPTIONS.face),
+      contentFade: z.enum(SCENE_OPTIONS.contentFade),
+      depth: z.enum(SCENE_OPTIONS.depth),
+      sway: z.enum(SCENE_OPTIONS.sway),
+      haze: z.enum(SCENE_OPTIONS.haze),
+      dust: z.enum(SCENE_OPTIONS.dust),
       density: z.enum(SCENE_OPTIONS.density),
       reach: z.enum(SCENE_OPTIONS.reach),
-      strength: z.enum(SCENE_OPTIONS.strength),
-      contentFade: z.enum(SCENE_OPTIONS.contentFade),
-      parallax: z.enum(SCENE_OPTIONS.parallax),
+      word: z.enum(SCENE_OPTIONS.word),
     }),
     /** How the header's buttons look and move. Any use can still override these. */
     headerButton: z.strictObject({

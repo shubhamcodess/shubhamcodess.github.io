@@ -8,7 +8,7 @@ export function SiteHeader() {
     <header className="site-header">
       <Button {...site.headerButton} as={Link} href="/" variant="secondary" size="sm" aria-label="Home">SP</Button>
       <nav aria-label="Main">
-        <Button {...site.headerButton} as={Link} href="/#projects" size="sm" icon="arrow" data-tower="">Projects</Button>
+        <Button {...site.headerButton} as={Link} href="/#projects" size="sm" icon="arrow">Projects</Button>
       </nav>
     </header>
   );

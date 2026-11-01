@@ -15,7 +15,7 @@ import "./background-panel.css";
 const GRAIN = { Theme: null, Off: "0", Low: ".3", High: ".85" };
 type SceneKey = keyof typeof SCENE_OPTIONS;
 const SCENE_KEYS = Object.keys(SCENE_OPTIONS) as SceneKey[];
-const LABEL: Record<SceneKey, string> = { fit: "Fit", face: "Face", density: "Density", reach: "Reach", strength: "City", contentFade: "Fade", parallax: "Parallax" };
+const LABEL: Record<SceneKey, string> = { face: "Face", contentFade: "Fade", depth: "Depth", sway: "Sway", haze: "Haze", dust: "Dust", density: "Density", reach: "Reach", word: "Word" };
 
 // Variant and size change only the Projects button, so the logo stays as it is.
 const BUTTON_KEYS = ["variant", "size", "texture", "shadow", "hover", "press", "sway"] as const;
@@ -42,7 +42,7 @@ export function BackgroundPanel() {
     setPalette(d.palette as PaletteId);
     setScene(Object.fromEntries(SCENE_KEYS.map((k) => [k, d[k]])));
     setPage(document.getElementById("page"));
-    const projects = document.querySelector<HTMLElement>("[data-tower]");
+    const projects = document.querySelector<HTMLElement>(".site-header nav .bp");
     setButton(Object.fromEntries(BUTTON_KEYS.map((k) => [k, projects?.dataset[k]])));
   }, []);
 
@@ -59,9 +59,8 @@ export function BackgroundPanel() {
 
   const setButtonOption = (key: ButtonKey, value: string) => {
     const one = key === "variant" || key === "size";
-    document.querySelectorAll<HTMLElement>(one ? "[data-tower]" : ".site-header .bp").forEach((el) => { el.dataset[key] = value; });
+    document.querySelectorAll<HTMLElement>(one ? ".site-header nav .bp" : ".site-header .bp").forEach((el) => { el.dataset[key] = value; });
     setButton((b) => ({ ...b, [key]: value }));
-    if (key === "size") document.documentElement.dataset.fit = document.documentElement.dataset.fit; // the tower follows the button's new width
   };
   const pickFont = (name: keyof typeof FONTS) => {
     const [family, track, size] = FONTS[name], { style } = document.querySelector(".site-header") as HTMLElement;

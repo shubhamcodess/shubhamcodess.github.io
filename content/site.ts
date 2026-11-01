@@ -5,7 +5,7 @@ const config = {
   name: "Shubham Prakash",
   description: "Shubham Prakash's corner of the internet.",
   background: { default: "oldGotham", onLoad: "config" },
-  scene: { fit: "behind", face: "clear", density: "dense", reach: "mid", strength: "clear", contentFade: "mid", parallax: "low" },
+  scene: { face: "clear", contentFade: "mid", depth: "big", sway: "full", haze: "full", dust: "full", density: "normal", reach: "mid", word: "faint" },
   headerButton: { texture: "hatch", shadow: "br", hover: "shadow", press: "keycap", sway: "off" },
   flags: { writing: false, photography: false, ask: false, motion: true, backgroundPanel: true },
 } satisfies SiteConfig;

@@ -17,11 +17,9 @@ Keep every prototype here. Don't overwrite or delete one: new ideas get a new nu
 | `12-gotham-skyline` | The user's chosen taste: no pointer effects, varied bats, a better phone composition, Old Gotham by default. Replaced by `13`. |
 | `13-gotham-skyline` | Same taste, with lighter, more open front rows and a clear space above Wayne Tower. Replaced by `14`. |
 | `14-gotham-skyline` | `13` plus a few low buildings in front of Wayne Tower for depth, on wide screens. Replaced by `15`. |
-| `15-gotham-skyline` | `14` plus a faint, upside-down GOTHAM in outline, far behind the skyline. Current candidate. |
+| `15-gotham-skyline` | `14` plus a faint, upside-down GOTHAM in outline, far behind the skyline. This went into the real site, and it's also the first version of night. |
 | `09-nav-skyline` | Traditional top nav with the daytime inverted skyline, three ways of fitting them together: Street, Apart and Behind. On scroll it keeps a bar, or drops it for floating buttons with a Clear, Fog or Mist face. Logo, links and page text are placeholders. |
 
 The four themes in `08-daylight-themes` are now in the real site, in `packages/design/src/palettes.ts`.
-
-The header, skyline and floating buttons from `09-nav-skyline` went into the real site, with Street and Behind kept as settings.
 
 The Batcave here is a stand-in. In the final build it needs to be much more realistic, with smoother animation and much better suits.

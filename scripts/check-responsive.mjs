@@ -29,14 +29,18 @@ for (const [width, height] of WIDTHS) {
   page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
   for (const path of pages) {
     await page.goto(base + path, { waitUntil: "networkidle" });
+    await page.waitForSelector("#scene .g-hero canvas", { timeout: 5000 }).catch(() => {});
     const overflow = await page.evaluate(() => {
       const limit = document.documentElement.clientWidth;
       // Decorative art may run past the edge, because it's clipped. Everything else has to fit.
       const wide = [...document.querySelectorAll("body *")].find((el) => { if (el.closest('[aria-hidden="true"]')) return false; const r = el.getBoundingClientRect(); return r.width > 0 && (r.right > limit + 0.5 || r.left < -0.5); });
       const page = document.getElementById("page");
-      return { scroll: document.documentElement.scrollWidth > limit || (page ? page.scrollWidth > page.clientWidth : false), wide: wide ? wide.tagName + "." + wide.className : null };
+      // The scene must actually have drawn something, including Wayne Tower's layer.
+      const hero = document.querySelector("#scene .g-hero canvas");
+      const drawn = hero ? hero.getContext("2d").getImageData(0, 0, hero.width, hero.height).data.some((v, i) => i % 4 === 3 && v > 0) : false;
+      return { drawn, scroll: document.documentElement.scrollWidth > limit || (page ? page.scrollWidth > page.clientWidth : false), wide: wide ? wide.tagName + "." + wide.className : null };
     });
-    const ok = !overflow.scroll && !overflow.wide && !errors.length;
+    const ok = overflow.drawn && !overflow.scroll && !overflow.wide && !errors.length;
     if (!ok) failures.push(`${width}x${height} ${path}: ${JSON.stringify(overflow)} ${errors.join("; ")}`);
     console.log(`${ok ? "ok  " : "FAIL"} ${String(width).padStart(4)}x${height}  ${path}`);
   }
