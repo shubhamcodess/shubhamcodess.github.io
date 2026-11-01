@@ -1,0 +1,52 @@
+/* Scroll motion. The curve and short timings are the part taken from the reference; the look stays blueprint. */
+:root { --expo:cubic-bezier(.16,1,.3,1); --font-head:"Geist",system-ui,sans-serif; --font-mono:"Geist Mono",ui-monospace,Menlo,monospace; }
+[data-type="barlow"] { --font-head:"Barlow Semi Condensed",system-ui,sans-serif; }
+[data-type="serif"] { --font-head:"Instrument Serif",Georgia,serif; }
+
+.page-inner { position:relative; }
+html.lenis, html.lenis body { height:auto; }
+.lenis.lenis-smooth { scroll-behavior:auto !important; }
+.page { overscroll-behavior:contain; }
+
+h1 { font:500 clamp(46px,8.4vw,104px)/1 var(--font-head); letter-spacing:-.035em; }
+[data-type="serif"] h1 { font-weight:400; letter-spacing:-.015em; }
+
+.sec { position:relative; max-width:1240px; margin:0 auto; padding:clamp(90px,16vh,170px) clamp(18px,4vw,48px); }
+.sec + .sec::before { content:""; position:absolute; top:0; left:clamp(18px,4vw,48px); right:clamp(18px,4vw,48px); height:1px; background:var(--line-rest); }
+.kicker { display:flex; align-items:center; gap:9px; margin:0 0 20px; font:500 12px/1 var(--font-mono); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
+.kicker::before { content:""; width:6px; height:6px; background:var(--accent); }
+h2 { margin:0; font:500 clamp(32px,4.4vw,56px)/1.08 var(--font-head); letter-spacing:-.03em; }
+[data-type="serif"] h2 { font-weight:400; letter-spacing:-.01em; font-size:clamp(38px,5.2vw,68px); }
+.ln { display:block; overflow:clip; padding-bottom:.1em; margin-bottom:-.1em; }
+.ln > span { display:block; }
+.dim { color:color-mix(in srgb,var(--ink) 58%,transparent); }
+.split { display:grid; grid-template-columns:1.1fr 1fr; gap:clamp(24px,6vw,90px); align-items:end; }
+.body { margin:0; max-width:46ch; font:400 clamp(16px,1.3vw,18px)/1.6 "Geist",system-ui,sans-serif; color:var(--ink-2); }
+.tag { margin:14px 0 0; font:500 11px/1.4 var(--font-mono); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); opacity:.8; }
+
+/* A blueprint sheet: four lines past the corners and hatching rising from the bottom. */
+.sheet { position:relative; margin-top:clamp(36px,6vh,64px); min-height:clamp(220px,38vh,380px); padding:26px; display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:18px; align-content:end; background:color-mix(in srgb,var(--paper) 62%,transparent); }
+.sheet::before { content:""; position:absolute; inset:0 -8px; border-block:1px solid var(--line); pointer-events:none; }
+.sheet::after { content:""; position:absolute; inset:-8px 0; border-inline:1px solid var(--line); pointer-events:none; }
+.sheet .fact b { display:block; font:500 clamp(28px,3vw,40px)/1 var(--font-head); letter-spacing:-.02em; color:var(--ink); }
+.sheet .fact span { display:block; margin-top:8px; font:500 11px/1.4 var(--font-mono); letter-spacing:.05em; text-transform:uppercase; color:var(--ink-2); }
+.hatch { position:absolute; inset:0; opacity:.3; pointer-events:none; background:repeating-linear-gradient(135deg,var(--line) 0 1px,transparent 1px 9px); -webkit-mask-image:linear-gradient(0deg,#000,transparent 55%); mask-image:linear-gradient(0deg,#000,transparent 55%); }
+.pair { display:grid; grid-template-columns:1fr 1fr; gap:clamp(24px,4vw,56px); }
+.pair .sheet { min-height:clamp(180px,26vh,260px); }
+.end { min-height:80vh; display:flex; flex-direction:column; justify-content:center; }
+@media (max-width:760px) { .split, .pair { grid-template-columns:1fr; } }
+
+/* Reveal and hide. The element is either below the fold, in view, or gone above. Entering is slower and staggered; leaving is quick and has no stagger. */
+.rv { transition:opacity .8s var(--expo),transform .95s var(--expo); transition-delay:calc(var(--i,0) * 70ms); }
+.ln > span.rv { transition:transform 1s var(--expo); transition-delay:calc(var(--i,0) * 70ms); }
+[data-state="above"] .rv, [data-state="above"].rv, [data-state="above"] .ln > span.rv { transition-duration:.42s; transition-delay:0s; }
+
+[data-reveal="fade"] [data-state="below"] .rv, [data-reveal="fade"] [data-state="above"] .rv { opacity:0; }
+[data-reveal="rise"] [data-state="below"] .rv { opacity:0; transform:translateY(34px); }
+[data-reveal="rise"] [data-state="above"] .rv { opacity:0; transform:translateY(-22px); }
+[data-reveal="mask"] [data-state="below"] .rv:not(.ln > span) { opacity:0; transform:translateY(30px); }
+[data-reveal="mask"] [data-state="above"] .rv:not(.ln > span) { opacity:0; transform:translateY(-20px); }
+[data-reveal="mask"] [data-state="below"] .ln > span.rv { transform:translateY(112%); }
+[data-reveal="mask"] [data-state="above"] .ln > span.rv { transform:translateY(-112%); }
+[data-hide="off"] [data-state="above"] .rv, [data-hide="off"] [data-state="above"] .ln > span.rv { opacity:1 !important; transform:none !important; }
+@media (prefers-reduced-motion:reduce) { .rv, .ln > span.rv { opacity:1 !important; transform:none !important; transition:none !important; } }
