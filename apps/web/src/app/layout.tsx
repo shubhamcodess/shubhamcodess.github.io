@@ -30,6 +30,7 @@ const themeIconCss = PALETTE_IDS.map((id) => `[data-palette="${id}"] .site-heade
 export default function RootLayout({ children }: { children: ReactNode }) {
   const { default: palette, onLoad } = site.background;
   const { face, contentFade, depth, sway, haze, dust, density, reach, word } = site.scene;
+  const { iconHover, textHover } = site.buttonMotion;
   return (
     // The boot script can change data-palette before React loads, so React shouldn't flag that as a mismatch.
     <html
@@ -47,6 +48,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       data-density={density}
       data-reach={reach}
       data-word={word}
+      data-icon-hover={iconHover}
+      data-text-hover={textHover}
       suppressHydrationWarning
     >
       <head>

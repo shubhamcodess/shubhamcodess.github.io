@@ -33,6 +33,11 @@ export const siteSchema = z
       press: z.enum(BUTTON_OPTIONS.press),
       sway: z.enum(BUTTON_OPTIONS.sway),
     }),
+    /** The site-wide default for every button's icon and label hover motion. Set on the page's root; any button can still override its own. */
+    buttonMotion: z.strictObject({
+      iconHover: z.enum(BUTTON_OPTIONS.iconHover),
+      textHover: z.enum(BUTTON_OPTIONS.textHover),
+    }),
     socials: z.array(z.strictObject({ label: z.string().min(1), href: url })),
     /** Sections hidden until there is something to show. */
     flags: z.strictObject({ writing: z.boolean(), photography: z.boolean(), ask: z.boolean(), motion: z.boolean(), backgroundPanel: z.boolean() }),

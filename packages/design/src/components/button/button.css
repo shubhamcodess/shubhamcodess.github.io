@@ -5,11 +5,13 @@
 /* Hover and press are separate values, so each can move at its own speed. Press releases slowly whatever hover is doing. */
 @property --bp-h { syntax:"<number>"; inherits:true; initial-value:0; }
 @property --bp-p { syntax:"<number>"; inherits:true; initial-value:0; }
+/* How far into the label's hover response we are, eased both on arrival and on leaving. */
+@property --bp-th { syntax:"<number>"; inherits:true; initial-value:0; }
 
 .bp {
   --off:7px; --tex-a:.3; --warp-v:58deg; --warp-h:16deg;
   position:relative; display:inline-block; padding:0; margin:0; color:var(--ink); background:none; border:0; cursor:pointer; font:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent;
-  transition:--bp-h .5s var(--ease-soft), --bp-p .25s var(--ease-soft);
+  transition:--bp-h .5s var(--ease-soft), --bp-p .25s var(--ease-soft), --bp-th var(--dur-small-part) var(--ease-soft);
 }
 .bp:focus { outline:none; }
 .bp::before { content:""; position:absolute; inset:-4px 0; } /* keeps the small size at a 46px touch target */
@@ -22,6 +24,16 @@
   translate:calc(var(--sx) * var(--off) * var(--bp-travel, 0)) calc(var(--sy) * var(--off) * var(--bp-travel, 0));
 }
 .bp-label, .bp-icon { position:relative; z-index:1; }
+
+/* textHover: the label's own hover response, on and off. Transform only, so growing it never moves a neighbouring button.
+   Either this button's own choice, or (when it hasn't made one) the site-wide default set on the page's root. */
+:is(.bp[data-text-hover="grow"] .bp-label, :root[data-text-hover="grow"] .bp:not([data-text-hover]) .bp-label) {
+  transform-origin:left center; scale:calc(1 + var(--bp-th) * .08);
+}
+/* A quick, settling glitch: a small sideways flicker that's loudest mid-transition and at rest, hovered or not, sits still. */
+:is(.bp[data-text-hover="glitch"] .bp-label, :root[data-text-hover="glitch"] .bp:not([data-text-hover]) .bp-label) {
+  translate:calc(sin(var(--bp-th) * 1080deg) * var(--bp-th) * (1 - var(--bp-th)) * 5.6px) 0;
+}
 
 /* The frame is four drafting lines that run slightly past each corner, not a CSS border. */
 .bp-frame { position:absolute; inset:calc(var(--os) * -1); pointer-events:none; --l:var(--line-rest); transition:--os var(--dur-frame) var(--ease-soft), --l var(--dur-frame) var(--ease-soft);
@@ -92,6 +104,15 @@
 .bp:not(:disabled, [aria-disabled="true"], [data-hover="none"]):focus-visible { --bp-h:1; }
 .bp:focus-visible { --os:6px; --rise:92%; }
 .bp:focus-visible .bp-frame { --l:var(--line); }
+
+/* The label's own hover response (textHover) is a separate value from --bp-h, so it isn't tied to the shadow-slide "hover" option.
+   Fully off under reduced motion, not just instant, since it's decoration rather than a core hover state. */
+@media (prefers-reduced-motion:no-preference) {
+  @media (hover:hover) {
+    .bp:not(:disabled, [aria-disabled="true"]):hover { --bp-th:1; }
+  }
+  .bp:not(:disabled, [aria-disabled="true"]):focus-visible { --bp-th:1; }
+}
 
 /* Press: a key goes down fast. A plain key comes back fairly slowly, and a fold eases out like a dent in a sheet of paper. */
 .bp[data-press="keycap"] { transition:--bp-h .5s var(--ease-soft), --bp-p .55s var(--ease-soft); }
@@ -181,12 +202,32 @@
   94.4% { transform:translate(0.001px,-0.000px); }
   100.0% { transform:translate(0.000px,-0.000px); }
 }
-/* Only the fainter pen line is redrawn. The main icon line never disappears. */
+/* iconHover: "redraw" only redraws the fainter second pen line, as before. "trace" is clearly visible but soft:
+   the second line redraws further, the main line never disappears (it only breathes a little heavier) and each
+   stroke sways a hair, as if the pen had just passed over it again. Either this button's own choice, or (when
+   it hasn't made one) the site-wide default set on the page's root. The main icon line never disappears either way. */
 @keyframes bp-redraw { from { stroke-dashoffset:.45; opacity:.12; } to { stroke-dashoffset:0; opacity:.45; } }
+@keyframes bp-trace-second { from { stroke-dashoffset:.78; opacity:.04; } to { stroke-dashoffset:0; opacity:.45; } }
+@keyframes bp-trace-main { 0%, 100% { stroke-width:1.25px; } 45% { stroke-width:1.7px; } }
+@keyframes bp-trace-stroke {
+  0% { transform:translate(0,0); }
+  22% { transform:translate(.55px,-.38px); }
+  48% { transform:translate(-.42px,.3px); }
+  74% { transform:translate(.18px,-.13px); }
+  100% { transform:translate(0,0); }
+}
 @media (hover:hover) and (prefers-reduced-motion:no-preference) {
   .bp[data-sway="soft"]:not(:disabled, [aria-disabled="true"]):hover .bp-body { animation:bp-sway-soft .9s linear; }
   .bp[data-sway="softer"]:not(:disabled, [aria-disabled="true"]):hover .bp-body { animation:bp-sway-softer 1.2s linear; }
-  .bp:not(:disabled, [aria-disabled="true"]):hover .bp-icon .second { animation:bp-redraw .95s var(--ease-soft); }
+
+  :is(.bp[data-icon-hover="redraw"], :root[data-icon-hover="redraw"] .bp:not([data-icon-hover])):not(:disabled, [aria-disabled="true"]):hover .bp-icon .second { animation:bp-redraw var(--dur-icon) var(--ease-soft); }
+
+  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])):not(:disabled, [aria-disabled="true"]):hover .bp-icon .second { animation:bp-trace-second var(--dur-icon) var(--ease-soft); }
+  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])):not(:disabled, [aria-disabled="true"]):hover .bp-icon path:not(.second) { animation:bp-trace-main var(--dur-icon) var(--ease-soft); }
+  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])):not(:disabled, [aria-disabled="true"]):hover .bp-icon > g { animation:bp-trace-stroke var(--dur-icon) var(--ease-soft); }
+  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])) .bp-icon > g:nth-child(2) { animation-delay:.05s; }
+  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])) .bp-icon > g:nth-child(3) { animation-delay:.1s; }
+  :is(.bp[data-icon-hover="trace"], :root[data-icon-hover="trace"] .bp:not([data-icon-hover])) .bp-icon > g:nth-child(4) { animation-delay:.15s; }
 }
 @media (prefers-reduced-motion:reduce) {
   .bp, .bp * { transition-duration:.01s !important; }

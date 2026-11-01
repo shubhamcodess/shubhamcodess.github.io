@@ -8,6 +8,10 @@ export const BUTTON_OPTIONS = {
   press: ["warp", "keycap", "drop", "none"],
   sway: ["off", "soft", "softer"],
   face: ["clear", "frost"],
+  /** How the sketched icon responds to hover: redraws only the faint second pen line, or traces the whole icon more visibly. */
+  iconHover: ["none", "redraw", "trace"],
+  /** How the label responds to hover, on and off: a quick settling glitch, or a soft grow and shrink. */
+  textHover: ["none", "glitch", "grow"],
 } as const;
 
 type Options = typeof BUTTON_OPTIONS;

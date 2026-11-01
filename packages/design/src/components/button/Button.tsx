@@ -7,9 +7,13 @@ export type { IconName };
 import type { ButtonStyle } from "./options";
 import "./button.css";
 
-export type ButtonProps = HTMLAttributes<HTMLElement> & Partial<Omit<ButtonStyle, "face">> & {
+export type ButtonProps = HTMLAttributes<HTMLElement> & Partial<Omit<ButtonStyle, "face" | "iconHover" | "textHover">> & {
   /** Leave it out to inherit --bp-face from around the button, or set it for this use. */
   face?: ButtonStyle["face"];
+  /** Leave it out to inherit the site-wide default (a data attribute on the page's root), or set it for this use. */
+  iconHover?: ButtonStyle["iconHover"];
+  /** Leave it out to inherit the site-wide default (a data attribute on the page's root), or set it for this use. */
+  textHover?: ButtonStyle["textHover"];
   icon?: IconName;
   /** Your own icon, in place of a sketched one. Give an aria-label if the button has no text. */
   glyph?: ReactNode;
@@ -40,7 +44,7 @@ export function SketchIcon({ name, className }: { name: IconName; className?: st
   );
 }
 
-export function Button({ variant = "primary", size = "md", texture = "hatch", shadow = "br", hover = "none", press = "warp", sway = "off", face, icon, glyph, href, as, disabled, type = "button", className, children, ...rest }: ButtonProps) {
+export function Button({ variant = "primary", size = "md", texture = "hatch", shadow = "br", hover = "none", press = "warp", sway = "off", face, iconHover, textHover, icon, glyph, href, as, disabled, type = "button", className, children, ...rest }: ButtonProps) {
   const Element: ElementType = href ? (as ?? "a") : "button";
   // A disabled link has no href, so it can't be followed, and says so to screen readers.
   const behaviour = href
@@ -57,6 +61,8 @@ export function Button({ variant = "primary", size = "md", texture = "hatch", sh
       data-press={press}
       data-sway={sway}
       data-face={face}
+      data-icon-hover={iconHover}
+      data-text-hover={textHover}
       {...behaviour}
       {...rest}
     >

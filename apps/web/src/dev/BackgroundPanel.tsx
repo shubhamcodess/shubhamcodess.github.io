@@ -20,6 +20,10 @@ const LABEL: Record<SceneKey, string> = { face: "Face", contentFade: "Fade", dep
 // Variant and size change only the Projects button, so the logo stays as it is.
 const BUTTON_KEYS = ["variant", "size", "texture", "shadow", "hover", "press", "sway"] as const;
 type ButtonKey = (typeof BUTTON_KEYS)[number];
+// The site-wide default for every button, set on the page's root. Any button can still override its own.
+const MOTION_KEYS = ["iconHover", "textHover"] as const;
+type MotionKey = (typeof MOTION_KEYS)[number];
+const MOTION_LABEL: Record<MotionKey, string> = { iconHover: "Icon hover (site default)", textHover: "Text hover (site default)" };
 const FONTS = {
   barlow: ["var(--font-label)", ".09em", "16px"],
   chakra: ["var(--font-chakra)", ".05em", "14.5px"],
@@ -35,12 +39,14 @@ export function BackgroundPanel() {
   const [scene, setScene] = useState<Partial<Record<SceneKey, string>>>({});
   const [page, setPage] = useState<HTMLElement | null>(null);
   const [button, setButton] = useState<Partial<Record<ButtonKey, string>>>({});
+  const [motion, setMotion] = useState<Partial<Record<MotionKey, string>>>({});
   const [font, setFont] = useState<keyof typeof FONTS>("barlow");
 
   useEffect(() => {
     const d = document.documentElement.dataset;
     setPalette(d.palette as PaletteId);
     setScene(Object.fromEntries(SCENE_KEYS.map((k) => [k, d[k]])));
+    setMotion(Object.fromEntries(MOTION_KEYS.map((k) => [k, d[k]])));
     setPage(document.getElementById("page"));
     const projects = document.querySelector<HTMLElement>(".header-wide .bp");
     setButton(Object.fromEntries(BUTTON_KEYS.map((k) => [k, projects?.dataset[k]])));
@@ -61,6 +67,10 @@ export function BackgroundPanel() {
     const one = key === "variant" || key === "size";
     document.querySelectorAll<HTMLElement>(one ? ".header-wide .bp" : ".site-header .bp").forEach((el) => { el.dataset[key] = value; });
     setButton((b) => ({ ...b, [key]: value }));
+  };
+  const setMotionOption = (key: MotionKey, value: string) => {
+    document.documentElement.dataset[key] = value;
+    setMotion((m) => ({ ...m, [key]: value }));
   };
   const pickFont = (name: keyof typeof FONTS) => {
     const [family, track, size] = FONTS[name], { style } = document.querySelector(".site-header") as HTMLElement;
@@ -88,6 +98,15 @@ export function BackgroundPanel() {
               <span>{LABEL[key]}</span>
               {SCENE_OPTIONS[key].map((value) => (
                 <button key={value} type="button" aria-pressed={scene[key] === value} onClick={() => setSceneOption(key, value)}>{value}</button>
+              ))}
+            </div>
+          ))}
+          <hr />
+          {MOTION_KEYS.map((key) => (
+            <div key={key} role="group" aria-label={MOTION_LABEL[key]}>
+              <span>{MOTION_LABEL[key]}</span>
+              {BUTTON_OPTIONS[key].map((value) => (
+                <button key={value} type="button" aria-pressed={motion[key] === value} onClick={() => setMotionOption(key, value)}>{value}</button>
               ))}
             </div>
           ))}
