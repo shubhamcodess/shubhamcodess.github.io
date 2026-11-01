@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { seededWaits } from "./seeded";
 import "./rotating-text.css";
 
+export { seededWaits };
+
 export type RotatingTextProps = {
   /** Stays still, before the line that changes. */
   prefix?: string;

@@ -124,7 +124,7 @@ A small paper box with four drafting lines running past its corners, and the lab
 Paper text on the active theme's accent color, set in `tokens.css`. A test keeps it readable in every theme.
 
 ### Hero: Draft
-Bottom left, in reading order: "I am", the name, the role, the rotating hook and one CTA. The name is the only large thing. Details are in decision 016.
+A drawing's title block at bottom left, held to the name's width: "I am", the name with a hatched wireframe shadow, the role on a dimension line, then the rotating hook and one CTA on a row. The plate rests slightly turned and follows the pointer. Letters blur into focus on load, and bats weave through the name. Details are in decision 016.
 
 ### Headings and small labels
 Headings are Geist 500 with tight tracking, often two-tone, with the second line dimmed. Small labels are Geist Mono, uppercase, with a small accent square.

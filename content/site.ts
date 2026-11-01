@@ -13,6 +13,8 @@ const config = {
     role: "Cloud Full Stack Developer",
     hook: { prefix: "Building", lines: ["tech that matters", "AI products at scale", "for the cloud, end to end", "things worth shipping"], seed: 7, minMs: 3200, maxMs: 5600 },
     cta: { label: "What I shipped recently", href: "/#projects" },
+    tilt: { y: 5, x: 2, reach: 3.5 }, // Degrees at rest, and how far the pointer moves it.
+    bats: { seed: 11, count: 3, minMs: 9000, maxMs: 17000 }, // A small group that weaves through the name now and then. Count 0 turns them off.
   },
   scroll: { lerp: 0.14, lag: 1, parallax: 1, reveal: "mask", hide: true },
   buttonMotion: { iconHover: "trace", textHover: "grow" },
