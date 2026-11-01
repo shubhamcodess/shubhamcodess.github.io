@@ -74,7 +74,7 @@ The Dark mode colors above are from the prototypes and aren't final.
 ## Components
 
 ### Button: Approved
-Code: `packages/design/src/components/button`. The options are listed once in `options.ts`, and the types, config and control panel all read that list. It runs on CSS alone. Prototype: `prototypes/05-button-soft`, whose hover and press have since been replaced.
+Code: `packages/design/src/components/button`. The options are listed once in `options.ts`, and the types, config and control panel all read that list. It runs on CSS alone. Prototype: `prototypes/05-button-soft`, whose press has since been replaced, and whose hover movement is now optional.
 
 - **Parts:** base wireframe, three corner lines, and the cap, which holds the texture, fold lines, frame, sketched icon and label.
 
@@ -84,8 +84,8 @@ Code: `packages/design/src/components/button`. The options are listed once in `o
 | `size` | sm 38px, md 46px, lg 60px, all with a 46px minimum touch area | md |
 | `texture` | hatch, dots, grid, fade | hatch |
 | `shadow` | Which way the cap sinks: br, bl, tr, tl | br |
-| `hover` | keycap, shadow, none | keycap |
-| `press` | warp, drop, none | warp |
+| `hover` | none, shadow | none |
+| `press` | warp, keycap, drop, none | warp |
 | `sway` | off, soft, softer | off |
 | `face` | clear, frost. Leave it out to inherit `--bp-face` and `--bp-face-filter` from around the button. | clear |
 | `icon`, `href`, `as`, `disabled`, `className`, `style` | Icon name, link target, link component, disabled state, and one-place changes | |
@@ -93,15 +93,16 @@ Code: `packages/design/src/components/button`. The options are listed once in `o
 | State | What happens |
 |---|---|
 | Rest | Corner overshoot 4px, texture rises 62% |
-| Hover, `keycap` | Like a key being pushed. The cap sinks 42% of the way onto a wireframe base that stays put, quickly (.17s), and returns more slowly (.5s). Overshoot 6px, texture rises 92%, frame brightens, faint pen line redraws. |
-| Hover, `shadow` | The earlier style: the cap stays still, and the wireframe slides out from it |
-| Press, `warp` | Like pressing a sheet of blueprint. The cap bottoms out, the texture folds inward along creases from each corner to the center, each side of the fold shades differently, and the label sinks slightly. In over .13s, and released slowly over 1.25s. |
+| Hover | The cap stays still. Overshoot 6px, texture rises 92%, frame brightens, faint pen line redraws. |
+| Hover, `shadow` | Also, the wireframe slides out from the still cap |
+| Press, `keycap` | Like a key going down. The cap sinks onto a wireframe base that appears under it, in .13s, and comes back over .55s. |
+| Press, `warp` | The same keycap sink, while the texture folds inward like a pressed sheet of blueprint, along creases from each corner to the center. Each side of the fold shades differently, and the label sinks slightly. Released slowly over 1.25s. |
 | Press, `drop` | The cap drops into its shadow, with no fold, and returns quickly |
 | Keyboard focus | Same as hover, plus a dashed amber line 12px clear of the button |
 | Disabled | Dashed frame, no texture or shadow, muted text |
 
 - **Rule:** the main icon line never disappears on hover. Only the fainter second line redraws.
-- **Rule:** hover and press are separate values, so a press releases slowly even while the pointer stays on the button.
+- **Rule:** hover and press are separate values, so each moves at its own speed.
 - **Reduced motion:** state changes are instant and the texture doesn't fold.
 
 ### Scroll thumb: Approved

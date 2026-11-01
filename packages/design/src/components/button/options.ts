@@ -4,8 +4,8 @@ export const BUTTON_OPTIONS = {
   size: ["sm", "md", "lg"],
   texture: ["hatch", "dots", "grid", "fade"],
   shadow: ["br", "bl", "tr", "tl"],
-  hover: ["keycap", "shadow", "none"],
-  press: ["warp", "drop", "none"],
+  hover: ["none", "shadow"],
+  press: ["warp", "keycap", "drop", "none"],
   sway: ["off", "soft", "softer"],
   face: ["clear", "frost"],
 } as const;

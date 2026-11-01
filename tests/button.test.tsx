@@ -20,7 +20,7 @@ describe("Button", () => {
 
   it("defaults to the agreed look, and takes every option as an input", () => {
     const rest = html(<Button>Go</Button>);
-    for (const attr of ['data-texture="hatch"', 'data-shadow="br"', 'data-hover="keycap"', 'data-press="warp"', 'data-sway="off"']) expect(rest).toContain(attr);
+    for (const attr of ['data-texture="hatch"', 'data-shadow="br"', 'data-hover="none"', 'data-press="warp"', 'data-sway="off"']) expect(rest).toContain(attr);
     expect(rest).not.toContain("data-face");
     for (const [key, values] of Object.entries(BUTTON_OPTIONS)) {
       for (const value of values) expect(html(<Button {...{ [key]: value }}>Go</Button>)).toContain(`data-${key}="${value}"`);
@@ -29,7 +29,7 @@ describe("Button", () => {
 
   it("every option has its styling", () => {
     const css = readFileSync("packages/design/src/components/button/button.css", "utf8");
-    const skip = new Set(["primary", "md", "clear", "off"]);
+    const skip = new Set(["primary", "md", "clear", "off", "none"]);
     for (const [key, values] of Object.entries(BUTTON_OPTIONS)) {
       for (const value of values) if (!skip.has(value) && !(key === "press" && value !== "warp") && !(key === "sway")) expect(css, `${key}=${value}`).toContain(`[data-${key}="${value}"]`);
     }

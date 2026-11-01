@@ -20,7 +20,7 @@ export type ButtonProps = HTMLAttributes<HTMLElement> & Partial<Omit<ButtonStyle
 
 const seedOf = (name: string) => [...name].reduce((sum, c) => sum + c.charCodeAt(0), 3);
 
-export function Button({ variant = "primary", size = "md", texture = "hatch", shadow = "br", hover = "keycap", press = "warp", sway = "off", face, icon, href, as, disabled, type = "button", className, children, ...rest }: ButtonProps) {
+export function Button({ variant = "primary", size = "md", texture = "hatch", shadow = "br", hover = "none", press = "warp", sway = "off", face, icon, href, as, disabled, type = "button", className, children, ...rest }: ButtonProps) {
   const Element: ElementType = href ? (as ?? "a") : "button";
   // A disabled link has no href, so it can't be followed, and says so to screen readers.
   const behaviour = href
