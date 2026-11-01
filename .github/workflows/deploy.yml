@@ -1,5 +1,6 @@
-name: Check and deploy
+name: Test, build and deploy
 
+# Pull requests only get tested and built. A push to main also publishes the site.
 on:
   pull_request:
   push:
@@ -9,27 +10,34 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false # Never stop a deploy halfway.
+
 jobs:
-  check:
+  test-and-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
+      # Types, tests, the static build, the JS budget and the responsive gate.
       - run: pnpm check
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload the built site
         if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
         with:
           path: apps/web/out
+          retention-days: 1 # A backstop, in case a failed run never reaches the delete step.
 
   deploy:
     if: github.event_name != 'pull_request'
-    needs: check
+    needs: test-and-build
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -39,4 +47,17 @@ jobs:
       url: ${{ steps.pages.outputs.page_url }}
     steps:
       - id: pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+
+  delete-artifact:
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Delete the uploaded site
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '.artifacts[] | select(.name == "github-pages") | .id' |
+            xargs -r -I{} gh api -X DELETE "repos/$GITHUB_REPOSITORY/actions/artifacts/{}"
