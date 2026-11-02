@@ -46,8 +46,10 @@ html, body { height: 100%; overflow: hidden; }
 .hero-dim-short::before, .hero-dim-long::after { content: ""; position: absolute; top: -5px; width: 1px; height: 11px; background: var(--accent); }
 .hero-dim-short::before { left: 0; }
 .hero-dim-long::after { right: 0; }
-/* A small figure standing at the end of the line. A single traced outline, used as a mask so it takes the theme's accent with no script. */
-.hero-figure { position: absolute; right: 12px; bottom: 0; height: clamp(24px, calc(var(--name) * .38), 44px); aspect-ratio: 366.8 / 780.0; background: var(--accent); -webkit-mask: url(/hero-figure.svg) center / 100% 100% no-repeat; mask: url(/hero-figure.svg) center / 100% 100% no-repeat; pointer-events: none; }
+/* A small figure standing on a line. The script sizes it to the room it has, and moves it along. Hidden until its outline has loaded. */
+.bat-figure { --figure-edge: color-mix(in srgb, var(--accent), var(--ink) 48%); position: absolute; left: 0; color: var(--accent); pointer-events: none; opacity: 0; transition: opacity 1s var(--ease-expo) 1.2s; }
+.bat-figure[data-ready] { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .bat-figure { transition: none; } }
 
 /* What you build and where next, on one row, each end held to the name's edges. */
 .hero-row { display: flex; align-items: center; justify-content: space-between; gap: clamp(18px, 3vw, 44px); margin-top: clamp(16px, calc(var(--name) * .24), 28px); }
@@ -64,7 +66,6 @@ html, body { height: 100%; overflow: hidden; }
   .hero-role > span { animation: hero-focus 1s var(--ease-expo) 1.1s backwards; }
   .hero-hook { animation: hero-focus 1.1s var(--ease-expo) 1.3s backwards; }
   .hero-cta { animation: hero-focus 1.1s var(--ease-expo) 1.45s backwards; }
-  .hero-figure { animation: hero-focus 1.2s var(--ease-expo) 1.7s backwards; }
   .hero-plate { transition: none; }
   /* Scrolling away blurs back into the haze, the same way it arrived. */
   .hero[data-state="above"] .rv { filter: blur(10px); }

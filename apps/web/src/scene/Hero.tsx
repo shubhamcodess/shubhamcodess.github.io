@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { Button } from "@portfolio/design/button";
 import { RotatingText } from "@portfolio/design/rotating-text";
 import { site } from "@portfolio/site";
+import { BatFigure } from "./figure/BatFigure";
 import { HeroStage } from "./HeroStage";
 
 const at = (i: number) => ({ "--i": i }) as CSSProperties;
@@ -19,7 +20,7 @@ export function Hero() {
       <HeroStage tilt={tilt}>
         <h1 className="hero-title" aria-label={`${lead} ${site.name}`} data-layer="b">
           <span className="hero-lead rv" aria-hidden="true" style={at(0)}>{lead}</span>
-          <span className="hero-name rv" aria-hidden="true" style={at(0)}>
+          <span className="hero-name rv" aria-hidden="true" style={at(0)} data-figure-ceiling data-figure-inset=".22">
             <span className="hero-wire hero-wire-hatch">{copy}</span>
             <span className="hero-wire hero-wire-line">{copy}</span>
             <span className="hero-face">
@@ -34,7 +35,7 @@ export function Hero() {
           <span><RotatingText lines={role.lines} suffix={role.rest} seed={role.seed} minMs={role.minMs} maxMs={role.maxMs} fit /></span>
           <span className="hero-track">
             <i className="hero-dim hero-dim-long" />
-            {figure.enabled && <i className="hero-figure" aria-hidden="true" />}
+            {figure.enabled && <BatFigure {...figure.props} motion={site.flags.motion} />}
           </span>
         </p>
         <div className="hero-row">
