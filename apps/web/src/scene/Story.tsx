@@ -9,6 +9,8 @@ import { StoryStage } from "./StoryStage";
 import { TOOL_LOGOS } from "./tool-logos";
 
 const pad = (n: number) => String(n).padStart(2, "0");
+/** How many chapters have their figure drawn. The rest stay marked as empty figures until theirs is built. */
+const DRAWN = 1;
 const toMark = ([x, y]: number[]) => [x! * 15 + 16, y! * 15 + 8];
 
 /* A fine ink batarang for each stop on the line, in the icons' own pen, so it redraws on hover the same way. Its solid shape sits underneath for the stop you're on. */
@@ -61,9 +63,11 @@ export function Story() {
                     ))}
                   </ul>
                 </div>
-                {/* The chapter's motion graphic goes here. Until then it's marked the way a drawing marks an empty figure. */}
+                {/* The chapter's part of the one Gotham drawing. Until it's built, it's marked the way a drawing marks an empty figure. */}
                 <figure className="story-fig">
-                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="0" x2="100" y2="100" /><line x1="100" y1="0" x2="0" y2="100" /></svg>
+                  {i < DRAWN
+                    ? <canvas className="story-canvas" data-chapter={i} aria-hidden="true" />
+                    : <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="0" x2="100" y2="100" /><line x1="100" y1="0" x2="0" y2="100" /></svg>}
                   <figcaption>Fig. {i + 1}: {scene.figure}</figcaption>
                 </figure>
                 <div className="story-tools">

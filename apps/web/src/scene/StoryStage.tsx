@@ -3,12 +3,27 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { currentScene, figurePresence, frameLook, lineProgress, sceneLook, sceneTarget } from "./story-motion";
 
+type StoryDrawing = { mount(canvas: HTMLCanvasElement, options: { chapter: number; count: number; story: () => { progress: number; live: boolean } }): () => void };
+
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /* Turns the story into a film: the stage pins to the screen and the scroll plays it, one scene at a time, and the stops on the line jump between scenes.
    If it wouldn't fit on this screen, or there's no script, or motion isn't welcome, it stays what the server sent: the scenes in order, as plain text, with the stops as ordinary links. */
 export function StoryStage({ count, pace, id, titles, children }: { count: number; pace: number; id: string; titles: readonly string[]; children: ReactNode }) {
   const ref = useRef<HTMLElement>(null);
+  const clock = useRef({ progress: 0, live: false }); // The film's place, read by the figure drawing every frame.
+
+  // The figure: one Gotham drawing, loaded only when the story is on the page. Each chapter's canvas shows its part.
+  useEffect(() => {
+    const canvases = [...(ref.current?.querySelectorAll<HTMLCanvasElement>("canvas[data-chapter]") ?? [])];
+    if (!canvases.length) return;
+    let stops: (() => void)[] = [], gone = false;
+    void import("./drawings/gotham-story").then(({ GothamStory }) => {
+      if (gone) return;
+      stops = canvases.map((canvas) => (GothamStory as StoryDrawing).mount(canvas, { chapter: Number(canvas.dataset.chapter), count, story: () => clock.current }));
+    });
+    return () => { gone = true; stops.forEach((stop) => stop()); };
+  }, [count]);
 
   useEffect(() => {
     const story = ref.current, page = document.getElementById("page");
@@ -22,7 +37,7 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
     // Where the stage pins (px from the top), its place in the section, and how much scroll the film takes.
     let raf = 0, on = false, lastHere = -1, pinTop = 0, stageAt = 0, film = 0;
     const clear = () => {
-      on = false; lastHere = -1;
+      on = false; lastHere = -1; clock.current.live = false;
       delete story.dataset.cine; delete story.dataset.holdStart; delete story.dataset.holdLength;
       for (const name of ["--story-drawn", "--now", "--stage-top", "height"]) story.style.removeProperty(name);
       for (const el of [...scenes, frame, track]) el?.removeAttribute("style");
@@ -37,6 +52,7 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
       if (box.bottom < -60 || box.top > innerHeight + 60 || film <= 0) return; // Off screen: nothing to do.
       const ahead = box.top + stageAt - pinTop; // How far the stage still is from pinning.
       const progress = Math.min(1, Math.max(0, -ahead / film));
+      clock.current.progress = progress; clock.current.live = true;
       scenes.forEach((scene, i) => {
         const look = sceneLook(progress, i, count), hidden = look.opacity < 0.004;
         scene.style.opacity = look.opacity.toFixed(3);
