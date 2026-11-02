@@ -142,6 +142,15 @@ A small Batman at the end of the role's dimension line, as an easter egg, built 
 - **Sharpness rule:** on the turned hero plate, don't animate its `opacity` or `transform`. Browsers paint that layer at low resolution. Animate something painted, like `fill-opacity`.
 - **Rule:** decoration only. Hidden from screen readers, never takes a click.
 
+### Story: Draft, for the user's eye
+Experience, told as a film rather than a timeline: where it started and what it is now. Words are `story` in `content/site.ts`, the code is `apps/web/src/scene/Story.tsx`, `StoryStage.tsx`, `StoryDrawing.tsx`, `story-drawings.ts` and `story-motion.ts`.
+- **Scenes:** one at a time on a screen that holds still while the scroll plays them. Two halves: the words on the left (label, big line in the hero's voice, role on a tick, one sentence, then three proof points set out like a drawing's schedule), and a large ink drawing of that chapter on the right. On narrow screens the drawing sits on top, and goes if there's no height for it.
+- **Drawings:** thin pen strokes, the same hand as the icons, abstract so no client's system can be read from them. The pen draws them stroke by stroke as the scene arrives, and a scroll back undoes them.
+- **Motion:** each scene comes out of the haze with a slow camera push, holds sharp to be read, and blurs away. It's a function of the scroll alone.
+- **The line:** draws as the story goes, reaching each stop as its scene arrives. Each stop is a fine outline batarang: filled when you're there, darker once passed, and a click glides to that scene. Tooltips carry the chapter's name. There are no years anywhere. The bat figure waits by the last stop and appears when the story reaches now.
+- **Words:** IBM is named. Clients and internal systems are never named. A test holds this.
+- **Without motion:** no script, reduced motion, or a scene too tall for the screen gets the same scenes as plain text in order, and the batarangs become plain links.
+
 ### Scroll motion: Approved
 Smooth scroll, content layers that follow a beat late, and reveal and hide. Mark content with `data-block` and `data-layer`, and text with `.rv` or `.ln`. Details are in decision 017.
 

@@ -63,6 +63,13 @@ export const siteSchema = z
     }).refine((s) => s.items.every((i) => i.span <= s.columns), { message: "A card can't span more than the columns", path: ["items"] })
       .refine((s) => new Set(s.items.map((i) => i.slug)).size === s.items.length, { message: "A project can only be featured once", path: ["items"] }),
     /** The /projects page. */
+    /** Where it started and what it is now, as scenes the scroll plays through. `pace` is screens of scrolling per scene. Every word must be true. */
+    story: z.strictObject({
+      kicker: z.string().min(1),
+      pace: z.number().min(0.4).max(2),
+      figure: z.strictObject({ anchor: z.number().min(0).max(1), face: z.enum(["left", "right"]), minHeight: z.number().min(12).max(120), maxHeight: z.number().min(12).max(240), clearance: z.number().min(0).max(40) }),
+      scenes: z.array(z.strictObject({ label: z.string().min(1), title: z.string().min(1), role: z.string().min(1), line: z.string().min(1), proof: z.array(z.string().min(1)).min(1).max(4), drawing: z.enum(["running", "building", "leading", "whole"]) })).min(2).max(6),
+    }),
     projects: z.strictObject({ kicker: z.string().min(1), title: z.tuple([z.string().min(1), z.string().min(1)]), description: z.string().min(1), columns: z.number().int().min(1).max(3) }),
     socials: z.array(z.strictObject({ label: z.string().min(1), href: url })),
     /** Sections hidden until there is something to show. */
