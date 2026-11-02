@@ -87,12 +87,11 @@ export const TokenFlow = (() => {
       ctx.fillText(s, px, py); ctx.globalAlpha = 1;
     }
     // A drawing's dimension line, with ticks at each end and its measure above.
-    function dimension(a, b, y, seed, alpha, label, size, color) {
+    function dimension(a, b, y, seed, alpha) {
       const drawn = a + (b - a) * alpha;
       seg([a, y, 0], [drawn, y, 0], seed, .8, colors.rest, alpha);
       seg([a, y - .08, 0], [a, y + .08, 0], seed + 1, .9, colors.line, alpha);
       seg([b, y - .08, 0], [b, y + .08, 0], seed + 2, .9, colors.line, alpha * (alpha > .98 ? 1 : 0));
-      text(label, (a + b) / 2, y - .17, 0, size, color, alpha);
     }
 
     function draw(t) {
@@ -106,8 +105,9 @@ export const TokenFlow = (() => {
         seg([OUT, s * RAIL, 0], [END, s * RAIL, 0], 210 + s, .7, colors.rest, .75);
       }
       // The two measures: drawn once there's something to measure, and to scale.
-      dimension(LANE, GATE, RAIL + .34, 300, ease(span(t, .7, 2)) * gone, '37,355 TOK', size, colors.ink2);
-      dimension(END - (GATE - LANE) * RATIO, END, RAIL + .34, 310, ease(span(t, rows[12].thru + .4, rows[12].thru + 1.5)) * gone, '13,244 TOK', size, colors.ink);
+      const inMeasure = ease(span(t, .7, 2)) * gone, outMeasure = ease(span(t, rows[12].thru + .4, rows[12].thru + 1.5)) * gone;
+      dimension(LANE, GATE, RAIL + .42, 300, inMeasure);
+      dimension(END - (GATE - LANE) * RATIO, END, RAIL + .42, 310, outMeasure);
 
       // Rows of the response. Noise is dashed, and what's kept is solid.
       const flecks = [];
@@ -142,10 +142,14 @@ export const TokenFlow = (() => {
       text('YOUR AGENT', AGENT.x, -AGENT.d, AGENT.h + .16, size, colors.ink2);
       text('MTO', MTO.x, -MTO.d, MTO.h + .16, Math.min(size + 1, 12), colors.ink);
 
+      // Each measure sits under its line, clear of the blocks.
+      text('37,355 TOK', (LANE + GATE) / 2, RAIL + .6, 0, size, colors.ink2, inMeasure);
+      text('13,244 TOK', END, RAIL + .6, 0, size, colors.ink, outMeasure, 'right');
+
       // The result. It's the loop's one lasting touch of amber.
       const result = ease(span(t, rows[12].thru + 1.2, rows[12].thru + 2.2)) * gone;
       text('64.5% FEWER', MTO.x, -MTO.d, MTO.h + .46, Math.min(size + 2, 14), colors.accent, result);
-      if (wide) text('GITHUB ISSUE LIST, 40 ISSUES', 0, MTO.d + .5, 0, Math.max(9, size - 1), colors.ink2, ease(span(t, .4, 1.2)) * gone * .8);
+      if (wide) text('GITHUB ISSUE LIST, 40 ISSUES', 0, MTO.d + .62, 0, Math.max(9, size - 1), colors.ink2, ease(span(t, .4, 1.2)) * gone * .8);
     }
 
     function frame(now) {
