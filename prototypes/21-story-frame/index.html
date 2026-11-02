@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story Frame</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky-1:#efe9d6; --sky-2:#d9d6c6; --sky-3:#c6c9c3; --sky-4:#b4bcbf;
+    --paper:#f2eddf; --ink:#131c1f; --ink-2:#37403f; --line:#22292b; --line-rest:rgba(34,41,43,.7); --accent:#8a4a22; --grid:rgba(34,41,43,.085);
+    --sans:"Geist",system-ui,sans-serif; --note:"Geist Mono",ui-monospace,Menlo,monospace;
+    --ease:cubic-bezier(.16,1,.3,1);
+    /* THE LAYOUT RULE. One edge for the header, the hero and every section. Nothing else sets its own. */
+    --gutter: clamp(18px, 4vw, 48px);
+    --header-h: 68px;
+    /* The figure's shades, as in the site. */
+    --f7:var(--ink); --f0:color-mix(in srgb,var(--ink),var(--paper) 8%); --f1:color-mix(in srgb,var(--ink),var(--paper) 24%); --f2:color-mix(in srgb,var(--ink),var(--paper) 42%); --f3:color-mix(in srgb,var(--ink),var(--paper) 60%); --f4:color-mix(in srgb,var(--ink),var(--paper) 74%); --f5:color-mix(in srgb,var(--ink),var(--paper) 86%); --f6:var(--paper);
+  }
+  * { box-sizing:border-box; }
+  html { background:var(--sky-3); }
+  body { margin:0; font-family:var(--sans); color:var(--ink); background:linear-gradient(var(--sky-1),var(--sky-2) 35%,var(--sky-3) 70%,var(--sky-4)) fixed; -webkit-font-smoothing:antialiased; }
+  .col { padding-inline:var(--gutter); }
+
+  /* Stubs, only here to show the edges agreeing. */
+  .stub-head { position:fixed; z-index:5; top:0; left:0; right:0; height:var(--header-h); display:flex; align-items:center; justify-content:space-between; pointer-events:none; }
+  .stub-logo { width:38px; height:38px; border:1px solid var(--line); display:grid; place-items:center; font:500 15px var(--sans); }
+  .stub-section { min-height:62svh; display:flex; flex-direction:column; justify-content:flex-end; padding-bottom:9svh; }
+  .stub-title { margin:0; font:500 clamp(32px,4.4vw,56px)/1.08 var(--sans); letter-spacing:-.03em; }
+  .stub-note { margin:14px 0 0; font:500 12px var(--note); color:var(--ink-2); }
+  .kicker { display:flex; align-items:center; gap:9px; margin:0 0 18px; font:500 12px/1 var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
+  .kicker::before,.kicker::after { content:""; flex:none; height:11px; background:linear-gradient(var(--line-rest),var(--line-rest)) 0 50%/100% 1px no-repeat; }
+  .kicker::before { width:16px; border-left:1px solid var(--accent); }
+  .kicker::after { width:clamp(40px,7vw,88px); border-right:1px solid var(--accent); }
+
+  /* The guide. Press G, or the button. */
+  .guide { position:fixed; z-index:9; top:0; bottom:0; left:var(--gutter); width:1px; background:#d0145a; opacity:0; pointer-events:none; }
+  .guide.r { left:auto; right:var(--gutter); }
+  body.guides .guide { opacity:.7; }
+  .guide-btn { position:fixed; z-index:9; right:10px; bottom:10px; padding:6px 9px; font:500 11px var(--note); background:var(--paper); border:1px solid var(--line); color:var(--ink); cursor:pointer; }
+
+  /* The stage holds the screen while the sheets pass inside the frame. */
+  .story { position:relative; height:calc(100svh * (1 + var(--n) * 1.05)); }
+  .stage { position:sticky; top:0; height:100svh; display:flex; flex-direction:column; padding-top:calc(var(--header-h) + 4px); padding-bottom:clamp(16px,3svh,30px); }
+  .stage .kicker { flex:none; margin-bottom:clamp(10px,1.8svh,16px); }
+
+  /* THE FRAME. Lines that run past each corner, a hatched shadow, a border of drawing zones. */
+  .frame { --tick:clamp(20px,2.6vw,34px); position:relative; flex:1; min-height:0; display:flex; flex-direction:column; margin-right:10px; margin-bottom:12px; }
+  .frame-shadow { position:absolute; inset:9px -9px -9px 9px; background:repeating-linear-gradient(135deg,var(--line) 0 1px,transparent 1px 7px); opacity:.26; }
+  .frame-sheet { position:relative; flex:1; min-height:0; display:flex; flex-direction:column; background:color-mix(in srgb,var(--paper) 90%,transparent); background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px); background-size:calc(100%/24) calc(100%/12); }
+  .edge { position:absolute; background:var(--line); z-index:3; pointer-events:none; }
+  .edge.t,.edge.b { left:-9px; right:-9px; height:1px; } .edge.t { top:0; } .edge.b { bottom:0; }
+  .edge.l,.edge.r { top:-9px; bottom:-9px; width:1px; } .edge.l { left:0; } .edge.r { right:0; }
+  /* The strip along the top: which sheet this is. It doesn't move; only its contents change. */
+  .strip { flex:none; display:grid; grid-template-columns:auto 1fr auto; align-items:center; border-bottom:1px solid var(--line); font:500 11.5px/1 var(--note); letter-spacing:.06em; text-transform:uppercase; }
+  .strip > * { padding:clamp(8px,1.3svh,12px) clamp(12px,1.4vw,20px); }
+  .strip-sheet { border-right:1px solid var(--line); white-space:nowrap; }
+  .strip-title { color:var(--ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .strip-org { border-left:1px solid var(--line); white-space:nowrap; }
+
+  /* THE WINDOW. The sheets slide through it and are clipped by it. */
+  .window { position:relative; flex:1; min-height:0; display:grid; overflow:hidden; }
+  .slide { grid-area:1/1; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); min-height:0; will-change:transform; }
+  .slide-text { display:flex; flex-direction:column; justify-content:center; min-width:0; padding:clamp(14px,3svh,40px) clamp(14px,3vw,52px); }
+  .label { margin:0 0 clamp(4px,1svh,10px); font-size:clamp(15px,1.5vw,22px); letter-spacing:-.02em; color:var(--ink-2); }
+  .title { position:relative; margin:0; font:500 clamp(32px,min(4.6vw,9.5svh),84px)/1.04 var(--sans); letter-spacing:-.04em; text-wrap:balance; }
+  .title b { position:relative; display:block; font-weight:inherit; }
+  .title i { position:absolute; inset:0; font-style:normal; color:transparent; -webkit-text-stroke:1px color-mix(in srgb,var(--line),transparent 55%); translate:calc(clamp(2px,.28vw,4px) + var(--d,0)*5px) clamp(2px,.28vw,4px); }
+  /* The role sits on a dimension line that measures the text column, as it does in the hero. */
+  .role { display:flex; align-items:center; gap:10px; margin:clamp(10px,2svh,20px) 0 0; font:500 clamp(11px,.92vw,13px)/1.3 var(--note); letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; }
+  .role::before,.role::after { content:""; height:1px; background:var(--line-rest); position:relative; }
+  .role::before { flex:none; width:16px; box-shadow:-1px 0 0 0 var(--accent); }
+  .role::after { flex:1; min-width:10px; box-shadow:1px 0 0 0 var(--accent); }
+  .line { max-width:60ch; margin:clamp(8px,1.6svh,14px) 0 0; font-size:clamp(15px,1.25vw,19px); line-height:1.42; letter-spacing:-.01em; text-wrap:pretty; }
+
+  /* The space reserved for the chapter's motion graphic. Marked as a drawing marks an empty figure. */
+  .fig { position:relative; min-width:0; border-left:1px solid var(--line-rest); overflow:hidden; }
+  .fig svg { position:absolute; inset:0; width:100%; height:100%; }
+  .fig line { stroke:var(--line-rest); stroke-width:1; vector-effect:non-scaling-stroke; stroke-dasharray:3 6; opacity:.55; }
+  .fig-cap { position:absolute; left:clamp(12px,1.4vw,20px); bottom:clamp(10px,1.4svh,16px); font:500 11px/1.3 var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); background:color-mix(in srgb,var(--paper) 90%,transparent); padding:2px 4px; }
+  .fig-tag { position:absolute; right:clamp(12px,1.4vw,20px); top:clamp(10px,1.4svh,16px); font:500 11px/1.3 var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
+
+  /* THE TITLE BLOCK. Exactly three cells, fixed to the frame. Only what's inside them moves. */
+  .block { flex:none; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid var(--line); }
+  .cell { display:grid; min-width:0; overflow:hidden; border-left:1px solid var(--line); }
+  .cell:first-child { border-left:0; }
+  .cell-item { grid-area:1/1; min-width:0; padding:clamp(8px,1.5svh,16px) clamp(12px,1.4vw,20px); will-change:transform; }
+  .cell-label { display:block; font:500 10.5px/1.2 var(--note); letter-spacing:.07em; text-transform:uppercase; color:var(--ink-2); }
+  .cell-value { display:block; margin-top:clamp(3px,.8svh,7px); font:500 clamp(19px,min(2vw,4svh),32px)/1.08 var(--sans); letter-spacing:-.03em; }
+  .cell-claim { display:block; margin-top:clamp(3px,.7svh,6px); font-size:clamp(12.5px,.95vw,14.5px); line-height:1.36; color:var(--ink-2); text-wrap:pretty; }
+
+  /* The line under the frame: 2020 at the first stop, a fine batarang at the others. */
+  .track { flex:none; position:relative; height:44px; margin-right:10px; }
+  .rail,.rail-drawn { position:absolute; left:0; right:0; top:50%; height:1px; }
+  .rail { background:color-mix(in srgb,var(--line-rest),transparent 45%); }
+  .rail-drawn { background:var(--ink); transform-origin:0 50%; transform:scaleX(var(--drawn,0)); }
+  .stop { position:absolute; top:50%; left:calc(var(--at)*100%); transform:translate(-50%,-50%); display:grid; place-items:center; min-width:48px; height:44px; padding:0; border:0; background:none; color:var(--ink-2); cursor:pointer; }
+  .stop:first-of-type { transform:translate(0,-50%); min-width:0; }
+  .stop:last-of-type { transform:translate(-100%,-50%); min-width:0; }
+  .stop:focus-visible { outline:1.5px dashed var(--accent); outline-offset:-2px; }
+  .stop span { padding:3px 7px; font:500 12px var(--note); letter-spacing:.06em; background:var(--sky-3); border:1px solid currentColor; transition:background .3s,color .3s; }
+  .stop svg { display:block; width:36px; height:18px; overflow:visible; transition:scale .3s var(--ease); }
+  .stop polygon { fill:var(--paper); stroke:currentColor; stroke-width:.8; transition:fill .3s; }
+  .stop.past,.stop.here { color:var(--ink); }
+  .stop.here polygon { fill:var(--ink); }
+  .stop.here span { background:var(--ink); color:var(--paper); }
+  @media (hover:hover) { .stop:hover svg { scale:1.16; } .stop:hover { color:var(--ink); } }
+  .bat { position:absolute; right:50px; bottom:50%; width:calc(var(--bh)*.504); height:var(--bh); --bh:clamp(26px,5.4svh,50px); scale:-1 1; opacity:var(--now,0); pointer-events:none; }
+  .bat svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+
+  .after { min-height:40svh; display:flex; align-items:center; }
+
+  /* Narrow: the drawing goes on top, the cells become rows. */
+  @media (max-width:860px) {
+    .slide { grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,1fr) auto; }
+    .fig { order:-1; border-left:0; border-bottom:1px solid var(--line-rest); min-height:0; }
+    .block { grid-template-columns:minmax(0,1fr); }
+    .cell { border-left:0; border-top:1px solid var(--line-rest); }
+    .cell:first-child { border-top:0; }
+    .cell-item { display:grid; grid-template-columns:minmax(84px,.42fr) minmax(0,1fr); column-gap:12px; align-items:baseline; padding-block:clamp(5px,.9svh,10px); }
+    .cell-label { grid-column:1; grid-row:2; }
+    .cell-value { grid-column:1; grid-row:1; margin:0; font-size:17px; }
+    .cell-claim { grid-column:2; grid-row:1/3; margin:0; font-size:12.5px; }
+    .strip-title { display:none; }
+    .strip { grid-template-columns:1fr auto; }
+    .fig-tag { display:none; }
+  }
+  /* Too short to pin: each sheet becomes its own framed block, one after another. */
+  .plain .story { height:auto; }
+  .plain .stage { position:static; height:auto; padding-top:0; }
+  .plain .frame { flex:none; margin-bottom:34px; }
+  .plain .slide { position:static; }
+  .plain .fig { min-height:170px; }
+  .plain .track { display:none; }
+</style>
+</head>
+<body>
+<div class="stub-head col"><div class="stub-logo">SP</div></div>
+<i class="guide"></i><i class="guide r"></i>
+<button class="guide-btn" id="guides">Show edges (G)</button>
+
+<section class="stub-section col">
+  <p class="kicker">Featured builds</p>
+  <h2 class="stub-title">What I shipped recently.</h2>
+  <p class="stub-note">Stub of the section above, here only to show the edges agreeing. Scroll down.</p>
+</section>
+
+<section class="story col" id="story">
+  <div class="stage" id="stage"></div>
+</section>
+<section class="after col"><p class="stub-note">End of the prototype.</p></section>
+
+<script src="story.js"></script>
+<script>
+(() => {
+  const { kicker, scenes } = window.STORY, n = scenes.length;
+  const story = document.getElementById("story"), stage = document.getElementById("stage");
+  const pad = (v) => String(v).padStart(2, "0");
+  const ease = (t) => t * t * (3 - 2 * t), clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+  // The batarang's own outline, the same numbers as the site's.
+  const curve = (a, c, b, k = 7) => Array.from({ length: k + 1 }, (_, i) => { const t = i / k, u = 1 - t; return [u*u*a[0] + 2*u*t*c[0] + t*t*b[0], u*u*a[1] + 2*u*t*c[1] + t*t*b[1]]; });
+  const right = [[[0,-.11],[.035,-.11]],[[.035,-.11],[.07,-.2]],[[.07,-.2],[.1,-.05]],curve([.1,-.05],[.25,.01],[.36,-.21]),[[.36,-.21],[1,-.22]],curve([1,-.22],[.84,-.04],[.74,.17]),curve([.74,.17],[.29,-.01],[0,.49])].flat();
+  const outline = [...right, ...[...right].reverse().map(([x, y]) => [-x, y])];
+  const MARK = outline.map(([x, y]) => `${(x*17+18).toFixed(2)},${(y*17+8).toFixed(2)}`).join(" ");
+
+  const slide = (s, i) => `<article class="slide" data-slide="${i}">
+      <div class="slide-text">
+        <p class="label">${s.label}</p>
+        <h3 class="title"><i aria-hidden="true">${s.title}</i><b>${s.title}</b></h3>
+        <p class="role">${s.role}</p>
+        <p class="line">${s.line}</p>
+      </div>
+      <div class="fig" aria-hidden="true">
+        <svg preserveAspectRatio="none" viewBox="0 0 100 100"><line x1="0" y1="0" x2="100" y2="100"/><line x1="100" y1="0" x2="0" y2="100"/></svg>
+        <span class="fig-tag">Motion graphic</span>
+        <span class="fig-cap">Fig. ${i + 1}: ${s.figure}</span>
+      </div>
+    </article>`;
+  const cell = (list, c, from) => `<div class="cell">${list.map((s, i) => `<div class="cell-item" data-cell="${c}" data-index="${from + i}"><span class="cell-label">${s.proof[c].label}</span><span class="cell-value">${s.proof[c].value}</span><span class="cell-claim">${s.proof[c].claim}</span></div>`).join("")}</div>`;
+  const frame = (list, from = 0) => `<div class="frame">
+      <i class="frame-shadow"></i>
+      <div class="frame-sheet">
+        <div class="strip"><span class="strip-sheet">Sheet <b data-sheet style="font-weight:inherit">${pad(from + 1)}</b> / ${pad(n)}</span><span class="strip-title" data-strip>${list[0].title}</span><span class="strip-org">IBM</span></div>
+        <div class="window">${list.map((s, i) => slide(s, from + i)).join("")}</div>
+        <div class="block">${[0, 1, 2].map((c) => cell(list, c, from)).join("")}</div>
+        <i class="edge t"></i><i class="edge b"></i><i class="edge l"></i><i class="edge r"></i>
+      </div>
+    </div>`;
+
+  const pinnedOk = () => matchMedia("(prefers-reduced-motion: no-preference)").matches && innerHeight >= 560;
+  let pinned = false, raf = 0;
+
+  function build() {
+    pinned = pinnedOk();
+    document.body.classList.toggle("plain", !pinned);
+    story.style.setProperty("--n", n);
+    if (pinned) {
+      stage.innerHTML = `<p class="kicker">${kicker}</p>${frame(scenes)}
+        <nav class="track" aria-label="Chapters"><i class="rail"></i><i class="rail-drawn"></i>
+          <span class="bat" aria-hidden="true"><svg viewBox="-5.9 37 376 746.2"><use href="hero-figure.svg#back"/></svg><svg viewBox="-5.9 37 376 746.2"><use href="hero-figure.svg#front"/></svg></span>
+          ${scenes.map((s, i) => `<button class="stop" style="--at:${i/(n-1)}" data-stop="${i}" aria-label="${s.label}: ${s.title}">${s.stop.kind === "text" ? `<span>${s.stop.text}</span>` : `<svg viewBox="0 0 36 18" aria-hidden="true"><polygon points="${MARK}"/></svg>`}</button>`).join("")}
+        </nav>`;
+    } else {
+      stage.innerHTML = `<p class="kicker">${kicker}</p>` + scenes.map((s, i) => frame([s], i)).join("");
+    }
+    draw();
+  }
+
+  // Each sheet holds for most of its slot, then the next slides up through the window.
+  const HOLD = 0.62;
+  const position = (p) => { const q = p * (n - 1), i = Math.min(n - 2, Math.floor(q)), f = q - i; return i + ease(clamp((f - HOLD / 2) / (1 - HOLD))); };
+
+  function draw() {
+    raf = 0;
+    if (!pinned) return;
+    const box = story.getBoundingClientRect(), travel = box.height - innerHeight;
+    const p = clamp(-box.top / travel), pos = position(p);
+    stage.querySelectorAll("[data-slide]").forEach((el) => { const d = +el.dataset.slide - pos; el.style.transform = `translate3d(0,${(d * 100).toFixed(3)}%,0)`; el.style.setProperty("--d", d.toFixed(3)); el.style.visibility = Math.abs(d) > 1.01 ? "hidden" : "visible"; });
+    // The cells follow one after another, a beat apart, each inside its own small window.
+    stage.querySelectorAll("[data-cell]").forEach((el) => { const lag = +el.dataset.cell * 0.09, d = clamp(+el.dataset.index - (pos - lag * Math.sin(Math.PI * (pos % 1))), -1.2, 1.2); el.style.transform = `translate3d(0,${(d * 104).toFixed(2)}%,0)`; el.style.opacity = (1 - Math.abs(d) * 1.1).toFixed(3); });
+    const here = Math.round(pos);
+    const sheet = stage.querySelector("[data-sheet]"), strip = stage.querySelector("[data-strip]");
+    if (sheet) sheet.textContent = pad(here + 1);
+    if (strip) strip.textContent = scenes[here].title;
+    stage.querySelectorAll("[data-stop]").forEach((el, i) => { el.classList.toggle("here", i === here); el.classList.toggle("past", i < here); });
+    story.style.setProperty("--drawn", (pos / (n - 1)).toFixed(4));
+    story.style.setProperty("--now", ease(clamp((pos - (n - 2)) * 1.6 - .6)).toFixed(3));
+  }
+  addEventListener("scroll", () => { raf ||= requestAnimationFrame(draw); }, { passive: true });
+  addEventListener("resize", () => { if (pinnedOk() !== pinned) build(); else draw(); });
+  stage.addEventListener("click", (e) => {
+    const stop = e.target.closest("[data-stop]"); if (!stop) return;
+    const box = story.getBoundingClientRect(), travel = box.height - innerHeight;
+    scrollTo({ top: scrollY + box.top + travel * (+stop.dataset.stop / (n - 1)), behavior: "smooth" });
+  });
+  const toggle = () => document.body.classList.toggle("guides");
+  document.getElementById("guides").onclick = toggle;
+  addEventListener("keydown", (e) => { if (e.key.toLowerCase() === "g") toggle(); });
+  build();
+})();
+</script>
+</body>
+</html>
