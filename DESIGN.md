@@ -127,10 +127,10 @@ A small paper box with four drafting lines running past its corners, and the lab
 Paper text on the active theme's accent color, set in `tokens.css`. A test keeps it readable in every theme.
 
 ### Hero: Draft
-A drawing's title block at bottom left, held to the name's width: "I am", the name with a hatched wireframe shadow, the role on a dimension line, then the rotating hook and one CTA on a row. The plate rests slightly turned and follows the pointer. Letters blur into focus on load. Details are in decision 016.
+A drawing's title block at bottom left, held to the name's width: "I am", the name with a hatched wireframe shadow, the role on a dimension line (its first word turns over, and the line eases to fit), then the rotating hook and one CTA on a row. The plate rests slightly turned and follows the pointer. Letters blur into focus on load. Details are in decision 016.
 
 ### Headings and small labels
-Headings are Geist 500 with tight tracking, often two-tone, with the second line dimmed. Small labels are Geist Mono, uppercase, with a small accent square.
+Headings are Geist 500 with tight tracking, often two-tone, with the second line dimmed. Small labels are Geist Mono, uppercase, set on a short dimension line like the hero's role: hairlines either side with amber end ticks. No section numbers.
 
 ### Scroll motion: Approved
 Smooth scroll, content layers that follow a beat late, and reveal and hide. Mark content with `data-block` and `data-layer`, and text with `.rv` or `.ln`. Details are in decision 017.

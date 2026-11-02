@@ -31,7 +31,7 @@ export function Hero() {
         </h1>
         <p className="hero-role rv" data-layer="b" style={at(6)}>
           <i className="hero-dim hero-dim-short" />
-          <span>{role}</span>
+          <span><RotatingText lines={role.lines} suffix={role.rest} seed={role.seed} minMs={role.minMs} maxMs={role.maxMs} fit /></span>
           <i className="hero-dim hero-dim-long" />
         </p>
         <div className="hero-row">
