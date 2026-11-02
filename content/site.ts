@@ -29,7 +29,8 @@ const config = {
   },
   story: {
     kicker: "Experience",
-    title: ["My day job.", "How it's been over the years."],
+    title: ["My day job, at", "How it's been over the years."],
+    company: "IBM", // Drawn as a striped wordmark after the first line.
     pace: 1.05,
     frame: true, // false takes the blueprint frame away; the words stay on the same column.
     figure: { anchor: 0.94, face: "left", minHeight: 22, maxHeight: 46, clearance: 6 },
@@ -73,7 +74,7 @@ const config = {
         tools: ["java", "spring", "angular", "oracle", "openshift"],
       },
       {
-        stop: { kind: "batarang" },
+        stop: { kind: "text", text: "Now" },
         label: "Now", title: "Cloud Full Stack Developer.", role: "IBM", figure: "Every layer, with agents on top",
         line: "Products from requirement to production: backend, frontend, schema and deployment. And AI agents for enterprise applications.",
         log: [

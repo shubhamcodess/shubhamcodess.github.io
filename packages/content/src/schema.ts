@@ -71,6 +71,7 @@ export const siteSchema = z
     story: z.strictObject({
       kicker: z.string().min(1),
       title: z.tuple([z.string().min(1), z.string().min(1)]),
+      company: z.string().min(1),
       /** Screens of scrolling per scene. */
       pace: z.number().min(0.4).max(2),
       /** The blueprint frame around the scenes. The section works with it on or off. */

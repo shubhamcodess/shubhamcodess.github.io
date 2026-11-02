@@ -81,9 +81,11 @@ describe("the section's rules", () => {
     expect(scss).not.toMatch(/\.(sec|story)[^{]*\{[^}]*max-width/);
     expect(scss).not.toMatch(/\.story \{[^}]*--line:/);
   });
-  it("starts with words on the line and uses batarangs after, so the line has no other years", () => {
-    expect(site.story.scenes[0]?.stop.kind).toBe("text");
-    for (const scene of site.story.scenes.slice(1)) expect(scene.stop.kind).toBe("batarang");
+  it("runs from a start year to Now, with batarangs between, so the line has no other years", () => {
+    const stops = site.story.scenes.map((scene) => scene.stop);
+    expect(stops[0]).toMatchObject({ kind: "text", text: expect.stringMatching(/^\d{4}$/) });
+    expect(stops.at(-1)).toEqual({ kind: "text", text: "Now" });
+    for (const stop of stops.slice(1, -1)) expect(stop.kind).toBe("batarang");
   });
   it("has a logo for every tool", () => {
     for (const tool of TOOLS) expect(TOOL_LOGOS[tool].plan.length).toBeGreaterThan(0);

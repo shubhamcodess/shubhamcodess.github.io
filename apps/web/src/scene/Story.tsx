@@ -5,6 +5,7 @@ import { Tooltip } from "@portfolio/design/tooltip";
 import { site } from "@portfolio/site";
 import { BATARANG_EDGES, BATARANG_OUTLINE } from "./batarang-shape";
 import { BatFigure } from "./figure/BatFigure";
+import { CompanyMark } from "./CompanyMark";
 import { StoryStage } from "./StoryStage";
 import { TOOL_LOGOS } from "./tool-logos";
 
@@ -26,18 +27,25 @@ const Pen = ({ strokes }: { strokes: ReturnType<typeof planStrokes> }) => stroke
 
 /* Where it started and what it is now, told as scenes. Words, tools and whether it has a frame are all in `story` in content/site.ts. */
 export function Story() {
-  const { kicker, title, pace, frame, figure, scenes } = site.story;
+  const { kicker, title, company, pace, frame, figure, scenes } = site.story;
   const titles = scenes.map((scene) => scene.title);
-  const stops = scenes.slice(1);
+  const stops = scenes.slice(1), last = scenes.at(-1);
   return (
     <StoryStage id="story" count={scenes.length} pace={pace} titles={titles}>
       <div className="story-stage page-col">
         <header className="story-head">
           <p className="kicker">{kicker}</p>
           <h2 className="sec-title">
-            <span className="ln"><span className="rv" style={{ "--i": 1 } as CSSProperties}>{title[0]}</span></span>
+            <span className="ln"><span className="rv" style={{ "--i": 1 } as CSSProperties}>{title[0]} <CompanyMark name={company} /></span></span>
             <span className="ln"><span className="rv dim" style={{ "--i": 2 } as CSSProperties}>{title[1]}</span></span>
           </h2>
+          {/* Now is this company; Archive will hold the ones before it. */}
+          <div className="story-tabs" role="tablist" aria-label="Which job">
+            <Button {...site.headerButton} size="xs" variant="primary" role="tab" aria-selected="true">Now</Button>
+            <Tooltip label="Nothing here yet" align="end">
+              <Button {...site.headerButton} size="xs" variant="secondary" role="tab" aria-selected="false" aria-disabled="true">Archive</Button>
+            </Tooltip>
+          </div>
         </header>
         <div className="pc story-frame" data-frame={frame ? "on" : "off"} data-figure-ceiling>
           {frame && <SheetFrame face={false} />}
@@ -95,7 +103,7 @@ export function Story() {
             <i className="story-rule-base" />
             <i className="story-rule-drawn" />
             <span className="story-figure" aria-hidden="true"><BatFigure {...figure} motion={site.flags.motion} /></span>
-            {stops.map((scene, i) => (
+            {stops.map((scene, i) => scene.stop.kind === "text" ? null : (
               <span key={scene.title} className="story-stop" style={{ "--at": (i + 1) / stops.length } as CSSProperties}>
                 <Tooltip label={scene.title} align={i === stops.length - 1 ? "end" : "center"}>
                   <a className="story-mark" href={`#scene-${i + 2}`} data-mark={i + 1} aria-label={`${scene.label}: ${scene.title}`}>
@@ -108,6 +116,11 @@ export function Story() {
               </span>
             ))}
           </span>
+          {last?.stop.kind === "text" && (
+            <Tooltip label={last.title} align="end">
+              <Button {...site.headerButton} href={`#scene-${scenes.length}`} size="xs" className="story-first story-last" data-mark={scenes.length - 1} aria-label={`${last.label}: ${last.title}`}>{last.stop.text}</Button>
+            </Tooltip>
+          )}
         </nav>
       </div>
     </StoryStage>
