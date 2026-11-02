@@ -185,7 +185,7 @@
 /* Sizes */
 .bp[data-size="sm"] { --off:5px; }
 .bp[data-size="xs"] { --off:5px; }
-.bp[data-size="xs"] .bp-body { min-height:30px; padding:5px 10px 5px 9px; gap:6px; font-size:calc(var(--size) * .76); }
+.bp[data-size="xs"] .bp-body { min-height:30px; padding:5px 8px 5px 7px; gap:5px; font-size:calc(var(--size) * .76); }
 .bp[data-size="xs"] .bp-icon { width:14px; height:14px; }
 .bp[data-size="sm"] .bp-body { min-height:38px; padding:8px 16px 8px 13px; gap:8px; font-size:calc(var(--size) * .88); }
 .bp[data-size="sm"] .bp-icon { width:16px; height:16px; }

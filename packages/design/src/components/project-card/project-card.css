@@ -48,7 +48,7 @@
 .pc-main::after { content:""; position:absolute; inset:0; }
 .pc .pc-go { flex:none; width:22px; height:22px; transition:transform var(--dur-frame) var(--ease-soft); }
 .pc-line { margin:0; color:var(--ink-2); font-size:15.5px; line-height:1.5; text-wrap:pretty; }
-.pc-actions { position:relative; z-index:2; display:flex; flex-wrap:wrap; gap:12px 14px; margin-top:auto; padding-top:18px; }
+.pc-actions { position:relative; z-index:2; display:flex; flex-wrap:wrap; gap:12px 10px; margin-top:auto; padding-top:18px; }
 
 /* Beside the text, once there's room. On a narrow card it stays stacked, whatever was asked for. */
 @container (min-width:620px) {
