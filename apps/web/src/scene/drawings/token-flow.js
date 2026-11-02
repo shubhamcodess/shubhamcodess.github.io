@@ -143,13 +143,13 @@ export const TokenFlow = (() => {
       text('MTO', MTO.x, -MTO.d, MTO.h + .16, Math.min(size + 1, 12), colors.ink);
 
       // Each measure sits under its line, clear of the blocks.
-      text('37,355 TOK', (LANE + GATE) / 2, RAIL + .6, 0, size, colors.ink2, inMeasure);
-      text('13,244 TOK', END, RAIL + .6, 0, size, colors.ink, outMeasure, 'right');
+      text('37,355 TOK', (LANE + GATE) / 2, RAIL + .68, 0, size, colors.ink2, inMeasure);
+      text('13,244 TOK', END, RAIL + .68, 0, size, colors.ink, outMeasure, 'right');
 
       // The result. It's the loop's one lasting touch of amber.
       const result = ease(span(t, rows[12].thru + 1.2, rows[12].thru + 2.2)) * gone;
       text('64.5% FEWER', MTO.x, -MTO.d, MTO.h + .46, Math.min(size + 2, 14), colors.accent, result);
-      if (wide) text('GITHUB ISSUE LIST, 40 ISSUES', 0, MTO.d + .62, 0, Math.max(9, size - 1), colors.ink2, ease(span(t, .4, 1.2)) * gone * .8);
+      if (wide) text('GITHUB ISSUE LIST, 40 ISSUES', 0, MTO.d + .82, 0, Math.max(9, size - 1), colors.ink2, ease(span(t, .4, 1.2)) * gone * .8);
     }
 
     function frame(now) {
