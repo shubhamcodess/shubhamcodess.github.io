@@ -1,0 +1,225 @@
+<!doctype html><body style="margin:0;background:#dccfb9"><canvas id=c width=1560 height=1040></canvas><script>/* A cut-out puppet of the traced figure, the way a rigged character is built: the cape, the legs and the boots are separate pieces in one color, cut from the reference along its own lines.
+   Standing still they add up to exactly the traced outline. Moving, the cape swings behind and the legs walk out from under it.
+   `stepFigure` moves it through time and `traceFigure` writes its shape. Neither touches the page. Units are the trace's own: y down, feet at `h`, facing +x. */
+
+                                       
+                                                   
+                                                                                        
+
+// Where the boots leave the hem, as segment numbers along the trace. A test holds these to the file.
+const BOOT_A = { from: 348, to: 14 }         ;
+const BOOT_B = { from: 320, to: 340 }         ;
+
+// The parts hidden inside the silhouette, cut by hand along the lines in the reference. They only show once the cape swings away.
+const HIPS          = [[165, 318], [296, 318], [287, 360], [244, 385], [172, 362]];
+const REAR_ARM          = [[78, 250], [135, 250], [140, 388], [172, 412], [165, 430], [152, 442], [115, 428], [100, 380], [80, 330]];
+const SHOULDER        = [100, 190];
+const LEGS = [
+  {
+    hip: [192, 375]         , knee: [157, 498]         , ankle: [128, 680]         , kneeSize: 17, thighBase: 9, footBase: 58, reach: 0,
+    thigh: [[172, 352], [192, 350], [219, 357], [244, 379], [236, 400], [212, 435], [189, 473], [172, 502], [162, 512], [146, 492], [151, 445], [160, 445], [169, 428], [172, 410], [160, 397]]           ,
+    shin: [[144, 490], [114, 522], [105, 552], [105, 578], [108, 610], [114, 655], [119, 690], [135, 690], [142, 640], [150, 605], [160, 575], [169, 508], [162, 490]]           ,
+    toes: [[116, 779], [134, 741]]           ,
+  },
+  {
+    hip: [252, 380]         , knee: [225, 505]         , ankle: [220, 690]         , kneeSize: 18, thighBase: 2, footBase: 0, reach: 46, // The reference stands in perspective with this foot higher. Walking, both use the same ground.
+    thigh: [[244, 379], [285, 357], [284, 385], [272, 422], [254, 465], [246, 495], [240, 515], [209, 502], [211, 495], [212, 445], [236, 400]]           ,
+    shin: [[209, 500], [192, 532], [192, 552], [202, 605], [209, 650], [210, 690], [235, 690], [232, 658], [240, 585], [242, 522], [241, 512], [235, 500]]           ,
+    toes: [[283, 733], [205, 705]]           ,
+  },
+];
+const CAPE_PIVOT        = [205, 190];
+
+const RAD = Math.PI / 180;
+const clamp = (v        , lo        , hi        ) => Math.min(hi, Math.max(lo, v));
+const lerp = (a        , b        , t        ) => a + (b - a) * t;
+const smooth = (lo        , hi        , v        ) => { const t = clamp((v - lo) / (hi - lo), 0, 1); return t * t * (3 - 2 * t); };
+/** One step of a spring. `damping` 1 settles with no overshoot; less lets it swing, for the cloth. Returns [value, velocity]. */
+const spring = (value        , velocity        , target        , freq        , dt        , damping = 1)                   => {
+  const v = velocity + (freq * freq * (target - value) - 2 * damping * freq * velocity) * dt;
+  return [value + v * dt, v];
+};
+
+/** Reads the one closed path in the figure's svg, which only ever holds m, c, l and z, and cuts it into the cape and the two boots. */
+function parseOutline(d        , w        , h        )          {
+  const tokens = d.match(/[Mmclz]|-?\d*\.?\d+/g) ?? [];
+  let i = 0, x = 0, y = 0, cmd = "";
+  const next = () => Number(tokens[i++]);
+  const segments             = [], at          = [];
+  const add = (rel          ) => {
+    const pts = rel.map((v, n) => v + (n % 2 ? y : x));
+    x = pts[pts.length - 2]          ; y = pts[pts.length - 1]          ;
+    segments.push(pts); at.push([x, y]);
+  };
+  while (i < tokens.length) {
+    const t = tokens[i]          ;
+    if (/[Mmclz]/.test(t)) { cmd = t; i++; }
+    if (cmd === "z") break;
+    if (cmd === "M" || cmd === "m") { x = next(); y = next(); at.push([x, y]); cmd = "l"; }
+    else if (cmd === "c") add([next(), next(), next(), next(), next(), next()]);
+    else add([next(), next()]);
+  }
+  const n = segments.length, run = (from        , to        ) => { const out             = []; for (let k = from; k !== to; k = (k + 1) % n) out.push(segments[k]            ); return out; };
+  const start = (k        ) => at[k % n]         ;
+  return {
+    w, h,
+    bootA: { from: start(BOOT_A.from), segments: run(BOOT_A.from, BOOT_A.to) },
+    bootB: { from: start(BOOT_B.from), segments: run(BOOT_B.from, BOOT_B.to) },
+    // The cape closes straight across where each boot was, and the shins fill those gaps.
+    cape: { from: start(BOOT_A.to), segments: [...run(BOOT_A.to, BOOT_B.from), [...start(BOOT_B.to)], ...run(BOOT_B.to, BOOT_A.from)] },
+  };
+}
+
+/** How tall it can be in the space above its line, leaving `clearance`, within the limits. Undefined room means it's free to take the largest size. */
+function fitHeight(room                    , limits                                                 )         {
+  return Math.round(clamp(room === undefined ? limits.max : room - limits.clearance, limits.min, limits.max));
+}
+
+                                                              
+                                                           
+
+                           
+                                         
+                                                           
+                                                             
+                                                                       
+                           
+  
+
+const startFigure = (x        , side        )              => ({
+  x, v: 0, chasing: false, turn: side, turnV: 0, tilt: 1, tiltV: 0, drive: 0, driveV: 0, lean: 0, leanV: 0, dragTop: 0, dragTopV: 0, dragLow: 0, dragLowV: 0, phase: 0, t: 0,
+});
+
+const STRIDE = 1.5; // Body heights per full cycle of both legs.
+const SET_OFF = 0.35; // Body heights away before it sets off, and...
+const ARRIVED = 0.08; // ...when it counts as there, so a small hand movement doesn't start and stop it.
+
+/** Turn first, heavy and unhurried, then go: he eases up to pace, leans in, and eases down onto the target. */
+function stepFigure(s             , input             , settings                , dtIn        )       {
+  const dt = clamp(dtIn, 0.001, 0.034), { height, pace } = settings;
+  const gap = input.target - s.x, away = Math.abs(gap), dir = Math.sign(gap) || 1;
+  if (away > SET_OFF * height) s.chasing = true;
+  else if (away < ARRIVED * height && Math.abs(s.v) < 0.25 * height) s.chasing = false;
+  const face = s.chasing ? dir : input.side;
+  [s.turn, s.turnV] = spring(s.turn, s.turnV, face, 8.5, dt);
+  [s.tilt, s.tiltV] = spring(s.tilt, s.tiltV, s.chasing ? 0.25 : 1, 5, dt);
+
+  const facing = clamp((s.turn * dir - 0.45) / 0.45, 0, 1);
+  const top = pace * height, decel = 4.5 * height, accel = 3.6 * height;
+  const want = s.chasing ? dir * Math.min(top, Math.sqrt(2 * decel * away)) * facing : 0;
+  const before = s.v, slowing = Math.abs(want) < Math.abs(s.v), limit = (slowing ? decel : accel) * dt;
+  s.v += clamp(want - s.v, -limit, limit);
+  s.x += s.v * dt;
+  if (Math.sign(input.target - s.x) !== dir && Math.abs(s.v) < 0.8 * height) { s.x = input.target; s.v = 0; }
+
+  const speed = Math.abs(s.v) / top;
+  [s.drive, s.driveV] = spring(s.drive, s.driveV, clamp(speed * 1.5, 0, 1), 8, dt);
+  const pulling = clamp((Math.abs(s.v) - Math.abs(before)) / dt / accel, -1, 1);
+  [s.lean, s.leanV] = spring(s.lean, s.leanV, speed * 7.5 + pulling * 2.5, 6, dt);
+  [s.dragTop, s.dragTopV] = spring(s.dragTop, s.dragTopV, clamp(speed * 1.2, 0, 1), 8, dt, 0.8);
+  [s.dragLow, s.dragLowV] = spring(s.dragLow, s.dragLowV, clamp(speed * 1.2, 0, 1), 5, dt, 0.62);
+  s.phase = (s.phase + (Math.abs(s.v) * dt) / (STRIDE * height)) % 1;
+  s.t += dt;
+}
+
+/** The pieces of a canvas path this needs. A test passes a recorder instead. */
+                                                                                            
+/** Each piece is filled on its own, so overlapping pieces can never cancel out into a hole. */
+                                                              
+
+                                            
+
+/** Paints the figure piece by piece, feet on y = 0, y up, x = 0 on its centre. `depth` moves it back along its own thickness. */
+function traceFigure(paint         , o         , s             , depth = 0) {
+  const { h: H } = o, cx = o.w / 2;
+  const stride = s.phase * Math.PI * 2, d = s.drive;
+  const breath = Math.sin((s.t * Math.PI * 2) / 3.6) * (1 - d);
+  const turnAbout = (j       , x        , y        , a        )        => { const c = Math.cos(a), n = Math.sin(a), dx = x - j[0], dy = y - j[1]; return [j[0] + dx * c + dy * n, j[1] - dx * n + dy * c]; };
+
+  // The walk. Thigh swings from the hip, the knee folds as the leg comes through, and the foot stays roughly level. Angles grow from nothing with the pace, so at rest every piece is exactly where it was cut.
+  const legs = LEGS.map((leg, i) => {
+    const a = stride + i * Math.PI, lift = Math.max(0, -Math.sin(a));
+    const thigh = (leg.thighBase + 23 * Math.cos(a)) * d * RAD;
+    const shin = thigh - (7 + 54 * lift) * d * RAD;
+    const foot = shin + ((leg.footBase - 24 * lift) * d * RAD) - shin * 0.75 * d;
+    const knee = turnAbout(leg.hip, leg.knee[0], leg.knee[1], thigh);
+    const down = leg.reach * d;
+    const shinAt = (x        , y        )        => { const p = turnAbout(leg.knee, x, y + (y > leg.knee[1] + 60 ? down : 0), shin); return [p[0] + knee[0] - leg.knee[0], p[1] + knee[1] - leg.knee[1]]; };
+    const ankle = shinAt(leg.ankle[0], leg.ankle[1]);
+    const bootAt = (x        , y        )        => { const p = turnAbout(leg.ankle, x, y, foot); return [p[0] + ankle[0] - leg.ankle[0], p[1] + ankle[1] - leg.ankle[1]]; };
+    const lowest = Math.max(...leg.toes.map(([x, y]) => bootAt(x, y)[1]));
+    return { thigh, knee, shinAt, bootAt, lowest };
+  });
+  // Whichever foot is lower carries him, so he's always on the ground and the body rises and falls with the step. That's the weight.
+  const carried = (H - Math.max(...legs.map((l) => l.lowest))) * d;
+  const armSwing = Math.sin(stride) * 26 * d * RAD;
+  const fist = Math.sin(stride) * 12 * d;
+  const leanTan = Math.tan((s.lean + 1.4 * s.tilt) * RAD); // Even at rest he leans into it a little.
+
+  // The turn. Crossing the middle he's narrow, which is where the drawing swaps for its mirror image.
+  const mirror = s.turn < 0 ? -1 : 1;
+  const width = lerp(0.5, 1, smooth(0, 1, Math.abs(s.turn)));
+  const yaw = lerp(3, 19, clamp(s.tilt, 0, 1)) * RAD, cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+
+  // Everything passes through here last: the lean above the hips, then a turn in 3D on a very slightly rounded surface, so the near side grows and the far side falls away like a solid thing, not a card.
+  const final = (pen                                , xIn        , yIn        ) => {
+    let x = xIn + leanTan * Math.max(0, 350 - yIn) + leanTan * 0.25 * Math.max(0, 650 - Math.max(yIn, 350));
+    const y = yIn + carried;
+    x += (x - cx) * breath * 0.01 * Math.exp(-(((yIn - 230) / 130) ** 2));
+    const across = (x - cx) * width, round = -(across * across) / 1500;
+    const wide = across * cosY + round * sinY, near = across * sinY - round * cosY - depth;
+    const scale = 1 / (1 - near / 1500);
+    pen(mirror * (wide + depth * sinY) * scale, (H - y + breath * 1.6 * smooth(650, 380, yIn)) * scale);
+  };
+
+  const curve = (c       , move                                 ) => paint((pen) => {
+    let out        = [0, 0];
+    const to = (x        , y        ) => { const p = move(x, y); final((a, b) => { out = [a, b]; }, p[0], p[1]); return out; };
+    const [fx, fy] = to(c.from[0], c.from[1]); pen.moveTo(fx, fy);
+    for (const q of c.segments) {
+      if (q.length === 2) { const [a, b] = to(q[0]          , q[1]          ); pen.lineTo(a, b); continue; }
+      const [a, b] = to(q[0]          , q[1]          ), [e, f] = to(q[2]          , q[3]          ), [g, h] = to(q[4]          , q[5]          );
+      pen.bezierCurveTo(a, b, e, f, g, h);
+    }
+    pen.closePath();
+  });
+  const shape = (points         , move                                 ) => paint((pen) => {
+    points.forEach(([x, y], i) => final((a, b) => (i ? pen.lineTo(a, b) : pen.moveTo(a, b)), ...move(x, y)));
+    pen.closePath();
+  });
+  const dot = (at       , r        ) => shape(Array.from({ length: 12 }, (_, i)        => [at[0] + Math.cos((i * Math.PI) / 6) * r, at[1] + Math.sin((i * Math.PI) / 6) * r]), (x, y) => [x, y]);
+
+  // The cape: rigid near the shoulders and swinging from them lower down, the far end lagging and rippling, so its points keep their shape. The rear lets go higher up than the front, which stays pinned behind the hand.
+  curve(o.cape, (x, y) => {
+    const front = clamp((x - 120) / 200, 0, 1), w = smooth(lerp(280, 440, front), lerp(520, 590, front), y);
+    if (w <= 0) { const sway = Math.exp(-(((x - 345) ** 2 + (y - 345) ** 2) / 3400)) * fist; return [x + sway, y]; }
+    const drag = lerp(s.dragTop, s.dragLow, w);
+    const ripple = Math.sin(stride * 2 - x * 0.012 - y * 0.006) * 3.2 * w * w * d;
+    const gathered = CAPE_PIVOT[0] + (x - CAPE_PIVOT[0]) * (1 - 0.3 * drag * w); // Pulled back, it gathers narrower, like cloth.
+    return turnAbout(CAPE_PIVOT, gathered, y, -(drag * 27 * w + ripple) * RAD);
+  });
+
+  shape(REAR_ARM, (x, y) => turnAbout(SHOULDER, x, y, armSwing));
+  shape(HIPS, (x, y) => [x, y]);
+  legs.forEach((l, i) => {
+    const leg = LEGS[i]                         ;
+    shape(leg.thigh, (x, y) => turnAbout(leg.hip, x, y, l.thigh));
+    shape(leg.shin, l.shinAt);
+    dot(l.knee, leg.kneeSize);
+    curve(i ? o.bootB : o.bootA, l.bootAt);
+  });
+}
+
+const o=parseOutline("M116 779.3c-5.7-6.1-12.5-20.1-14.5-30.1c-2-9.6-1.7-10.7 5.8-27.7c1.4-3.1 2.7-6.2 3-6.9c.3-.7 .7-1.8 1-2.4c1.2-3.1 1.5-4 2.2-5.8c.4-1.1 .9-2.9 1.2-4c.4-1.1 .8-2.8 1.1-3.6c1.3-4.6 1.7-9.4 1.1-13.4c-.2-1.4-.5-4-.6-5.9c-.2-1.9-.4-4.3-.6-5.5c-1.1-6.1-1.5-8-1.5-8.8c0-.4-.2-1.8-.4-3c-.3-1.1-.5-2.5-.5-3c0-1.1-1.1-6-1.4-6.4c-1-1.4-8.1 15.6-10.9 26.2c-2.4 9.5-2.7 9.6-5.3 2.8c-.7-1.6-1.7-4.6-2.4-6.6c-.7-1.9-1.4-4-1.6-4.6c-2.1-5.3-2.8-7.3-3.6-9c-.4-1.1-1.4-3.5-2.2-5.5c-4.5-11.2-10.1-16.6-14.3-13.8c-3.8 2.6-3.9 3-2.8 10.8c2 15.4 3.1 22.2 4 27.2c.2 1.4 .4 2.9 .4 3.4c0 .4 .2 1.4 .4 2.2c.2 .8 .5 2.1 .6 2.8c.4 2.7 2.1 11.2 3.6 17.8c.5 2.1 .5 2.3 .1 2.7c-.6 .6-.7 .4-5.6-9.4c-2.6-5.2-6.2-12.1-8-15.3c-1.8-3.2-4.5-8.2-6-11c-5.4-10.2-5.2-10-7.8-6.1c-4.7 6.9-9.4 16.6-12 24.7c-1.1 3.4-1.9 3.4-3.1-.1c-2.8-8.4-5-13.8-9.4-22.2c-4.4-8.7-9.8-17.3-10.9-17.3c-.6 0-.9 .9-3.8 10.3c-.6 1.8-1.3 3.8-1.5 4.4c-.2 .7-.5 1.6-.6 2c-.1 .5-.4 2-.8 3.3c-1.6 6.2-3.6 14.2-4.7 19.3c-1.7 8.2-1.7 8.2-2.3 8.2c-1.4 0-1.9-35.6-.6-48c.1-1.3 .3-5.2 .4-8.6c.2-3.5 .4-7 .5-7.8c.2-.8 .4-3.4 .6-5.8c.1-2.3 .3-4.8 .4-5.5c.2-.7 .3-2.6 .4-4.2c.1-1.6 .4-4.6 .7-6.5c.2-2 .5-4.1 .5-4.7c0-.6 .1-2.1 .3-3.3c.2-1.2 .5-3.6 .7-5.4c.1-1.8 .4-4 .6-5c.2-.9 .4-2.3 .4-2.9c0-.6 .2-2.2 .5-3.5c.2-1.3 .5-2.8 .5-3.4c0-.6 .2-2 .4-3.2c.3-1.1 .5-2.6 .5-3.2c0-.6 .3-2.3 .5-3.8c.7-3.4 1.3-7.4 1.6-9.8c.1-1.1 .4-2.8 .6-3.7c.2-.8 .3-2 .3-2.5c0-.5 .3-2.1 .5-3.5c.3-1.4 .6-3.4 .8-4.5c.4-2.8 .7-5.1 1.2-7.4c.2-1.2 .5-2.9 .6-3.8c.1-.9 .3-2.4 .5-3.2c.3-.9 .4-2 .4-2.4c0-.4 .3-1.8 .5-3.1c.8-3.6 1.6-8.1 1.6-8.7c0-.2 .2-1.4 .4-2.5c.3-1.1 .6-2.7 .8-3.6c.3-2.2 .7-3.9 1.3-6.6c.2-1.3 .5-2.6 .5-3.1c0-.4 .2-1.4 .4-2.3c.3-.9 .5-1.9 .5-2.3c0-.4 .3-1.8 .6-3c1.3-5.8 1.4-6.6 1.6-7.8c.1-.6 .3-1.6 .5-2.2c.2-.6 .4-1.3 .4-1.6c0-.4 .2-1.7 .5-2.9c.2-1.3 .7-3.4 1-4.7c.3-1.3 .7-3.1 .9-4c.2-.8 .5-2.3 .7-3.2c.2-.9 .4-2.2 .6-2.8c.2-1 .5-2.1 1.8-8.1c.3-1.3 .7-3.1 .9-4.1c.3-1.1 .6-2.5 .8-3.2c.2-.7 .5-2.1 .8-3.2c.3-1.1 .6-2.8 .8-3.6c.2-.9 .6-2.2 .8-2.9c.2-.7 .4-1.8 .6-2.5c.3-1.2 .8-3.4 1.5-6.2c.1-.6 .3-1.6 .5-2.3c.3-1.2 .5-2.3 1.2-5.5c.3-1.1 .7-3.2 1-4.5c.7-2.8 1.3-5.7 2.1-8.3c.2-1 .7-2.7 1-3.8c.3-1.1 .7-2.5 .9-3.3c.3-1.3 .5-2 1.4-5.7c.2-.8 .5-1.9 .7-2.4c.1-.5 .4-1.6 .6-2.4c.9-3.7 1.1-4.5 1.4-5.8c.6-2 1.2-4.7 1.5-6c.1-.6 .3-1.8 .5-2.5c.8-2.8 1.4-5.4 1.4-6c0-.3 .3-1.3 .6-2.1c.2-.8 .5-1.7 .4-2.1c0-.4 .3-1.4 .5-2.3c.5-1.5 .7-2.7 1.3-5.5c.3-1.2 .6-2.9 1.8-8.3c.3-1.3 .7-3 .9-3.9c.2-.9 .4-2.2 .5-3c.2-.8 .4-2.2 .6-3.1c1-4.4 1.5-6.6 1.5-7.2c0-.3 .1-1.2 .3-1.9c.3-.8 .6-2.3 .8-3.5c.5-2.9 .8-4.7 1.3-7.4c1.4-6.6 1.4-6.9 .1-8.6c-2.8-3.9-5.3-9.1-4.5-9.6c.5-.3 .4-.3 2.5 1c4.2 2.7 4.2 2.7 4.6-.5c.2-1.1 .4-2.7 .6-3.4c.1-.7 .2-1.8 .2-2.4c0-.6 .3-2.8 .5-4.9c.3-2.1 .6-5.1 .8-6.7c.1-1.5 .4-4.1 .5-5.6c.2-1.6 .4-4.2 .7-5.9c.2-1.8 .4-4.9 .6-7c.1-2.2 .4-5.3 .6-6.9c.2-1.7 .4-4 .4-5.1c0-1.2 .1-3.4 .3-4.9c.2-1.5 .5-4.8 .7-7.3c.1-2.4 .4-5.8 .6-7.5c.2-1.6 .4-4.9 .5-7.2c0-2.4 .2-5.3 .4-6.6c.1-1.2 .3-5.9 .4-10.3c.2-4.5 .4-9.3 .5-10.8c.2-1.4 .4-5.4 .5-8.8c.2-3.5 .4-6.9 .5-7.6c.2-.8 .4-3.2 .5-5.3c.2-2.1 .5-4.7 .7-5.7c.2-1 .3-2.2 .3-2.7c0-.5 .3-2.1 .5-3.6c.3-1.4 .6-3.4 .8-4.3c.5-3.4 1.4-7.8 2-10.3c.2-.6 .4-1.8 .6-2.8c1.2-5.4 3-7.6 6.3-7.6c.4 0 1.7-.2 2.8-.5c1.1-.3 2.4-.5 2.8-.5c.6 0 2.2-.3 7.5-1.5c1.2-.3 2.6-.5 3.1-.6c.6-.1 1.8-.3 2.6-.5c.9-.2 2.8-.6 4.2-.9c2.2-.5 4.2-.9 7.7-1.7c.7-.2 1.8-.4 2.5-.6c.7-.1 1.9-.4 2.6-.6c.8-.2 2-.5 2.7-.6c1.7-.3 5.8-1.3 10-2.5c.8-.3 2.4-.7 3.5-1c3.9-1.1 5.5-1.6 6.8-2c.8-.2 2.2-.7 3.2-1c13.3-4 25.3-9.2 30.2-13.1c5.3-4.1 9.6-12.7 13.1-26.8c1.1-4.2 1.6-6.6 1.6-7.6c0-.6 .2-2.5 .5-4.1c.2-1.7 .5-4.1 .5-5.4c0-1.3 .1-4.1 .2-6.2c.2-4.1-.1-22.2-.5-30.8c-.1-2.5-.4-7.1-.5-10.1c-.5-11.4-1.1-19.8-1.8-24.5c-.6-5.3-.6-6 .5-5c.6 .5 5.2 9.6 6.3 12.4c.4 1.1 1.1 2.8 1.4 3.7c.4 .9 .9 2.4 1.3 3.2c1.1 3 4.3 13.2 5.6 17.8c2 7.6 2 7.6 4.6 6.5c2.8-1.1 8.5-2.4 12.8-2.9c7.3-.7 15.6 .2 19.8 2.2c1.8 .8 2.3-.2 4.9-8c1.9-6.1 2.1-6.8 2.3-8c.2-.7 .4-1.8 .6-2.7c.2-.8 .6-2.7 .9-4.2c.3-1.5 .8-3.7 1.1-4.8c.2-1.2 .4-2.5 .4-3.1c0-.5 .2-1.8 .4-2.9c.2-1.1 .5-3 .6-4.3c.5-4.7 1.5-3.6 2.3 2.6c.1 1.1 .3 2.8 .5 3.9c.1 1 .4 3.5 .5 5.4c.1 2 .4 4.8 .5 6.2c.3 3.2 .3 18.9 0 22.2c-.9 10-.9 10.4 0 12.3c1.9 4.1 2.1 5.7 .9 7.3c-1.2 1.7-1.2 2.1 .7 7.8c.5 1.6 .5 2.3-.1 2.9c-.9 .8-1.1 1.4-1.2 4.3c0 1.6-.2 3.6-.3 4.4c-1.1 6-2.5 19.7-2.7 26.6c-.1 6.9 0 6.6-2.8 7c-2.2 .4-2.3 .4-2.3 3.4c0 3.8-.3 3.5 14.4 10.5c1.4 .7 3.8 1.8 5.4 2.6c1.6 .7 5 2.3 7.5 3.4c2.5 1.2 5.1 2.3 5.7 2.6c1.8 .8 3.6 1.5 10 4.1c8 3.3 19.1 7.1 26.7 9.2c1.1 .3 2.7 .8 3.5 1c.8 .3 2.4 .7 3.6 1c8.8 2.3 8.2 2 9.4 5c1 2.2 1.5 4 2.6 8.1c.9 3.7 2.2 11.8 3 18.5c1.5 12.7 1.8 30.1 .9 41.8c-.2 2.3-.5 6.2-.7 8.7c-.1 2.4-.3 4.5-.3 4.7c-.1 .2-.3 2-.5 4.1c-.2 2.1-.6 4.8-.8 6c-.2 1.2-.4 2.6-.4 3.2c0 .6-.1 2.1-.3 3.4c-.3 1.3-.5 3.6-.7 5c-.1 1.4-.2 3.1-.3 3.7c-.2 1.1-.1 1.3 .8 2.7c.5 .8 2.4 3.9 4.2 6.8c5 8 6.9 13.3 7.2 21.2c.2 2.9-.4 11.6-.8 12.2c-2 3.2 6.2-.5 10.2-4.7c3.1-3.3 2.8 1.2-.8 8.8c-3.4 7.3-6 10.2-12.7 14.1c-1.4 .8-4 5.6-3.6 6.6c.4 .9 2.9-.3 6.6-3.2c2.9-2.2 3.7-1.8 2.5 1.3c-2.5 6.6-7.1 12-12.4 14.6c-3 1.5-3 1.5-4.3 4c-2.4 4.6-.9 4.8 4.6 .6c2.4-1.9 2.9-1.2 1.4 2c-3 6.1-5.4 8.7-10.8 11.4c-2.4 1.2-2.4 1.3-3.2 2.7c-1.3 2.6-4.1 9-4.7 10.8c-3.4 9.8-4.8 14.7-4.8 16.2c0 .4-.3 1.7-.6 3c-.6 2.7-.7 13.9-.2 18.9c1.1 11.5 1.1 12.3-.8 14.3c-1.8 1.8-1.8 1.9 .1 10.5c.2 1.2 .4 2.5 .4 2.8c0 .5 .3 1.8 2.1 9.4c1.1 5 1.8 7.7 2.5 10.2c.2 .9 .5 1.9 .5 2.2c0 .2 .2 1.2 .4 2.1c.3 .9 .7 2.8 1.1 4.2c.3 1.3 .9 4 1.4 5.9c.5 1.8 .9 3.7 1 4.2c.4 1.6 2.7 10.1 3.5 12.8c.2 .7 .5 1.7 .6 2.2c.1 .5 .4 1.9 .8 3.2c.9 3.6 2.1 8.1 2.7 10.8c.5 2.5 1.1 4.9 1.8 7.9c.3 .9 .6 2.4 .7 3.1c.1 .8 .3 1.7 .5 2.1c.1 .4 .3 1.3 .4 2c.2 .7 .4 2.1 .7 3c.8 3.2 1.3 5.5 1.8 8c.3 1.4 .7 3 .8 3.5c.2 .6 .4 1.6 .5 2.4c.3 1.3 .5 2.6 1.8 8.4c1.5 7.3 1.4 7.1 2.5 11.4c.2 1 .5 2.4 .7 3.1c.2 .7 .5 2.1 .8 3.1c.2 1 .7 2.9 1 4.1c.3 1.3 .7 3.1 1 4.1c1 4 1.4 6 1.7 7c.5 2.6 .8 3.8 1.2 5.4c.3 1 .7 2.9 1 4.3c.4 1.3 .8 3.2 1.1 4.1c.2 .9 .5 1.8 .5 2c0 .2 .2 1.1 .4 2c1.1 3.7 2.7 10 4.1 16.8c.2 1.3 .7 3.3 1 4.5c.2 1.2 .4 2.3 .4 2.6c0 .3 .3 1.4 .5 2.6c.8 3.1 1.9 9 2.3 11.7c.2 .9 .5 2.7 .8 4.1c.2 1.3 .5 2.8 .5 3.3c0 .6 .2 2.1 .5 3.4c.2 1.3 .5 2.8 .5 3.4c0 .5 .2 2.3 .5 3.8c.2 1.6 .5 3.4 .5 4.1c0 .7 .1 2.2 .3 3.3c.2 1.1 .5 3.3 .5 4.8c.1 1.5 .3 4.5 .6 6.6c.2 2.5 .3 4.8 .2 6.5c-.4 6.4-.6 9.2-.8 9.5c-.3 .5-.6 .3-.8-.6c-.6-2-2.4-6.3-3.8-9.3c-.9-1.8-2.2-4.7-3-6.4c-2.9-6.1-4.9-9.7-7.8-13.5c-3-4-4.6-2.1-8.7 10.5c-5.9 17.8-9.4 27.3-12.2 32.3c-4.5 8.2-5.7 8.4-5.4 .9c.2-7.8 .4-46 .2-47c-.5-2.3-2.4-.6-6.4 5.9c-3.9 6.4-6.3 11.3-10.8 22.9c-2.3 5.8-2.9 6.1-3.7 1.8c-.8-4-1-4.9-1.3-6.9c-.2-1.1-.6-2.6-.8-3.5c-.1-.8-.5-2.7-.8-4.2c-.6-2.9-.8-3.9-1.6-7.3c-.2-1.1-.6-2.5-.7-3.2c-.7-3.3-3.3-11.5-4.1-13.5c-1.7-3.8-5-10.1-5.7-11c-1.6-1.9-2.4-1.1-7.1 7.7c-4.1 7.5-8.6 19.5-12.5 32.9c-2.1 7.2-2.6 8.5-3.1 8.5c-.7 0-.9-.6-1.4-3.4c-.2-1.4-.6-3.7-.9-5.2c-.2-1.5-.4-3.1-.4-3.4c0-.8-.9-6.1-1.6-9.2c-.2-1.2-.5-2.6-.5-2.9c0-1.2-2-9.4-3-12.3c-2.3-6.7-6.5-14.1-8.6-15.2c-2.8-1.6-11.9 9.7-16.2 20.2c-1.1 2.5-1.1 3.1-.5 6.1c.2 1.2 .3 2.6 .3 3.2c0 8.5 12.1 25.3 29.3 40.9c16.4 14.9 22 20.8 20.9 21.9c-1.4 1.4-12.3 1-19.7-.7c-1.2-.3-2.4-.5-2.7-.5c-.4 0-1.3-.2-2.1-.5c-.9-.2-2.4-.7-3.5-1c-2.8-.8-7.7-2.7-15.2-5.8c-1.4-.6-4.7-2.2-7.3-3.4c-2.6-1.3-4.7-2.3-4.8-2.3c-.4 0-13.2-6.5-15.6-7.9c-7.8-4.7-8-5.1-6.7-13.3c.2-1.8 .4-3.8 .4-4.4c0-.6 .3-2.1 .5-3.4c.3-1.3 .5-2.8 .5-3.3c.1-.4 .2-1.5 .4-2.3c.2-.9 .6-3.5 .8-6c.2-2.5 .5-6.2 .6-8.3c.4-4.7 0-17.5-.6-21.5c-.5-3-8.2-10.6-10.7-10.6c-1.3 0-4.6 3.8-6.8 7.8c-1.5 2.8-5.9 11.7-6.5 13.3c-.4 .8-1.1 2.6-1.7 4c-.5 1.4-1.5 3.8-2.1 5.3c-1.2 2.9-3.9 9.5-5 12c-2.3 5.4-2.4 5.4-5.2-2.7c-5.5-15.6-22.1-40-27.3-40c-.6 0-1.9 4.7-1.9 6.8c0 .5-.2 1.9-.5 3.2c-.2 1.3-.5 2.9-.5 3.5c0 .7-.1 1.9-.3 2.8c-.2 .9-.5 2.7-.7 4.1c-.1 1.4-.3 2.9-.5 3.4c-.1 .5-.3 2.3-.5 4.1c-.1 1.8-.3 3.7-.5 4.2c-.1 .6-.3 2.5-.4 4.3c-.2 1.8-.5 4.3-.7 5.6c-.2 1.4-.4 5.1-.5 8.4c-.1 3.3-.2 6.8-.4 7.8c-.1 .9-.3 5.8-.4 10.8c-.2 5.1-.4 10.6-.5 12.3c-.2 1.7-.4 7-.6 11.8c-.1 5.1-.4 9.7-.6 11.2c-.2 1.4-.4 2.8-.4 3.2c0 1.7-3.2 10.6-7.5 20.4c-.6 1.4-6.9 13.8-7.3 14.5c-.6 .9-1.4 .8-2.4-.3z",366.8,780.0);const ctx=c.getContext('2d');const accent='#8a4a22',ink='#1a2428';
+const set={pace:2.4,height:40};
+function paint(s,x,y,k){ctx.save();ctx.translate(x,y);ctx.scale(k,-k);
+ for(let i=2;i>=1;i--){ctx.fillStyle=accent;traceFigure(w=>{const p=new Path2D();w(p);ctx.fill(p);},o,s,i*14);ctx.fillStyle=ink;ctx.globalAlpha=.28;const all=new Path2D();traceFigure(w=>{const p=new Path2D();w(p);ctx.fill(p);},o,s,i*14);ctx.globalAlpha=1;}
+ ctx.fillStyle=accent;traceFigure(w=>{const p=new Path2D();w(p);ctx.fill(p);},o,s,0);ctx.restore();}
+const F=[];const snap=(n,s)=>F.push([n,JSON.parse(JSON.stringify(s))]);
+{const s=startFigure(0,1);for(let i=0;i<100;i++)stepFigure(s,{target:0,side:1},set,1/60);snap('still right',s);const m=startFigure(0,-1);for(let i=0;i<100;i++)stepFigure(m,{target:0,side:-1},set,1/60);snap('still left',m);}
+{const s=startFigure(0,-1);let t=0;const marks=[.1,.2,.3,.4,.55,.8,1.1,1.3,1.5,1.7,1.9,2.1];let i=0;for(let f=0;f<140;f++){stepFigure(s,{target:9000,side:1},set,1/60);t+=1/60;if(i<marks.length&&t>=marks[i]){snap('go '+marks[i],s);i++;}}
+ const g=JSON.parse(JSON.stringify(s));const tgt=g.x+70;for(let f=0;f<110;f++){stepFigure(g,{target:tgt,side:1},set,1/60);if(f%22==21)snap('stop '+f,g);}
+ const l=startFigure(0,-1);for(let f=0;f<95;f++)stepFigure(l,{target:-9000,side:-1},set,1/60);snap('left',l);}
+ctx.font='11px monospace';const cols=8,cw=195,ch=255;
+F.forEach(([n,s],i)=>{const x=(i%cols)*cw+cw/2,y=Math.floor(i/cols)*ch+225;ctx.strokeStyle='#6d6555';ctx.beginPath();ctx.moveTo(x-95,y);ctx.lineTo(x+95,y);ctx.stroke();paint(s,x-10,y,.25);paint(s,x+72,y,40/780.0);ctx.fillStyle='#333';ctx.fillText(n,x-90,y+16);});
+</script>

@@ -21,7 +21,8 @@ Keep every prototype here. Don't overwrite or delete one: new ideas get a new nu
 | `16-scroll-motion` | `15` plus snappy smooth scroll, content that follows a beat late with parallax, reveal and hide on scroll, and a font option. Taken from studying tryalan.ai, see `docs/references/tryalan-motion.md`. Only the EverythingTech section has real content. |
 | `17-mcp-token-flow` | The mcp-token-optimizer drawing: a response passes through mto, noise drops out, and a shorter one reaches the agent. The production copy is in `apps/web/src/scene/drawings/`. |
 | `18-bat-rig` | A small Batman built from 3D joints, with a turn, a run cycle and a cape, that followed the pointer along the hero's role line. The user wanted the exact reference shape instead, so it came off the site. `index.html` shows its poses. Replaced by the cut-out puppet in `apps/web/src/scene/figure/`. |
-| `19-bat-trace` | The script that traces a figure on a white background into one clean outline, used for `apps/web/public/hero-figure.svg`. The reference image is not committed. |
+| `20-bat-puppet` | The traced figure cut into a puppet, with a turn and a walk after the pointer. The user said the walk looked like a chicken walk and the turn like a flat image flipping, so it came off the site. `index.html` shows its poses. |
+| `19-bat-trace` | `trace.py` traces a figure on a white background into one clean outline. `trace_layers.py` traces its color regions into stacked layers with a knee bend, and made `apps/web/public/hero-figure.svg`. The reference image is not committed. |
 | `09-nav-skyline` | Traditional top nav with the daytime inverted skyline, three ways of fitting them together: Street, Apart and Behind. On scroll it keeps a bar, or drops it for floating buttons with a Clear, Fog or Mist face. Logo, links and page text are placeholders. |
 
 The four themes in `08-daylight-themes` are now in the real site, in `packages/design/src/palettes.ts`.

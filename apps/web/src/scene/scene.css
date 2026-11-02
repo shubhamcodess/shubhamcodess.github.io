@@ -46,10 +46,35 @@ html, body { height: 100%; overflow: hidden; }
 .hero-dim-short::before, .hero-dim-long::after { content: ""; position: absolute; top: -5px; width: 1px; height: 11px; background: var(--accent); }
 .hero-dim-short::before { left: 0; }
 .hero-dim-long::after { right: 0; }
-/* A small figure standing on a line. The script sizes it to the room it has, and moves it along. Hidden until its outline has loaded. */
-.bat-figure { --figure-edge: color-mix(in srgb, var(--accent), var(--ink) 48%); position: absolute; left: 0; color: var(--accent); pointer-events: none; opacity: 0; transition: opacity 1s var(--ease-expo) 1.2s; }
-.bat-figure[data-ready] { opacity: 1; }
-@media (prefers-reduced-motion: reduce) { .bat-figure { transition: none; } }
+/* A small figure standing on a line, in the theme's own ink and paper: darkest for the edge, the cowl and the gloves, then the cape, the suit's shadow and light, the belt, the face and the eyes.
+   The depth is in the drawing. Its two groups part a little with the hero's pointer tilt, when there is one. */
+.bat-figure {
+  --figure-h: clamp(22px, calc(var(--name) * .46), 52px);
+  --figure-w: calc(var(--figure-h) * 0.504);
+  --f7: var(--ink);
+  --f0: color-mix(in srgb, var(--ink), var(--paper) 8%);
+  --f1: color-mix(in srgb, var(--ink), var(--paper) 24%);
+  --f2: color-mix(in srgb, var(--ink), var(--paper) 42%);
+  --f3: color-mix(in srgb, var(--ink), var(--paper) 60%);
+  --f4: color-mix(in srgb, var(--ink), var(--paper) 74%);
+  --f5: color-mix(in srgb, var(--ink), var(--paper) 86%);
+  --f6: var(--paper);
+  --inset: calc(var(--figure-w) * .6 + 5px);
+  position: absolute; bottom: 0; left: calc(var(--inset) + (100% - var(--inset) * 2) * var(--anchor));
+  width: var(--figure-w); height: var(--figure-h); margin-left: calc(var(--figure-w) / -2); pointer-events: none;
+}
+.bat-figure[data-face="left"] { scale: -1 1; }
+.bat-figure-stand { position: absolute; inset: 0; display: block; }
+.bat-figure-layer { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.bat-figure-back { translate: calc(var(--px, 0) * -.4px) 0; }
+.bat-figure-front { translate: calc(var(--px, 0) * .4px) 0; }
+.bat-figure-shadow { position: absolute; left: 50%; bottom: calc(var(--figure-h) * -.025); width: calc(var(--figure-h) * .56); height: calc(var(--figure-h) * .05); margin-left: calc(var(--figure-h) * -.28); border-radius: 50%; background: color-mix(in srgb, var(--ink), transparent 80%); }
+@media (prefers-reduced-motion: no-preference) {
+  .bat-figure { animation: hero-focus 1.2s var(--ease-expo) 1.7s backwards; }
+  /* The pulse, barely there: the suit's light dims a touch and returns, like holding still in the dark. It's fill-opacity, not opacity, because opacity gives it a layer of its own, and on the turned plate browsers paint that layer at low resolution. */
+  .bat-figure:not([data-still]) .bat-figure-front { animation: figure-glow 4.2s ease-in-out infinite; }
+}
+@keyframes figure-glow { 0%, 100% { fill-opacity: 1; } 50% { fill-opacity: .86; } }
 
 /* What you build and where next, on one row, each end held to the name's edges. */
 .hero-row { display: flex; align-items: center; justify-content: space-between; gap: clamp(18px, 3vw, 44px); margin-top: clamp(16px, calc(var(--name) * .24), 28px); }

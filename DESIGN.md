@@ -133,13 +133,14 @@ A drawing's title block at bottom left, held to the name's width: "I am", the na
 Headings are Geist 500 with tight tracking, often two-tone, with the second line dimmed. Small labels are Geist Mono, uppercase, set on a short dimension line like the hero's role: hairlines either side with amber end ticks. No section numbers.
 
 ### Bat figure: Draft, for the user's eye
-A small Batman on the role's dimension line, as an easter egg, built to be placed on other lines too. One flat color, the theme's `--accent`. Settings are `hero.figure` in `content/site.ts`, the code is `apps/web/src/scene/figure/`.
-- **Model:** traced from the user's reference image (`apps/web/public/hero-figure.svg`). It's a cut-out puppet: cape, thighs, shins and boots are separate pieces cut along the reference's own lines. Standing still they add up to the traced outline.
-- **Knows its height:** `BatFigure` sits in any positioned element whose bottom edge is the line, and measures the room up to the nearest `data-figure-ceiling` in its section, less `clearance`, within `minHeight` and `maxHeight`. `data-figure-inset` says how much of the ceiling's box is empty at the bottom. It re-measures on resize. Speed and stride are in body heights, so every size moves alike.
-- **Standing:** turned about 19 degrees on a slightly rounded surface, with a thin darker edge and a soft contact shadow, so it reads as a solid figurine. It breathes very slightly, and faces inward.
-- **Moving:** it turns to the pointer first, unhurried, then chases in a heavy, grounded stride, not a sprint: legs walk out from under the cape, the body leans in and carries on whichever foot is down, and the cape swings back, lagging, with its points keeping their shape. When the pointer rests for `idleMs`, it walks back to `anchor`.
-- **Touch:** a tap sends it there. **Reduced motion:** stands still at its anchor. **No outline file:** no figure, nothing else changes.
-- **Rule:** decoration only. Hidden from screen readers, never takes a click, asleep when off screen or in a hidden tab.
+A small Batman at the end of the role's dimension line, as an easter egg, built to be placed on other lines too. Settings are `hero.figure` in `content/site.ts`, the code is `apps/web/src/scene/figure/`.
+- **Model:** traced from the user's reference image into stacked layers, one for each region of the drawing: edge, cowl and gloves, cape, suit shadow, suit light, belt, face, eyes (`apps/web/public/hero-figure.svg`).
+- **Color:** every shade is a mix of the theme's `--ink` and `--paper`, never the accent, so it belongs to whichever theme is on.
+- **Pose:** upright, with a slight stealth bend from the knees only. The picture itself isn't tilted or leaned. A thin dark edge behind it and layers that part slightly with the pointer give it depth.
+- **Pulse:** barely there. The suit's light dims by 14% over 4.2s and returns. Reduced motion stops it.
+- **Knows its height:** `BatFigure` sits in any positioned element whose bottom edge is the line, and measures the room up to the nearest `data-figure-ceiling` in its section, less `clearance`, within `minHeight` and `maxHeight`. `data-figure-inset` says how much of the ceiling's box is empty at the bottom. It re-measures on resize.
+- **Sharpness rule:** on the turned hero plate, don't animate its `opacity` or `transform`. Browsers paint that layer at low resolution. Animate something painted, like `fill-opacity`.
+- **Rule:** decoration only. Hidden from screen readers, never takes a click.
 
 ### Scroll motion: Approved
 Smooth scroll, content layers that follow a beat late, and reveal and hide. Mark content with `data-block` and `data-layer`, and text with `.rv` or `.ln`. Details are in decision 017.

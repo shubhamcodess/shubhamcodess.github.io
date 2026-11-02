@@ -48,7 +48,7 @@ export const siteSchema = z
       /** The small figure on the role's line. It sizes itself to the room there, within these limits. See `BatFigure`. */
       figure: z.strictObject({
         enabled: z.boolean(),
-        props: z.strictObject({ anchor: z.number().min(0).max(1), chase: z.boolean(), pace: z.number().min(0.5).max(6), idleMs: z.number().min(500).max(30000), minHeight: z.number().min(12).max(120), maxHeight: z.number().min(12).max(240), clearance: z.number().min(0).max(40) }),
+        props: z.strictObject({ anchor: z.number().min(0).max(1), face: z.enum(["left", "right"]), minHeight: z.number().min(12).max(120), maxHeight: z.number().min(12).max(240), clearance: z.number().min(0).max(40) }),
       }),
     }),
     /** Smooth scroll, content layers and reveals. Set `lerp` to 0 for native scrolling. */
