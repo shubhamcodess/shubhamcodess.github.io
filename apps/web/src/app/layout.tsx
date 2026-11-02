@@ -8,6 +8,7 @@ import { site } from "@portfolio/site";
 import { BackgroundPanel } from "@/dev/BackgroundPanel";
 import { Batarang } from "@/scene/Batarang";
 import { GothamScene } from "@/scene/GothamScene";
+import { ScrollHash } from "@/scene/ScrollHash";
 import { ScrollReset } from "@/scene/ScrollReset";
 import { SiteHeader } from "@/scene/SiteHeader";
 import "@portfolio/design/tokens.css";
@@ -68,6 +69,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <main id="page" className="page" tabIndex={-1}><div className="page-inner">{children}</div></main>
         {site.flags.motion && <ScrollMotion target="#page" content=".page-inner" lerp={site.scroll.lerp} lag={site.scroll.lag} parallax={site.scroll.parallax} />}
         <ScrollReset />
+        <ScrollHash />
         <SiteHeader />
         <ScrollThumb target="#page"><Batarang /></ScrollThumb>
         <div className="environment-vignette" aria-hidden="true" />

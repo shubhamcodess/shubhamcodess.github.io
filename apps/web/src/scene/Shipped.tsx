@@ -11,7 +11,7 @@ const LAYERS = ["c", "d", "c", "d", "c", "d"];
 export function Shipped() {
   const { kicker, title, columns, seeAll } = site.shipped;
   return (
-    <section id="projects" className="sec" data-block>
+    <section id="featured" className="sec" data-block>
       <p className="kicker rv" data-layer="a">{kicker}</p>
       <h2 className="sec-title" data-layer="b">
         <span className="ln"><span className="rv" style={{ "--i": 1 } as CSSProperties}>{title[0]}</span></span>

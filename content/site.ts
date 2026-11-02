@@ -12,7 +12,7 @@ const config = {
     nightName: "Vengeance", // For night mode, to read "I am Vengeance". Not wired up until dark mode exists.
     role: { lines: ["Cloud", "AI"], rest: "Full Stack Developer", seed: 3, minMs: 3600, maxMs: 6200 }, // The first word turns over; the rest stays on the dimension line.
     hook: { prefix: "Building", lines: ["tech that matters", "AI products at scale", "open source products", "for the cloud, end to end", "things worth shipping"], seed: 7, minMs: 3200, maxMs: 5600 },
-    cta: { label: "What I shipped recently", href: "/#projects" },
+    cta: { label: "What I shipped recently", href: "/#featured" },
     tilt: { y: 5, x: 2, reach: 3.5 }, // Degrees at rest, and how far the pointer moves it.
   },
   shipped: {
