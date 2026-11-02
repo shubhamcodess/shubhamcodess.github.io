@@ -51,6 +51,17 @@ function styleFor(p: Palette, l: Layer, W: number): Style {
 
 type Node = { el: HTMLDivElement; canvas: HTMLCanvasElement; z: number; fog: boolean; paint: (n: Node) => void };
 
+/** The scroll the city follows: the page's, minus any stretch a pinned section holds still (`data-hold-start` and `data-hold-length`, in px of scroll). */
+function cityScroll(scroller: HTMLElement) {
+  const s = scroller.scrollTop;
+  let held = 0;
+  for (const el of scroller.querySelectorAll<HTMLElement>("[data-hold-length]")) {
+    const start = Number(el.dataset.holdStart), length = Number(el.dataset.holdLength);
+    held += Math.min(length, Math.max(0, s - start));
+  }
+  return s - held;
+}
+
 export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () => { palette: Palette; font: string; settings: SceneSettings }) {
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const stage = document.createElement("div"); stage.className = "g-stage"; host.append(stage);
@@ -221,11 +232,11 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
     const dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now;
     const q = 1 - Math.exp(-dt * 2.4);
     cam.x += (cam.tx - cam.x) * q; cam.y += (cam.ty - cam.y) * q;
-    cam.scroll += (scroller.scrollTop - cam.scroll) * (1 - Math.exp(-dt * 6));
+    cam.scroll += (cityScroll(scroller) - cam.scroll) * (1 - Math.exp(-dt * 6));
     place(now / 1000); drawLive(now / 1000);
   }
   const pointer = (e: PointerEvent) => { if (e.pointerType !== "touch") { cam.tx = e.clientX / innerWidth - 0.5; cam.ty = e.clientY / innerHeight - 0.5; } };
-  const scrolledStill = () => { cam.scroll = scroller.scrollTop; place(0); drawLive(8); };
+  const scrolledStill = () => { cam.scroll = cityScroll(scroller); place(0); drawLive(8); };
 
   let timer = 0;
   const sized = new ResizeObserver(() => { clearTimeout(timer); timer = window.setTimeout(resize, 140); });

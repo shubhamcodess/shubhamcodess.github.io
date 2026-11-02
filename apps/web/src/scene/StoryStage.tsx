@@ -23,7 +23,7 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
     let raf = 0, on = false, lastHere = -1, pinTop = 0, stageAt = 0, film = 0;
     const clear = () => {
       on = false; lastHere = -1;
-      delete story.dataset.cine;
+      delete story.dataset.cine; delete story.dataset.holdStart; delete story.dataset.holdLength;
       for (const name of ["--story-drawn", "--now", "--stage-top", "height"]) story.style.removeProperty(name);
       for (const el of [...scenes, frame, track]) el?.removeAttribute("style");
       for (const mark of marks) { delete mark.dataset.state; mark.removeAttribute("aria-current"); }
@@ -79,6 +79,9 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
       film = innerHeight * count * pace;
       story.style.setProperty("--stage-top", `${pinTop}px`);
       story.style.height = `${stageAt + h + film + parseFloat(getComputedStyle(story).paddingBottom)}px`;
+      // The city holds still while the film plays.
+      story.dataset.holdStart = String(Math.round(page.scrollTop + story.getBoundingClientRect().top + stageAt - pinTop));
+      story.dataset.holdLength = String(Math.round(film));
       on = true;
       draw();
     };
