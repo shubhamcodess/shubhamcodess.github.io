@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { domAnimation, LazyMotion, m, useReducedMotion } from "motion/react";
-import { useEffect, useState } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 
 import { BLADE, BLADE_ANGLE, BLADE_TILT, BLADE_TIP, BLADE_VISIBLE, CRACKS, FLECK, LODGED, LOGO, PLATE, SLIT_LINE } from "./logo-drawing";
 
@@ -20,11 +21,18 @@ export function SiteLogo() {
   // The server sends the finished logo, so it's right before any script runs. The throw plays once it's here.
   useEffect(() => { if (!still) setTake(1); }, [still]);
   const replay = () => { if (!still) setTake((n) => n + 1); };
+  // On the home page it glides back to the top; anywhere else it's a plain link home.
+  const path = usePathname();
+  const toTop = (e: MouseEvent) => {
+    if (path !== "/" || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    document.getElementById("page")?.scrollTo({ top: 0, behavior: still ? "auto" : "smooth" });
+  };
 
   const playing = take > 0;
   return (
     <LazyMotion features={domAnimation}>
-      <Link href="/" className="site-logo" aria-label="Home" data-thrown={playing || undefined} onPointerEnter={(e) => { if (e.pointerType !== "touch") replay(); }}>
+      <Link href="/" className="site-logo" aria-label="Home" onClick={toTop} data-thrown={playing || undefined} onPointerEnter={(e) => { if (e.pointerType !== "touch") replay(); }}>
         <svg viewBox={`0 0 ${PLATE.w} ${PLATE.h}`} width={PLATE.w} height={PLATE.h} aria-hidden="true" fill="none" strokeLinejoin="round">
           <defs>
             <linearGradient id="logo-rise" x1="0" y1="1" x2="0" y2="0">
