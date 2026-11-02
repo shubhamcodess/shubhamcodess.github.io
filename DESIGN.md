@@ -132,13 +132,11 @@ A drawing's title block at bottom left, held to the name's width: "I am", the na
 ### Headings and small labels
 Headings are Geist 500 with tight tracking, often two-tone, with the second line dimmed. Small labels are Geist Mono, uppercase, set on a short dimension line like the hero's role: hairlines either side with amber end ticks. No section numbers.
 
-### Hero runner: Draft, for the user's eye
-A small Batman living on the role's dimension line, as an easter egg. One flat color, the theme's `--accent`, about 34px tall. Settings are `hero.runner` in `content/site.ts`, the code is `apps/web/src/scene/bat-runner/`.
-- **Built from joints in 3D, flattened to a silhouette.** Turning is a real rotation, so every angle between facing you and side-on exists. The camera sits slightly above, so depth shows.
-- **Still:** crouched, slowly breathing and pulsing, with a faint ring running out along the line. It's in the middle, turned a little toward the pointer.
-- **Moving:** turns toward the pointer first, then runs to it along the line and eases to a stop. The legs are paced by distance, not time. The cape lags row by row and swings on stopping. When the pointer rests for `idleMs`, it goes back to the middle.
-- **Touch:** a tap sends it there. **Reduced motion:** a still crouch in the middle, no pulse, no running.
-- **Rule:** decoration only. Hidden from screen readers, never takes a click, asleep when off screen or in a hidden tab.
+### Hero figure: Draft, for the user's eye
+A small Batman standing at the right end of the role's dimension line, as an easter egg. Still for now; animation comes after the model is approved.
+- **Model:** one closed outline traced from the user's reference image, so its proportions are the reference's. One flat color, the theme's `--accent`, 26 to 44px tall, scaling with the name. No inner detail.
+- **How:** `apps/web/public/hero-figure.svg`, used as a CSS mask. No script, and it follows every theme. To retrace, see `prototypes/19-bat-trace/trace.py`.
+- **Rule:** decoration only. Hidden from screen readers, never takes a click.
 
 ### Scroll motion: Approved
 Smooth scroll, content layers that follow a beat late, and reveal and hide. Mark content with `data-block` and `data-layer`, and text with `.rv` or `.ln`. Details are in decision 017.
