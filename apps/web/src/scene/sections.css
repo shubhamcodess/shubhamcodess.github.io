@@ -54,8 +54,8 @@
 
 /* The story. As plain text first: every scene in order inside the frame. The script turns that into a film if motion is welcome and it fits the screen. */
 .story { --story-drawn: 1; --now: 1; position: relative; padding-block: var(--sec-pad); }
-/* Kicker and heading scroll by like any section's; only the stage below them pins. */
-.story-stage { margin-top: var(--sec-gap); }
+/* Kicker and heading pin with the sheet, so they stay while the scenes play. */
+.story-head { margin-bottom: var(--sec-gap); }
 /* The sheet is clear, like a button: the frame's texture rises from below and the page shows through. Its hover is the project card's. */
 .pc.story-frame { height: auto; }
 .story-strip { display: grid; grid-template-columns: auto 1fr auto; align-items: center; border-bottom: 1px solid var(--line-rest); font: 500 11px/1 var(--font-note); letter-spacing: .06em; text-transform: uppercase; }
@@ -145,3 +145,7 @@
 .story[data-cine] .story-window { display: grid; overflow: hidden; }
 .story[data-cine] .story-window > li { grid-area: 1 / 1; border-top: 0; will-change: opacity, filter, transform; }
 .story[data-cine] .story-track { flex: none; }
+/* Pinned, the heading gives way on short screens so the whole stage still fits. */
+.story[data-cine] .story-head { margin-bottom: clamp(14px, 3.4svh, 64px); }
+.story[data-cine] .story-head .kicker { margin-bottom: clamp(10px, 1.6svh, 18px); }
+.story[data-cine] .story-head .sec-title { font-size: clamp(26px, min(4.4vw, 5.6svh), 56px); }

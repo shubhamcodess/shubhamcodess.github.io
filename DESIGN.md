@@ -151,7 +151,7 @@ A small Batman at the end of the role's dimension line, as an easter egg, built 
 
 ### Story: Draft, for the user's eye
 Experience, told as a film. All content and whether it has a frame are `story` in `content/site.ts`, under a strict type. The code is `apps/web/src/scene/Story.tsx`, `StoryStage.tsx`, `story-motion.ts` and `tool-logos.ts`. Prototype: `prototypes/22-story-log`.
-- **Heading:** kicker and two-tone heading scroll by like any section's; only the stage below them pins, centered below the header.
+- **Heading:** kicker and two-tone heading pin with the sheet, centered below the header, and leave with it after the last scene.
 - **Stage:** it holds the screen while the scroll plays one scene at a time, in place. Each scene blurs out of the haze with a slow camera push, holds to be read, and blurs away. The whole frame comes out of the haze as the section arrives, and goes back as it leaves. It's a function of the scroll alone.
 - **Frame:** `frame: true` puts the scenes on a clear drawn sheet: not opaque, with the texture rising from below only, as on a button. Its frame and hover are the project card's own (`SheetFrame`). `frame: false` removes it, and the words stay on the column.
 - **Scene:** a strip naming the sheet, then label, big line, role on a dimension line, one sentence, the log, a figure, and the tools.

@@ -29,14 +29,14 @@ export function Story() {
   const stops = scenes.slice(1);
   return (
     <StoryStage id="story" count={scenes.length} pace={pace} titles={titles}>
-      <header className="story-head page-col">
-        <p className="kicker">{kicker}</p>
-        <h2 className="sec-title">
-          <span className="ln"><span className="rv" style={{ "--i": 1 } as CSSProperties}>{title[0]}</span></span>
-          <span className="ln"><span className="rv dim" style={{ "--i": 2 } as CSSProperties}>{title[1]}</span></span>
-        </h2>
-      </header>
       <div className="story-stage page-col">
+        <header className="story-head">
+          <p className="kicker">{kicker}</p>
+          <h2 className="sec-title">
+            <span className="ln"><span className="rv" style={{ "--i": 1 } as CSSProperties}>{title[0]}</span></span>
+            <span className="ln"><span className="rv dim" style={{ "--i": 2 } as CSSProperties}>{title[1]}</span></span>
+          </h2>
+        </header>
         <div className="pc story-frame" data-frame={frame ? "on" : "off"} data-figure-ceiling>
           {frame && <SheetFrame face={false} />}
           <div className="story-strip">
