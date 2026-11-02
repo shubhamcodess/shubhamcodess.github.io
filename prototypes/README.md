@@ -24,6 +24,7 @@ Keep every prototype here. Don't overwrite or delete one: new ideas get a new nu
 | `20-bat-puppet` | The traced figure cut into a puppet, with a turn and a walk after the pointer. The user said the walk looked like a chicken walk and the turn like a flat image flipping, so it came off the site. `index.html` shows its poses. |
 | `19-bat-trace` | `trace.py` traces a figure on a white background into one clean outline. `trace_layers.py` traces its color regions into stacked layers with a knee bend, and made `apps/web/public/hero-figure.svg`. The reference image is not committed. |
 | `21-story-frame` | The story as sheets passing inside one blueprint frame: a strip naming the sheet, a window the slides move through, a space reserved for the motion graphic, and a fixed three-cell title block. All content is one typed object in `story.js`. Press G to see the one shared page edge. |
+| `22-story-log` | `21` made compact, on one shared column that leaves room on the left for in-page links later (press G to see it). A log of what was done replaces the fact cells, with slots for hand-drawn tool logos, and the scenes blur in and out with a slow camera push. |
 | `09-nav-skyline` | Traditional top nav with the daytime inverted skyline, three ways of fitting them together: Street, Apart and Behind. On scroll it keeps a bar, or drops it for floating buttons with a Clear, Fog or Mist face. Logo, links and page text are placeholders. |
 
 The four themes in `08-daylight-themes` are now in the real site, in `packages/design/src/palettes.ts`.

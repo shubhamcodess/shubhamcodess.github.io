@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky-1:#efe9d6; --sky-2:#d9d6c6; --sky-3:#c6c9c3; --sky-4:#b4bcbf;
+    --paper:#f2eddf; --ink:#131c1f; --ink-2:#37403f; --line:#22292b; --line-rest:rgba(34,41,43,.7); --accent:#8a4a22; --grid:rgba(34,41,43,.075);
+    --sans:"Geist",system-ui,sans-serif; --note:"Geist Mono",ui-monospace,Menlo,monospace;
+    --header-h:68px;
+    /* THE LAYOUT RULE. One column for every section, on every page. The rail is the space kept free on its left for the in-page links, later. */
+    --gutter: clamp(18px, 4vw, 48px);
+    --rail: 0px;
+    --page-w: 1120px;
+    --col-left: max(var(--gutter), calc(var(--rail) + var(--gutter)), calc((100vw - var(--page-w)) / 2));
+    --col-w: min(var(--page-w), calc(100vw - var(--col-left) - var(--gutter)));
+    --f7:var(--ink); --f0:color-mix(in srgb,var(--ink),var(--paper) 8%); --f1:color-mix(in srgb,var(--ink),var(--paper) 24%); --f2:color-mix(in srgb,var(--ink),var(--paper) 42%); --f3:color-mix(in srgb,var(--ink),var(--paper) 60%); --f4:color-mix(in srgb,var(--ink),var(--paper) 74%); --f5:color-mix(in srgb,var(--ink),var(--paper) 86%); --f6:var(--paper);
+  }
+  @media (min-width:1100px) { :root { --rail: clamp(84px, 8vw, 150px); } }
+  * { box-sizing:border-box; }
+  html { background:var(--sky-3); }
+  body { margin:0; font-family:var(--sans); color:var(--ink); background:linear-gradient(var(--sky-1),var(--sky-2) 35%,var(--sky-3) 70%,var(--sky-4)) fixed; -webkit-font-smoothing:antialiased; overflow-x:clip; }
+  .col { margin-left:var(--col-left); width:var(--col-w); }
+
+  /* Stubs, only here to show the edges agreeing. */
+  .stub-head { position:fixed; z-index:5; top:0; left:var(--gutter); height:var(--header-h); display:flex; align-items:center; pointer-events:none; }
+  .stub-logo { width:38px; height:38px; border:1px solid var(--line); display:grid; place-items:center; font:500 15px var(--sans); }
+  .stub-section { min-height:62svh; display:flex; flex-direction:column; justify-content:flex-end; padding-bottom:9svh; }
+  .stub-title { margin:0; font:500 clamp(30px,3.6vw,48px)/1.08 var(--sans); letter-spacing:-.03em; }
+  .stub-note { margin:14px 0 0; font:500 12px var(--note); color:var(--ink-2); }
+  .kicker { display:flex; align-items:center; gap:9px; margin:0 0 18px; font:500 12px/1 var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
+  .kicker::before,.kicker::after { content:""; flex:none; height:11px; background:linear-gradient(var(--line-rest),var(--line-rest)) 0 50%/100% 1px no-repeat; }
+  .kicker::before { width:16px; border-left:1px solid var(--accent); }
+  .kicker::after { width:clamp(40px,7vw,88px); border-right:1px solid var(--accent); }
+
+  /* The guides. Press G. */
+  .guide { position:fixed; z-index:9; top:0; bottom:0; width:1px; background:#d0145a; opacity:0; pointer-events:none; }
+  .guide.a { left:var(--col-left); } .guide.b { left:calc(var(--col-left) + var(--col-w)); }
+  .rail-stub { position:fixed; z-index:9; top:0; bottom:0; left:0; width:var(--col-left); background:rgba(208,20,90,.07); opacity:0; pointer-events:none; display:grid; place-items:center; font:500 11px var(--note); color:#a0104a; writing-mode:vertical-rl; }
+  body.guides .guide { opacity:.7; } body.guides .rail-stub { opacity:1; }
+  .guide-btn { position:fixed; z-index:9; right:10px; bottom:10px; padding:6px 9px; font:500 11px var(--note); background:var(--paper); border:1px solid var(--line); color:var(--ink); cursor:pointer; }
+
+  /* The stage holds the screen. The frame is only as big as what's in it, in the middle of what's left. */
+  .story { position:relative; height:calc(100svh * (1 + var(--n) * 1.05)); }
+  .stage { position:sticky; top:0; height:100svh; display:flex; flex-direction:column; justify-content:center; padding-top:calc(var(--header-h) - 6px); padding-bottom:clamp(10px,2svh,22px); }
+  .stage .kicker { flex:none; margin-bottom:clamp(10px,1.6svh,14px); }
+
+  .frame { position:relative; flex:none; display:flex; flex-direction:column; margin-right:9px; margin-bottom:9px; will-change:opacity,filter,transform; }
+  .frame-shadow { position:absolute; inset:7px -7px -7px 7px; background:repeating-linear-gradient(135deg,var(--line) 0 1px,transparent 1px 6px); opacity:.24; }
+  .frame-sheet { position:relative; display:flex; flex-direction:column; background:color-mix(in srgb,var(--paper) 90%,transparent); background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px); background-size:32px 32px; }
+  .edge { position:absolute; background:var(--line); z-index:3; pointer-events:none; }
+  .edge.t,.edge.b { left:-7px; right:-7px; height:1px; } .edge.t { top:0; } .edge.b { bottom:0; }
+  .edge.l,.edge.r { top:-7px; bottom:-7px; width:1px; } .edge.l { left:0; } .edge.r { right:0; }
+  .strip { flex:none; display:grid; grid-template-columns:auto 1fr auto; align-items:center; border-bottom:1px solid var(--line); font:500 11px/1 var(--note); letter-spacing:.06em; text-transform:uppercase; }
+  .strip > * { padding:clamp(7px,1.1svh,10px) clamp(11px,1.2vw,16px); }
+  .strip-sheet { border-right:1px solid var(--line); white-space:nowrap; }
+  .strip-title { color:var(--ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .strip-org { border-left:1px solid var(--line); white-space:nowrap; }
+
+  /* The window. Scenes come out of the haze inside it, one at a time. */
+  .window { position:relative; display:grid; overflow:hidden; }
+  .scene { grid-area:1/1; display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); will-change:opacity,filter,transform; transform-origin:40% 50%; }
+  .text { display:flex; flex-direction:column; min-width:0; padding:clamp(12px,2.2svh,24px) clamp(12px,1.9vw,28px); }
+  .label { margin:0 0 3px; font-size:clamp(14px,1.15vw,17px); letter-spacing:-.02em; color:var(--ink-2); }
+  .title { position:relative; margin:0; font:500 clamp(27px,min(3.3vw,6.4svh),50px)/1.05 var(--sans); letter-spacing:-.035em; text-wrap:balance; }
+  .title b { position:relative; display:block; font-weight:inherit; }
+  .title i { position:absolute; inset:0; font-style:normal; color:transparent; -webkit-text-stroke:.8px color-mix(in srgb,var(--line),transparent 55%); translate:calc(2px + var(--d,0)*4px) 2px; }
+  .role { display:flex; align-items:center; gap:8px; margin:clamp(7px,1.2svh,12px) 0 0; font:500 11px/1.3 var(--note); letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; }
+  .role::before,.role::after { content:""; height:1px; background:var(--line-rest); }
+  .role::before { flex:none; width:14px; box-shadow:-1px 0 0 0 var(--accent); }
+  .role::after { flex:1; min-width:10px; box-shadow:1px 0 0 0 var(--accent); }
+  .line { margin:clamp(6px,1svh,10px) 0 0; font-size:clamp(14px,1.08vw,16px); line-height:1.4; letter-spacing:-.01em; text-wrap:pretty; }
+
+  /* THE LOG. What was done, one line each. The verb is the column you scan. */
+  .log { margin:clamp(9px,1.6svh,16px) 0 0; padding:0; list-style:none; }
+  .log li { display:grid; grid-template-columns:7.2ch minmax(0,1fr); gap:0 10px; align-items:baseline; padding:clamp(3px,.62svh,6px) 0; border-top:1px solid color-mix(in srgb,var(--line-rest),transparent 62%); }
+  .log li:last-child { border-bottom:1px solid color-mix(in srgb,var(--line-rest),transparent 62%); }
+  .log-verb { font:500 10.5px/1.5 var(--note); letter-spacing:.03em; color:var(--accent); }
+  .log-what { font-size:clamp(12.5px,.92vw,13.5px); line-height:1.36; color:var(--ink-2); text-wrap:pretty; }
+
+  /* The space reserved for the motion graphic. */
+  .fig { position:relative; min-width:0; min-height:180px; border-left:1px solid var(--line-rest); overflow:hidden; }
+  .fig svg { position:absolute; inset:0; width:100%; height:100%; }
+  .fig line { stroke:var(--line-rest); stroke-width:1; vector-effect:non-scaling-stroke; stroke-dasharray:3 6; opacity:.5; }
+  .fig-cap { position:absolute; left:14px; bottom:12px; font:500 10.5px/1.3 var(--note); letter-spacing:.05em; text-transform:uppercase; color:var(--ink-2); background:color-mix(in srgb,var(--paper) 90%,transparent); padding:2px 4px; }
+  .fig-tag { position:absolute; right:16px; top:12px; font:500 10.5px var(--note); letter-spacing:.05em; text-transform:uppercase; color:var(--accent); }
+
+  /* The tools, along the bottom. Each dashed square is where a hand-drawn logo goes. */
+  .tools { grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:center; gap:clamp(5px,.8svh,8px) clamp(12px,1.5vw,22px); padding:clamp(7px,1.2svh,11px) clamp(12px,1.9vw,28px); border-top:1px solid var(--line); }
+  .tools-label { font:500 10.5px var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
+  .tool { display:flex; align-items:center; gap:6px; font:500 11px var(--note); color:var(--ink); }
+  .tool i { width:18px; height:18px; border:1px dashed var(--line-rest); }
+
+  /* The line under the frame. */
+  .track { flex:none; position:relative; height:40px; margin-right:9px; margin-top:clamp(0px,1svh,8px); }
+  .rail,.rail-drawn { position:absolute; left:0; right:0; top:50%; height:1px; }
+  .rail { background:color-mix(in srgb,var(--line-rest),transparent 45%); }
+  .rail-drawn { background:var(--ink); transform-origin:0 50%; transform:scaleX(var(--drawn,0)); }
+  .stop { position:absolute; top:50%; left:calc(var(--at)*100%); transform:translate(-50%,-50%); display:grid; place-items:center; min-width:44px; height:40px; padding:0; border:0; background:none; color:var(--ink-2); cursor:pointer; }
+  .stop:first-of-type { transform:translate(0,-50%); min-width:0; }
+  .stop:last-of-type { transform:translate(-100%,-50%); min-width:0; }
+  .stop:focus-visible { outline:1.5px dashed var(--accent); outline-offset:-2px; }
+  .stop span { padding:2px 6px; font:500 11.5px var(--note); letter-spacing:.06em; background:var(--sky-3); border:1px solid currentColor; transition:background .3s,color .3s; }
+  .stop svg { display:block; width:32px; height:16px; overflow:visible; transition:scale .3s cubic-bezier(.16,1,.3,1); }
+  .stop polygon { fill:var(--paper); stroke:currentColor; stroke-width:.8; transition:fill .3s; }
+  .stop.past,.stop.here { color:var(--ink); }
+  .stop.here polygon { fill:var(--ink); }
+  .stop.here span { background:var(--ink); color:var(--paper); }
+  @media (hover:hover) { .stop:hover svg { scale:1.16; } .stop:hover { color:var(--ink); } }
+
+  .after { min-height:40svh; display:flex; align-items:center; }
+
+  @media (max-width:860px) {
+    .scene { grid-template-columns:minmax(0,1fr); }
+    .fig { order:-1; min-height:clamp(70px,12svh,130px); border-left:0; border-bottom:1px solid var(--line-rest); }
+    .fig-tag { display:none; }
+    .strip-title { display:none; }
+    .strip { grid-template-columns:1fr auto; }
+    .tools { grid-column:auto; }
+    .tool { font-size:10.5px; } .tool i { width:14px; height:14px; }
+  }
+  /* Too short to pin: each scene is its own framed block, one after another. */
+  .plain .story { height:auto; }
+  .plain .stage { position:static; height:auto; padding-top:0; display:block; }
+  .plain .frame { margin-bottom:30px; }
+  .plain .track { display:none; }
+</style>
+</head>
+<body>
+<div class="stub-head"><div class="stub-logo">SP</div></div>
+<div class="rail-stub">Kept free for the in-page links</div>
+<i class="guide a"></i><i class="guide b"></i>
+<button class="guide-btn" id="guides">Show column (G)</button>
+
+<section class="stub-section col">
+  <p class="kicker">Featured builds</p>
+  <h2 class="stub-title">What I shipped recently.</h2>
+  <p class="stub-note">Stub of the section above, here only to show the edges agreeing. Scroll down.</p>
+</section>
+
+<section class="story" id="story">
+  <div class="stage col" id="stage"></div>
+</section>
+<section class="after col"><p class="stub-note">End of the prototype.</p></section>
+
+<script src="story.js"></script>
+<script>
+(() => {
+  const { kicker, scenes } = window.STORY, n = scenes.length;
+  const story = document.getElementById("story"), stage = document.getElementById("stage");
+  const pad = (v) => String(v).padStart(2, "0");
+  const ease = (t) => t * t * (3 - 2 * t), clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const curve = (a, c, b, k = 7) => Array.from({ length: k + 1 }, (_, i) => { const t = i / k, u = 1 - t; return [u*u*a[0] + 2*u*t*c[0] + t*t*b[0], u*u*a[1] + 2*u*t*c[1] + t*t*b[1]]; });
+  const right = [[[0,-.11],[.035,-.11]],[[.035,-.11],[.07,-.2]],[[.07,-.2],[.1,-.05]],curve([.1,-.05],[.25,.01],[.36,-.21]),[[.36,-.21],[1,-.22]],curve([1,-.22],[.84,-.04],[.74,.17]),curve([.74,.17],[.29,-.01],[0,.49])].flat();
+  const outline = [...right, ...[...right].reverse().map(([x, y]) => [-x, y])];
+  const MARK = outline.map(([x, y]) => `${(x*15+16).toFixed(2)},${(y*15+7).toFixed(2)}`).join(" ");
+  const TOOL_NAMES = { java:"Java", spring:"Spring", angular:"Angular", react:"React", nextjs:"Next.js", typescript:"TypeScript", openshift:"OpenShift", gke:"GKE", kubernetes:"Kubernetes", helm:"Helm", "github-actions":"GitHub Actions", "azure-ad":"Azure AD", oracle:"Oracle", postgresql:"PostgreSQL", rabbitmq:"RabbitMQ", mcp:"MCP" };
+
+  const scene = (s, i) => `<article class="scene" data-scene="${i}">
+      <div class="text">
+        <p class="label">${s.label}</p>
+        <h3 class="title"><i aria-hidden="true">${s.title}</i><b>${s.title}</b></h3>
+        <p class="role">${s.role}</p>
+        <p class="line">${s.line}</p>
+        <ul class="log">${s.log.map((e) => `<li><span class="log-verb">${e.verb}</span><span class="log-what">${e.what}</span></li>`).join("")}</ul>
+      </div>
+      <div class="fig" aria-hidden="true">
+        <svg preserveAspectRatio="none" viewBox="0 0 100 100"><line x1="0" y1="0" x2="100" y2="100"/><line x1="100" y1="0" x2="0" y2="100"/></svg>
+        <span class="fig-tag">Motion graphic</span>
+        <span class="fig-cap">Fig. ${i + 1}: ${s.figure}</span>
+      </div>
+      <div class="tools"><span class="tools-label">With</span>${s.tools.map((t) => `<span class="tool"><i aria-hidden="true"></i>${TOOL_NAMES[t]}</span>`).join("")}</div>
+    </article>`;
+  const frame = (list, from = 0) => `<div class="frame" data-frame>
+      <i class="frame-shadow"></i>
+      <div class="frame-sheet">
+        <div class="strip"><span class="strip-sheet">Sheet <b data-sheet style="font-weight:inherit">${pad(from + 1)}</b> / ${pad(n)}</span><span class="strip-title" data-strip>${list[0].title}</span><span class="strip-org">IBM</span></div>
+        <div class="window">${list.map((s, i) => scene(s, from + i)).join("")}</div>
+        <i class="edge t"></i><i class="edge b"></i><i class="edge l"></i><i class="edge r"></i>
+      </div>
+    </div>`;
+
+  let pinned = false, raf = 0;
+  function build() {
+    const motion = matchMedia("(prefers-reduced-motion: no-preference)").matches;
+    story.style.setProperty("--n", n);
+    document.body.classList.remove("plain");
+    stage.innerHTML = `<p class="kicker">${kicker}</p>${frame(scenes)}
+      <nav class="track" aria-label="Chapters"><i class="rail"></i><i class="rail-drawn"></i>
+        ${scenes.map((s, i) => `<button class="stop" style="--at:${i/(n-1)}" data-stop="${i}" aria-label="${s.label}: ${s.title}">${s.stop.kind === "text" ? `<span>${s.stop.text}</span>` : `<svg viewBox="0 0 32 16" aria-hidden="true"><polygon points="${MARK}"/></svg>`}</button>`).join("")}
+      </nav>`;
+    // Pin only if the whole thing fits on this screen.
+    const used = [...stage.children].reduce((sum, el) => sum + el.offsetHeight, 0) + parseFloat(getComputedStyle(stage).paddingTop) + parseFloat(getComputedStyle(stage).paddingBottom) + 28;
+    pinned = motion && used <= innerHeight;
+    if (!pinned) { document.body.classList.add("plain"); stage.innerHTML = `<p class="kicker">${kicker}</p>` + scenes.map((s, i) => frame([s], i)).join(""); }
+    draw();
+  }
+
+  const ENTER = 0.3, LEAVE = 0.74;
+  function draw() {
+    raf = 0;
+    if (!pinned) return;
+    const box = story.getBoundingClientRect(), travel = box.height - innerHeight;
+    if (box.bottom < -60 || box.top > innerHeight + 60) return;
+    const p = clamp(-box.top / travel);
+    let here = 0;
+    stage.querySelectorAll("[data-scene]").forEach((el, i) => {
+      const t = p * n - i;
+      const arrived = i === 0 ? 1 : ease(clamp(t / ENTER));
+      const left = i === n - 1 ? 0 : ease(clamp((t - LEAVE) / (1 - LEAVE)));
+      const opacity = arrived * (1 - left);
+      if (t >= ENTER / 2) here = i;
+      // It never stands still: a slow camera push runs through the whole of each scene, on top of the blur in and out.
+      const push = 1.012 - clamp(i === 0 ? 0.35 + t * 0.65 : t) * 0.024 + (1 - arrived) * 0.03;
+      el.style.opacity = opacity.toFixed(3);
+      el.style.visibility = opacity < 0.004 ? "hidden" : "visible";
+      if (opacity < 0.004) return;
+      const blur = (1 - arrived) * 16 + left * 13;
+      el.style.filter = blur < 0.05 ? "none" : `blur(${blur.toFixed(2)}px)`;
+      el.style.transform = `translate3d(0,${((1 - arrived) * 26 - left * 26).toFixed(2)}px,0) scale(${push.toFixed(4)})`;
+      el.style.setProperty("--d", (clamp(t) - .5).toFixed(3));
+    });
+    // The whole frame comes out of the haze as the section arrives, and goes back into it as it leaves.
+    const come = ease(clamp(1 - box.top / (innerHeight * .75))), go = ease(clamp((innerHeight * .9 - box.bottom) / (innerHeight * .5)));
+    const f = stage.querySelector("[data-frame]");
+    const whole = come * (1 - go);
+    f.style.opacity = whole.toFixed(3);
+    const fb = (1 - come) * 18 + go * 14;
+    f.style.filter = fb < 0.05 ? "none" : `blur(${fb.toFixed(2)}px)`;
+    f.style.transform = `translate3d(0,${((1 - come) * 34).toFixed(2)}px,0) scale(${(1.03 - come * .03).toFixed(4)})`;
+    stage.querySelector("[data-sheet]").textContent = pad(here + 1);
+    stage.querySelector("[data-strip]").textContent = scenes[here].title;
+    stage.querySelectorAll("[data-stop]").forEach((el, i) => { el.classList.toggle("here", i === here); el.classList.toggle("past", i < here); });
+    story.style.setProperty("--drawn", clamp((p * n - ENTER) / (n - 1)).toFixed(4));
+  }
+  addEventListener("scroll", () => { raf ||= requestAnimationFrame(draw); }, { passive: true });
+  addEventListener("resize", build);
+  stage.addEventListener("click", (e) => {
+    const stop = e.target.closest("[data-stop]"); if (!stop) return;
+    const i = +stop.dataset.stop, box = story.getBoundingClientRect(), travel = box.height - innerHeight;
+    const at = i === 0 ? 0 : i === n - 1 ? 1 : (i + (ENTER + LEAVE) / 2) / n;
+    scrollTo({ top: scrollY + box.top + travel * at, behavior: "smooth" });
+  });
+  const toggle = () => document.body.classList.toggle("guides");
+  document.getElementById("guides").onclick = toggle;
+  addEventListener("keydown", (e) => { if (e.key.toLowerCase() === "g") toggle(); });
+  document.fonts?.ready.then(build);
+  build();
+})();
+</script>
+</body>
+</html>
