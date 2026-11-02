@@ -10,7 +10,7 @@ const ICONS: Record<ProjectSummary["links"][number]["kind"], IconName> = { site:
 /** A project's links, the same on its card and its page. */
 export function ProjectLinks({ project }: { project: ProjectSummary }) {
   return project.links.map((l) => (
-    <Button key={l.href} {...site.headerButton} href={l.href} target="_blank" rel="noopener" variant="secondary" size="sm" icon={ICONS[l.kind]} iconEnd="arrowOut">{l.label}<span className="sr-only"> (opens in a new tab)</span></Button>
+    <Button key={l.href} {...site.headerButton} href={l.href} target="_blank" rel="noopener" variant="secondary" size="xs" icon={ICONS[l.kind]} iconEnd="arrowOut">{l.label}<span className="sr-only"> (opens in a new tab)</span></Button>
   ));
 }
 

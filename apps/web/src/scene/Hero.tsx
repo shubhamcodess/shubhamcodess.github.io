@@ -39,7 +39,8 @@ export function Hero() {
             <RotatingText prefix={hook.prefix} lines={hook.lines} seed={hook.seed} minMs={hook.minMs} maxMs={hook.maxMs} />
           </p>
           <div className="hero-cta rv" data-layer="d" style={at(10)}>
-            <Button {...site.headerButton} as={Link} href={cta.href} variant="primary" size="md" icon="arrow">{cta.label}</Button>
+            {/* A plain link when it's a section of this page: a browser scrolls to it on every click, while the router ignores a click to the URL it's already on. */}
+            <Button {...site.headerButton} as={cta.href.includes("#") ? undefined : Link} href={cta.href} variant="primary" size="md" icon="arrow">{cta.label}</Button>
           </div>
         </div>
       </HeroStage>

@@ -1,7 +1,7 @@
 /** Every way a Button can vary. The component's types, the config and the control panel all read this list. */
 export const BUTTON_OPTIONS = {
   variant: ["primary", "secondary", "quiet"],
-  size: ["sm", "md", "lg"],
+  size: ["xs", "sm", "md", "lg"],
   texture: ["hatch", "dots", "grid", "fade"],
   shadow: ["br", "bl", "tr", "tl"],
   hover: ["none", "shadow"],
