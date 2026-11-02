@@ -5,7 +5,10 @@
 /* Pages other than home leave the city its first part of the screen, as the hero does. */
 .sub-page { padding-top: clamp(190px, 46svh, 460px); }
 .kicker { display: flex; align-items: center; gap: 9px; margin: 0 0 18px; font: 500 12px/1 var(--font-note); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
-.kicker::before { content: ""; width: 6px; height: 6px; background: var(--accent); }
+/* A label on a dimension line, like the hero's role: hairlines either side, amber end ticks. */
+.kicker::before, .kicker::after { content: ""; flex: none; }
+.kicker::before { width: 16px; border-left: 1px solid var(--accent); height: 11px; background: linear-gradient(var(--line-rest), var(--line-rest)) 0 50% / 100% 1px no-repeat; }
+.kicker::after { width: clamp(40px, 7vw, 88px); border-right: 1px solid var(--accent); height: 11px; background: linear-gradient(var(--line-rest), var(--line-rest)) 0 50% / 100% 1px no-repeat; }
 .sec-title { margin: 0; font: 500 clamp(32px, 4.4vw, 56px)/1.08 var(--sans); letter-spacing: -.03em; }
 .dim { color: color-mix(in srgb, var(--ink) 58%, transparent); }
 
