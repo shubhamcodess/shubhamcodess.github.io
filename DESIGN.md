@@ -74,6 +74,12 @@ The Dark mode colors above are from the prototypes and aren't final.
 
 **Frost** (blurring what's behind a surface) is the one allowed glass effect, and only where a component sits over the busy cave or floats in the header. It should look like smoke in the air, not like a glass panel.
 
+## Page layout
+- **One column.** Every section below the hero, on every page, sits on `--col-left` and `--col-w` (`.page-col`, tokens in `tokens.css`). It's at most 1120px wide. No section sets its own width or side padding.
+- **The header and the hero stay on `--gutter`,** the wider edge, by the user's choice.
+- **The rail:** from 1100px wide, the column keeps space clear on its left for in-page links, later.
+- `pnpm responsive` fails if the sections' left edges differ at any width.
+
 ## Components
 
 ### Button: Approved
@@ -143,13 +149,16 @@ A small Batman at the end of the role's dimension line, as an easter egg, built 
 - **Rule:** decoration only. Hidden from screen readers, never takes a click.
 
 ### Story: Draft, for the user's eye
-Experience, told as a film rather than a timeline: where it started and what it is now. Words are `story` in `content/site.ts`, the code is `apps/web/src/scene/Story.tsx`, `StoryStage.tsx`, `StoryDrawing.tsx`, `story-drawings.ts` and `story-motion.ts`.
-- **Scenes:** one at a time on a screen that holds still while the scroll plays them. Two halves: the words on the left (label, big line in the hero's voice, role on a tick, one sentence, then three proof points set out like a drawing's schedule), and a large ink drawing of that chapter on the right. On narrow screens the drawing sits on top, and goes if there's no height for it.
-- **Drawings:** thin pen strokes, the same hand as the icons, abstract so no client's system can be read from them. The pen draws them stroke by stroke as the scene arrives, and a scroll back undoes them.
-- **Motion:** each scene comes out of the haze with a slow camera push, holds sharp to be read, and blurs away. It's a function of the scroll alone.
-- **The line:** draws as the story goes, reaching each stop as its scene arrives. Each stop is a fine outline batarang: filled when you're there, darker once passed, and a click glides to that scene. Tooltips carry the chapter's name. There are no years anywhere. The bat figure waits by the last stop and appears when the story reaches now.
-- **Words:** IBM is named. Clients and internal systems are never named. A test holds this.
-- **Without motion:** no script, reduced motion, or a scene too tall for the screen gets the same scenes as plain text in order, and the batarangs become plain links.
+Experience, told as a film. All content and whether it has a frame are `story` in `content/site.ts`, under a strict type. The code is `apps/web/src/scene/Story.tsx`, `StoryStage.tsx`, `story-motion.ts` and `tool-logos.ts`. Prototype: `prototypes/22-story-log`.
+- **Stage:** it holds the screen while the scroll plays one scene at a time, in place. Each scene blurs out of the haze with a slow camera push, holds to be read, and blurs away. The whole frame comes out of the haze as the section arrives, and goes back as it leaves. It's a function of the scroll alone.
+- **Frame:** `frame: true` puts the scenes on a clear drawn sheet: not opaque, with the texture rising from below only, as on a button. Its frame and hover are the project card's own (`SheetFrame`). `frame: false` removes it, and the words stay on the column.
+- **Scene:** a strip naming the sheet, then label, big line, role on a dimension line, one sentence, the log, a figure, and the tools.
+- **Log:** what was done, one line each, with the verb as the column you scan. Verbs are a fixed list.
+- **Tools:** hand-sketched references to each logo, in the icons' pen, and they redraw on hover. `Tool` is a fixed list and each must have a logo, or the build fails.
+- **Figure:** marked as an empty drawing figure until its motion graphic is built. Don't publish these empty.
+- **Line:** the first stop is words (2020), in a small button; the others are fine batarangs, filled when you're there. All jump to their scene, and the batarangs redraw on hover. The bat figure appears by the last one when the story reaches now.
+- **Words:** IBM is named. Clients and internal systems never are. A test holds this, using hashes so the names aren't in the repo.
+- **Without motion:** no script, reduced motion, or too small a screen gets every scene in order inside the frame, and the stops become plain links.
 
 ### Scroll motion: Approved
 Smooth scroll, content layers that follow a beat late, and reveal and hide. Mark content with `data-block` and `data-layer`, and text with `.rv` or `.ln`. Details are in decision 017.

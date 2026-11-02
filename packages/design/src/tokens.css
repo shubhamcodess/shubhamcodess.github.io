@@ -27,7 +27,16 @@
   --size: 14.5px;
   --sx: 1;
   --sy: 1;
+
+  /* THE PAGE COLUMN. Every section below the hero, on every page, sits on it, so left edges always agree. The header and the hero stay on the wider --gutter edge, by the user's choice. A section never sets its own width or side padding: use `.page-col`.
+     --rail is the space kept clear on the left for in-page links. A test checks the edges agree. */
+  --gutter: clamp(18px, 4vw, 48px);
+  --rail: 0px;
+  --page-w: 1120px;
+  --col-left: max(var(--gutter), calc(var(--rail) + var(--gutter)), calc((100vw - var(--page-w)) / 2));
+  --col-w: min(var(--page-w), calc(100vw - var(--col-left) - var(--gutter)));
 }
+@media (min-width: 1100px) { :root { --rail: clamp(84px, 8vw, 150px); } }
 
 /* Browser parts follow the design as well: selected text uses the active theme's color. */
 ::selection { background: var(--accent); color: var(--paper); }

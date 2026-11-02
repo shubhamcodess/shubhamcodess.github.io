@@ -1,30 +1,36 @@
-/* Where every scene of the story stands at a given point of the scroll. A function of the scroll alone, so scrolling back plays it in reverse and a test can freeze any moment. */
+/* Where everything in the story stands at a given point of the scroll. A function of the scroll alone, so scrolling back plays it in reverse and a test can freeze any moment. */
 
 const clamp = (v: number, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v));
 const ease = (t: number) => t * t * (3 - 2 * t);
 
-const ENTER = 0.3, LEAVE = 0.72; // The parts of its slot a scene spends arriving and leaving. Between them it holds, to be read.
-const INK = 0.62; // The part of its slot a scene's drawing takes to draw.
+const ENTER = 0.3, LEAVE = 0.74; // The parts of its slot a scene spends arriving and leaving. Between them it holds, to be read.
 
-export type SceneLook = { opacity: number; blur: number; y: number; scale: number; drift: number; ink: number };
+export type SceneLook = { opacity: number; blur: number; y: number; scale: number; drift: number };
 
-/** One scene's look. `progress` is 0 to 1 through the whole story. `approach` is 0 to 1 as the section comes up the screen, which is when the first scene draws. The first scene is already there and the last one never leaves. */
-export function sceneLook(progress: number, index: number, count: number, approach = 1): SceneLook {
+/** One scene's look. `progress` is 0 to 1 through the whole story. It comes out of the haze, holds, and goes back in, and a slow camera push runs through all of it so it's never quite still. The first scene is already there and the last one never leaves. */
+export function sceneLook(progress: number, index: number, count: number): SceneLook {
   const t = progress * count - index;
   const arrived = index === 0 ? 1 : ease(clamp(t / ENTER));
   const left = index === count - 1 ? 0 : ease(clamp((t - LEAVE) / (1 - LEAVE)));
-  const opacity = arrived * (1 - left);
+  const through = clamp(index === 0 ? 0.35 + t * 0.65 : t);
   return {
-    opacity,
-    blur: (1 - arrived) * 14 + left * 10, // Out of the haze and back into it, as the hero does.
-    y: (1 - arrived) * 34 - left * 34,
-    scale: 1.045 - arrived * 0.045 - left * 0.025, // A slow camera push through each scene.
-    drift: clamp(t) - 0.5, // Slides the wireframe shadow against the words, for depth.
-    ink: index === 0 ? ease(clamp(approach)) : clamp(t / INK),
+    opacity: arrived * (1 - left),
+    blur: (1 - arrived) * 16 + left * 13,
+    y: (1 - arrived) * 26 - left * 26,
+    scale: 1.012 - through * 0.024 + (1 - arrived) * 0.03,
+    drift: clamp(t) - 0.5, // Slides the title's shadow against its words, for depth.
   };
 }
 
-/** How far the line has drawn. It reaches each batarang just as that scene arrives. */
+export type FrameLook = { opacity: number; blur: number; y: number; scale: number };
+
+/** The whole frame coming out of the haze as the section arrives, and going back as it leaves. `top` and `bottom` are the section's edges on a screen `height` tall. */
+export function frameLook(top: number, bottom: number, height: number): FrameLook {
+  const come = ease(clamp(1 - top / (height * 0.75))), go = ease(clamp((height * 0.9 - bottom) / (height * 0.5)));
+  return { opacity: come * (1 - go), blur: (1 - come) * 18 + go * 14, y: (1 - come) * 34, scale: 1.03 - come * 0.03 };
+}
+
+/** How far the line has drawn. It reaches each stop just as that scene arrives. */
 export const lineProgress = (progress: number, count: number) => (count < 2 ? 1 : clamp((progress * count - ENTER) / (count - 1)));
 
 /** How present the figure at the end of the line is: only once the story has got there. */

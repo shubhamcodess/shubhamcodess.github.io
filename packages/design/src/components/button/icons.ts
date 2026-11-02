@@ -82,11 +82,14 @@ const penRuns = (plans: number[][][]) => {
   });
 };
 
-/** Each stroke of the icon as a main pen line and a fainter second pass, with when the pen draws it, for a button or anywhere else that wants the same pen. */
-export const iconStrokes = (name: IconName, seed: number) => {
-  const plans = ICONS[name] as number[][][], runs = penRuns(plans);
-  return plans.map((plan, i) => ({ main: sketch(plan, seed + i * 7, 0.62), second: sketch(plan, seed + i * 13 + 91, 0.95), ...(runs[i] as { from: number; span: number }) }));
+/** Any plan of strokes as a main pen line and a fainter second pass, with when the pen draws each. `amp` is how far the hand wanders. Anything drawn this way takes the icons' hover. */
+export const planStrokes = (plans: number[][][], seed: number, amp = 1) => {
+  const runs = penRuns(plans);
+  return plans.map((plan, i) => ({ main: sketch(plan, seed + i * 7, 0.62 * amp), second: sketch(plan, seed + i * 13 + 91, 0.95 * amp), ...(runs[i] as { from: number; span: number }) }));
 };
+
+/** Each stroke of the icon as a main pen line and a fainter second pass, with when the pen draws it, for a button or anywhere else that wants the same pen. */
+export const iconStrokes = (name: IconName, seed: number) => planStrokes(ICONS[name] as number[][][], seed);
 
 /** Every sketched icon's name. */
 export const ICON_NAMES = Object.keys(ICONS) as IconName[];

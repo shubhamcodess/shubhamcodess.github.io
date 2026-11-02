@@ -2,7 +2,7 @@ import type { CSSProperties, ElementType, AnchorHTMLAttributes, HTMLAttributes, 
 import { iconStrokes, type IconName } from "./icons";
 import { PressLatch } from "./press";
 
-export { ICON_NAMES, iconStrokes, sketch } from "./icons";
+export { ICON_NAMES, iconStrokes, planStrokes, sketch } from "./icons";
 
 export type { IconName };
 import type { ButtonStyle } from "./options";

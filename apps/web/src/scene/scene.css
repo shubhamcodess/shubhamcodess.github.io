@@ -17,7 +17,7 @@ html, body { height: 100%; overflow: hidden; }
 .hero {
   --name: clamp(42px, min(7vw, 13.5svh), 118px);
   min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; overflow-x: clip;
-  padding: calc(var(--header-h) + 24px) clamp(18px, 4vw, 48px) clamp(24px, 13svh, 150px);
+  padding: calc(var(--header-h) + 24px) var(--gutter) clamp(24px, 13svh, 150px);
 }
 /* The plate: slightly turned, hinged on its left edge, and following the pointer a little. All measures come from the name. */
 .hero-plate {
@@ -109,7 +109,7 @@ html, body { height: 100%; overflow: hidden; }
 }
 
 /* No bar: the items stand alone as buttons, with the city running behind them. */
-.site-header { position: fixed; z-index: 10; top: 0; left: 0; right: 0; height: var(--header-h); display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(18px, 4vw, 48px); }
+.site-header { position: fixed; z-index: 10; top: 0; left: 0; right: 0; height: var(--header-h); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--gutter); }
 [data-face="fog"] .site-header { --bp-face: color-mix(in srgb, var(--sky-1) 58%, transparent); --bp-face-filter: blur(5px); }
 [data-face="mist"] .site-header { --bp-face: color-mix(in srgb, var(--sky-1) 82%, transparent); --bp-face-filter: blur(12px); }
 

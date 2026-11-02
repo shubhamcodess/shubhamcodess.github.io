@@ -40,6 +40,12 @@ for (const [width, height] of WIDTHS) {
       const drawn = hero ? hero.getContext("2d").getImageData(0, 0, hero.width, hero.height).data.some((v, i) => i % 4 === 3 && v > 0) : false;
       return { drawn, scroll: document.documentElement.scrollWidth > limit || (page ? page.scrollWidth > page.clientWidth : false), wide: wide ? wide.tagName + "." + wide.className : null };
     });
+    // Every section below the hero hangs off one left edge. Measured here because it only goes wrong at some widths.
+    const edges = await page.evaluate(() => [...new Set([".kicker", ".sec-title"].flatMap((q) => [...document.querySelectorAll(q)]).map((el) => {
+      const box = el.getBoundingClientRect();
+      return Math.round(box.left / 3) * 3; // Within a hair: the hero's plate is turned slightly.
+    }))]);
+    if (edges.length > 1) failures.push(`${width}x${height} ${path}: left edges differ: ${edges.join(", ")}`);
     const ok = overflow.drawn && !overflow.scroll && !overflow.wide && !errors.length;
     if (!ok) failures.push(`${width}x${height} ${path}: ${JSON.stringify(overflow)} ${errors.join("; ")}`);
     console.log(`${ok ? "ok  " : "FAIL"} ${String(width).padStart(4)}x${height}  ${path}`);

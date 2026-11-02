@@ -1,7 +1,9 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { currentScene, figurePresence, lineProgress, sceneLook, sceneTarget } from "../apps/web/src/scene/story-motion";
+import { currentScene, figurePresence, frameLook, lineProgress, sceneLook, sceneTarget } from "../apps/web/src/scene/story-motion";
+import { TOOL_LOGOS } from "../apps/web/src/scene/tool-logos";
+import { TOOLS } from "../packages/content/src/schema";
 import { site } from "../content/site";
 
 const COUNT = 4;
@@ -20,14 +22,30 @@ describe("the story's scenes", () => {
       expect(look.blur).toBe(0);
     }
   });
+  it("keeps moving while it holds", () => {
+    expect(sceneLook(1.35 / COUNT, 1, COUNT).scale).not.toBe(sceneLook(1.65 / COUNT, 1, COUNT).scale);
+  });
+  it("blurs on the way in and the way out", () => {
+    expect(sceneLook(1.05 / COUNT, 1, COUNT).blur).toBeGreaterThan(5);
+    expect(sceneLook(1.95 / COUNT, 1, COUNT).blur).toBeGreaterThan(5);
+  });
   it("never shows two scenes fully at once", () => {
     for (let p = 0; p <= 1; p += 0.002) {
       const shown = [0, 1, 2, 3].map((i) => sceneLook(p, i, COUNT).opacity);
       expect(shown.filter((o) => o > 0.5).length).toBeLessThanOrEqual(1);
     }
   });
-  it("is the same on the way back", () => {
-    expect(sceneLook(0.37, 1, COUNT)).toEqual(sceneLook(0.37, 1, COUNT));
+});
+
+describe("the frame", () => {
+  it("comes out of the haze as the section arrives, and is sharp once pinned", () => {
+    expect(frameLook(900, 5000, 900).opacity).toBe(0);
+    expect(frameLook(900, 5000, 900).blur).toBeGreaterThan(10);
+    expect(frameLook(0, 4000, 900)).toMatchObject({ opacity: 1, blur: 0 });
+  });
+  it("goes back into it as the section leaves", () => {
+    expect(frameLook(-4000, 900, 900).opacity).toBe(1);
+    expect(frameLook(-4600, 300, 900).opacity).toBe(0);
   });
 });
 
@@ -57,10 +75,18 @@ describe("the jump points", () => {
   });
 });
 
-describe("the story's styles", () => {
-  it("doesn't reuse the name of a theme color for its own numbers", () => {
-    const css = readFileSync(new URL("../apps/web/src/scene/sections.css", import.meta.url), "utf8");
-    expect(css).not.toMatch(/\.story \{[^}]*--line:/);
+describe("the section's rules", () => {
+  const scss = readFileSync(new URL("../apps/web/src/scene/sections.css", import.meta.url), "utf8");
+  it("only the page column sets a section's width", () => {
+    expect(scss).not.toMatch(/\.(sec|story)[^{]*\{[^}]*max-width/);
+    expect(scss).not.toMatch(/\.story \{[^}]*--line:/);
+  });
+  it("starts with words on the line and uses batarangs after, so the line has no other years", () => {
+    expect(site.story.scenes[0]?.stop.kind).toBe("text");
+    for (const scene of site.story.scenes.slice(1)) expect(scene.stop.kind).toBe("batarang");
+  });
+  it("has a logo for every tool", () => {
+    for (const tool of TOOLS) expect(TOOL_LOGOS[tool].plan.length).toBeGreaterThan(0);
   });
 });
 
@@ -70,8 +96,8 @@ describe("the story's words", () => {
     expect(site.story.scenes.at(-1)?.label).toBe("Now");
     expect(site.story.scenes.at(-1)?.title).toContain("Full Stack Developer");
   });
-  it("carries no years, by the user's choice", () => {
-    expect(all.match(/\b(19|20)\d\d\b/g)).toBeNull();
+  it("carries one year only: the first stop", () => {
+    expect(all.match(/\b(19|20)\d\d\b/g)).toEqual(["2020"]);
   });
   it("names IBM, and no client or internal system", () => {
     expect(all).toContain("ibm");
