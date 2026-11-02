@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { Button, type ButtonProps } from "@portfolio/design/button";
+import { Button, SketchIcon, type ButtonProps } from "@portfolio/design/button";
 
 export type MenuLink = { label: string; href: string; external?: boolean };
 
@@ -26,7 +26,10 @@ export function HeaderMenu({ label, links, ...button }: { label: ReactNode; link
         <ul id={id} className="header-menu-list">
           {links.map((l) => (
             <li key={l.href}>
-              <a href={l.href} onClick={() => setOpen(false)} {...(l.external ? { target: "_blank", rel: "noopener" } : {})}>{l.label}</a>
+              <a href={l.href} onClick={() => setOpen(false)} {...(l.external ? { target: "_blank", rel: "noopener" } : {})}>
+                {l.label}
+                {l.external && <><SketchIcon name="arrowOut" className="header-menu-out" /><span className="sr-only"> (opens in a new tab)</span></>}
+              </a>
             </li>
           ))}
         </ul>

@@ -16,6 +16,8 @@ export type ButtonProps = HTMLAttributes<HTMLElement> & Pick<AnchorHTMLAttribute
   /** Leave it out to inherit the site-wide default (a data attribute on the page's root), or set it for this use. */
   textHover?: ButtonStyle["textHover"];
   icon?: IconName;
+  /** A small second icon after the label, such as an arrow for a link that leaves the site. */
+  iconEnd?: IconName;
   /** Your own icon, in place of a sketched one. Give an aria-label if the button has no text. */
   glyph?: ReactNode;
   /** With an href it's a link, otherwise a button. */
@@ -45,7 +47,7 @@ export function SketchIcon({ name, className }: { name: IconName; className?: st
   );
 }
 
-export function Button({ variant = "primary", size = "md", texture = "hatch", shadow = "br", hover = "none", press = "warp", sway = "off", face, iconHover, textHover, icon, glyph, href, as, disabled, type = "button", className, children, ...rest }: ButtonProps) {
+export function Button({ variant = "primary", size = "md", texture = "hatch", shadow = "br", hover = "none", press = "warp", sway = "off", face, iconHover, textHover, icon, iconEnd, glyph, href, as, disabled, type = "button", className, children, ...rest }: ButtonProps) {
   const Element: ElementType = href ? (as ?? "a") : "button";
   // A disabled link has no href, so it can't be followed, and says so to screen readers.
   const behaviour = href
@@ -76,6 +78,7 @@ export function Button({ variant = "primary", size = "md", texture = "hatch", sh
         <span className="bp-frame" />
         {glyph ?? (icon && <SketchIcon name={icon} />)}
         {children != null && <span className="bp-label">{children}</span>}
+        {iconEnd && <SketchIcon name={iconEnd} className="bp-icon-end" />}
       </span>
     </Element>
   );

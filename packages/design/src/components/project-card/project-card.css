@@ -59,4 +59,11 @@
   .pc[data-layout="horizontal"] .pc-title { font-size:clamp(28px, 4.4cqi, 38px); }
   .pc[data-layout="horizontal"] .pc-actions { margin-top:auto; }
 }
+/* The whole card is one link, so its arrow redraws for the whole card, not only when the pointer is on the arrow. */
+@media (hover:hover) and (prefers-reduced-motion:no-preference) {
+  .pc:is(:hover, :has(.pc-main:focus-visible)) .pc-go > g {
+    --bp-lift:var(--bp-lift-to, 1); --bp-pen:1;
+    transition:--bp-lift var(--dur-press) var(--ease-soft), --bp-pen var(--dur-icon) linear var(--dur-press);
+  }
+}
 @media (prefers-reduced-motion:reduce) { .pc, .pc * { transition-duration:.01s !important; animation:none !important; } }

@@ -5,12 +5,12 @@ import type { ProjectSummary } from "@portfolio/content";
 import { site } from "@portfolio/site";
 import { ProjectStage } from "./ProjectStage";
 
-const ICONS: Partial<Record<ProjectSummary["links"][number]["kind"], IconName>> = { site: "arrow" };
+const ICONS: Record<ProjectSummary["links"][number]["kind"], IconName> = { site: "browser", code: "github", feed: "rss", package: "npm" };
 
 /** A project's links, the same on its card and its page. */
 export function ProjectLinks({ project }: { project: ProjectSummary }) {
   return project.links.map((l) => (
-    <Button key={l.href} {...site.headerButton} href={l.href} target="_blank" rel="noopener" variant="secondary" size="sm" icon={ICONS[l.kind]}>{l.label}</Button>
+    <Button key={l.href} {...site.headerButton} href={l.href} target="_blank" rel="noopener" variant="secondary" size="sm" icon={ICONS[l.kind]} iconEnd="arrowOut">{l.label}<span className="sr-only"> (opens in a new tab)</span></Button>
   ));
 }
 

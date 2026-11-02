@@ -25,7 +25,7 @@ export function Shipped() {
         ))}
       </div>
       <div className="sec-more rv" data-layer="b" style={{ "--i": 7 } as CSSProperties}>
-        <Button {...site.headerButton} as={Link} href={seeAll.href} variant="primary" size="md" icon="folder">{seeAll.label}</Button>
+        <Button {...site.headerButton} as={Link} href={seeAll.href} variant="primary" size="md" icon="arrow">{seeAll.label}</Button>
       </div>
     </section>
   );

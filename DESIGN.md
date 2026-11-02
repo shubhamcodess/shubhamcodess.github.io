@@ -143,7 +143,8 @@ Prototype: `prototypes/06-project-card`, with its detail page at `projects/every
 
 - **Parts:** frame, wireframe shadow, texture, stage (drafting plate with a live drawing), meta line, title with arrow, one description, up to three links.
 - **Click:** the whole card opens `/projects/<slug>`. Links sit above it and go straight to the site, code or feed. Private projects have no links.
-- **Hover:** overshoot 6px to 9px, texture rises 18% to 34%, shadow slides out 9px over .8s, arrow moves 5px, and the drawing leans slowly towards the pointer. The card doesn't sway, because shaking a large surface is jarring.
+- **Link icons:** a link that leaves the site opens in a new tab and has a tilted arrow, plus an icon for what it is: browser window for a site, GitHub for code, RSS for a feed, npm for a package. A link within the site has a straight arrow.
+- **Hover:** overshoot 6px to 9px, texture rises 18% to 34%, shadow slides out 9px over .8s, arrow moves 5px and redraws, and the drawing leans slowly towards the pointer. The card doesn't sway, because shaking a large surface is jarring.
 - **Keyboard focus:** dashed amber line around the frame.
 - **Over the cave:** use Frost (62% base tint, 4px blur).
 - **Layouts:** stacked for the grid, and side by side for a featured project.

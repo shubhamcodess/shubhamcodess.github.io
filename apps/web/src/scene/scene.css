@@ -90,6 +90,8 @@ html, body { height: 100%; overflow: hidden; }
 .header-menu-list::before { inset: 0 -6px; border-block: 1px solid var(--line); }
 .header-menu-list::after { inset: -6px 0; border-inline: 1px solid var(--line); }
 .header-menu-list a { display: flex; align-items: center; min-height: 44px; padding: 0 12px; color: var(--ink); font: 500 calc(var(--size) * .88)/1 var(--label); letter-spacing: var(--track); text-transform: uppercase; text-decoration: none; transition: background-color var(--dur-small-part) var(--ease-soft); }
+.header-menu-list a { justify-content: space-between; gap: 14px; }
+.header-menu-out { width: 12px; height: 12px; }
 .header-menu-list a:hover { background: color-mix(in srgb, var(--line) 10%, transparent); }
 .header-menu-list a:focus-visible { outline: 1.5px dashed var(--accent); outline-offset: -3px; }
 .header-narrow { display: none; }

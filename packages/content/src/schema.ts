@@ -86,7 +86,7 @@ export const projectSchema = z
     order: z.number().int().nonnegative(),
     private: z.boolean(),
     mount: z.enum(["path", "subdomain"]).default("path"),
-    links: z.array(z.strictObject({ label: z.string().min(1), href: url, kind: z.enum(["site", "code", "feed"]) })).max(3),
+    links: z.array(z.strictObject({ label: z.string().min(1), href: url, kind: z.enum(["site", "code", "feed", "package"]) })).max(3),
   })
   .refine((p) => !p.private || p.links.length === 0, { message: "Private projects have no links", path: ["links"] });
 /** The short version, for cards. Everything in it comes from the file's frontmatter. */
