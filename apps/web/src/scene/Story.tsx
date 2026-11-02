@@ -24,13 +24,19 @@ const Pen = ({ strokes }: { strokes: ReturnType<typeof planStrokes> }) => stroke
 
 /* Where it started and what it is now, told as scenes. Words, tools and whether it has a frame are all in `story` in content/site.ts. */
 export function Story() {
-  const { kicker, pace, frame, figure, scenes } = site.story;
+  const { kicker, title, pace, frame, figure, scenes } = site.story;
   const titles = scenes.map((scene) => scene.title);
   const stops = scenes.slice(1);
   return (
     <StoryStage id="story" count={scenes.length} pace={pace} titles={titles}>
+      <header className="story-head page-col">
+        <p className="kicker">{kicker}</p>
+        <h2 className="sec-title">
+          <span className="ln"><span className="rv" style={{ "--i": 1 } as CSSProperties}>{title[0]}</span></span>
+          <span className="ln"><span className="rv dim" style={{ "--i": 2 } as CSSProperties}>{title[1]}</span></span>
+        </h2>
+      </header>
       <div className="story-stage page-col">
-        <p className="kicker story-kicker">{kicker}</p>
         <div className="pc story-frame" data-frame={frame ? "on" : "off"} data-figure-ceiling>
           {frame && <SheetFrame face={false} />}
           <div className="story-strip">

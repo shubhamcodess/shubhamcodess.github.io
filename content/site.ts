@@ -28,7 +28,8 @@ const config = {
     seeAll: { label: "See all my builds", href: "/projects/" },
   },
   story: {
-    kicker: "How I got here",
+    kicker: "Experience",
+    title: ["How I got here.", "Four roles, all at IBM."],
     pace: 1.05,
     frame: true, // false takes the blueprint frame away; the words stay on the same column.
     figure: { anchor: 0.94, face: "left", minHeight: 22, maxHeight: 46, clearance: 6 },

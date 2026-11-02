@@ -77,6 +77,7 @@ The Dark mode colors above are from the prototypes and aren't final.
 ## Page layout
 - **One column.** Every section below the hero, on every page, sits on `--col-left` and `--col-w` (`.page-col`, tokens in `tokens.css`). At most 1480px wide; on wide screens it centers, below that it starts after the rail and keeps half a rail clear on the right. No section sets its own width or side padding.
 - **The header and the hero stay on `--gutter`,** the wider edge, by the user's choice.
+- **Rhythm:** every section has `--sec-pad` above and below, and `--sec-gap` between its heading and its content. Every section opens the same way: kicker on a dimension line, two-tone heading, then content.
 - **The rail:** from 1100px wide, the column keeps space clear on its left for in-page links, later.
 - `pnpm responsive` fails if the sections' left edges differ at any width.
 
@@ -150,6 +151,7 @@ A small Batman at the end of the role's dimension line, as an easter egg, built 
 
 ### Story: Draft, for the user's eye
 Experience, told as a film. All content and whether it has a frame are `story` in `content/site.ts`, under a strict type. The code is `apps/web/src/scene/Story.tsx`, `StoryStage.tsx`, `story-motion.ts` and `tool-logos.ts`. Prototype: `prototypes/22-story-log`.
+- **Heading:** kicker and two-tone heading scroll by like any section's; only the stage below them pins, centered below the header.
 - **Stage:** it holds the screen while the scroll plays one scene at a time, in place. Each scene blurs out of the haze with a slow camera push, holds to be read, and blurs away. The whole frame comes out of the haze as the section arrives, and goes back as it leaves. It's a function of the scroll alone.
 - **Frame:** `frame: true` puts the scenes on a clear drawn sheet: not opaque, with the texture rising from below only, as on a button. Its frame and hover are the project card's own (`SheetFrame`). `frame: false` removes it, and the words stay on the column.
 - **Scene:** a strip naming the sheet, then label, big line, role on a dimension line, one sentence, the log, a figure, and the tools.

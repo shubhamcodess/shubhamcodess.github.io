@@ -70,6 +70,7 @@ export const siteSchema = z
     /** Where it started and what it is now, as scenes the scroll plays through. Every word must be true, and clients stay unnamed. */
     story: z.strictObject({
       kicker: z.string().min(1),
+      title: z.tuple([z.string().min(1), z.string().min(1)]),
       /** Screens of scrolling per scene. */
       pace: z.number().min(0.4).max(2),
       /** The blueprint frame around the scenes. The section works with it on or off. */

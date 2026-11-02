@@ -33,6 +33,9 @@
   --gutter: clamp(18px, 4vw, 48px);
   --rail: 0px;
   --page-w: 1480px;
+  /* Section rhythm: the same space above and below every section, and between a section's heading and its content. */
+  --sec-pad: clamp(56px, 9svh, 112px);
+  --sec-gap: clamp(36px, 6svh, 64px);
   --col-left: max(var(--gutter), calc(var(--rail) + var(--gutter)), calc((100vw - var(--page-w)) / 2));
   --col-w: min(var(--page-w), calc(100vw - var(--col-left) - var(--gutter) - var(--rail) * .5)); /* The right keeps half a rail too, so the column doesn't crowd the scroll thumb. */
 }

@@ -19,11 +19,12 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
     const marks = [...story.querySelectorAll<HTMLElement>("[data-mark]")];
     const sheet = story.querySelector<HTMLElement>("[data-sheet]"), strip = story.querySelector<HTMLElement>("[data-strip]");
 
-    let raf = 0, on = false, lastHere = -1;
+    // Where the stage pins (px from the top), its place in the section, and how much scroll the film takes.
+    let raf = 0, on = false, lastHere = -1, pinTop = 0, stageAt = 0, film = 0;
     const clear = () => {
       on = false; lastHere = -1;
       delete story.dataset.cine;
-      for (const name of ["--story-length", "--story-drawn", "--now"]) story.style.removeProperty(name);
+      for (const name of ["--story-drawn", "--now", "--stage-top", "height"]) story.style.removeProperty(name);
       for (const el of [...scenes, frame, track]) el?.removeAttribute("style");
       for (const mark of marks) { delete mark.dataset.state; mark.removeAttribute("aria-current"); }
       if (sheet) sheet.textContent = pad(1);
@@ -32,9 +33,10 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
     const draw = () => {
       raf = 0;
       if (!on) return;
-      const box = story.getBoundingClientRect(), travel = box.height - innerHeight;
-      if (box.bottom < -60 || box.top > innerHeight + 60 || travel <= 0) return; // Off screen: nothing to do.
-      const progress = Math.min(1, Math.max(0, -box.top / travel));
+      const box = story.getBoundingClientRect();
+      if (box.bottom < -60 || box.top > innerHeight + 60 || film <= 0) return; // Off screen: nothing to do.
+      const ahead = box.top + stageAt - pinTop; // How far the stage still is from pinning.
+      const progress = Math.min(1, Math.max(0, -ahead / film));
       scenes.forEach((scene, i) => {
         const look = sceneLook(progress, i, count), hidden = look.opacity < 0.004;
         scene.style.opacity = look.opacity.toFixed(3);
@@ -44,7 +46,7 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
         scene.style.transform = `translate3d(0,${look.y.toFixed(2)}px,0) scale(${look.scale.toFixed(4)})`;
         scene.style.setProperty("--drift", look.drift.toFixed(3));
       });
-      const whole = frameLook(box.top, box.bottom, innerHeight);
+      const whole = frameLook(ahead, ahead + film + innerHeight, innerHeight);
       for (const el of [frame, track]) {
         if (!el) continue;
         el.style.opacity = whole.opacity.toFixed(3);
@@ -64,15 +66,19 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
       });
     };
     const onScroll = () => { raf ||= requestAnimationFrame(draw); };
-    /** Pins only if the whole stage fits on this screen. */
+    /** Pins only if the whole stage fits below the header. It pins centered there, so the section above sits at the usual distance. */
     const fit = () => {
       if (!stage) return;
       clear();
       story.dataset.cine = "";
-      story.style.setProperty("--story-length", String(count * pace));
-      const css = getComputedStyle(stage);
-      const used = [...stage.children].reduce((sum, el) => { const c = getComputedStyle(el); return sum + (el as HTMLElement).offsetHeight + parseFloat(c.marginTop) + parseFloat(c.marginBottom); }, parseFloat(css.paddingTop) + parseFloat(css.paddingBottom));
-      if (used > stage.clientHeight) { clear(); return; }
+      const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 0;
+      const h = stage.offsetHeight, room = innerHeight - header;
+      if (h > room - 12) { clear(); return; }
+      pinTop = header + (room - h) / 2;
+      stageAt = stage.offsetTop;
+      film = innerHeight * count * pace;
+      story.style.setProperty("--stage-top", `${pinTop}px`);
+      story.style.height = `${stageAt + h + film + parseFloat(getComputedStyle(story).paddingBottom)}px`;
       on = true;
       draw();
     };
@@ -81,8 +87,8 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
       if (!mark || !on) return;
       e.preventDefault();
       e.stopPropagation(); // This is a place in the film, not a place on the page.
-      const box = story.getBoundingClientRect(), travel = box.height - innerHeight;
-      page.scrollTo({ top: page.scrollTop + box.top + travel * sceneTarget(Number(mark.dataset.mark), count), behavior: "smooth" });
+      const ahead = story.getBoundingClientRect().top + stageAt - pinTop;
+      page.scrollTo({ top: page.scrollTop + ahead + film * sceneTarget(Number(mark.dataset.mark), count), behavior: "smooth" });
     };
 
     fit();

@@ -2,7 +2,7 @@
 
 /* Sections below the hero: a numbered label, a two-tone heading, then the content. */
 .page-col { margin-left: var(--col-left); width: var(--col-w); }
-.sec { position: relative; margin-left: var(--col-left); width: var(--col-w); padding-block: clamp(70px, 13svh, 150px); }
+.sec { position: relative; margin-left: var(--col-left); width: var(--col-w); padding-block: var(--sec-pad); }
 /* Pages other than home leave the city its first part of the screen, as the hero does. */
 .sub-page { padding-top: clamp(190px, 46svh, 460px); }
 .kicker { display: flex; align-items: center; gap: 9px; margin: 0 0 18px; font: 500 12px/1 var(--font-note); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
@@ -14,7 +14,7 @@
 .dim { color: color-mix(in srgb, var(--ink) 58%, transparent); }
 
 /* Every shape comes from config: how many columns, and how many each card takes. A phone always stacks. */
-.project-grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: clamp(30px, 4vw, 52px); margin-top: clamp(36px, 6svh, 64px); }
+.project-grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: clamp(30px, 4vw, 52px); margin-top: var(--sec-gap); }
 .project-cell { display: grid; min-width: 0; grid-column: span var(--span); }
 @media (max-width: 820px) {
   .project-grid { grid-template-columns: minmax(0, 1fr); }
@@ -53,8 +53,9 @@
 .project-stack { max-width: 68ch; margin: 28px 0 0; padding-top: 14px; border-top: 1px solid var(--line-rest); font: 500 12px/1.5 var(--font-note); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); }
 
 /* The story. As plain text first: every scene in order inside the frame. The script turns that into a film if motion is welcome and it fits the screen. */
-.story { --story-drawn: 1; --now: 1; position: relative; padding-block: clamp(50px, 9svh, 110px); }
-.story-kicker { margin-bottom: clamp(10px, 1.6svh, 14px); }
+.story { --story-drawn: 1; --now: 1; position: relative; padding-block: var(--sec-pad); }
+/* Kicker and heading scroll by like any section's; only the stage below them pins. */
+.story-stage { margin-top: var(--sec-gap); }
 /* The sheet is clear, like a button: the frame's texture rises from below and the page shows through. Its hover is the project card's. */
 .pc.story-frame { height: auto; }
 .story-strip { display: grid; grid-template-columns: auto 1fr auto; align-items: center; border-bottom: 1px solid var(--line-rest); font: 500 11px/1 var(--font-note); letter-spacing: .06em; text-transform: uppercase; }
@@ -139,9 +140,7 @@
 }
 
 /* The film: the stage holds the screen while the scroll plays it. The frame is only as big as what's in it, in the middle of what's left. */
-.story[data-cine] { height: calc(100svh * (1 + var(--story-length, 3))); padding-block: 0; }
-.story[data-cine] .story-stage { position: sticky; top: 0; display: flex; flex-direction: column; justify-content: center; height: 100svh; padding-top: calc(var(--header-h) - 6px); padding-bottom: clamp(10px, 2svh, 22px); }
-.story[data-cine] .story-kicker { flex: none; }
+.story[data-cine] .story-stage { position: sticky; top: var(--stage-top, 0px); display: flex; flex-direction: column; } /* The script sets the section's height and centers the stage below the header. */
 .story[data-cine] .story-frame { flex: none; will-change: opacity, filter, transform; }
 .story[data-cine] .story-window { display: grid; overflow: hidden; }
 .story[data-cine] .story-window > li { grid-area: 1 / 1; border-top: 0; will-change: opacity, filter, transform; }
