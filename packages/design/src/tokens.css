@@ -32,9 +32,9 @@
      --rail is the space kept clear on the left for in-page links. A test checks the edges agree. */
   --gutter: clamp(18px, 4vw, 48px);
   --rail: 0px;
-  --page-w: 1120px;
+  --page-w: 1480px;
   --col-left: max(var(--gutter), calc(var(--rail) + var(--gutter)), calc((100vw - var(--page-w)) / 2));
-  --col-w: min(var(--page-w), calc(100vw - var(--col-left) - var(--gutter)));
+  --col-w: min(var(--page-w), calc(100vw - var(--col-left) - var(--gutter) - var(--rail) * .5)); /* The right keeps half a rail too, so the column doesn't crowd the scroll thumb. */
 }
 @media (min-width: 1100px) { :root { --rail: clamp(84px, 8vw, 150px); } }
 

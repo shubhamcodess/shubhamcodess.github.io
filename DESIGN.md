@@ -75,7 +75,7 @@ The Dark mode colors above are from the prototypes and aren't final.
 **Frost** (blurring what's behind a surface) is the one allowed glass effect, and only where a component sits over the busy cave or floats in the header. It should look like smoke in the air, not like a glass panel.
 
 ## Page layout
-- **One column.** Every section below the hero, on every page, sits on `--col-left` and `--col-w` (`.page-col`, tokens in `tokens.css`). It's at most 1120px wide. No section sets its own width or side padding.
+- **One column.** Every section below the hero, on every page, sits on `--col-left` and `--col-w` (`.page-col`, tokens in `tokens.css`). At most 1480px wide; on wide screens it centers, below that it starts after the rail and keeps half a rail clear on the right. No section sets its own width or side padding.
 - **The header and the hero stay on `--gutter`,** the wider edge, by the user's choice.
 - **The rail:** from 1100px wide, the column keeps space clear on its left for in-page links, later.
 - `pnpm responsive` fails if the sections' left edges differ at any width.
