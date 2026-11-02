@@ -8,11 +8,13 @@ import { site } from "@portfolio/site";
 import { BackgroundPanel } from "@/dev/BackgroundPanel";
 import { Batarang } from "@/scene/Batarang";
 import { GothamScene } from "@/scene/GothamScene";
+import { ScrollReset } from "@/scene/ScrollReset";
 import { SiteHeader } from "@/scene/SiteHeader";
 import "@portfolio/design/tokens.css";
 import "@portfolio/design/environment.css";
 import "./globals.css";
 import "@/scene/scene.css";
+import "@/scene/sections.css";
 
 // Self-hosted at build time. One family everywhere: the page, the buttons and the lettering in the art.
 const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
@@ -65,6 +67,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <GothamScene />
         <main id="page" className="page" tabIndex={-1}><div className="page-inner">{children}</div></main>
         {site.flags.motion && <ScrollMotion target="#page" content=".page-inner" lerp={site.scroll.lerp} lag={site.scroll.lag} parallax={site.scroll.parallax} />}
+        <ScrollReset />
         <SiteHeader />
         <ScrollThumb target="#page"><Batarang /></ScrollThumb>
         <div className="environment-vignette" aria-hidden="true" />

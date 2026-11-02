@@ -48,6 +48,17 @@ export const siteSchema = z
     }),
     /** Smooth scroll, content layers and reveals. Set `lerp` to 0 for native scrolling. */
     scroll: z.strictObject({ lerp: z.number().min(0).max(1), lag: z.number().min(0).max(3), parallax: z.number().min(0).max(3), reveal: z.enum(["none", "fade", "rise", "mask"]), hide: z.boolean() }),
+    /** The section after the hero. Rank is the order of `items`. `span` is how many of the `columns` a card takes. */
+    shipped: z.strictObject({
+      kicker: z.string().min(1),
+      title: z.tuple([z.string().min(1), z.string().min(1)]),
+      columns: z.number().int().min(1).max(3),
+      items: z.array(z.strictObject({ slug: z.string().min(1), layout: z.enum(["vertical", "horizontal"]), span: z.number().int().min(1).max(3) })).min(1).max(6),
+      seeAll: z.strictObject({ label: z.string().min(1), href: z.string().min(1) }),
+    }).refine((s) => s.items.every((i) => i.span <= s.columns), { message: "A card can't span more than the columns", path: ["items"] })
+      .refine((s) => new Set(s.items.map((i) => i.slug)).size === s.items.length, { message: "A project can only be featured once", path: ["items"] }),
+    /** The /projects page. */
+    projects: z.strictObject({ kicker: z.string().min(1), title: z.tuple([z.string().min(1), z.string().min(1)]), description: z.string().min(1), columns: z.number().int().min(1).max(3) }),
     socials: z.array(z.strictObject({ label: z.string().min(1), href: url })),
     /** Sections hidden until there is something to show. */
     flags: z.strictObject({ writing: z.boolean(), photography: z.boolean(), ask: z.boolean(), motion: z.boolean(), backgroundPanel: z.boolean() }),
@@ -63,15 +74,22 @@ export const projectSchema = z
     stack: z.array(z.string().min(1)).min(1),
     status: z.string().min(1),
     since: z.string().regex(/^\d{4}-\d{2}$/),
+    /** A status that's running right now gets the small breathing square. */
+    live: z.boolean(),
     /** Which live drawing this project shows. Built with the blueprint-motion-graphic skill. */
     stage: z.string().min(1).nullable(),
+    /** Real numbers, shown on the plate when there's no drawing yet. */
+    facts: z.array(z.strictObject({ value: z.string().min(1).max(10), label: z.string().min(1).max(40) })).min(1).max(3),
     /** hidden is left off the site, but the repo is public, so never put secrets in a hidden project. */
-    visibility: z.enum(["featured", "listed", "hidden"]),
-    size: z.enum(["big", "small"]),
+    visibility: z.enum(["listed", "hidden"]),
+    /** Rank on the /projects page. The homepage's picks and rank are `shipped` in content/site.ts. */
     order: z.number().int().nonnegative(),
     private: z.boolean(),
     mount: z.enum(["path", "subdomain"]).default("path"),
     links: z.array(z.strictObject({ label: z.string().min(1), href: url, kind: z.enum(["site", "code", "feed"]) })).max(3),
   })
   .refine((p) => !p.private || p.links.length === 0, { message: "Private projects have no links", path: ["links"] });
-export type Project = z.output<typeof projectSchema> & { html: string };
+/** The short version, for cards. Everything in it comes from the file's frontmatter. */
+export type ProjectSummary = z.output<typeof projectSchema>;
+/** The full version, for its page: the same file, plus its body. */
+export type Project = ProjectSummary & { html: string };

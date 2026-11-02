@@ -5,9 +5,13 @@ line: A daily tech newspaper with no human editor. It reads 45+ sources overnigh
 stack: [Python, GitHub Actions, GitHub Pages, Claude Code routines]
 status: Live, daily 08:30 IST
 since: "2026-09"
+live: true
 stage: newsletter-fold
-visibility: featured
-size: big
+facts:
+  - { value: "45+", label: "Sources read overnight" }
+  - { value: "08:30", label: "Live daily, IST" }
+  - { value: "0", label: "Servers" }
+visibility: listed
 order: 1
 private: false
 links:

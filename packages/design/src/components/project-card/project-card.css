@@ -1,0 +1,62 @@
+/* The project card. Colors come only from tokens. Its layout follows its own width, so it fits any grid. */
+@property --pc-os { syntax:"<length>"; inherits:true; initial-value:6px; }
+@property --pc-rise { syntax:"<percentage>"; inherits:true; initial-value:18%; }
+@property --pc-l { syntax:"<color>"; inherits:true; initial-value:transparent; }
+
+.pc-box { container-type:inline-size; min-width:0; }
+.pc { --off:9px; --pc-os:6px; --pc-rise:18%; position:relative; isolation:isolate; display:flex; flex-direction:column; height:100%; color:var(--ink); }
+.pc-face { position:absolute; inset:0; z-index:-1; pointer-events:none; background:color-mix(in srgb, var(--paper) 62%, transparent); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); }
+
+.pc-frame { position:absolute; inset:calc(var(--pc-os) * -1); pointer-events:none; --pc-l:var(--line-rest); transition:--pc-os .7s var(--ease-soft), --pc-l .7s var(--ease-soft);
+  background:
+    linear-gradient(var(--pc-l),var(--pc-l)) 0 var(--pc-os) / 100% 1px no-repeat,
+    linear-gradient(var(--pc-l),var(--pc-l)) 0 calc(100% - var(--pc-os)) / 100% 1px no-repeat,
+    linear-gradient(var(--pc-l),var(--pc-l)) var(--pc-os) 0 / 1px 100% no-repeat,
+    linear-gradient(var(--pc-l),var(--pc-l)) calc(100% - var(--pc-os)) 0 / 1px 100% no-repeat; }
+/* Same texture as the button: it rises from the foot and is gone long before the text. */
+.pc-tex { position:absolute; inset:0; pointer-events:none; opacity:.22; transition:--pc-rise 1s var(--ease-soft); background:repeating-linear-gradient(135deg, var(--line) 0 1px, transparent 1px 6px);
+  -webkit-mask-image:linear-gradient(to top, #000 0, transparent var(--pc-rise)); mask-image:linear-gradient(to top, #000 0, transparent var(--pc-rise)); }
+/* Same shadow as the button: the far two edges and the lines joining the corners. */
+.pc-ghost { position:absolute; inset:0; pointer-events:none; opacity:0; transition:transform var(--dur-texture) var(--ease-soft), opacity var(--dur-frame); }
+.pc-ghost i { position:absolute; display:block; background:var(--line); }
+.pc-ghost .g-h { left:0; bottom:-.5px; width:100%; height:1px; }
+.pc-ghost .g-v { top:0; right:-.5px; height:100%; width:1px; }
+.pc-link { position:absolute; width:calc(var(--off) * 1.4142); height:1px; background:var(--line); transform-origin:0 50%; pointer-events:none; opacity:0; transform:rotate(45deg) scaleX(0); transition:transform var(--dur-texture) var(--ease-soft), opacity var(--dur-frame); }
+.pc-link.l1 { left:100%; top:100%; }
+.pc-link.l2 { left:100%; top:0; }
+.pc-link.l3 { left:0; top:100%; }
+
+@media (hover:hover) { .pc:hover { --pc-os:9px; --pc-rise:34%; } .pc:hover .pc-frame { --pc-l:var(--line); } .pc:hover .pc-ghost { opacity:.5; transform:translate(var(--off), var(--off)); } .pc:hover .pc-link { opacity:.38; transform:rotate(45deg) scaleX(1); } .pc:hover .pc-go { transform:translateX(5px); } }
+.pc:has(.pc-main:focus-visible) { --pc-os:9px; --pc-rise:34%; }
+.pc:has(.pc-main:focus-visible) .pc-frame { --pc-l:var(--line); }
+.pc:has(.pc-main:focus-visible) .pc-frame::after { content:""; position:absolute; inset:-5px; border:1.5px dashed var(--accent); }
+
+/* The drafting plate. */
+.pc-stage { position:relative; flex:none; aspect-ratio:16/10.6; overflow:hidden; background:linear-gradient(color-mix(in srgb, var(--line) 9%, transparent) 1px, transparent 1px) 0 0 / 22px 22px, linear-gradient(90deg, color-mix(in srgb, var(--line) 9%, transparent) 1px, transparent 1px) 0 0 / 22px 22px; }
+.pc-stage::after { content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:var(--line-rest); }
+.pc-stage canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.pc-reg { position:absolute; z-index:1; width:9px; height:9px; pointer-events:none; opacity:.5; background:linear-gradient(var(--line),var(--line)) 50% 50% / 100% 1px no-repeat, linear-gradient(var(--line),var(--line)) 50% 50% / 1px 100% no-repeat; }
+.pc-reg.tl { left:9px; top:9px; }
+.pc-reg.tr { right:9px; top:9px; }
+
+.pc-sheet { display:flex; flex-direction:column; flex:1; gap:10px; padding:18px 20px 22px; }
+.pc-meta { display:flex; flex-wrap:wrap; gap:3px 14px; margin:0; font:500 11px/1.4 var(--font-note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
+.pc-meta .live::before { content:""; display:inline-block; width:6px; height:6px; margin-right:6px; vertical-align:1px; background:var(--accent); animation:pc-breathe 3.6s ease-in-out infinite; }
+@keyframes pc-breathe { 50% { opacity:.3; } }
+.pc-title { display:flex; align-items:center; justify-content:space-between; gap:14px; margin:2px 0 0; font:500 clamp(23px, 7.4cqi, 28px)/1.12 var(--sans); letter-spacing:-.025em; }
+.pc-main { color:inherit; text-decoration:none; outline:none; }
+.pc-main::after { content:""; position:absolute; inset:0; }
+.pc .pc-go { flex:none; width:22px; height:22px; transition:transform var(--dur-frame) var(--ease-soft); }
+.pc-line { margin:0; color:var(--ink-2); font-size:15.5px; line-height:1.5; text-wrap:pretty; }
+.pc-actions { position:relative; z-index:2; display:flex; flex-wrap:wrap; gap:16px 18px; margin-top:auto; padding-top:18px; }
+
+/* Beside the text, once there's room. On a narrow card it stays stacked, whatever was asked for. */
+@container (min-width:620px) {
+  .pc[data-layout="horizontal"] { flex-direction:row; }
+  .pc[data-layout="horizontal"] .pc-stage { flex:1.2; aspect-ratio:auto; min-height:340px; }
+  .pc[data-layout="horizontal"] .pc-stage::after { left:auto; right:0; top:0; width:1px; height:auto; }
+  .pc[data-layout="horizontal"] .pc-sheet { flex:1; min-width:0; padding:26px; }
+  .pc[data-layout="horizontal"] .pc-title { font-size:clamp(28px, 4.4cqi, 38px); }
+  .pc[data-layout="horizontal"] .pc-actions { margin-top:auto; }
+}
+@media (prefers-reduced-motion:reduce) { .pc, .pc * { transition-duration:.01s !important; animation:none !important; } }

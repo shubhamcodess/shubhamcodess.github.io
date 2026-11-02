@@ -1,4 +1,4 @@
-import type { CSSProperties, ElementType, HTMLAttributes, ReactNode } from "react";
+import type { CSSProperties, ElementType, AnchorHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { iconStrokes, type IconName } from "./icons";
 import { PressLatch } from "./press";
 
@@ -8,7 +8,7 @@ export type { IconName };
 import type { ButtonStyle } from "./options";
 import "./button.css";
 
-export type ButtonProps = HTMLAttributes<HTMLElement> & Partial<Omit<ButtonStyle, "face" | "iconHover" | "textHover">> & {
+export type ButtonProps = HTMLAttributes<HTMLElement> & Pick<AnchorHTMLAttributes<HTMLAnchorElement>, "target" | "rel"> & Partial<Omit<ButtonStyle, "face" | "iconHover" | "textHover">> & {
   /** Leave it out to inherit --bp-face from around the button, or set it for this use. */
   face?: ButtonStyle["face"];
   /** Leave it out to inherit the site-wide default (a data attribute on the page's root), or set it for this use. */

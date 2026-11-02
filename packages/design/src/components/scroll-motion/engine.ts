@@ -53,7 +53,7 @@ export function startScrollMotion(page: HTMLElement, content: HTMLElement, optio
   measure();
 
   const lenis = reduced || !options.lerp ? null : new Lenis({
-    wrapper: page, content, eventsTarget: document.documentElement, lerp: options.lerp, smoothWheel: true, syncTouch: false, autoRaf: false,
+    wrapper: page, content, eventsTarget: document.documentElement, lerp: options.lerp, smoothWheel: true, syncTouch: false, autoRaf: false, anchors: true,
     // Things that scroll on their own keep their wheel.
     prevent: (node: HTMLElement) => !!node.closest?.("[data-scroll-own]"),
   });

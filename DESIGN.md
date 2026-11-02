@@ -149,7 +149,7 @@ Prototype: `prototypes/06-project-card`, with its detail page at `projects/every
 - **Layouts:** stacked for the grid, and side by side for a featured project.
 - **To the detail page:** the stage grows into the page header using a view transition.
 
-**Production layout, agreed but not designed yet:** a mixed-size grid rather than equal cards, with the featured project biggest and a rhythm of one big, one small.
+**Production layout:** a configurable grid of 1 to 3 columns, where each card sets its shape and span. The card chooses side by side from its own width, so it fits any cell. A plate with no drawing shows the project's real numbers as a schedule. Component: `@portfolio/design/project-card`.
 
 ### Live drawings
 Each project's drawing is built with the `blueprint-motion-graphic` skill, which holds their rules and code contract.
@@ -159,7 +159,7 @@ Each project's drawing is built with the `blueprint-motion-graphic` skill, which
 | EverythingTech | A folded newspaper opens, the pen writes the front page, it's checked, it folds away | Approved |
 
 ### Project page: Draft
-A mock exists in `prototypes/06-project-card/projects/everything-tech/`: back link, stage, meta, title, lead paragraph, links, numbered steps, what was built, stack. Its layout hasn't been reviewed on its own.
+Back link, then meta, title, description and links beside a frosted plate, then the write-up and stack. Pages other than home start lower, leaving the city the top of the screen.
 
 ## Not decided yet
 

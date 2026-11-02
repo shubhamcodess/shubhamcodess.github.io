@@ -15,6 +15,18 @@ const config = {
     cta: { label: "What I shipped recently", href: "/#projects" },
     tilt: { y: 5, x: 2, reach: 3.5 }, // Degrees at rest, and how far the pointer moves it.
   },
+  shipped: {
+    kicker: "01 / Shipped",
+    title: ["What I shipped recently.", "Two I'd show you first."],
+    columns: 3,
+    // Rank is this order. Try: both vertical with columns 2 and span 1, both horizontal with columns 1, or three cards with columns 3 and span 1.
+    items: [
+      { slug: "everything-tech", layout: "horizontal", span: 2 },
+      { slug: "mcp-token-optimizer", layout: "vertical", span: 1 },
+    ],
+    seeAll: { label: "See all my builds", href: "/projects/" },
+  },
+  projects: { kicker: "All projects", title: ["All my builds.", "The list is still growing."], description: "Projects by Shubham Prakash.", columns: 2 },
   scroll: { lerp: 0.14, lag: 1, parallax: 1, reveal: "mask", hide: true },
   buttonMotion: { iconHover: "trace", textHover: "grow" },
   socials: [
