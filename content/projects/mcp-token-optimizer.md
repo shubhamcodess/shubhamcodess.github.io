@@ -6,7 +6,7 @@ stack: [TypeScript, Node.js, MCP, Ollama, TOON]
 status: Open source, Apache-2.0
 live: false
 since: "2026-09"
-stage: null
+stage: token-flow
 facts:
   - { value: "98.4%", label: "Tokens saved, CI build log" }
   - { value: "64.5%", label: "Tokens saved, GitHub issue list" }

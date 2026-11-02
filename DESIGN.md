@@ -157,6 +157,7 @@ Each project's drawing is built with the `blueprint-motion-graphic` skill, which
 | Project | Drawing | Status |
 |---|---|---|
 | EverythingTech | A folded newspaper opens, the pen writes the front page, it's checked, it folds away | Approved |
+| mcp-token-optimizer | A response leaves the server, noise drops out at mto, and a shorter one reaches the agent, with dimension lines to scale | Draft |
 
 ### Project page: Draft
 Back link, then meta, title, description and links beside a frosted plate, then the write-up and stack. Pages other than home start lower, leaving the city the top of the screen.

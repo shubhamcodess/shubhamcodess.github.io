@@ -7,6 +7,7 @@ type Mountable = { mount(canvas: HTMLCanvasElement, options: { pointerHost: Elem
 /* Each drawing is its own file, loaded only when its project is on the page. Add new ones here, built with the blueprint-motion-graphic skill. */
 const DRAWINGS: Record<string, () => Promise<Mountable>> = {
   "newsletter-fold": () => import("./drawings/newsletter-fold").then((m) => m.NewsletterFold as Mountable),
+  "token-flow": () => import("./drawings/token-flow").then((m) => m.TokenFlow as Mountable),
 };
 
 export type StageFact = { value: string; label: string };

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Flow</title>
+<style>
+  :root { --paper:#f2eddf; --ink:#131c1f; --ink-2:#4a5456; --line:#22292b; --line-rest:rgba(34,41,43,.68); --accent:#8a4a22; --font-note:ui-monospace,Menlo,monospace; }
+  body { margin:0; padding:24px; display:grid; gap:24px; background:#dcd9c9; }
+  canvas { display:block; width:100%; background:var(--paper); }
+  #card { max-width:370px; aspect-ratio:16/10.6; }
+  #wide { max-width:760px; aspect-ratio:16/9; }
+</style>
+</head>
+<body>
+<canvas id="card"></canvas>
+<canvas id="wide"></canvas>
+<script type="module">
+  import { TokenFlow } from "./token-flow.js";
+  for (const id of ["card", "wide"]) TokenFlow.mount(document.getElementById(id), { pointerHost: document.getElementById(id), plays: "always" });
+</script>
+</body>
+</html>

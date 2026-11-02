@@ -19,6 +19,7 @@ Keep every prototype here. Don't overwrite or delete one: new ideas get a new nu
 | `14-gotham-skyline` | `13` plus a few low buildings in front of Wayne Tower for depth, on wide screens. Replaced by `15`. |
 | `15-gotham-skyline` | `14` plus a faint, upside-down GOTHAM in outline, far behind the skyline. This went into the real site, and it's also the first version of night. |
 | `16-scroll-motion` | `15` plus snappy smooth scroll, content that follows a beat late with parallax, reveal and hide on scroll, and a font option. Taken from studying tryalan.ai, see `docs/references/tryalan-motion.md`. Only the EverythingTech section has real content. |
+| `17-mcp-token-flow` | The mcp-token-optimizer drawing: a response passes through mto, noise drops out, and a shorter one reaches the agent. The production copy is in `apps/web/src/scene/drawings/`. |
 | `09-nav-skyline` | Traditional top nav with the daytime inverted skyline, three ways of fitting them together: Street, Apart and Behind. On scroll it keeps a bar, or drops it for floating buttons with a Clear, Fog or Mist face. Logo, links and page text are placeholders. |
 
 The four themes in `08-daylight-themes` are now in the real site, in `packages/design/src/palettes.ts`.
