@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { Button } from "@portfolio/design/button";
 import { RotatingText } from "@portfolio/design/rotating-text";
 import { site } from "@portfolio/site";
+import { BatRunner } from "./bat-runner/BatRunner";
 import { HeroStage } from "./HeroStage";
 
 const at = (i: number) => ({ "--i": i }) as CSSProperties;
@@ -11,7 +12,7 @@ const emerges = (i: number) => ((i * 37 + 11) % 15) / 15;
 
 /* A drawing's title block. Who you are, a dimension line carrying your role, then what you build and where to go next, all held to the width of the name. */
 export function Hero() {
-  const { lead, role, hook, cta, tilt } = site.hero;
+  const { lead, role, hook, cta, tilt, runner } = site.hero;
   const letters = [...site.name];
   const copy = letters.map((c, i) => <span key={i} className="hero-char">{c === " " ? " " : c}</span>);
   return (
@@ -32,7 +33,9 @@ export function Hero() {
         <p className="hero-role rv" data-layer="b" style={at(6)}>
           <i className="hero-dim hero-dim-short" />
           <span><RotatingText lines={role.lines} suffix={role.rest} seed={role.seed} minMs={role.minMs} maxMs={role.maxMs} fit /></span>
-          <i className="hero-dim hero-dim-long" />
+          {runner.enabled
+            ? <BatRunner speed={runner.speed} idleMs={runner.idleMs} motion={site.flags.motion} />
+            : <span className="hero-track"><i className="hero-dim hero-dim-long" /></span>}
         </p>
         <div className="hero-row">
           <p className="hero-hook rv" data-layer="c" style={at(8)}>

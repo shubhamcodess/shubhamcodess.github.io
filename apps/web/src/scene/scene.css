@@ -41,10 +41,13 @@ html, body { height: 100%; overflow: hidden; }
 .hero-role { display: flex; align-items: center; gap: 10px; margin: calc(var(--name) * .2) 0 0; font: 500 clamp(11.5px, .95vw, 14px)/1.3 var(--font-note); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; color: var(--ink); }
 .hero-dim { position: relative; display: block; height: 1px; background: var(--line-rest); transform-origin: 0 50%; }
 .hero-dim-short { flex: none; width: 16px; }
-.hero-dim-long { flex: 1; min-width: 12px; }
+.hero-track { position: relative; flex: 1; min-width: 12px; height: 1px; }
+.hero-dim-long { width: 100%; }
 .hero-dim-short::before, .hero-dim-long::after { content: ""; position: absolute; top: -5px; width: 1px; height: 11px; background: var(--accent); }
 .hero-dim-short::before { left: 0; }
 .hero-dim-long::after { right: 0; }
+/* A small figure on the line. The box is wider than he is, for the cape behind him; the script slides it along and keeps his feet on the line. */
+.hero-bat { --bat: clamp(26px, calc(var(--name) * .34), 38px); position: absolute; left: 0; bottom: calc(var(--bat) * -.15); width: calc(var(--bat) * 4); height: calc(var(--bat) * 1.25); color: var(--accent); pointer-events: none; }
 
 /* What you build and where next, on one row, each end held to the name's edges. */
 .hero-row { display: flex; align-items: center; justify-content: space-between; gap: clamp(18px, 3vw, 44px); margin-top: clamp(16px, calc(var(--name) * .24), 28px); }
@@ -61,6 +64,7 @@ html, body { height: 100%; overflow: hidden; }
   .hero-role > span { animation: hero-focus 1s var(--ease-expo) 1.1s backwards; }
   .hero-hook { animation: hero-focus 1.1s var(--ease-expo) 1.3s backwards; }
   .hero-cta { animation: hero-focus 1.1s var(--ease-expo) 1.45s backwards; }
+  .hero-bat { animation: hero-focus 1.2s var(--ease-expo) 1.7s backwards; }
   .hero-plate { transition: none; }
   /* Scrolling away blurs back into the haze, the same way it arrived. */
   .hero[data-state="above"] .rv { filter: blur(10px); }
