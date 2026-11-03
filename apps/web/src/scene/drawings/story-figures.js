@@ -362,16 +362,28 @@ export const StoryFigures = (() => {
       ctx.strokeStyle = colors.ink; ctx.globalAlpha = .85 * alpha; ctx.lineWidth = 1; ctx.strokeRect(x - 9, y - 12, 18, 24);
       ctx.strokeStyle = colors.line; ctx.globalAlpha = .7 * alpha; for (let q = 0; q < 4; q++) pen(3000 + k * 5 + q, [x - 5, y - 6 + q * 4.5], [x + 5 - (q === 3 ? 4 : 0), y - 6 + q * 4.5], alpha, .7);
     };
-    const slab = (k, alpha, live) => {
+    const slab = (k, alpha, live, reveal = alpha) => { // how much of each edge is drawn, and how strongly, are separate
       const [x, y] = at(k), { w, d, t } = P4;
       const top = [[x - w, y - d], [x + w, y - d], [x + w, y + d], [x - w, y + d]].map(([px, py]) => iso(px, py, 0));
       const low = [[x + w, y - d], [x + w, y + d], [x - w, y + d]].map(([px, py]) => iso(px, py, -t));
       ctx.strokeStyle = live ? colors.ink : colors.line; ctx.globalAlpha = .85 * alpha;
-      for (let e = 0; e < 4; e++) pen(3100 + k * 10 + e, top[e], top[(e + 1) % 4], alpha, 1.1);
-      pen(3105 + k * 10, top[1], low[0], alpha); pen(3106 + k * 10, top[2], low[1], alpha); pen(3107 + k * 10, top[3], low[2], alpha);
-      pen(3108 + k * 10, low[0], low[1], alpha); pen(3109 + k * 10, low[1], low[2], alpha);
+      for (let e = 0; e < 4; e++) pen(3100 + k * 10 + e, top[e], top[(e + 1) % 4], reveal, 1.1);
+      pen(3105 + k * 10, top[1], low[0], reveal); pen(3106 + k * 10, top[2], low[1], reveal); pen(3107 + k * 10, top[3], low[2], reveal);
+      pen(3108 + k * 10, low[0], low[1], reveal); pen(3109 + k * 10, low[1], low[2], reveal);
     };
     const names = (k, lines, alpha) => { const [lx, ly] = iso(at(k)[0] - P4.w, at(k)[1] - P4.d, 0); lines.forEach(([text, color], q) => label(text, lx, ly - 13 - (lines.length - 1 - q) * 13, color, .95 * alpha)); };
+
+    // The plan first: as soon as the sheet is in focus the whole layout is there as faint dashed construction lines, and the scroll builds over it.
+    const plan = span(g.intro, .1, .6);
+    if (plan > 0) {
+      ctx.setLineDash([3, 5]);
+      [[2, T4.code], [1, T4.ai], [0, T4.auto]].forEach(([k, r]) => { if (ph(r) < 1) slab(k, .45 * (1 - ph(r)), false, plan); });
+      ctx.strokeStyle = colors.line; ctx.lineWidth = .8;
+      if (ph(T4.row1) < 1) { ctx.globalAlpha = .4 * plan; ctx.beginPath(); ctx.moveTo(xL, y1); ctx.lineTo(xR, y1); ctx.stroke(); }
+      const l0 = iso(at(0)[0] + P4.w, at(0)[1] + P4.d, -P4.t);
+      if (ph(T4.row3) < 1) { ctx.globalAlpha = .4 * plan; ctx.beginPath(); ctx.moveTo(l0[0], y3); ctx.lineTo(l0[0] + 6.2 * s, y3); ctx.stroke(); }
+      ctx.setLineDash([]);
+    }
 
     // Top row: the in-portal, the line, and two design docs.
     const r1 = ph(T4.row1), docs = ph(T4.docs);

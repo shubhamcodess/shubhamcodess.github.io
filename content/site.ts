@@ -76,7 +76,7 @@ const config = {
       },
       {
         stop: { kind: "now" }, // Shows the current year.
-        label: "Now", title: "Cloud Full Stack Developer.", role: "IBM", figure: "Every layer, with agents on top",
+        label: "Now", title: "Owning it, end to end.", role: "Cloud Full Stack Developer, IBM", figure: "Requirement to production, one flow",
         line: "Products from requirement to production: backend, frontend, schema and deployment. And AI agents for enterprise applications.",
         log: [
           { verb: "designed", what: "a reusable CI/CD framework, adopted across 10+ repositories" },
