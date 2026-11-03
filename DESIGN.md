@@ -219,7 +219,7 @@ Touch devices (`hover: none` and `pointer: coarse`) get the same look with less 
 - **Scrolling is native.** No smooth scroll, and no layer follows a finger from script, because it would land a frame apart from the browser's scroll. Reveals still run.
 - **No masks on what moves.** The page is cut at the header instead of fading there, and the city has no foot fade.
 - **No animated blur.** Things fade and move instead. No frosted header buttons.
-- **The city:** five layers at most, with fog and rays painted into the layer behind them. The browser moves the layers and fades the city, through animations tied to the scroll, so they stay in step with a finger. Browsers without that fall back to script. Dust, bats and drawings run at 30 frames a second.
+- **The city:** five layers at most, with fog and rays painted into the layer behind them. The browser moves the layers and fades the city, through animations tied to the scroll, so they stay in step with a finger. The bats and the scroll thumb move the same way, and dust stays put. Script never places anything from the scroll position on touch, except inside the pinned film. Browsers without scroll-linked animations fall back to script. Dust, bats and drawings run at 30 frames a second.
 - **Load near the screen.** A drawing's code loads as it nears the screen. Only a story chapter on screen holds canvas memory.
 - **Per-frame values go on what reads them,** never on a whole section, where an inherited variable restyles everything inside.
 

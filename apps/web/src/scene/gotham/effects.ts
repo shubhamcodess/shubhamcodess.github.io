@@ -54,3 +54,6 @@ const bats: Effect = (r, { phone }) => {
 };
 
 export const EFFECTS: Record<string, Effect> = { dust, bats };
+
+/** How fast an effect rises with the city, where the browser moves it (see `link` in the engine). Dust stays where it is. */
+export const EFFECT_RISE: Record<string, number> = { bats: 0.3 };

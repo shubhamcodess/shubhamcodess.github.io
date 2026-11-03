@@ -44,11 +44,13 @@ expect(!drawingLoaded("REVIEW · FEEDBACK LOOP"), "the story's figures loaded be
 // The city is tied to the scroll in the browser, or it jitters against a finger. Same for how it fades.
 const tied = () => page.evaluate(() => {
   const moved = (el) => el.getAnimations().some((a) => a.timeline instanceof ScrollTimeline && a.timeline.source === document.getElementById("page"));
-  return { layers: [...document.querySelectorAll("#scene .g-layer")].every(moved), fade: moved(document.getElementById("scene")), inline: [...document.querySelectorAll("#scene .g-layer")].filter((el) => el.style.transform).length };
+  return { layers: [...document.querySelectorAll("#scene .g-layer")].every(moved), fade: moved(document.getElementById("scene")), bats: moved(document.querySelector("#scene .g-rising")), thumb: moved(document.querySelector(".scroll-thumb")), inline: [...document.querySelectorAll("#scene .g-layer")].filter((el) => el.style.transform).length };
 });
 const first = await tied();
 expect(first.layers, "a city layer isn't tied to the scroll in the browser");
 expect(first.fade, "the city's fade isn't tied to the scroll in the browser");
+expect(first.bats, "the bats aren't tied to the scroll in the browser");
+expect(first.thumb, "the scroll thumb isn't tied to the scroll in the browser");
 expect(first.inline === 0, `${first.inline} city layers are moved from script`);
 const where = () => page.evaluate(() => getComputedStyle(document.querySelector("#scene .g-hero")).transform);
 const rest = await where();

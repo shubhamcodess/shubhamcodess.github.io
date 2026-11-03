@@ -10,6 +10,8 @@ export type ScrollThumbProps = {
   children: ReactNode;
 };
 
+declare const ScrollTimeline: { new (options: { source: Element }): AnimationTimeline };
+
 const SCROLL_KEYS = new Set(["PageUp", "PageDown", "Home", "End", "ArrowUp", "ArrowDown"]);
 
 /**
@@ -28,9 +30,18 @@ export function ScrollThumb({ target, children }: ScrollThumbProps) {
     const start = () => (parseFloat(getComputedStyle(el).getPropertyValue("--scroll-thumb-top")) || 0) + GAP - margin();
     const room = () => window.innerHeight - GAP - el.offsetHeight + margin() - start();
     const range = () => scroller.scrollHeight - scroller.clientHeight;
+    // A finger scrolls on the browser's own thread, so on touch the browser moves the thumb too, or it would jump behind the scroll.
+    const tied = matchMedia("(hover: none) and (pointer: coarse)").matches && "ScrollTimeline" in window;
+    let track = "", travel: Animation | undefined;
     const place = () => {
       el.hidden = range() <= 1;
-      if (!el.hidden) el.style.transform = `translateY(${start() + (scroller.scrollTop / Math.max(1, range())) * room()}px)`;
+      if (el.hidden) return;
+      if (!tied) { el.style.transform = `translateY(${start() + (scroller.scrollTop / Math.max(1, range())) * room()}px)`; return; }
+      const from = start(), to = from + room();
+      if (track === `${from} ${to}`) return;
+      track = `${from} ${to}`;
+      travel?.cancel();
+      travel = el.animate([{ transform: `translateY(${from}px)` }, { transform: `translateY(${to}px)` }], { timeline: new ScrollTimeline({ source: scroller }), fill: "both" });
     };
     // Scrolling keys should work wherever focus is, except inside something that uses them itself.
     const keys = (e: KeyboardEvent) => {
@@ -53,7 +64,7 @@ export function ScrollThumb({ target, children }: ScrollThumbProps) {
     window.addEventListener("resize", place);
     if (scroller.firstElementChild) sized.observe(scroller.firstElementChild);
     new MutationObserver(place).observe(scroller, { childList: true, subtree: true });
-    scroller.addEventListener("scroll", place, { passive: true });
+    if (!tied) scroller.addEventListener("scroll", place, { passive: true });
     el.addEventListener("pointerdown", down);
     el.addEventListener("pointerup", up);
     el.addEventListener("pointercancel", up);
@@ -62,6 +73,7 @@ export function ScrollThumb({ target, children }: ScrollThumbProps) {
     place();
     return () => {
       sized.disconnect();
+      travel?.cancel();
       window.removeEventListener("resize", place);
       scroller.removeEventListener("scroll", place);
       window.removeEventListener("keydown", keys);

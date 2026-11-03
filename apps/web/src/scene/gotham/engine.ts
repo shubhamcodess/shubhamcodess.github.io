@@ -5,7 +5,7 @@ import { SCENE_OPTIONS } from "@portfolio/content/scene-options";
 import type { Palette } from "@portfolio/design/palettes";
 import { building, MIX_BAG, type Ctx, type Style } from "./buildings";
 import { alpha, hex, mix, seeded } from "./color";
-import { EFFECTS, type Effect, type EffectFrame } from "./effects";
+import { EFFECT_RISE, EFFECTS, type Effect, type EffectFrame } from "./effects";
 import { LANDMARKS, type Landmark, type LandmarkContext, type LayerId } from "./landmarks";
 
 type Option<K extends keyof typeof SCENE_OPTIONS> = (typeof SCENE_OPTIONS)[K][number];
@@ -71,9 +71,16 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
   const stage = document.createElement("div"); stage.className = "g-stage"; host.append(stage);
   const live = document.createElement("canvas"); live.className = "g-live"; host.append(live);
   const liveX = live.getContext("2d") as Ctx;
+  // What rises with the scroll gets its own canvas where the browser moves things, and is drawn as if the page were still, so it can't lag behind a finger.
+  const rising = linked ? document.createElement("canvas") : null;
+  if (rising) { rising.className = "g-live g-rising"; host.append(rising); }
+  const risingX = rising?.getContext("2d") as Ctx | undefined;
+  let risingSeen = true;
+  const seen = new IntersectionObserver(([e]) => { risingSeen = !!e?.isIntersecting; });
+  if (rising) seen.observe(rising);
   let { palette, font, settings } = read();
   let nodes: Node[] = [], W = 0, H = 0, overscan = 0, D = 1, liveD = 1;
-  let effects: ReturnType<Effect>[] = [], shownFade = "";
+  let effects: { draw: ReturnType<Effect>; rises: boolean }[] = [], shownFade = "";
   const cam = { x: 0, y: 0, tx: 0, ty: 0, scroll: 0 };
 
   function fit(n: Node) {
@@ -199,7 +206,7 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
   function paintAll() {
     nodes.forEach((n) => n.paint(n));
     const r = seeded(77), setup = { phone: W < PHONE };
-    effects = Object.values(EFFECTS).map((e) => e(r, setup));
+    effects = Object.entries(EFFECTS).map(([name, e]) => ({ draw: e(r, setup), rises: !!EFFECT_RISE[name] }));
     if (linked) link(); else place(performance.now() / 1000);
     drawLive(reduced ? 8 : performance.now() / 1000);
   }
@@ -207,8 +214,8 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
   function resize() {
     W = host.clientWidth; H = host.clientHeight;
     if (!W || !H) return;
-    D = Math.min(devicePixelRatio || 1, touch ? 1.25 : W < PHONE ? 1.5 : 1.75); liveD = Math.min(devicePixelRatio || 1, 1.5); overscan = Math.round(W * 0.1);
-    live.width = W * liveD; live.height = H * liveD;
+    D = Math.min(devicePixelRatio || 1, touch ? 1.25 : W < PHONE ? 1.5 : 1.75); liveD = Math.min(devicePixelRatio || 1, touch ? 1.25 : 1.5); overscan = Math.round(W * 0.1);
+    for (const c of rising ? [live, rising] : [live]) { c.width = W * liveD; c.height = H * liveD; }
     buildNodes(); paintAll();
   }
 
@@ -249,6 +256,7 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
     const along = (frame: (city: number) => Keyframe) => stops.map((s) => ({ ...frame(cityScroll(scroller, s)), offset: s / max }));
     links = [
       host.animate(along((city) => ({ opacity: fadeAt(city).toFixed(3) })), { timeline, fill: "both" }),
+      ...(rising ? [rising.animate(along((city) => ({ transform: `translate3d(0,${(-city * (EFFECT_RISE.bats ?? 0)).toFixed(1)}px,0)` })), { timeline, fill: "both" })] : []),
       ...nodes.map((n) => n.el.animate(along((city) => ({ transform: poseAt(n, city, 0).transform })), { timeline, fill: "both" })),
     ];
   }
@@ -256,7 +264,11 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
   function drawLive(t: number) {
     liveX.setTransform(liveD, 0, 0, liveD, 0, 0); liveX.clearRect(0, 0, W, H);
     const f: EffectFrame = { W, H, t, wind: 1 + Math.sin(t * 0.07) * 0.4, scroll: cam.scroll, cam: cam.x, amount: settings.dust, palette };
-    for (const draw of effects) draw(liveX, f);
+    if (risingX) { risingX.setTransform(liveD, 0, 0, liveD, 0, 0); risingX.clearRect(0, 0, W, H); }
+    for (const { draw, rises } of effects) {
+      if (rises && risingX) { if (risingSeen) draw(risingX, f); }
+      else draw(liveX, f);
+    }
   }
 
   let raf = 0, last = 0, drawn = 0;
@@ -265,7 +277,7 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
     const dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now;
     const q = 1 - Math.exp(-dt * 2.4);
     cam.x += (cam.tx - cam.x) * q; cam.y += (cam.ty - cam.y) * q;
-    cam.scroll += (cityScroll(scroller) - cam.scroll) * (1 - Math.exp(-dt * 6));
+    if (!linked) cam.scroll += (cityScroll(scroller) - cam.scroll) * (1 - Math.exp(-dt * 6));
     if (!linked) place(now / 1000);
     if (touch && now - drawn < 28) return;
     drawn = now; drawLive(now / 1000);
@@ -298,7 +310,7 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
     destroy() {
       cancelAnimationFrame(raf); clearTimeout(timer); clearTimeout(linkTimer); sized.disconnect(); lengthened.disconnect(); links.forEach((a) => a.cancel());
       removeEventListener("pointermove", pointer); scroller.removeEventListener("scroll", scrolledStill);
-      stage.remove(); live.remove();
+      seen.disconnect(); stage.remove(); live.remove(); rising?.remove();
     },
   };
 }
