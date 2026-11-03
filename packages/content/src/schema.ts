@@ -9,7 +9,7 @@ export { LOGO_OPTIONS, SCENE_OPTIONS };
 const url = z.url({ protocol: /^https?$/ });
 
 export const LOG_VERBS = ["owned", "migrated", "built", "replaced", "made", "shipped", "led", "designed", "reworked", "turned"] as const;
-export const TOOLS = ["java", "spring", "angular", "react", "typescript", "openshift", "gke", "kubernetes", "github-actions", "azure-ad", "oracle", "rabbitmq", "mcp"] as const;
+export const TOOLS = ["java", "spring", "angular", "nextjs", "typescript", "openshift", "gke", "kubernetes", "github-actions", "azure-ad", "oracle", "rabbitmq", "mcp"] as const;
 export type Tool = (typeof TOOLS)[number];
 
 export const siteSchema = z
@@ -111,7 +111,7 @@ export const siteSchema = z
         /** What was done, one line each. */
         log: z.array(z.strictObject({ verb: z.enum(LOG_VERBS), what: z.string().min(1) })).min(3).max(5),
         /** What it was done with. Each one has a hand-drawn logo. */
-        tools: z.array(z.enum(TOOLS)).min(1).max(6),
+        tools: z.array(z.enum(TOOLS)).min(1).max(7),
       })).min(2).max(6),
     }),
     projects: z.strictObject({ kicker: z.string().min(1), title: z.tuple([z.string().min(1), z.string().min(1)]), description: z.string().min(1), columns: z.number().int().min(1).max(3) }),

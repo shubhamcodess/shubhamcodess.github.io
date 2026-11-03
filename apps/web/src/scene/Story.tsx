@@ -12,7 +12,7 @@ import { TOOL_LOGOS } from "./tool-logos";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 /** How many chapters have their figure drawn. The rest stay marked as empty figures until theirs is built. */
-const DRAWN = 3;
+const DRAWN = 4;
 const toMark = ([x, y]: number[]) => [x! * 15 + 16, y! * 15 + 8];
 
 /* A fine ink batarang for each stop on the line, in the icons' own pen, so it redraws on hover the same way. Its solid shape sits underneath for the stop you're on. */

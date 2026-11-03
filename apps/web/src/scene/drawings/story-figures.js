@@ -340,7 +340,88 @@ export const StoryFigures = (() => {
     }
   }
 
-  const CHAPTERS = [chapterOne, chapterTwo, chapterThree];
+  /* ---------- Chapter 4: everything, assembled ---------- */
+  // The finale. A stack flies together from all sides, foundation first: engineering principles, data, backend, frontend, then AI on top. The Kubernetes frame draws round it, a CI/CD loop starts circling above, and requirements drop in through the loop into the stack.
+  const STACK = [
+    { name: 'ENGINEERING PRINCIPLES', half: 1.1, t: .2, z: 0, from: [0, 0, -.9], base: true },
+    { name: 'DATA · SCHEMA', half: .8, t: .18, z: .42, from: [-1.3, 1.3, .1] },
+    { name: 'JAVA · SPRING · RABBITMQ', half: .8, t: .18, z: .8, from: [1.4, -1.4, .2] },
+    { name: 'NEXT.JS', half: .8, t: .18, z: 1.18, from: [-1.1, 1.1, .6] },
+    { name: 'AI AGENTS · MCP', half: .8, t: .18, z: 1.56, from: [0, 0, 1.1], ai: true },
+  ];
+  const LOOP = { z: 2.75, r: .78 }, FRAME = { half: .94, z0: .32, z1: 1.86 };
+
+  function chapterFour(g) {
+    const { ctx, w: W, h: H, colors, intro, c, time, pen, label } = g;
+    const s = Math.min(W / 9.4, H / 5.9), X0 = W / 2 - .9 * s, Y0 = H / 2 + 1.15 * s;
+    const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
+    const box = boxTool(ctx, iso, pen);
+    const col = X0 + 1.1 * 2 * COS * s + 26; // the label column, past the foundation's right corner
+
+    // The layers: each starts apart as a faint dashed outline, flies in and turns solid as it settles. Foundation first, AI last.
+    STACK.forEach((L, k) => {
+      const fly = ease(span(c, .04 + k * .1, .2 + k * .1)), shown = span(intro, .05 + k * .06, .4 + k * .06);
+      if (!shown) return;
+      const [fx, fy, fz] = L.from, x = fx * (1 - fly), y = fy * (1 - fly), z = L.z + fz * (1 - fly);
+      const landed = fly >= 1, color = L.ai && landed ? colors.accent : colors.ink;
+      box(x - L.half, y - L.half, z, L.half * 2, L.half * 2, L.t, 1600 + k, (landed ? .9 : .35 + .4 * fly) * shown, landed ? color : colors.line, L.base ? .16 : L.ai && landed ? .14 : .05, landed ? null : [4, 4]);
+      // Its name, in the column, with a leader back to its right corner, once it's in place.
+      const named = ease(span(c, .14 + k * .1, .22 + k * .1));
+      if (named > 0) {
+        const [ax, ay] = iso(L.half, -L.half, L.z + L.t / 2);
+        ctx.strokeStyle = colors.line; ctx.globalAlpha = .65 * named; pen(1650 + k, [ax + 3, ay], [col - 5, ay], named, .8);
+        label(L.name, col, ay, L.ai ? colors.accent : L.base ? colors.ink : colors.ink2, .92 * named, 'left');
+      }
+    });
+    // The foundation's note, under its lowest corner.
+    { const n = ease(span(c, .14, .22)); if (n > 0) { const [fx, fy] = iso(1.1, 1.1, 0); label('STANDARDS · REVIEWS · ARCHITECTURE', fx, fy + 16, colors.ink2, .8 * n); } }
+
+    // The platform: a dashed Kubernetes frame drawn round everything above the foundation.
+    const framed = ease(span(c, .6, .7));
+    if (framed > 0) {
+      const { half: f, z0, z1 } = FRAME;
+      box(-f, -f, z0, f * 2, f * 2, (z1 - z0) * framed, 1700, .6, colors.line, 0, [3, 4]);
+      const [lx, ly] = iso(-f, f, (z0 + z1) / 2);
+      label('KUBERNETES', lx - 8, ly - 6, colors.ink2, .9 * framed, 'right');
+      label('ON GKE', lx - 8, ly + 7, colors.ink2, .9 * framed, 'right');
+    }
+
+    // On top, the CI/CD loop: drawn round, then circling with builds, tests and deploys that drop into the stack.
+    const looped = ease(span(c, .68, .78)), running = ease(span(c, .74, .82));
+    if (looped > 0) {
+      const pt = (a) => iso(Math.cos(a) * LOOP.r, Math.sin(a) * LOOP.r, LOOP.z);
+      ctx.strokeStyle = colors.ink; ctx.globalAlpha = .8; ctx.lineWidth = 1;
+      ctx.beginPath(); const n = 64;
+      for (let i = 0; i <= Math.round(n * looped); i++) { const [px, py] = pt((i / n) * Math.PI * 2); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+      ctx.stroke();
+      const [lx, ly] = pt(Math.PI * .75);
+      label('CI/CD', lx - 10, ly - 7, colors.ink, .95 * looped, 'right');
+      label('GITHUB ACTIONS', lx - 10, ly + 6, colors.ink2, .9 * looped, 'right');
+      if (running > 0) {
+        ctx.fillStyle = colors.accent;
+        for (let q = 0; q < 3; q++) { const [px, py] = pt(time * 1.3 + q * (Math.PI * 2 / 3)); ctx.globalAlpha = .9 * running; ctx.fillRect(px - 3, py - 3, 6, 6); }
+        // A deploy dropping from the loop into the top of the stack.
+        const d = (time % 1.6) / 1.6, [ax, ay] = iso(0, 0, LOOP.z), [bx, by] = iso(0, 0, FRAME.z1 - .1);
+        ctx.strokeStyle = colors.line; ctx.globalAlpha = .55 * running; ctx.setLineDash([2, 4]); ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.setLineDash([]);
+        ctx.globalAlpha = .9 * running * Math.sin(Math.PI * d); ctx.fillRect(ax - 2.5, ay + (by - ay) * ease(d) - 2.5, 5, 5);
+      }
+    }
+
+    // Requirements drop in from above, through the loop: small amber cards, one after another, once it's all running.
+    const asks = ease(span(c, .84, .94));
+    if (asks > 0) {
+      for (let q = 0; q < 3; q++) {
+        const u = ((time * .32 + q / 3) % 1), z = LOOP.z + .95 * (1 - ease(u)), x = (q - 1) * .25;
+        const [px, py] = iso(x, -x, z);
+        ctx.strokeStyle = colors.accent; ctx.globalAlpha = asks * Math.sin(Math.PI * u) * .9; ctx.lineWidth = 1;
+        ctx.strokeRect(px - 6, py - 4, 12, 8); ctx.beginPath(); ctx.moveTo(px - 3, py - 1); ctx.lineTo(px + 3, py - 1); ctx.moveTo(px - 3, py + 1.5); ctx.lineTo(px + 1, py + 1.5); ctx.stroke();
+      }
+      const [rx, ry] = iso(0, 0, LOOP.z + .95); // left of where the cards fall
+      label('REQUIREMENTS', rx - .6 * s, ry + 4, colors.accent, .85 * asks, 'right');
+    }
+  }
+
+  const CHAPTERS = [chapterOne, chapterTwo, chapterThree, chapterFour];
 
   /* ---------- Mounting: one canvas per chapter, drawn only while it shows ---------- */
   function mount(canvas, opts) {

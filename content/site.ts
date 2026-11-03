@@ -84,7 +84,7 @@ const config = {
           { verb: "built", what: "a workflow platform with a visual DAG builder and live run monitoring" },
           { verb: "led", what: "the team: PR reviews, code standards, architecture decisions" },
         ],
-        tools: ["java", "react", "kubernetes", "github-actions", "rabbitmq", "mcp"],
+        tools: ["java", "nextjs", "kubernetes", "gke", "github-actions", "rabbitmq", "mcp"],
       },
     ],
   },
