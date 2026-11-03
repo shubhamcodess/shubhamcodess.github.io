@@ -32,8 +32,9 @@ for (const [width, height] of WIDTHS) {
     await page.waitForSelector("#scene .g-hero canvas", { timeout: 5000 }).catch(() => {});
     const overflow = await page.evaluate(() => {
       const limit = document.documentElement.clientWidth;
-      // Decorative art may run past the edge, because it's clipped. Everything else has to fit.
-      const wide = [...document.querySelectorAll("body *")].find((el) => { if (el.closest('[aria-hidden="true"]')) return false; const r = el.getBoundingClientRect(); return r.width > 0 && (r.right > limit + 0.5 || r.left < -0.5); });
+      // Decorative art may run past the edge, because it's clipped, and so may what's inside a row built to swipe sideways. Everything else has to fit.
+      const inSwipeRow = (el) => { for (let up = el.parentElement; up; up = up.parentElement) if (up.id !== "page" && /auto|scroll/.test(getComputedStyle(up).overflowX)) return true; return false; };
+      const wide = [...document.querySelectorAll("body *")].find((el) => { if (el.closest('[aria-hidden="true"]') || inSwipeRow(el)) return false; const r = el.getBoundingClientRect(); return r.width > 0 && (r.right > limit + 0.5 || r.left < -0.5); });
       const page = document.getElementById("page");
       // The scene must actually have drawn something, including Wayne Tower's layer.
       const hero = document.querySelector("#scene .g-hero canvas");

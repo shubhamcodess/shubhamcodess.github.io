@@ -146,7 +146,7 @@
   .story-log { margin-top: calc(16px * var(--g)); }
   .story-log li { padding-block: calc(8px * var(--g)); }
   .story-what { font-size: calc(12.5px * var(--k)); line-height: 1.42; }
-  .story-tools { padding: calc(10px * var(--g)) 20px; }
+  .story-tools { padding: 8px 20px; } /* Never tightens: the row is the same height on every card. */
   .story-fig { min-height: 0; border-left: 0; border-top: 1px solid var(--line-rest); }
   .story-frame[data-frame="off"] .story-fig { border-top: 0; }
   .story-frame[data-frame="on"] .story-text::before { display: none; } /* The figure is between the words and the tools now, so nothing rises to them. */
