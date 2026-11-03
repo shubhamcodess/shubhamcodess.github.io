@@ -227,7 +227,7 @@ Prototype: `prototypes/06-project-card`, with its detail page at `projects/every
 - **Hover:** overshoot 6px to 9px, texture rises 18% to 34%, shadow slides out 9px over .8s, arrow moves 5px and redraws, and the drawing leans slowly towards the pointer. The card doesn't sway, because shaking a large surface is jarring.
 - **Keyboard focus:** dashed amber line around the frame.
 - **Over the cave:** `face: "frost"` (62% base tint, 4px blur) is still available, for when words sit over something busy.
-- **Layouts:** `vertical` for the grid, `horizontal` side by side, and `wide` for a card spanning columns: the drawing across the top, then note and title, then the description on the left and links on the right. A card under 620px always stacks. In a stacked card the plate takes any height the row leaves over.
+- **Layouts:** `vertical` for the grid, `horizontal` side by side, and `wide` for a card spanning columns: the drawing across the top and the words under it, with the links on the last line, level with the card beside it. A card under 620px always stacks. In a stacked card the plate takes any height the row leaves over.
 - **Featured rank:** mcp-token-optimizer is the wide hero, because its drawing is wide; EverythingTech sits beside it stacked, because its newspaper is portrait.
 - **To the detail page:** the stage grows into the page header using a view transition.
 

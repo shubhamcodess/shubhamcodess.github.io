@@ -65,7 +65,9 @@ export const TokenFlow = (() => {
     function face(corners, seed) {
       const p = corners.map((c) => at(...c));
       ctx.beginPath(); p.forEach(([x, y], i) => ctx[i ? 'lineTo' : 'moveTo'](x, y)); ctx.closePath();
-      ctx.fillStyle = colors.paper; ctx.fill();
+      // Hides what's behind it in the drawing, but the page shows through, so it matches any theme.
+      ctx.globalCompositeOperation = 'destination-out'; ctx.fillStyle = '#000'; ctx.fill();
+      ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = .08; ctx.fillStyle = colors.ink; ctx.fill(); ctx.globalAlpha = 1;
       corners.forEach((c, i) => {
         const n = corners[(i + 1) % corners.length];
         seg(c, n, seed + i, 1.1, colors.line, 1);

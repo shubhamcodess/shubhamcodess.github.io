@@ -74,14 +74,11 @@
   .pc[data-layout="horizontal"] .pc-title { font-size:clamp(28px, 4.4cqi, 38px); }
   .pc[data-layout="horizontal"] .pc-actions { margin-top:auto; }
   .pc[data-layout="horizontal"][data-hatch="text"] { --hatch-k:1; }
-  /* Wide: the drawing across the top. Under it the note and title run the full width, then the description on the left and the links on the right. */
+  /* Wide: the drawing across the top and the words under it, with the links on the last line, level with a stacked card's beside it. */
   .pc[data-layout="wide"] { --hatch-k:3.4; }
   .pc[data-layout="wide"] .pc-stage { aspect-ratio:16/6.6; }
-  .pc[data-layout="wide"] .pc-sheet { display:grid; grid-template-columns:minmax(0, 1.45fr) minmax(0, 1fr); gap:8px clamp(24px, 4cqi, 56px); padding:20px 26px 24px; }
-  .pc[data-layout="wide"] .pc-meta, .pc[data-layout="wide"] .pc-title { grid-column:1 / -1; }
+  .pc[data-layout="wide"] .pc-sheet { padding-inline:26px; }
   .pc[data-layout="wide"] .pc-title { justify-content:flex-start; font-size:clamp(28px, 4.4cqi, 38px); }
-  .pc[data-layout="wide"] .pc-actions { align-self:end; justify-content:flex-end; margin:0; padding:0; }
-  .pc[data-layout="wide"] .pc-actions .bp-tip[data-align="center"] { left:auto; right:0; transform:none; } /* The links reach the card's right edge, so a tooltip opens inward. */
 }
 /* The whole card is one link, so its arrow redraws for the whole card, not only when the pointer is on the arrow. */
 @media (hover:hover) and (prefers-reduced-motion:no-preference) {

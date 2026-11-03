@@ -222,7 +222,9 @@ export const NewsletterFold = (() => {
         const front = area > 0;
 
         ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath();
-        ctx.fillStyle = colors.paper; ctx.fill();
+        // The sheet hides what's behind it in the drawing, but the page shows through, so it matches any theme. The same treatment as the story's figures.
+        ctx.globalCompositeOperation = 'destination-out'; ctx.fillStyle = '#000'; ctx.fill();
+        ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = .05; ctx.fillStyle = colors.ink; ctx.fill(); ctx.globalAlpha = 1;
 
         if (front) {
           for (const l of PAGE[q]) {

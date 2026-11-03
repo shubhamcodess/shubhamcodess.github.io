@@ -6,7 +6,7 @@ export const CARD_OPTIONS = {
   plate: ["drafting", "grid", "none"],
   /** Where the frame's rising hatch goes. `text`: only behind the words, never the drawing. `whole`: across the whole card. */
   hatch: ["text", "whole"],
-  /** `vertical`: drawing over words. `horizontal`: side by side. `wide`: a wide drawing over words on the left and links on the right, for a card spanning columns. A narrow card always stacks. */
+  /** `vertical`: drawing over words. `horizontal`: side by side. `wide`: a wide drawing over the words, for a card spanning columns. A narrow card always stacks. */
   layout: ["vertical", "horizontal", "wide"],
 } as const;
 
