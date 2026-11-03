@@ -96,7 +96,7 @@ describe("the story's words", () => {
   const all = JSON.stringify(site.story).toLowerCase();
   it("ends on what the role is now, matching the hero", () => {
     expect(site.story.scenes.at(-1)?.label).toBe("Now");
-    expect(site.story.scenes.at(-1)?.title).toContain("Full Stack Developer");
+    expect(site.story.scenes.at(-1)?.role).toContain(site.hero.role.rest); // the title tells the story; the role line carries the role
   });
   it("carries one year only: the first stop", () => {
     expect(all.match(/\b(19|20)\d\d\b/g)).toEqual(["2020"]);
