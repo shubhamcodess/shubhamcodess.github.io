@@ -95,7 +95,6 @@
 .story-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .story-fig svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .story-fig line { stroke: var(--line-rest); stroke-width: 1; vector-effect: non-scaling-stroke; stroke-dasharray: 3 6; opacity: .45; }
-.story-fig figcaption { position: absolute; left: 14px; bottom: 12px; font: 500 10.5px/1.3 var(--font-note); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); }
 /* What it was done with, along the bottom, each in the same pen as the icons. */
 .story-tools { grid-column: 1 / -1; display: flex; align-items: center; gap: clamp(10px, 1.4vw, 20px); padding: clamp(6px, 1.1svh, 10px) clamp(12px, 1.9vw, 28px); border-top: 1px solid var(--line-rest); }
 .story-tools-label { flex: none; font: 500 10.5px var(--font-note); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }

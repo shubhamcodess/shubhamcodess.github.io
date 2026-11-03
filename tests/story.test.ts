@@ -56,7 +56,7 @@ describe("the line and the figure", () => {
     expect(lineProgress(1, COUNT)).toBe(1);
   });
   it("reaches each stop as its scene arrives", () => {
-    for (let i = 1; i < COUNT; i++) expect(lineProgress((i + 0.3) / COUNT, COUNT)).toBeCloseTo(i / (COUNT - 1), 5);
+    for (let i = 1; i < COUNT; i++) expect(lineProgress(i / COUNT, COUNT)).toBeCloseTo(i / (COUNT - 1), 5);
   });
   it("keeps the figure back until the story reaches now", () => {
     expect(figurePresence(0.5, COUNT)).toBe(0);

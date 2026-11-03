@@ -3,7 +3,7 @@
 const clamp = (v: number, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v));
 const ease = (t: number) => t * t * (3 - 2 * t);
 
-const ENTER = 0.3, LEAVE = 0.74; // The parts of its slot a scene spends arriving and leaving. Between them it holds, to be read.
+const ENTER = 0.3, LEAVE = 0.8; // The parts of its slot a scene spends arriving and leaving. Between them it holds, to be read.
 
 export type SceneLook = { opacity: number; blur: number; y: number; scale: number; drift: number };
 
@@ -30,8 +30,8 @@ export function frameLook(top: number, bottom: number, height: number): FrameLoo
   return { opacity: come * (1 - go), blur: (1 - come) * 18 + go * 14, y: (1 - come) * 34, scale: 1.03 - come * 0.03 };
 }
 
-/** How far the line has drawn. It reaches each stop just as that scene arrives. */
-export const lineProgress = (progress: number, count: number) => (count < 2 ? 1 : clamp((progress * count - ENTER) / (count - 1)));
+/** How far the line has drawn. It reaches each stop as that scene starts to arrive, so a chapter plays out along its own stretch of the line. */
+export const lineProgress = (progress: number, count: number) => (count < 2 ? 1 : clamp((progress * count) / (count - 1)));
 
 /** How present the figure at the end of the line is: only once the story has got there. */
 export const figurePresence = (progress: number, count: number) => ease(clamp((progress * count - (count - 1)) / ENTER));

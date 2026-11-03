@@ -72,11 +72,10 @@ export function Story() {
                   </ul>
                 </div>
                 {/* The chapter's part of the one Gotham drawing. Until it's built, it's marked the way a drawing marks an empty figure. */}
-                <figure className="story-fig">
+                <figure className="story-fig" role="img" aria-label={scene.figure}>
                   {i < DRAWN
                     ? <canvas className="story-canvas" data-chapter={i} aria-hidden="true" />
                     : <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="0" x2="100" y2="100" /><line x1="100" y1="0" x2="0" y2="100" /></svg>}
-                  <figcaption>Fig. {i + 1}: {scene.figure}</figcaption>
                 </figure>
                 <div className="story-tools">
                   <span className="story-tools-label">With</span>

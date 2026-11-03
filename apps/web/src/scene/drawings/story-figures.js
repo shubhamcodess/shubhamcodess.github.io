@@ -6,7 +6,7 @@ export const StoryFigures = (() => {
   const ease = (v) => { v = clamp(v); return v * v * v * (v * (v * 6 - 15) + 10); };
   const span = (t, a, b) => clamp((t - a) / (b - a));
   const hash = (n) => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
-  const LEAVE = 0.74; // Matches story-motion: the share of its slot a chapter holds before it leaves.
+  const DONE = 0.78; // A chapter's drawing finishes here in its slot: about 80% of the way along its stretch of the line, just before the scene leaves.
   const INTRO = 1.8; // Seconds the pen takes to lay the drawing down.
   const COS = Math.cos(Math.PI / 6), SIN = Math.sin(Math.PI / 6);
 
@@ -149,7 +149,7 @@ export const StoryFigures = (() => {
     function beat() {
       const st = story();
       if (!st.live || reduced) return 1;
-      return clamp((st.progress * count - chapter) / (LEAVE * .92));
+      return clamp((st.progress * count - chapter) / DONE);
     }
 
     function draw(now) {
