@@ -5,7 +5,7 @@ import { currentScene, figureInView, figureLoop, figurePresence, frameLook, line
 
 type StoryDrawing = { mount(canvas: HTMLCanvasElement, options: { chapter: number; count: number; story: () => { progress: number; live: boolean; from: (number | null)[] }; loop: ((seconds: number) => number) | null }): () => void };
 
-const FIT_STEPS = [{ k: 1, g: 1 }, { k: 0.96, g: 0.8 }, { k: 0.92, g: 0.6 }, { k: 0.88, g: 0.4 }]; // How far a stacked card's type (k) and spacing (g) may tighten. Below this the words get too small to read.
+const FIT_STEPS = [{ k: 1, g: 1 }, { k: 1, g: 0.85 }, { k: 0.96, g: 0.7 }, { k: 0.92, g: 0.55 }, { k: 0.88, g: 0.4 }]; // How far a stacked card's type (k) and spacing (g) may tighten. Below this the words get too small to read.
 const MIN_WINDOW = 150; // The least of a card worth showing at once. Below this the story stays a plain stack.
 
 /* Turns the story into a film: the stage pins to the screen and the scroll plays it, one scene at a time, and the stops on the line jump between scenes.
@@ -113,6 +113,13 @@ export function StoryStage({ count, pace, id, figureMotion, children }: { count:
       const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 0;
       let h = stage.offsetHeight;
       const room = innerHeight - header, hintH = hint ? hint.offsetHeight + 6 : 0;
+      const tighten = (scene: HTMLElement, { k, g }: (typeof FIT_STEPS)[number]) => { scene.style.setProperty("--story-k", String(k)); scene.style.setProperty("--story-g", String(g)); };
+      // Stacked cards tighten together first, if that keeps the heading on screen with them.
+      if (stacked.matches) for (const step of FIT_STEPS) {
+        scenes.forEach((scene) => tighten(scene, step));
+        h = stage.offsetHeight;
+        if (h + hintH <= room - 12) break;
+      }
       if (h + hintH <= room - 12) pinTop = header + (room - h - hintH) / 2;
       else {
         if (!stacked.matches) { clear(); return; }
@@ -123,9 +130,8 @@ export function StoryStage({ count, pace, id, figureMotion, children }: { count:
         if (avail < MIN_WINDOW) { clear(); return; }
         story.dataset.pan = ""; // From here each card is its own height, so it can be measured alone.
         // Tighten each card a step at a time until it fits, so a long one doesn't shrink the rest, and a card only slides on a screen too small for that.
-        for (const scene of scenes) for (const { k, g } of FIT_STEPS) {
-          scene.style.setProperty("--story-k", String(k));
-          scene.style.setProperty("--story-g", String(g));
+        for (const scene of scenes) for (const step of FIT_STEPS) {
+          tighten(scene, step);
           if (scene.offsetHeight <= avail) break;
         }
         const shown = Math.min(avail, Math.max(...scenes.map((scene) => scene.offsetHeight)));

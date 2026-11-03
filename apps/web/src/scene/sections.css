@@ -151,7 +151,11 @@
   .story-frame[data-frame="off"] .story-fig { border-top: 0; }
   .story-frame[data-frame="on"] .story-text::before { display: none; } /* The figure is between the words and the tools now, so nothing rises to them. */
   .story-role { white-space: normal; }
-  .story-tools { grid-column: auto; align-items: flex-start; }
+  /* The tools keep to one row however many there are: the rest are a swipe away, and the row's end fades to say so. */
+  .story-tools { grid-column: auto; padding-right: 0; }
+  .story-tools ul { flex-wrap: nowrap; flex: 1; min-width: 0; padding-right: 28px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-mask-image: linear-gradient(to left, transparent, #000 28px); mask-image: linear-gradient(to left, transparent, #000 28px); }
+  .story-tools ul::-webkit-scrollbar { display: none; }
+  .story-tool { flex: none; white-space: nowrap; }
   .story-tool { font-size: 10.5px; }
   .story-tool .bp-icon { width: 17px; height: 17px; }
 }

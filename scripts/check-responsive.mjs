@@ -74,6 +74,9 @@ for (const [width, height, slides] of [[412, 790, false], [393, 852, false], [36
   if (!story) problems.push("no story");
   else {
     if (!slides && story.slide > 0) problems.push(`a card slides by ${story.slide}px`);
+    const tools = await page.evaluate(() => [...document.querySelectorAll(".story-tools")].map((row) => { const items = [...row.querySelectorAll(".story-tool")], tops = new Set(items.map((i) => i.offsetTop)); return { shown: row.getClientRects().length > 0, rows: tops.size, height: row.offsetHeight }; }));
+    if (tools.some((t) => t.shown && t.rows !== 1)) problems.push("a card's tools run past one row");
+    if (new Set(tools.filter((t) => t.shown).map((t) => t.height)).size > 1) problems.push("the tools row changes height between cards");
     for (let i = 0; i < 4; i++) {
       await page.evaluate(({ top }) => { document.getElementById("page").scrollTop = top; }, { top: story.start + story.length * (i === 3 ? 1 : (i + 0.79) / 4) });
       await page.waitForTimeout(1500); // Long enough for the drawing to finish coming in.
