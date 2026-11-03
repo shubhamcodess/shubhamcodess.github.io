@@ -72,7 +72,7 @@ export const StoryFigures = (() => {
       });
       // Ready: a tick over the new platform before any traffic reaches it.
       const ready = k > 0 ? phase(k - 1, MOVE.ready) * (1 - phase(k - 1, MOVE.retire)) : 0;
-      if (ready > .01) { const [rx, ry] = iso(cx + w, cy - d, 0); label('READY ✓', rx + 4, ry - 12, colors.accent, ready); }
+      if (ready > .01) { const [rx, ry] = iso(cx + w, cy - d, -t); label('READY ✓', rx, ry + 20, colors.accent, ready); } // under its right corner, clear of the drawing
       // Its name, over its back corner.
       const [lx, ly] = iso(cx - w, cy - d, 0);
       label(name.toUpperCase(), lx, ly - 13, serving > .5 ? colors.accent : colors.ink2, (built > .5 ? .95 - .5 * retired : .6) * r);

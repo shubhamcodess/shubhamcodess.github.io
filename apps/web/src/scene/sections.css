@@ -92,7 +92,7 @@
 .story-what { font-size: clamp(12.5px, .92vw, 13.5px); line-height: 1.36; color: var(--ink-2); text-wrap: pretty; }
 /* The figure, waiting for its motion graphic. */
 .story-fig { position: relative; min-width: 0; min-height: 180px; margin: 0; border-left: 1px solid var(--line-rest); overflow: hidden; }
-.story-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.story-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; transform: scale(calc(1 + var(--drift, 0) * .05)); } /* Zooms slowly through its chapter, a touch faster than the words: parallax. */
 .story-fig svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .story-fig line { stroke: var(--line-rest); stroke-width: 1; vector-effect: non-scaling-stroke; stroke-dasharray: 3 6; opacity: .45; }
 /* What it was done with, along the bottom, each in the same pen as the icons. */
@@ -114,7 +114,7 @@
 .story-frame[data-frame="off"] .story-tools { padding-inline: 0; }
 
 /* The line under the frame: words at the first stop, a fine batarang at the others, and the figure waiting by the last. */
-.story-track { display: flex; align-items: center; height: 40px; margin-top: clamp(14px, 3svh, 30px); }
+.story-track { position: relative; display: flex; align-items: center; height: 40px; margin-top: clamp(14px, 3svh, 30px); }
 .story-rule { position: relative; display: block; flex: 1; min-width: 0; height: 1px; margin: 0 16px 0 10px; }
 .story-rule-base, .story-rule-drawn { position: absolute; inset: 0; display: block; }
 .story-rule-base { background: color-mix(in srgb, var(--line-rest), transparent 45%); }
@@ -154,3 +154,9 @@
 .story[data-cine] .story-head { margin-bottom: clamp(14px, 3.4svh, 64px); }
 .story[data-cine] .story-head .kicker { margin-bottom: clamp(10px, 1.6svh, 18px); }
 .story[data-cine] .story-head .sec-title { font-size: clamp(26px, min(4.4vw, 5.6svh), 56px); }
+/* The scroll hint under the line: a quiet note with a slowly settling chevron, there only while the film is pinned. */
+.story-hint { position: absolute; left: 50%; top: calc(100% + 6px); display: none; align-items: center; gap: 6px; margin: 0; transform: translateX(-50%); font: 500 10.5px/1 var(--font-note); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; color: var(--ink-2); opacity: var(--hint, 1); pointer-events: none; }
+.story[data-cine] .story-hint { display: flex; }
+.story-hint svg { width: 12px; height: 12px; fill: none; stroke: var(--accent); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+@media (prefers-reduced-motion: no-preference) { .story-hint svg { animation: story-hint 2.4s var(--ease-expo) infinite; } }
+@keyframes story-hint { 0%, 100% { transform: translateY(-1px); opacity: .5; } 50% { transform: translateY(2px); opacity: 1; } }

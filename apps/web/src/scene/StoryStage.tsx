@@ -39,7 +39,7 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
     const clear = () => {
       on = false; lastHere = -1; clock.current.live = false;
       delete story.dataset.cine; delete story.dataset.holdStart; delete story.dataset.holdLength;
-      for (const name of ["--story-drawn", "--now", "--stage-top", "height"]) story.style.removeProperty(name);
+      for (const name of ["--story-drawn", "--now", "--hint", "--stage-top", "height"]) story.style.removeProperty(name);
       for (const el of [...scenes, frame, track]) el?.removeAttribute("style");
       for (const mark of marks) { delete mark.dataset.state; mark.removeAttribute("aria-current"); }
       if (sheet) sheet.textContent = pad(1);
@@ -71,6 +71,7 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
       }
       story.style.setProperty("--story-drawn", lineProgress(progress, count).toFixed(4));
       story.style.setProperty("--now", figurePresence(progress, count).toFixed(3));
+      story.style.setProperty("--hint", (1 - Math.min(1, Math.max(0, (progress * count - 0.5) / 0.4))).toFixed(3)); // The scroll hint fades once the first chapter is under way.
       const here = currentScene(progress, count);
       if (here === lastHere) return;
       lastHere = here;

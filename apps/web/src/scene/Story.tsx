@@ -120,6 +120,8 @@ export function Story() {
               <Button {...site.headerButton} href={`#scene-${scenes.length}`} size="xs" className="story-first story-last" data-mark={scenes.length - 1} aria-label={`${last.label}: ${last.title}`}><CurrentYear /></Button>
             </Tooltip>
           )}
+          {/* Only while the film is pinned: says the scroll plays it. */}
+          <p className="story-hint" aria-hidden="true">Scroll to move through the years<svg viewBox="0 0 12 12"><path d="M3 4.5 6 7.5 9 4.5" /></svg></p>
         </nav>
       </div>
     </StoryStage>
