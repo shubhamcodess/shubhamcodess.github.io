@@ -195,7 +195,7 @@ export const TokenFlow = (() => {
       cube(MTO, 600);
 
       // The server stands where the wire starts, with its side on the wire, and its logo and name turn underneath.
-      const wireStart = at(LANE, 0, 0), rackSize = scale * .82, rackBox = rack(wireStart[0] - rackSize * .46, wireStart[1] - rackSize * .45, rackSize, 400, clock); // Stands above the wire, clear of the measure under it.
+      const wireStart = at(LANE, 0, 0), rackSize = scale * .66, rackBox = rack(wireStart[0] - rackSize * .46, wireStart[1] - rackSize * .45, rackSize, 400, clock); // Stands above the wire, clear of the measure under it.
       const serverTurn = (clock / PERIOD) * SERVER_TURNS, serverIndex = Math.floor(serverTurn), serverSlide = ease(span(serverTurn % 1, .84, 1));
       const nameY = rackBox.bottom + size + 7, nameX = rackBox.left + rackSize * .1;
       for (const q of [0, 1]) {
@@ -205,15 +205,16 @@ export const TokenFlow = (() => {
         ctx.fillText(name, nameX + size * 2.1, y); ctx.globalAlpha = 1;
       }
 
-      // The agent: a plain square on the page, where the wire ends, with its mark turning inside.
-      const wireEnd = at(END, 0, 0), half = at(AGENT.x, 0, 0)[0] - wireEnd[0], agentX = wireEnd[0] + half, agentY = wireEnd[1];
-      const square = [[agentX - half, agentY - half], [agentX + half, agentY - half], [agentX + half, agentY + half], [agentX - half, agentY + half]];
-      surface(square, 500, .04);
-      const markSize = half * 1.15, agentTurn = (clock / PERIOD) * AGENTS.length, agentIndex = Math.floor(agentTurn) % AGENTS.length, agentSlide = ease(span(agentTurn % 1, .78, 1));
-      ctx.save(); ctx.beginPath(); ctx.rect(agentX - half + 1, agentY - half + 1, half * 2 - 2, half * 2 - 2); ctx.clip();
+      // The agent: one flat square standing where the wire ends. It's in the scene's own camera, so it skews with the stream and sways with the pointer, and its mark turns inside it.
+      const AX = AGENT.x, AW = AGENT.w, AZ = AW / Math.sin(.8); // As tall on screen as it is wide.
+      face([[AX - AW, 0, -AZ], [AX + AW, 0, -AZ], [AX + AW, 0, AZ], [AX - AW, 0, AZ]], 500);
+      const box = [[AX - AW, -AZ], [AX + AW, -AZ], [AX + AW, AZ], [AX - AW, AZ]].map(([x, z]) => at(x, 0, z));
+      ctx.save(); ctx.beginPath(); box.forEach(([x, y], i) => ctx[i ? 'lineTo' : 'moveTo'](x, y)); ctx.closePath(); ctx.clip();
+      const agentTurn = (clock / PERIOD) * AGENTS.length, agentIndex = Math.floor(agentTurn) % AGENTS.length, agentSlide = ease(span(agentTurn % 1, .78, 1));
       for (let q = -1; q <= 2; q++) {
-        const off = q - agentSlide, near = Math.max(0, 1 - Math.abs(off));
-        mark(AGENTS[(agentIndex + q + AGENTS.length) % AGENTS.length], agentX, agentY + off * half * 1.5, markSize * (.72 + .28 * near), (.08 + .92 * near * near) * clamp(1.5 - Math.abs(off)), 520 + q * 40);
+        const off = q - agentSlide, near = Math.max(0, 1 - Math.abs(off)), alpha = (.08 + .92 * near * near) * clamp(1.5 - Math.abs(off)), k = (AW * 1.1 / 24) * (.72 + .28 * near);
+        if (alpha <= .01) continue;
+        MARKS[AGENTS[(agentIndex + q + AGENTS.length) % AGENTS.length]].forEach((stroke, i) => pen(stroke.map(([gx, gy]) => at(AX + (gx - 12) * k, 0, -(gy - 12) * k / Math.sin(.8) - off * AZ * 1.5)), 520 + q * 40 + i * 13, 1.1, colors.ink, alpha));
       }
       ctx.restore();
 
@@ -225,7 +226,8 @@ export const TokenFlow = (() => {
         seg([x - half, y, z], [x + half, y, z + (hash(row.i + 4) - .5) * .12], row.i + 700, 1.1, colors.accent, (1 - e) * .95, [2, 2]);
       }
 
-      for (const [word, x, y] of [['MCP SERVER', rackBox.left + rackSize * .46, rackBox.top - size * .9], ['YOUR AGENT', agentX, agentY - half - size * 1.1]]) {
+      const agentTop = at(AX, 0, AZ);
+      for (const [word, x, y] of [['MCP SERVER', rackBox.left + rackSize * .46, rackBox.top - size * .9], ['YOUR AGENT', agentTop[0], agentTop[1] - size * 1.1]]) {
         ctx.font = `500 ${size}px ${font}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = colors.ink2; ctx.fillText(word, x, y);
       }
       text('MTO', MTO.x, -MTO.d, MTO.h + .16, Math.min(size + 1, 12), colors.ink);
