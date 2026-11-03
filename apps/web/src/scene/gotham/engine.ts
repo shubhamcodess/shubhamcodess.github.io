@@ -34,6 +34,8 @@ export const LAYERS: readonly Layer[] = [
 ];
 const ACTIVE: Landmark[] = Object.values(LANDMARKS);
 const PERSPECTIVE = 1500, ABOVE = 120, SUN_X = 0.84, PHONE = 760, WORD = "GOTHAM";
+const LINK_STEP = 48; // px of scroll between the points of a layer's path on touch. Its sway is far slower than this.
+declare const ScrollTimeline: { new (options: { source: Element }): AnimationTimeline };
 
 /** The colors a layer draws with, worked out from the active daylight theme. */
 function styleFor(p: Palette, l: Layer, W: number): Style {
@@ -52,8 +54,7 @@ function styleFor(p: Palette, l: Layer, W: number): Style {
 type Node = { el: HTMLDivElement; canvas: HTMLCanvasElement; z: number; fog: boolean; paint: (n: Node) => void; placed?: string; off?: boolean };
 
 /** The scroll the city follows: the page's, minus any stretch a pinned section holds still (`data-hold-start` and `data-hold-length`, in px of scroll). */
-function cityScroll(scroller: HTMLElement) {
-  const s = scroller.scrollTop;
+function cityScroll(scroller: HTMLElement, s = scroller.scrollTop) {
   let held = 0;
   for (const el of scroller.querySelectorAll<HTMLElement>("[data-hold-length]")) {
     const start = Number(el.dataset.holdStart), length = Number(el.dataset.holdLength);
@@ -65,6 +66,8 @@ function cityScroll(scroller: HTMLElement) {
 export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () => { palette: Palette; font: string; settings: SceneSettings }) {
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const touch = matchMedia("(hover: none) and (pointer: coarse)").matches; // On a phone the layers move only with the scroll, and the dust and bats draw at 30 frames a second.
+  const linked = touch && !reduced && "ScrollTimeline" in window; // Older browsers fall back to moving it from here.
+  let links: Animation[] = [];
   const stage = document.createElement("div"); stage.className = "g-stage"; host.append(stage);
   const live = document.createElement("canvas"); live.className = "g-live"; host.append(live);
   const liveX = live.getContext("2d") as Ctx;
@@ -197,7 +200,7 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
     nodes.forEach((n) => n.paint(n));
     const r = seeded(77), setup = { phone: W < PHONE };
     effects = Object.values(EFFECTS).map((e) => e(r, setup));
-    place(performance.now() / 1000);
+    if (linked) link(); else place(performance.now() / 1000);
     drawLive(reduced ? 8 : performance.now() / 1000);
   }
 
@@ -211,29 +214,45 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
 
   /* The camera: one spring, one clock. Perspective is worked out here rather than left to CSS 3D, which some browsers flatten.
      A layer at depth z appears at `near` times its true movement, so far layers move little and near layers move a lot. */
-  function place(t: number) {
-    const k = settings.depth, s = cam.scroll;
-    // The city steps back as content scrolls over it, so text always wins.
-    const fade = Math.max(0.38, 1 - s / (H * 0.9)).toFixed(3);
-    if (fade !== shownFade) host.style.opacity = shownFade = fade;
+  const fadeAt = (s: number) => Math.max(0.38, 1 - s / (H * 0.9)); // The city steps back as content scrolls over it, so text always wins.
+  function poseAt(n: Node, s: number, t: number) {
+    const k = settings.depth;
     const sway = reduced ? 0 : Math.sin(s / 520) * settings.sway;
     const turnY = reduced ? 0 : ((cam.x * 1.9 + sway * 1.5) * k + (touch ? 0 : Math.sin(t * 0.11) * 0.1)) * (Math.PI / 180), turnX = reduced ? 0 : -cam.y * k * (Math.PI / 180);
     const dolly = reduced ? 0 : s * 0.05;
+    const near = PERSPECTIVE / (PERSPECTIVE - n.z);
+    const depth = Math.max(0, (n.z + 900) / 1050); // 0 far, 1 near
+    // The word sits furthest back but rises with the city, so the skyline keeps it clipped and it's never seen in full.
+    const rise = n.z < -900 ? 0.5 : 0.12 + depth * 0.62;
+    const lift = s * rise * (reduced ? 0.4 : 1), side = sway * depth * 46 * k, drift = !reduced && n.fog ? Math.sin(t * 0.05 + n.z) * 34 : 0;
+    const x = (side + drift + n.z * Math.sin(turnY)) * near, y = (-lift - n.z * Math.sin(turnX)) * near;
+    return { y, transform: `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${((PERSPECTIVE - n.z) / (PERSPECTIVE - n.z + dolly)).toFixed(4)})` };
+  }
+  function place(t: number) {
+    const fade = fadeAt(cam.scroll).toFixed(3);
+    if (fade !== shownFade) host.style.opacity = shownFade = fade;
     for (const n of nodes) {
-      const near = PERSPECTIVE / (PERSPECTIVE - n.z);
-      const depth = Math.max(0, (n.z + 900) / 1050); // 0 far, 1 near
-      // The word sits furthest back but rises with the city, so the skyline keeps it clipped and it's never seen in full.
-      const rise = n.z < -900 ? 0.5 : 0.12 + depth * 0.62;
-      const lift = s * rise * (reduced ? 0.4 : 1), side = sway * depth * 46 * k, drift = !reduced && n.fog ? Math.sin(t * 0.05 + n.z) * 34 : 0;
-      const x = (side + drift + n.z * Math.sin(turnY)) * near, y = (-lift - n.z * Math.sin(turnX)) * near;
-      const zoom = (PERSPECTIVE - n.z) / (PERSPECTIVE - n.z + dolly);
+      const { y, transform } = poseAt(n, cam.scroll, t);
       const off = -y > H * 1.1; // Lifted clear of the screen: the GPU can forget it.
       if (off !== n.off) { n.off = off; n.el.style.visibility = off ? "hidden" : ""; }
       if (off) continue;
-      const placed = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${zoom.toFixed(4)})`;
-      if (placed !== n.placed) n.el.style.transform = n.placed = placed; // A layer that hasn't moved costs nothing.
+      if (transform !== n.placed) n.el.style.transform = n.placed = transform; // A layer that hasn't moved costs nothing.
     }
   }
+  /* A finger scrolls on the browser's own thread, so a city moved from this one always lands a little apart from it, and jitters. On touch the browser moves it instead: each layer's whole path down the page, worked out from the same pose, is handed over as an animation tied to the scroll. */
+  function link() {
+    links.forEach((a) => a.cancel()); links = [];
+    const max = scroller.scrollHeight - scroller.clientHeight;
+    if (max <= 0 || !H) return;
+    const timeline = new ScrollTimeline({ source: scroller });
+    const stops = Array.from({ length: Math.ceil(max / LINK_STEP) + 1 }, (_, i) => Math.min(max, i * LINK_STEP));
+    const along = (frame: (city: number) => Keyframe) => stops.map((s) => ({ ...frame(cityScroll(scroller, s)), offset: s / max }));
+    links = [
+      host.animate(along((city) => ({ opacity: fadeAt(city).toFixed(3) })), { timeline, fill: "both" }),
+      ...nodes.map((n) => n.el.animate(along((city) => ({ transform: poseAt(n, city, 0).transform })), { timeline, fill: "both" })),
+    ];
+  }
+
   function drawLive(t: number) {
     liveX.setTransform(liveD, 0, 0, liveD, 0, 0); liveX.clearRect(0, 0, W, H);
     const f: EffectFrame = { W, H, t, wind: 1 + Math.sin(t * 0.07) * 0.4, scroll: cam.scroll, cam: cam.x, amount: settings.dust, palette };
@@ -247,7 +266,7 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
     const q = 1 - Math.exp(-dt * 2.4);
     cam.x += (cam.tx - cam.x) * q; cam.y += (cam.ty - cam.y) * q;
     cam.scroll += (cityScroll(scroller) - cam.scroll) * (1 - Math.exp(-dt * 6));
-    place(now / 1000);
+    if (!linked) place(now / 1000);
     if (touch && now - drawn < 28) return;
     drawn = now; drawLive(now / 1000);
   }
@@ -257,6 +276,10 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
   let timer = 0;
   const sized = new ResizeObserver(() => { clearTimeout(timer); timer = window.setTimeout(resize, 140); });
   sized.observe(host);
+  // The page's length moves every stop on a layer's path: the film pinning, say.
+  let linkTimer = 0;
+  const lengthened = new ResizeObserver(() => { clearTimeout(linkTimer); linkTimer = window.setTimeout(link, 140); });
+  if (linked) { lengthened.observe(scroller); if (scroller.firstElementChild) lengthened.observe(scroller.firstElementChild); }
   addEventListener("pointermove", pointer);
   resize();
   if (reduced) scroller.addEventListener("scroll", scrolledStill, { passive: true });
@@ -270,9 +293,10 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
       palette = next.palette; font = next.font; settings = next.settings;
       if (repaint) paintAll();
       else if (reduced) scrolledStill();
+      else if (linked) link();
     },
     destroy() {
-      cancelAnimationFrame(raf); clearTimeout(timer); sized.disconnect();
+      cancelAnimationFrame(raf); clearTimeout(timer); clearTimeout(linkTimer); sized.disconnect(); lengthened.disconnect(); links.forEach((a) => a.cancel());
       removeEventListener("pointermove", pointer); scroller.removeEventListener("scroll", scrolledStill);
       stage.remove(); live.remove();
     },

@@ -41,6 +41,22 @@ expect(look.layers <= MAX_CITY_LAYERS, `the city stacks ${look.layers} full-scre
 expect(!drawingLoaded("64.5% FEWER"), "a project drawing loaded before its card was near the screen");
 expect(!drawingLoaded("REVIEW · FEEDBACK LOOP"), "the story's figures loaded before the story was near the screen");
 
+// The city is tied to the scroll in the browser, or it jitters against a finger. Same for how it fades.
+const tied = () => page.evaluate(() => {
+  const moved = (el) => el.getAnimations().some((a) => a.timeline instanceof ScrollTimeline && a.timeline.source === document.getElementById("page"));
+  return { layers: [...document.querySelectorAll("#scene .g-layer")].every(moved), fade: moved(document.getElementById("scene")), inline: [...document.querySelectorAll("#scene .g-layer")].filter((el) => el.style.transform).length };
+});
+const first = await tied();
+expect(first.layers, "a city layer isn't tied to the scroll in the browser");
+expect(first.fade, "the city's fade isn't tied to the scroll in the browser");
+expect(first.inline === 0, `${first.inline} city layers are moved from script`);
+const where = () => page.evaluate(() => getComputedStyle(document.querySelector("#scene .g-hero")).transform);
+const rest = await where();
+await page.evaluate(() => { document.getElementById("page").scrollTop = 400; });
+await page.waitForTimeout(100);
+expect(await where() !== rest, "the city doesn't move with the scroll");
+await page.evaluate(() => { document.getElementById("page").scrollTop = 0; });
+
 // Touch scrolls natively, so nothing should follow the scroll from script.
 await page.evaluate(() => { const p = document.getElementById("page"); p.scrollTop = 700; });
 await page.waitForTimeout(300);
@@ -50,6 +66,15 @@ await page.evaluate(() => document.querySelector(".story").scrollIntoView());
 await page.waitForSelector(".story[data-cine]", { timeout: 15000 });
 await page.waitForTimeout(1500);
 expect(drawingLoaded("REVIEW · FEEDBACK LOOP"), "the story's figures never loaded");
+// The city holds still while the film plays, so its path has to know about the film.
+const held = await page.evaluate(async () => {
+  const p = document.getElementById("page"), s = document.querySelector(".story"), hero = document.querySelector("#scene .g-hero");
+  await new Promise((done) => setTimeout(done, 400));
+  const start = Number(s.dataset.holdStart), length = Number(s.dataset.holdLength);
+  const at = async (y) => { p.scrollTop = y; await new Promise(requestAnimationFrame); await new Promise(requestAnimationFrame); return new DOMMatrix(getComputedStyle(hero).transform).m42; };
+  return [await at(start + 60), await at(start + length - 60)];
+});
+expect(Math.abs(held[0] - held[1]) < 1, `the city moves ${Math.abs(held[0] - held[1]).toFixed(1)}px during the film`);
 
 const film = await page.evaluate(async () => {
   const p = document.getElementById("page"), s = document.querySelector(".story");
