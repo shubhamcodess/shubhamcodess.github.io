@@ -37,14 +37,15 @@ export function MotionText({ text, after = 0, line = false, className }: MotionT
   }, []);
 
   let n = after;
-  const words = text.split(" ");
+  // Each word, split after any hyphen, is one unbreakable piece, so lines still wrap where the plain text would.
+  const words = text.split(" ").flatMap((word, w, all) => word.split(/(?<=-)/).map((part, k, parts) => ({ part, space: k === parts.length - 1 && w < all.length - 1 })));
   const total = after + text.replace(/ /g, "").length;
   return (
     <span ref={ref} className={["mt", line && "mt-line", className].filter(Boolean).join(" ")} data-state={state} aria-label={text} role="text">
-      {words.map((word, w) => (
+      {words.map(({ part, space }, w) => (
         <span key={w} className="mt-w" aria-hidden="true">
-          {[...word].map((ch, c) => <span key={c} className="mt-c" style={{ "--i": n++, "--n": total } as CSSProperties}>{ch}</span>)}
-          {w < words.length - 1 ? " " : null}
+          {[...part].map((ch, c) => <span key={c} className="mt-c" style={{ "--i": n++, "--n": total } as CSSProperties}>{ch}</span>)}
+          {space ? " " : null}
         </span>
       ))}
     </span>

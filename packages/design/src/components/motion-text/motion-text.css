@@ -1,7 +1,7 @@
 /* Motion-blur text. Letters slide in from the left, stretched and blurred, and settle sharp in turn; leaving, they slide on to the right and blur away, last letter first.
    Soft motion only: no overshoot, nothing bounces. */
 .mt-line { display:block; }
-.mt-w { display:inline-block; white-space:pre; }
+.mt-w { display:inline-block; white-space:pre; max-width:100%; }
 .mt-c { display:inline-block; transform-origin:0 60%; }
 @media (prefers-reduced-motion:no-preference) {
   .mt-c {
