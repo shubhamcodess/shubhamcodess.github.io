@@ -125,6 +125,20 @@ export const StoryFigures = (() => {
     if (ring > 0 && ring < 1) { ctx.strokeStyle = colors.accent; ctx.globalAlpha = (1 - ring) * .7; ctx.beginPath(); ctx.ellipse(dropTo[0], dropTo[1] + .5 * s, 6 + ring * 26, (6 + ring * 26) * .5, 0, 0, Math.PI * 2); ctx.stroke(); }
   }
 
+  /** Draws iso boxes from their near-bottom-left corner: the top and the two faces that show, lightly toned. Shared by the chapters. */
+  function boxTool(ctx, iso, pen) {
+    const poly = (pts) => { ctx.beginPath(); pts.forEach(([px, py], q) => (q ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.closePath(); };
+    return (x, y, z, bw, bd, bh, k, alpha, color, tone = .1, dash = null) => {
+      if (alpha <= .005 || bh <= .001) return;
+      const P = (dx, dy, dz) => iso(x + dx, y + dy, z + dz);
+      const t0 = P(0, 0, bh), t1 = P(bw, 0, bh), t2 = P(bw, bd, bh), t3 = P(0, bd, bh), b1 = P(bw, 0, 0), b2 = P(bw, bd, 0), b3 = P(0, bd, 0);
+      ctx.globalAlpha = alpha * tone; ctx.fillStyle = color; poly([t0, t1, b1, b2, b3, t3]); ctx.fill();
+      ctx.setLineDash(dash ?? []); ctx.strokeStyle = color; ctx.globalAlpha = alpha * .9;
+      [[t0, t1], [t1, t2], [t2, t3], [t3, t0], [t1, b1], [t2, b2], [t3, b3], [b1, b2], [b2, b3]].forEach(([p, q], e) => pen(k * 20 + e, p, q, 1, 1));
+      ctx.setLineDash([]);
+    };
+  }
+
   /* ---------- Chapter 2: the pilot first, then the rest ---------- */
   // A legacy block in five slices. The pilot slice is cut out first, rebuilt on the platform as a clean two-layer app, and approved; then the rest follow the same path, faster, onto the same stack, and a shared-standards strip runs under them all.
   const LEGACY = { x0: -2.4, y0: 1.0, d: 1.2, h: 1.1, slice: .32, n: 5 };
@@ -139,16 +153,7 @@ export const StoryFigures = (() => {
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const reveal = (a) => span(intro, a, a + .35);
     const poly = (pts) => { ctx.beginPath(); pts.forEach(([px, py], q) => (q ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.closePath(); };
-    // A box from its near-bottom-left corner: top, and the two faces that show.
-    const box = (x, y, z, bw, bd, bh, k, alpha, color, tone = .1, dash = null) => {
-      if (alpha <= .005 || bh <= .001) return;
-      const P = (dx, dy, dz) => iso(x + dx, y + dy, z + dz);
-      const t0 = P(0, 0, bh), t1 = P(bw, 0, bh), t2 = P(bw, bd, bh), t3 = P(0, bd, bh), b1 = P(bw, 0, 0), b2 = P(bw, bd, 0), b3 = P(0, bd, 0);
-      ctx.globalAlpha = alpha * tone; ctx.fillStyle = color; poly([t0, t1, b1, b2, b3, t3]); ctx.fill();
-      ctx.setLineDash(dash ?? []); ctx.strokeStyle = color; ctx.globalAlpha = alpha * .9;
-      [[t0, t1], [t1, t2], [t2, t3], [t3, t0], [t1, b1], [t2, b2], [t3, b3], [b1, b2], [b2, b3]].forEach(([p, q], e) => pen(k * 20 + e, p, q, 1, 1));
-      ctx.setLineDash([]);
-    };
+    const box = boxTool(ctx, iso, pen);
 
     // The platform it all lands on: containers on Kubernetes, released with Helm.
     const deckIn = reveal(.15);
@@ -239,7 +244,103 @@ export const StoryFigures = (() => {
     }
   }
 
-  const CHAPTERS = [chapterOne, chapterTwo];
+  /* ---------- Chapter 3: one framework, many systems ---------- */
+  // Four sources, one order platform. The first is wired by hand, a tangle of custom plumbing; then the integration framework is drawn and the tangle becomes one socket and a task. The other three just snap in. Data runs to the platform through a few bounded lanes, it goes live, and the 20-minute compile shrinks to seconds.
+  const RAIL = { x0: -2.4, x1: 1.0, y: -.3, d: .6, t: .14 }, PLAT = { x: 2.3, y: -.7, w: 1.2, d: 1.4, h: .8 };
+  const SOCKETS = [-1.95, -1.25, -.55, .15], SRC_Y = -1.55, SRC = .4, LANES = [-.2, 0, .2];
+  const SNAP = [[.3, .38], [.42, .5], [.5, .58], [.58, .66]]; // When each source's task snaps into its socket.
+
+  function chapterThree(g) {
+    const { ctx, w: W, h: H, colors, intro, c, time, pen, label } = g;
+    const s = Math.min(W / 10.4, H / 4.6), X0 = W / 2 - .8 * s, Y0 = H / 2 + .1 * s - 8;
+    const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
+    const reveal = (a) => span(intro, a, a + .35);
+    const box = boxTool(ctx, iso, pen);
+    const rail = ease(span(c, .16, .3)), flow = ease(span(c, .62, .7));
+
+    // The sources: small boxes in a row behind the rail, unnamed.
+    const srcIn = reveal(.05);
+    SOCKETS.forEach((x, k) => box(x - SRC / 2, SRC_Y, 0, SRC, SRC, SRC, 1100 + k, .85 * srcIn, colors.ink, .12));
+    { const [lx, ly] = iso(SOCKETS[0] - SRC / 2, SRC_Y, SRC); label('SOURCES', lx, ly - 13, colors.ink2, .9 * srcIn); }
+
+    // The old way: the first source wired straight to the platform by hand, a long wandering dashed line. It fades once the framework is there.
+    const wired = ease(span(c, .02, .16)), unwired = ease(span(c, .3, .38));
+    if (wired > 0 && unwired < 1) {
+      // Out of the source towards the viewer, then a long wander along where the rail will be, into the platform.
+      const a = iso(SOCKETS[0], SRC_Y + SRC, 0), m = iso(SOCKETS[0], .1, 0), b = iso(PLAT.x, .25, .1);
+      const at = (t) => (t < .2 ? [a[0] + (m[0] - a[0]) * t / .2, a[1] + (m[1] - a[1]) * t / .2] : [m[0] + (b[0] - m[0]) * (t - .2) / .8, m[1] + (b[1] - m[1]) * (t - .2) / .8]);
+      ctx.strokeStyle = colors.ink2; ctx.globalAlpha = .75 * (1 - unwired); ctx.lineWidth = .9; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(a[0], a[1]);
+      const n = 48;
+      for (let i = 1; i <= Math.round(n * wired); i++) {
+        const t = i / n, [px, py] = at(t), wob = t < .2 ? 0 : Math.sin((t - .2) * Math.PI * 7) * 11 * Math.sin(Math.PI * (t - .2) / .8) + (hash(i) - .5) * 5;
+        ctx.lineTo(px, py + wob);
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // The framework: a long rail, drawn by the pen, its name to the left of its near end.
+    if (rail > 0) {
+      const { x0, x1, y, d, t } = RAIL;
+      ctx.strokeStyle = colors.ink; ctx.globalAlpha = .85;
+      const top = [[x0, y], [x1, y], [x1, y + d], [x0, y + d]].map(([px, py]) => iso(px, py, 0));
+      const low = [[x1, y], [x1, y + d], [x0, y + d]].map(([px, py]) => iso(px, py, -t));
+      for (let e = 0; e < 4; e++) pen(1200 + e, top[e], top[(e + 1) % 4], rail, 1.1);
+      pen(1205, top[1], low[0], rail); pen(1206, top[2], low[1], rail); pen(1207, top[3], low[2], rail);
+      pen(1208, low[0], low[1], rail); pen(1209, low[1], low[2], rail);
+      // Its sockets: small marks on its top, one per source.
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .7 * rail;
+      SOCKETS.forEach((x, k) => { const q = [[x - .17, y + .05], [x + .17, y + .05], [x + .17, y + .39], [x - .17, y + .39]].map(([px, py]) => iso(px, py, 0)); for (let e = 0; e < 4; e++) pen(1220 + k * 4 + e, q[e], q[(e + 1) % 4], rail, .7); });
+      const [lx, ly] = iso(x0, y + d, -t);
+      label('INTEGRATION', lx - 8, ly + 4, colors.ink2, .9 * rail, 'right');
+      label('FRAMEWORK', lx - 8, ly + 17, colors.ink2, .9 * rail, 'right');
+    }
+
+    // Each source connects with a short line and a task card in its socket: amber as it lands, ink after.
+    SOCKETS.forEach((x, k) => {
+      const [a, b] = SNAP[k], on = ease(span(c, a, b));
+      if (on <= 0) return;
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .8; pen(1300 + k, iso(x, SRC_Y + SRC, 0), iso(x, RAIL.y + .05, 0), on, .9);
+      const fresh = 1 - span(c, b + .04, b + .12);
+      box(x - .13, RAIL.y + .09, 0, .26, .26, .08 * on, 1320 + k, on, fresh > .5 ? colors.accent : colors.ink, .25);
+    });
+    // The first card is named once, under the rail, where nothing else lands.
+    { const t = ease(span(c, SNAP[0][0], SNAP[0][1])); if (t > 0) { const [tx, ty] = iso(SOCKETS[0], RAIL.y + RAIL.d, -RAIL.t); label('TASK', tx, ty + 14, colors.accent, t * (1 - span(c, .42, .52))); } }
+
+    // The order platform at the rail's end.
+    const platIn = reveal(.2);
+    box(PLAT.x, PLAT.y, 0, PLAT.w, PLAT.d, PLAT.h, 1400, .9 * platIn, colors.ink, .1);
+    const [bx, by] = iso(PLAT.x, PLAT.y, PLAT.h);
+    label('ORDER PLATFORM', bx, by - 13, colors.ink2, .9 * platIn);
+    label('LIVE ✓', bx, by - 27, colors.accent, ease(span(c, .7, .78)));
+
+    // Bounded lanes from the rail into the platform, and the work moving through them, a few at a time.
+    if (flow > 0) {
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .7;
+      LANES.forEach((y, k) => pen(1500 + k, iso(RAIL.x1, y, 0), iso(PLAT.x, y, 0), flow, .8));
+      ctx.fillStyle = colors.accent;
+      LANES.forEach((y, k) => {
+        for (let q = 0; q < 2; q++) {
+          const u = ((time * .55 + k * .37 + q * .5) % 1), [px, py] = iso(RAIL.x1 + (PLAT.x - RAIL.x1) * u, y, .02);
+          ctx.globalAlpha = flow * .9 * Math.sin(Math.PI * u); ctx.fillRect(px - 3, py - 3, 6, 6);
+        }
+      });
+      const [lx, ly] = iso(RAIL.x1, RAIL.y + RAIL.d, -RAIL.t); // under the rail's end, left of the platform
+      label('BOUNDED WORKERS', lx + .6 * s, ly + 22, colors.ink2, .9 * flow, 'right');
+    }
+
+    // The compile: a dimension line under the platform, 20 minutes long, that shrinks to seconds.
+    const dim = ease(span(c, .74, .8)), shrink = ease(span(c, .8, .95));
+    if (dim > 0) {
+      const [cx, cy] = iso(PLAT.x + PLAT.w, PLAT.y + PLAT.d, 0), len = 80 - 68 * shrink, y = cy + 34, x0 = cx - len / 2, x1 = cx + len / 2;
+      ctx.strokeStyle = shrink > .5 ? colors.accent : colors.ink2; ctx.globalAlpha = .9 * dim; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.moveTo(x0, y - 4); ctx.lineTo(x0, y + 4); ctx.moveTo(x1, y - 4); ctx.lineTo(x1, y + 4); ctx.stroke();
+      label('20 MIN', cx, y - 11, colors.ink2, dim * (1 - shrink));
+      label('SECONDS', cx, y - 11, colors.accent, shrink);
+    }
+  }
+
+  const CHAPTERS = [chapterOne, chapterTwo, chapterThree];
 
   /* ---------- Mounting: one canvas per chapter, drawn only while it shows ---------- */
   function mount(canvas, opts) {
