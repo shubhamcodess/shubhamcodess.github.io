@@ -231,7 +231,7 @@ export const TokenFlow = (() => {
       text('MTO', MTO.x, -MTO.d, MTO.h + .16, Math.min(size + 1, 12), colors.ink);
 
       // Each measure sits under its line, clear of the blocks.
-      text('37,355 TOK', (LANE + GATE) / 2, RAIL + .68, 0, size, colors.ink2, inMeasure);
+      text('37,355 TOK', GATE, RAIL + .68, 0, size, colors.ink2, inMeasure, 'right'); // At the line's far end, clear of the server's name.
       text('13,244 TOK', END - .05, RAIL + .68, 0, size, colors.ink, outMeasure, 'right');
 
       // The result. It's the loop's one lasting touch of amber.
