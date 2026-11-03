@@ -79,7 +79,7 @@ for (const [width, height, slides] of [[412, 790, false], [393, 852, false], [36
       await page.waitForTimeout(1500); // Long enough for the drawing to finish coming in.
       const cut = await page.evaluate((n) => {
         const canvas = document.querySelector(`canvas[data-chapter="${n}"]`);
-        if (!canvas) return null;
+        if (!canvas?.width) return null; // A card can be words only.
         const row = (y) => canvas.getContext("2d").getImageData(0, y, canvas.width, 1).data.some((v, q) => q % 4 === 3 && v > 8);
         return row(0) || row(canvas.height - 1);
       }, i);

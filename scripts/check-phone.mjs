@@ -16,7 +16,7 @@ for (const [name, type, device] of [["Android", chromium, devices["Pixel 7"]], [
     await page.waitForSelector("#scene .g-hero canvas", { timeout: 15000 });
     await page.evaluate(() => document.querySelector(".story")?.scrollIntoView());
     await page.waitForSelector(".story[data-cine]", { timeout: 15000 });
-    await page.waitForSelector(".story-canvas", { timeout: 5000 });
+    await page.waitForSelector(".story-canvas", { timeout: 5000, state: "attached" }); // A card can be words only, which hides it.
     console.log(`ok    ${name}  ${url}`);
   } catch (e) {
     failed = true;

@@ -1,17 +1,16 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import { currentScene, figureInView, figurePresence, frameLook, lineProgress, panRoom, sceneLook, scenePan, sceneTarget } from "./story-motion";
+import { currentScene, figureInView, figureLoop, figurePresence, frameLook, lineProgress, panRoom, sceneLook, scenePan, sceneTarget } from "./story-motion";
 
-type StoryDrawing = { mount(canvas: HTMLCanvasElement, options: { chapter: number; count: number; story: () => { progress: number; live: boolean; from: (number | null)[] } }): () => void };
+type StoryDrawing = { mount(canvas: HTMLCanvasElement, options: { chapter: number; count: number; story: () => { progress: number; live: boolean; from: (number | null)[] }; loop: ((seconds: number) => number) | null }): () => void };
 
-const pad = (n: number) => String(n).padStart(2, "0");
 const FIT_STEPS = [1, 0.96, 0.92, 0.88]; // How far a stacked card's type and spacing may tighten. Below this the words get too small to read.
 const MIN_WINDOW = 150; // The least of a card worth showing at once. Below this the story stays a plain stack.
 
 /* Turns the story into a film: the stage pins to the screen and the scroll plays it, one scene at a time, and the stops on the line jump between scenes.
    On a screen too small for all of it, the heading scrolls away and a card taller than the sheet slides inside it as you scroll, so nothing is cut. If even that wouldn't fit, or there's no script, or motion isn't welcome, it stays what the server sent: the scenes in order, as plain text, with the stops as ordinary links. */
-export function StoryStage({ count, pace, id, titles, children }: { count: number; pace: number; id: string; titles: readonly string[]; children: ReactNode }) {
+export function StoryStage({ count, pace, id, figureMotion, children }: { count: number; pace: number; id: string; figureMotion: "scroll" | "loop"; children: ReactNode }) {
   const ref = useRef<HTMLElement>(null);
   const clock = useRef({ progress: 0, live: false, from: [] as (number | null)[] }); // The film's place, read by the figure drawing every frame.
 
@@ -19,18 +18,26 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
   useEffect(() => {
     const canvases = [...(ref.current?.querySelectorAll<HTMLCanvasElement>("canvas[data-chapter]") ?? [])];
     if (!canvases.length) return;
-    let stops: (() => void)[] = [], gone = false;
+    let stops: (() => void)[] = [], gone = false, close = false, loaded = false;
+    // Where the cards are words only, the figures are never fetched, unless a turned phone or a wider window brings them back.
+    const load = () => {
+      if (loaded || gone || !close || !canvases.some((canvas) => canvas.getClientRects().length)) return;
+      loaded = true;
+      void import("./drawings/story-figures").then(({ StoryFigures }) => {
+        if (gone) return;
+        stops = canvases.map((canvas) => (StoryFigures as StoryDrawing).mount(canvas, { chapter: Number(canvas.dataset.chapter), count, story: () => clock.current, loop: figureMotion === "loop" ? figureLoop : null }));
+      });
+    };
     const near = new IntersectionObserver(([e]) => {
       if (!e?.isIntersecting) return;
       near.disconnect();
-      void import("./drawings/story-figures").then(({ StoryFigures }) => {
-        if (gone) return;
-        stops = canvases.map((canvas) => (StoryFigures as StoryDrawing).mount(canvas, { chapter: Number(canvas.dataset.chapter), count, story: () => clock.current }));
-      });
+      close = true;
+      load();
     }, { root: document.getElementById("page"), rootMargin: "100% 0px" });
     near.observe(ref.current as HTMLElement);
-    return () => { gone = true; near.disconnect(); stops.forEach((stop) => stop()); };
-  }, [count]);
+    addEventListener("resize", load);
+    return () => { gone = true; near.disconnect(); removeEventListener("resize", load); stops.forEach((stop) => stop()); };
+  }, [count, figureMotion]);
 
   useEffect(() => {
     const story = ref.current, page = document.getElementById("page");
@@ -41,7 +48,6 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
     const stacked = matchMedia("(max-width: 860px)"); // Where the cards run top to bottom. The same width as in sections.css.
     const scenes = [...story.querySelectorAll<HTMLElement>("[data-scene]")];
     const marks = [...story.querySelectorAll<HTMLElement>("[data-mark]")];
-    const sheet = story.querySelector<HTMLElement>("[data-sheet]"), strip = story.querySelector<HTMLElement>("[data-strip]");
     const touch = matchMedia("(hover: none) and (pointer: coarse)").matches; // A phone's GPU can't blur a whole card every frame, so there it only fades and moves.
     // Each value is written only on what reads it. Set on the section, it would restyle every element inside on every frame.
     const drawn = story.querySelector<HTMLElement>(".story-rule-drawn"), present = story.querySelector<HTMLElement>(".story-figure");
@@ -58,8 +64,6 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
       for (const el of drifting.flat()) el.style.removeProperty("--drift");
       for (const el of [...scenes, frame, track, head]) el?.removeAttribute("style");
       for (const mark of marks) { delete mark.dataset.state; mark.removeAttribute("aria-current"); }
-      if (sheet) sheet.textContent = pad(1);
-      if (strip) strip.textContent = titles[0] ?? "";
     };
     const draw = () => {
       raf = 0;
@@ -94,8 +98,6 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
       const here = currentScene(progress, count);
       if (here === lastHere) return;
       lastHere = here;
-      if (sheet) sheet.textContent = pad(here + 1);
-      if (strip) strip.textContent = titles[here] ?? "";
       marks.forEach((mark, i) => {
         mark.dataset.state = i === here ? "here" : i < here ? "past" : "next";
         if (i === here) mark.setAttribute("aria-current", "step"); else mark.removeAttribute("aria-current");
@@ -175,7 +177,7 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
       story.removeEventListener("click", jump);
       clear();
     };
-  }, [count, pace, titles]);
+  }, [count, pace]);
 
   return <section ref={ref} id={id} className="story">{children}</section>;
 }

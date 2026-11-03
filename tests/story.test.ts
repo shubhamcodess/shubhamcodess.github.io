@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { currentScene, figurePresence, frameLook, lineProgress, figureInView, panRoom, sceneLook, scenePan, sceneTarget } from "../apps/web/src/scene/story-motion";
+import { currentScene, figureLoop, figurePresence, frameLook, lineProgress, figureInView, panRoom, sceneLook, scenePan, sceneTarget } from "../apps/web/src/scene/story-motion";
 import { TOOL_LOGOS } from "../apps/web/src/scene/tool-logos";
 import { TOOLS } from "../packages/content/src/schema";
 import { site } from "../content/site";
@@ -129,5 +129,15 @@ describe("the story's words", () => {
   });
   it("leaves out what must never be published", () => {
     for (const word of ["salary", "ctc", "notice period", "laid off", "open to work", "looking for"]) expect(all).not.toContain(word);
+  });
+});
+
+describe("a figure playing by itself", () => {
+  it("draws, holds, rewinds and closes on itself", () => {
+    expect(figureLoop(0)).toBe(0);
+    expect(figureLoop(4)).toBe(0.5);
+    expect(figureLoop(10)).toBe(1);
+    expect(figureLoop(15.6)).toBe(0);
+    expect(figureLoop(15.6 + 4)).toBeCloseTo(0.5);
   });
 });

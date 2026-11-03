@@ -550,10 +550,12 @@ export const StoryFigures = (() => {
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       return true;
     }
-    /** How far through its chapter the scroll is. Without the film (no pin, or reduced motion) it's the finished chapter. */
+    /** How far through its chapter the drawing is: by the scroll, or by the clock with `loop`. Without the film (no pin, or reduced motion) it's the finished chapter. */
     function beat() {
+      if (reduced) return 1;
+      if (opts.loop) return opts.loop((performance.now() - t0) / 1000);
       const st = story();
-      if (!st.live || reduced) return 1;
+      if (!st.live) return 1;
       // A chapter after the first waits until its scene has fully arrived and its words are sharp.
       const start = st.from?.[chapter] ?? (chapter ? ARRIVED : 0);
       return clamp((st.progress * count - chapter - start) / (DONE - start));

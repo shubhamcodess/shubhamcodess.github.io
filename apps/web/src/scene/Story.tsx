@@ -10,7 +10,6 @@ import { CurrentYear } from "./CurrentYear";
 import { StoryStage } from "./StoryStage";
 import { TOOL_LOGOS } from "./tool-logos";
 
-const pad = (n: number) => String(n).padStart(2, "0");
 /** How many chapters have their figure drawn. The rest stay marked as empty figures until theirs is built. */
 const DRAWN = 4;
 const toMark = ([x, y]: number[]) => [x! * 15 + 16, y! * 15 + 8];
@@ -28,11 +27,11 @@ const Pen = ({ strokes }: { strokes: ReturnType<typeof planStrokes> }) => stroke
 
 /* Where it started and what it is now, told as scenes. Words, tools and whether it has a frame are all in `story` in content/site.ts. */
 export function Story() {
-  const { kicker, title, company, pace, frame, figure, scenes } = site.story;
+  const { kicker, title, company, pace, frame, figure, figureMotion, content, scenes } = site.story;
   const titles = scenes.map((scene) => scene.title);
   const stops = scenes.slice(1), last = scenes.at(-1);
   return (
-    <StoryStage id="experience" count={scenes.length} pace={pace} titles={titles}>
+    <StoryStage id="experience" count={scenes.length} pace={pace} figureMotion={figureMotion}>
       <div className="story-stage page-col">
         <header className="story-head">
           <p className="kicker">{kicker}</p>
@@ -48,13 +47,8 @@ export function Story() {
             </Tooltip>
           </div>
         </header>
-        <div className="pc story-frame" data-frame={frame ? "on" : "off"} data-figure-ceiling>
+        <div className="pc story-frame" data-frame={frame ? "on" : "off"} data-narrow={content.narrow} data-wide={content.wide} data-figure-ceiling>
           {frame && <SheetFrame face={false} />}
-          <div className="story-strip">
-            <span className="story-sheet">Sheet <b data-sheet>{pad(1)}</b> / {pad(scenes.length)}</span>
-            <span className="story-strip-title" data-strip>{titles[0]}</span>
-            <span className="story-org">{company}</span>
-          </div>
           <ol className="story-window">
             {scenes.map((scene, i) => (
               <li key={scene.title} id={`scene-${i + 1}`} className="story-scene" data-scene>

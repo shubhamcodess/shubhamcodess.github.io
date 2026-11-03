@@ -20,6 +20,8 @@ export const LOG_VERBS = ["owned", "migrated", "built", "replaced", "made", "shi
 export const TOOLS = ["java", "spring", "angular", "nextjs", "typescript", "openshift", "gke", "kubernetes", "github-actions", "azure-ad", "oracle", "rabbitmq", "mcp"] as const;
 export type Tool = (typeof TOOLS)[number];
 
+const STORY_CONTENT = ["full", "text", "text-tools"] as const;
+
 export const siteSchema = z
   .object({
     name: z.string().min(1),
@@ -121,6 +123,10 @@ export const siteSchema = z
       pace: z.number().min(0.4).max(2),
       /** The blueprint frame around the scenes. The section works with it on or off. */
       frame: z.boolean(),
+      /** What plays a chapter's drawing: the scroll, or the card itself, on a loop, so it's already moving as you scroll by. */
+      figureMotion: z.enum(["scroll", "loop"]),
+      /** What a card shows on narrow screens (under 860px) and wide ones: everything, the words alone, or the words and tools. */
+      content: z.strictObject({ narrow: z.enum(STORY_CONTENT), wide: z.enum(STORY_CONTENT) }),
       figure: z.strictObject({ anchor: z.number().min(0).max(1), face: z.enum(["left", "right"]), minHeight: z.number().min(12).max(120), maxHeight: z.number().min(12).max(240), clearance: z.number().min(0).max(40) }),
       scenes: z.array(z.strictObject({
         /** Its milestone on the line: words, or a batarang. */

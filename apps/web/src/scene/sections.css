@@ -63,12 +63,6 @@
 .story-tabs .bp[aria-selected="true"] { pointer-events: none; }
 /* The sheet is clear, like a button: the frame's texture rises from below and the page shows through. Its hover is the project card's. */
 .pc.story-frame { height: auto; }
-.story-strip { display: grid; grid-template-columns: auto 1fr auto; align-items: center; border-bottom: 1px solid var(--line-rest); font: 500 11px/1 var(--font-note); letter-spacing: .06em; text-transform: uppercase; }
-.story-strip > * { padding: clamp(7px, 1.1svh, 10px) clamp(11px, 1.2vw, 16px); }
-.story-sheet { border-right: 1px solid var(--line-rest); white-space: nowrap; }
-.story-sheet b { font-weight: inherit; }
-.story-strip-title { min-width: 0; overflow: hidden; color: var(--ink-2); white-space: nowrap; text-overflow: ellipsis; }
-.story-org { border-left: 1px solid var(--line-rest); white-space: nowrap; }
 .story-window { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
 .story-window > li + li { border-top: 1px solid var(--line-rest); }
 .story-scene { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); transform-origin: 40% 50%; }
@@ -113,9 +107,6 @@
 .story-frame[data-frame="on"] .story-text::before { --fade: linear-gradient(to top, rgb(0 0 0 / calc((var(--pc-rise) - 14%) * 2.4)) 0, transparent calc((var(--pc-rise) - 14%) * 1.5)); -webkit-mask-image: var(--fade); mask-image: var(--fade); }
 
 /* Without the frame: the same words on the same column, with nothing around them. */
-.story-frame[data-frame="off"] .story-strip { border-bottom: 0; grid-template-columns: auto 1fr; }
-.story-frame[data-frame="off"] .story-strip > * { padding: 0 12px 8px 0; border: 0; }
-.story-frame[data-frame="off"] .story-org { display: none; }
 .story-frame[data-frame="off"] .story-text { padding-left: 0; }
 .story-frame[data-frame="off"] .story-fig { border-left: 0; }
 .story-frame[data-frame="off"] .story-tools { padding-inline: 0; }
@@ -159,8 +150,6 @@
   .story-frame[data-frame="off"] .story-fig { border-top: 0; }
   .story-frame[data-frame="on"] .story-text::before { display: none; } /* The figure is between the words and the tools now, so nothing rises to them. */
   .story-role { white-space: normal; }
-  .story-strip-title { display: none; }
-  .story-strip { grid-template-columns: 1fr auto; }
   .story-tools { grid-column: auto; align-items: flex-start; }
   .story-tool { font-size: 10.5px; }
   .story-tool .bp-icon { width: 17px; height: 17px; }
@@ -168,6 +157,17 @@
 
 /* The heading fills a phone's width, so the tabs take a line of their own under it. */
 @media (max-width: 640px) { .story-tabs { position: static; margin-top: 12px; } }
+
+/* `content` in `story`: a card can be words only, with or without its tools, set apart for narrow and wide screens. Under 860px is where the cards run top to bottom. */
+@media (max-width: 860px) {
+  .story-frame[data-narrow^="text"] .story-scene { grid-template-rows: 1fr auto; }
+  .story-frame[data-narrow^="text"] .story-fig, .story-frame[data-narrow="text"] .story-tools { display: none; }
+  .story-frame[data-frame="on"][data-narrow^="text"] .story-text::before { display: block; }
+}
+@media (min-width: 861px) {
+  .story-frame[data-wide^="text"] .story-scene { grid-template-columns: minmax(0, 1fr); }
+  .story-frame[data-wide^="text"] .story-fig, .story-frame[data-wide="text"] .story-tools { display: none; }
+}
 
 /* The film: the stage holds the screen while the scroll plays it. The frame is only as big as what's in it, in the middle of what's left. */
 .story[data-cine] .story-stage { position: sticky; top: var(--stage-top, 0px); display: flex; flex-direction: column; } /* The script sets the section's height and centers the stage below the header. */

@@ -37,6 +37,8 @@ const config = {
     company: "IBM", // Set in the theme's accent after the first line.
     pace: 1.05,
     frame: true, // false takes the blueprint frame away; the words stay on the same column.
+    figureMotion: "scroll", // "loop": each card's drawing plays by itself, so scrolling only moves between cards.
+    content: { narrow: "text", wide: "full" }, // Each is "full", "text" (the words alone) or "text-tools".
     figure: { anchor: 0.94, face: "left", minHeight: 22, maxHeight: 46, clearance: 6 },
     // Clients stay unnamed here. IBM is fine. Every claim comes from the user's own public profile; don't round anything up.
     scenes: [

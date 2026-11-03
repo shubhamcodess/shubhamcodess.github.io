@@ -67,7 +67,8 @@ expect(await page.evaluate(() => [...document.querySelectorAll("[data-layer]")].
 await page.evaluate(() => document.querySelector(".story").scrollIntoView());
 await page.waitForSelector(".story[data-cine]", { timeout: 15000 });
 await page.waitForTimeout(1500);
-expect(drawingLoaded("REVIEW · FEEDBACK LOOP"), "the story's figures never loaded");
+const drawable = await page.evaluate(() => [...document.querySelectorAll("canvas[data-chapter]")].some((c) => c.getClientRects().length));
+expect(drawingLoaded("REVIEW · FEEDBACK LOOP") === drawable, drawable ? "the story's figures never loaded" : "the story's figures loaded for cards that are words only");
 // The city holds still while the film plays, so its path has to know about the film.
 const held = await page.evaluate(async () => {
   const p = document.getElementById("page"), s = document.querySelector(".story"), hero = document.querySelector("#scene .g-hero");
@@ -86,8 +87,8 @@ const film = await page.evaluate(async () => {
   return {
     blurred: [...scenes, s.querySelector(".story-frame"), s.querySelector(".story-track")].filter((el) => el.style.filter && el.style.filter !== "none").length,
     onSection: ["--story-drawn", "--now", "--hint", "--drift"].filter((v) => s.style.getPropertyValue(v)),
-    holding: s.querySelectorAll('canvas[data-chapter]').length - [...s.querySelectorAll("canvas[data-chapter]")].filter((c) => c.width === 0).length,
-    hiddenHolding: scenes.filter((el) => el.style.visibility === "hidden" && [...el.querySelectorAll("canvas")].some((c) => c.width > 0)).length,
+    holding: [...s.querySelectorAll("canvas[data-chapter]")].filter((c) => c.width > 0 && c.getClientRects().length).length,
+    hiddenHolding: scenes.filter((el) => el.style.visibility === "hidden" && [...el.querySelectorAll("canvas")].some((c) => c.width > 0 && c.getClientRects().length)).length,
     megapixels: canvases.reduce((sum, c) => sum + c.width * c.height, 0) / 1e6,
   };
 });

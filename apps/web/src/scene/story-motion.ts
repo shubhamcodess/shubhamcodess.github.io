@@ -48,6 +48,14 @@ export function figureInView(needed: number, spare: number, index: number, count
   return PAN_END;
 }
 
+const LOOP_DRAW = 8, LOOP_HOLD = 6, LOOP_REWIND = 1.6;
+/** A figure playing by itself instead of with the scroll, 0 to 1: it draws, holds to be looked at, and quickly rewinds, so the loop closes on itself. */
+export function figureLoop(seconds: number) {
+  const t = seconds % (LOOP_DRAW + LOOP_HOLD + LOOP_REWIND);
+  if (t < LOOP_DRAW) return t / LOOP_DRAW;
+  return t < LOOP_DRAW + LOOP_HOLD ? 1 : 1 - (t - LOOP_DRAW - LOOP_HOLD) / LOOP_REWIND;
+}
+
 /** How far the line has drawn. It reaches each stop as that scene starts to arrive, so a chapter plays out along its own stretch of the line. */
 export const lineProgress = (progress: number, count: number) => (count < 2 ? 1 : clamp((progress * count) / (count - 1)));
 
