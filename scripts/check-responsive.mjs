@@ -5,7 +5,7 @@ import { extname, join } from "node:path";
 import { chromium } from "playwright";
 
 const OUT = "apps/web/out";
-const WIDTHS = [[320, 568], [375, 812], [768, 1024], [1024, 768], [1440, 900], [2560, 1440], [812, 375]]; // the last is a phone on its side
+const WIDTHS = [[320, 568], [375, 812], [768, 1024], [1024, 768], [1440, 900], [2560, 1440], [1440, 800], [1366, 650], [900, 700], [812, 375]]; // short laptops must keep the film pinned, and the last is a phone on its side
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".txt": "text/plain" };
 
 const pages = readdirSync(OUT, { recursive: true }).map(String)

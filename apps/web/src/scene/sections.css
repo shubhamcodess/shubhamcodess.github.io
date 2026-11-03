@@ -53,7 +53,7 @@
 .project-stack { max-width: 68ch; margin: 28px 0 0; padding-top: 14px; border-top: 1px solid var(--line-rest); font: 500 12px/1.5 var(--font-note); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); }
 
 /* The story. As plain text first: every scene in order inside the frame. The script turns that into a film if motion is welcome and it fits the screen. */
-.story { --story-drawn: 1; --now: 1; position: relative; padding-block: var(--sec-pad); }
+.story { --story-drawn: 1; --now: 1; --air: clamp(0px, calc(100svh - 650px), 300px); position: relative; padding-block: var(--sec-pad); } /* `--air` is the height to spare: side by side, the words open up with it, while a short laptop keeps the film pinned. */
 /* Kicker and heading pin with the sheet, so they stay while the scenes play. */
 .story-head { position: relative; margin-bottom: var(--sec-gap); }
 /* The company's name, a touch heavier and in the theme's accent. */
@@ -66,21 +66,21 @@
 .story-window { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
 .story-window > li + li { border-top: 1px solid var(--line-rest); }
 .story-scene { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); transform-origin: 40% 50%; }
-.story-text { display: flex; flex-direction: column; min-width: 0; padding: clamp(12px, 2.2svh, 24px) clamp(12px, 1.9vw, 28px); }
-.story-label { margin: 0 0 3px; font-size: clamp(14px, 1.15vw, 17px); letter-spacing: -.02em; color: var(--ink-2); }
+.story-text { display: flex; flex-direction: column; min-width: 0; padding: calc(clamp(12px, 2.2svh, 24px) + var(--air) * .05) clamp(16px, 2.4vw, 40px); }
+.story-label { margin: 0 0 calc(3px + var(--air) * .008); font-size: clamp(14px, 1.15vw, 17px); letter-spacing: -.02em; color: var(--ink-2); }
 .story-title { position: relative; margin: 0; font: 500 clamp(27px, min(3.3vw, 6.4svh), 50px)/1.05 var(--sans); letter-spacing: -.035em; color: var(--ink); text-wrap: balance; }
 .story-face { position: relative; display: block; }
 /* The same depth as the name in the hero: a thin shadow behind the words, sliding as the scene passes. */
 .story-wire { position: absolute; inset: 0; color: transparent; -webkit-text-stroke: .8px color-mix(in srgb, var(--line), transparent 55%); translate: calc(2px + var(--drift, 0) * 4px) 2px; pointer-events: none; }
 /* The role on a dimension line that measures the text, as it does in the hero. */
-.story-role { display: flex; align-items: center; gap: 8px; margin: clamp(7px, 1.2svh, 12px) 0 0; font: 500 11px/1.3 var(--font-note); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; color: var(--ink); }
+.story-role { display: flex; align-items: center; gap: 10px; margin: calc(clamp(7px, 1.2svh, 12px) + var(--air) * .02) 0 0; font: 500 11px/1.3 var(--font-note); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; color: var(--ink); }
 .story-role::before, .story-role::after { content: ""; height: 1px; background: var(--line-rest); }
 .story-role::before { flex: none; width: 14px; box-shadow: -1px 0 0 0 var(--accent); }
 .story-role::after { flex: 1; min-width: 10px; box-shadow: 1px 0 0 0 var(--accent); }
-.story-line { margin: clamp(6px, 1svh, 10px) 0 0; font-size: clamp(14px, 1.08vw, 16px); line-height: 1.4; letter-spacing: -.01em; color: var(--ink); text-wrap: pretty; }
+.story-line { margin: calc(clamp(6px, 1svh, 10px) + var(--air) * .02) 0 0; font-size: clamp(14px, 1.08vw, 16px); line-height: 1.4; letter-spacing: -.01em; color: var(--ink); text-wrap: pretty; }
 /* The log: what was done, one line each. The verb is the column you scan. */
-.story-log { margin: clamp(9px, 1.6svh, 16px) 0 0; padding: 0; list-style: none; }
-.story-log li { display: grid; grid-template-columns: 7.2ch minmax(0, 1fr); gap: 0 10px; align-items: baseline; padding: clamp(3px, .62svh, 6px) 0; border-top: 1px solid color-mix(in srgb, var(--line-rest), transparent 62%); }
+.story-log { margin: calc(clamp(9px, 1.6svh, 16px) + var(--air) * .04) 0 0; padding: 0; list-style: none; }
+.story-log li { display: grid; grid-template-columns: 7.2ch minmax(0, 1fr); gap: 0 14px; align-items: baseline; padding: calc(clamp(3px, .62svh, 6px) + var(--air) * .015) 0; border-top: 1px solid color-mix(in srgb, var(--line-rest), transparent 62%); }
 .story-log li:last-child { border-bottom: 1px solid color-mix(in srgb, var(--line-rest), transparent 62%); }
 .story-verb { font: 500 10.5px/1.5 var(--font-note); letter-spacing: .03em; color: var(--accent); }
 .story-what { font-size: clamp(12.5px, .92vw, 13.5px); line-height: 1.36; color: var(--ink-2); text-wrap: pretty; }
@@ -90,7 +90,7 @@
 .story-fig svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .story-fig line { stroke: var(--line-rest); stroke-width: 1; vector-effect: non-scaling-stroke; stroke-dasharray: 3 6; opacity: .45; }
 /* What it was done with, along the bottom, each in the same pen as the icons. */
-.story-tools { grid-column: 1 / -1; display: flex; align-items: center; gap: clamp(10px, 1.4vw, 20px); padding: clamp(6px, 1.1svh, 10px) clamp(12px, 1.9vw, 28px); border-top: 1px solid var(--line-rest); }
+.story-tools { grid-column: 1 / -1; display: flex; align-items: center; gap: clamp(10px, 1.4vw, 20px); padding: calc(clamp(6px, 1.1svh, 10px) + var(--air) * .012) clamp(16px, 2.4vw, 40px); border-top: 1px solid var(--line-rest); }
 .story-tools-label { flex: none; font: 500 10.5px var(--font-note); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
 .story-tools ul { display: flex; flex-wrap: wrap; gap: clamp(4px, .8svh, 8px) clamp(12px, 1.5vw, 22px); margin: 0; padding: 0; list-style: none; }
 .story-tool { display: flex; align-items: center; gap: 6px; font: 500 11px var(--font-note); color: var(--ink); }
@@ -133,20 +133,20 @@
 @media (max-width: 860px) {
   .story-scene { grid-template-columns: minmax(0, 1fr); }
   /* Top to bottom, in the order they read side by side: the words, the figure, the tools. The figure is tall enough for its drawing at this width, and takes any height left over. */
-  .story-scene { --k: var(--story-k, 1); grid-template-rows: auto minmax(calc(var(--fig-min, clamp(180px, 52vw, 300px)) * var(--k)), 1fr) auto; }
+  .story-scene { --k: var(--story-k, 1); --g: var(--story-g, 1); grid-template-rows: auto minmax(calc(var(--fig-min, clamp(180px, 52vw, 300px)) * var(--k)), 1fr) auto; }
   .story-scene:last-child { --fig-min: clamp(250px, 66vw, 320px); } /* The last chapter's drawing has three rows. */
   .story-scene:nth-child(3) { --fig-min: clamp(205px, 58vw, 300px); } /* Its drawing is the tallest of the single-row ones. */
-  /* `--k` tightens a stacked card to fit the screen. The script picks it. */
-  .story-text { padding: calc(12px * var(--k)) 12px calc(10px * var(--k)); }
-  .story-label { margin-bottom: calc(2px * var(--k)); font-size: calc(14px * var(--k)); }
+  /* A stacked card tightens to fit the screen: `--g` its spacing first, and `--k` its type only a little. The script picks them. */
+  .story-text { padding: calc(22px * var(--g)) 20px calc(24px * var(--g)); }
+  .story-label { margin-bottom: calc(4px * var(--g)); font-size: calc(14px * var(--k)); }
   .story-title { font-size: calc(27px * var(--k)); }
   .story-wire { translate: calc(1px + var(--drift, 0) * 2px) 1px; } /* The shadow's reach shrinks with the type. */
-  .story-role { margin-top: calc(7px * var(--k)); }
-  .story-line { margin-top: calc(6px * var(--k)); font-size: calc(14px * var(--k)); line-height: 1.34; }
-  .story-log { margin-top: calc(8px * var(--k)); }
-  .story-log li { padding-block: calc(3px * var(--k)); }
-  .story-what { font-size: calc(12.5px * var(--k)); line-height: 1.3; }
-  .story-tools { padding-block: calc(6px * var(--k)); }
+  .story-role { margin-top: calc(12px * var(--g)); }
+  .story-line { margin-top: calc(11px * var(--g)); font-size: calc(14px * var(--k)); line-height: 1.48; }
+  .story-log { margin-top: calc(16px * var(--g)); }
+  .story-log li { padding-block: calc(8px * var(--g)); }
+  .story-what { font-size: calc(12.5px * var(--k)); line-height: 1.42; }
+  .story-tools { padding: calc(10px * var(--g)) 20px; }
   .story-fig { min-height: 0; border-left: 0; border-top: 1px solid var(--line-rest); }
   .story-frame[data-frame="off"] .story-fig { border-top: 0; }
   .story-frame[data-frame="on"] .story-text::before { display: none; } /* The figure is between the words and the tools now, so nothing rises to them. */
@@ -165,6 +165,8 @@
   .story-frame[data-narrow^="text"] .story-fig, .story-frame[data-narrow="text"] .story-tools { display: none; }
   .story-frame[data-frame="on"][data-narrow^="text"] .story-text::before { display: block; }
 }
+@media (min-width: 861px) and (max-width: 1100px) and (max-height: 760px) { .story { --air: 0px; } .story-text, .story-tools { padding-inline: clamp(12px, 1.9vw, 28px); } } /* Narrow columns wrap more lines, so a short window has nothing to spare. */
+@media (min-width: 861px) and (min-height: 760px) { .story-line { line-height: 1.5; } .story-what { line-height: 1.45; } }
 @media (min-width: 861px) {
   .story-frame[data-wide^="text"] .story-scene { grid-template-columns: minmax(0, 1fr); }
   .story-frame[data-wide^="text"] .story-fig, .story-frame[data-wide="text"] .story-tools { display: none; }

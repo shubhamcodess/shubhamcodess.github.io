@@ -5,7 +5,7 @@ import { currentScene, figureInView, figureLoop, figurePresence, frameLook, line
 
 type StoryDrawing = { mount(canvas: HTMLCanvasElement, options: { chapter: number; count: number; story: () => { progress: number; live: boolean; from: (number | null)[] }; loop: ((seconds: number) => number) | null }): () => void };
 
-const FIT_STEPS = [1, 0.96, 0.92, 0.88]; // How far a stacked card's type and spacing may tighten. Below this the words get too small to read.
+const FIT_STEPS = [{ k: 1, g: 1 }, { k: 0.96, g: 0.8 }, { k: 0.92, g: 0.6 }, { k: 0.88, g: 0.4 }]; // How far a stacked card's type (k) and spacing (g) may tighten. Below this the words get too small to read.
 const MIN_WINDOW = 150; // The least of a card worth showing at once. Below this the story stays a plain stack.
 
 /* Turns the story into a film: the stage pins to the screen and the scroll plays it, one scene at a time, and the stops on the line jump between scenes.
@@ -123,8 +123,9 @@ export function StoryStage({ count, pace, id, figureMotion, children }: { count:
         if (avail < MIN_WINDOW) { clear(); return; }
         story.dataset.pan = ""; // From here each card is its own height, so it can be measured alone.
         // Tighten each card a step at a time until it fits, so a long one doesn't shrink the rest, and a card only slides on a screen too small for that.
-        for (const scene of scenes) for (const k of FIT_STEPS) {
+        for (const scene of scenes) for (const { k, g } of FIT_STEPS) {
           scene.style.setProperty("--story-k", String(k));
+          scene.style.setProperty("--story-g", String(g));
           if (scene.offsetHeight <= avail) break;
         }
         const shown = Math.min(avail, Math.max(...scenes.map((scene) => scene.offsetHeight)));
