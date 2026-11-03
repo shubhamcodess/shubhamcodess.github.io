@@ -3,7 +3,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { currentScene, figureInView, figureLoop, figurePresence, frameLook, lineProgress, panRoom, sceneLook, scenePan, sceneTarget } from "./story-motion";
 
-type StoryDrawing = { mount(canvas: HTMLCanvasElement, options: { chapter: number; count: number; story: () => { progress: number; live: boolean; from: (number | null)[] }; loop: ((seconds: number) => number) | null }): () => void };
+type StoryDrawing = { mount(canvas: HTMLCanvasElement, options: { chapter: number; count: number; story: () => { progress: number; live: boolean; settled: boolean; restarts: number; from: (number | null)[] }; loop: ((seconds: number) => number) | null }): () => void };
 
 const FIT_STEPS = [{ k: 1, g: 1 }, { k: 1, g: 0.85 }, { k: 0.96, g: 0.7 }, { k: 0.92, g: 0.55 }, { k: 0.88, g: 0.4 }]; // How far a stacked card's type (k) and spacing (g) may tighten. Below this the words get too small to read.
 const MIN_WINDOW = 150; // The least of a card worth showing at once. Below this the story stays a plain stack.
@@ -12,7 +12,7 @@ const MIN_WINDOW = 150; // The least of a card worth showing at once. Below this
    On a screen too small for all of it, the heading scrolls away and a card taller than the sheet slides inside it as you scroll, so nothing is cut. If even that wouldn't fit, or there's no script, or motion isn't welcome, it stays what the server sent: the scenes in order, as plain text, with the stops as ordinary links. */
 export function StoryStage({ count, pace, id, figureMotion, children }: { count: number; pace: number; id: string; figureMotion: "scroll" | "loop"; children: ReactNode }) {
   const ref = useRef<HTMLElement>(null);
-  const clock = useRef({ progress: 0, live: false, from: [] as (number | null)[] }); // The film's place, read by the figure drawing every frame.
+  const clock = useRef({ progress: 0, live: false, settled: false, restarts: 0, from: [] as (number | null)[] }); // The film's place, read by the figure drawing every frame.
 
   // The figures: blueprint drawings, loaded only once the story is a screen away. Each chapter's canvas shows its part.
   useEffect(() => {
@@ -86,6 +86,7 @@ export function StoryStage({ count, pace, id, figureMotion, children }: { count:
       });
       if (head && headRoom) head.style.opacity = Math.min(1, Math.max(0, ahead / headRoom)).toFixed(3); // It's on its way out from under the header, so it fades before it gets there.
       const whole = frameLook(ahead, ahead + film + innerHeight, innerHeight);
+      clock.current.settled = whole.opacity > 0.95;
       for (const el of [frame, track]) {
         if (!el) continue;
         el.style.opacity = whole.opacity.toFixed(3);
@@ -167,6 +168,7 @@ export function StoryStage({ count, pace, id, figureMotion, children }: { count:
       if (!mark || !on) return;
       e.preventDefault();
       e.stopPropagation(); // This is a place in the film, not a place on the page.
+      clock.current.restarts++;
       const ahead = story.getBoundingClientRect().top + stageAt - pinTop;
       page.scrollTo({ top: page.scrollTop + ahead + film * sceneTarget(Number(mark.dataset.mark), count), behavior: "smooth" });
     };

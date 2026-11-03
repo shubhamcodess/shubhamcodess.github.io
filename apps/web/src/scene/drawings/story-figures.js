@@ -535,7 +535,7 @@ export const StoryFigures = (() => {
     const chapter = opts.chapter ?? 0, count = opts.count ?? 4, story = opts.story ?? (() => ({ progress: 0, live: false }));
     const paint = CHAPTERS[chapter];
     const scene = canvas.closest('[data-scene]');
-    let w = 0, h = 0, dpr = 1, colors = {}, font = 'monospace', raf = 0, visible = false, shownAt = -1;
+    let w = 0, h = 0, dpr = 1, colors = {}, font = 'monospace', raf = 0, visible = false, shownAt = -1, restarts = 0;
     const t0 = performance.now();
 
     function readColors() {
@@ -551,9 +551,9 @@ export const StoryFigures = (() => {
       return true;
     }
     /** How far through its chapter the drawing is: by the scroll, or by the clock with `loop`. Without the film (no pin, or reduced motion) it's the finished chapter. */
-    function beat() {
+    function beat(now) {
       if (reduced) return 1;
-      if (opts.loop) return opts.loop((performance.now() - t0) / 1000);
+      if (opts.loop) return shownAt < 0 ? 0 : opts.loop(Math.max(0, now - shownAt) / 1000);
       const st = story();
       if (!st.live) return 1;
       // A chapter after the first waits until its scene has fully arrived and its words are sharp.
@@ -583,7 +583,7 @@ export const StoryFigures = (() => {
         ctx.globalAlpha = alpha; ctx.fillStyle = color; ctx.font = `500 ${Math.max(8.5, Math.min(10.5, s * .2))}px ${font}`;
         ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillText(w < NARROW ? text : text.split('').join(' '), x, y); // Spaced out where there's room; on a narrow plate the width matters more.
       };
-      paint({ ctx, w, h, s, X0, Y0, colors, intro, c: beat(), time, pen, label });
+      paint({ ctx, w, h, s, X0, Y0, colors, intro, c: beat(now), time, pen, label });
       ctx.globalAlpha = 1;
     }
 
@@ -592,11 +592,15 @@ export const StoryFigures = (() => {
     let held = false, drawn = 0; // `held`: the canvas has its pixels. Only the chapter on screen keeps them.
     function frame(now) {
       raf = 0;
+      // On a loop, a card plays from the start each time it arrives, and when its stop on the line is pressed.
+      if (opts.loop && story().restarts !== restarts) { restarts = story().restarts; shownAt = -1; }
+      if (opts.loop && !showing()) shownAt = -1;
       if (!showing()) { if (held) { canvas.width = canvas.height = 0; held = false; } return; }
       if (!held) { held = resize(); if (!held) return; readColors(); }
       if (touch && !reduced && now - drawn < 28) { raf = requestAnimationFrame(frame); return; }
       drawn = now;
-      if (shownAt < 0 && (!scene || Number(scene.style.opacity || 1) > .95)) shownAt = now; // The pen starts once the scene is in focus.
+      if (opts.loop && story().live && !story().settled) shownAt = -1; // The section is still arriving, or already leaving.
+      else if (shownAt < 0 && (!scene || Number(scene.style.opacity || 1) > .95)) shownAt = now; // The pen starts once the scene is in focus.
       draw(now);
       if (!reduced) raf = requestAnimationFrame(frame);
     }
