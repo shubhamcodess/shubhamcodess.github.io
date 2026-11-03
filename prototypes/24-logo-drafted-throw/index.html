@@ -84,10 +84,16 @@
         <div class="seg"><button id="b-load">Replay load</button><button id="b-throw">Throw</button><button id="b-pull">Pull out</button></div>
       </div>
       <div class="group"><span>Lettering</span>
-        <div class="seg" data-key="letter"><button data-v="drafted" aria-pressed="true">Drafted</button><button data-v="geist">Geist</button></div>
+        <div class="seg" data-key="letter"><button data-v="geist" aria-pressed="true">Geist</button><button data-v="drafted">Drafted</button></div>
       </div>
       <div class="group"><span>Construction guides</span>
-        <div class="seg" data-key="guides"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div>
+        <div class="seg" data-key="guides"><button data-v="on">On</button><button data-v="off" aria-pressed="true">Off</button></div>
+      </div>
+      <div class="group"><span>Letter depth</span>
+        <div class="seg" data-key="depthOn"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div>
+      </div>
+      <div class="group"><span>Aim line and target</span>
+        <div class="seg" data-key="aim"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div>
       </div>
       <div class="group"><span>Speed</span>
         <div class="seg" data-key="speed"><button data-v="1" aria-pressed="true">1×</button><button data-v=".5">½×</button><button data-v=".2">⅕×</button></div>
@@ -99,8 +105,9 @@
   </section>
 
   <div class="notes">
-    <div><h3>Lettering</h3><p>SP is built like drafting lettering: straight strokes and arcs of a single 4-unit radius, square ends, the same weight everywhere. It sits on three faint guides (cap line, mid line, baseline) that are drawn first, as a draftsman would. No wobble.</p></div>
-    <div><h3>The throw</h3><p>A dashed flight line is drawn from outside the plate to the bowl of the P, with an amber target mark. The batarang follows that line, tip first, spinning, and lands in the target. The line and the mark then fade. Nothing shakes or bounces.</p></div>
+    <div><h3>Lettering</h3><p>The Drafted option builds SP like drafting lettering: straight strokes and arcs of a single 4-unit radius, square ends, the same weight everywhere. It sits on three faint guides (cap line, mid line, baseline) that are drawn first, as a draftsman would. No wobble.</p></div>
+    <div><h3>The throw</h3><p>A dashed flight line is drawn from outside the plate to the top right of the P's bowl, with an amber target mark (both can be switched off). The batarang follows it, spinning, and buries its tip in the letter. Its shadow falls on the plate and closes in on the entry point as it lands, and the cut shows as a pale notch in the P. Nothing shakes or bounces.</p></div>
+    <div><h3>Depth</h3><p>SP has a 2.5D wireframe copy set back down and to the right, faintly hatched, the same depth cue as the hero name. It slides out once the letters are drawn.</p></div>
     <div><h3>Scroll</h3><p>Leaving the top pulls the batarang back out along its line, and only the cut mark is left. Back at the top, the flight line is drawn again and the batarang is thrown again. Reduced motion shows it lodged and still.</p></div>
   </div>
 
@@ -121,7 +128,7 @@ const RIGHT = [
 ];
 const EDGES = [...RIGHT, ...RIGHT.map((e) => e.map(([x, y]) => [-x, y]))];
 const right = RIGHT.flat(), OUTLINE = [...right, ...[...right].reverse().map(([x, y]) => [-x, y])];
-const TILT = [1, -.03, -.1, .9], ANGLE = -44, R = 14;
+const TILT = [1, -.03, -.1, .9], ANGLE = -44, R = 12.5;
 const line = (pts) => `M${pts.map(([x, y]) => `${f(x)} ${f(y)}`).join("L")}`;
 const BLADE = {
   shape: line(OUTLINE.map(([x, y]) => [x * R, y * R])) + "Z",
@@ -132,11 +139,13 @@ const BLADE = {
 const rad = ANGLE * Math.PI / 180, cos = Math.cos(rad), sin = Math.sin(rad);
 const place = (x, y) => { const rx = x*cos - y*sin, ry = x*sin + y*cos; return { x: TILT[0]*rx + TILT[2]*ry, y: TILT[1]*rx + TILT[3]*ry }; };
 
-const TIP_AT = { x: 27.5, y: 15 };                       // in the bowl of the P
+const al = place(1, 0), al_l = Math.hypot(al.x, al.y), U = { x: al.x / al_l, y: al.y / al_l }, N = { x: -U.y, y: U.x };
+// It goes in through the top right of the P's bowl, and its tip is buried a little way inside the letter.
+const ENTRY = { x: 30.1, y: 12.7 }, BURIED = 4.6;
+const TIP_AT = { x: ENTRY.x - U.x * BURIED, y: ENTRY.y - U.y * BURIED };
 const TIP = place(-R, -.22 * R);                          // the tip, from the batarang's centre
 const LODGED = { x: TIP_AT.x - TIP.x, y: TIP_AT.y - TIP.y };
-const al = place(1, 0), al_l = Math.hypot(al.x, al.y), U = { x: al.x / al_l, y: al.y / al_l }, N = { x: -U.y, y: U.x };
-const SLIT = { x: TIP_AT.x + U.x * 2.4, y: TIP_AT.y + U.y * 2.4 }, BIG = 200;
+const SLIT = ENTRY, BIG = 200;
 const VISIBLE = [[SLIT.x - N.x*BIG, SLIT.y - N.y*BIG], [SLIT.x + N.x*BIG, SLIT.y + N.y*BIG], [SLIT.x + N.x*BIG + U.x*BIG, SLIT.y + N.y*BIG + U.y*BIG], [SLIT.x - N.x*BIG + U.x*BIG, SLIT.y - N.y*BIG + U.y*BIG]].map(([x, y]) => `${f(x)},${f(y)}`).join(" ");
 const from = (a, b) => `${f(SLIT.x + U.x*a + N.x*b)} ${f(SLIT.y + U.y*a + N.y*b)}`;
 const SLIT_LINE = `M${from(0, -1.6)}L${from(0, 2.1)}`;
@@ -144,11 +153,20 @@ const CRACKS = [`M${from(0,-1.6)}L${from(-3,-3.4)}`, `M${from(0,1.6)}L${from(-2.
 const FLECK = `M${from(0,-.6)}L${from(.9,.3)}`;
 const CHIPS = [[-5,-7],[1,-9],[6,-6],[-8,-2]];
 
-// The flight line the tip follows: a slight arc in from beyond the top right, ending on the target.
-const START = { x: TIP_AT.x + U.x * 34, y: TIP_AT.y + U.y * 34 };
-const CTRL = { x: (START.x + TIP_AT.x) / 2 - N.x * 4, y: (START.y + TIP_AT.y) / 2 - N.y * 4 };
-const FLIGHT_D = `M${f(START.x)} ${f(START.y)}Q${f(CTRL.x)} ${f(CTRL.y)} ${f(TIP_AT.x)} ${f(TIP_AT.y)}`;
-const onFlight = (s) => { const t = 1 - s, a = (1-t)*(1-t), b = 2*(1-t)*t, c = t*t; return { x: a*START.x + b*CTRL.x + c*TIP_AT.x, y: a*START.y + b*CTRL.y + c*TIP_AT.y }; };
+// The flight line: a slight arc in from beyond the top right, ending where the blade enters the P.
+const START = { x: ENTRY.x + U.x * 34, y: ENTRY.y + U.y * 34 };
+const CTRL = { x: (START.x + ENTRY.x) / 2 - N.x * 4, y: (START.y + ENTRY.y) / 2 - N.y * 4 };
+const FLIGHT_D = `M${f(START.x)} ${f(START.y)}Q${f(CTRL.x)} ${f(CTRL.y)} ${f(ENTRY.x)} ${f(ENTRY.y)}`;
+const onFlight = (s) => { const t = 1 - s, a = (1-t)*(1-t), b = 2*(1-t)*t, c = t*t; return { x: a*START.x + b*CTRL.x + c*ENTRY.x, y: a*START.y + b*CTRL.y + c*ENTRY.y }; };
+
+// The blade's shadow on the plate. It falls down and to the right, like every shadow here, and the further a point is from
+// where the blade goes in, the further its shadow falls. So in flight the shadow trails off, and it closes on the entry as the blade lands.
+const SH_K = .16, SH_D = { x: .55, y: .84 }, sDot = SLIT.x * U.x + SLIT.y * U.y;
+const SHEAR = [1 + SH_K*SH_D.x*U.x, SH_K*SH_D.y*U.x, SH_K*SH_D.x*U.y, 1 + SH_K*SH_D.y*U.y, -SH_K*SH_D.x*sDot, -SH_K*SH_D.y*sDot].map(f).join(" ");
+
+// The letters' depth: a wireframe copy set back down and to the right, faintly hatched inside.
+const DEPTH = { x: 1.3, y: 1.3 };
+const LHATCH = Array.from({ length: 34 }, (_, i) => { const c = -10 + i * 1.5; return `M${c} 40L${c + 30} 0`; }).join(" ");
 
 // The plate.
 const { w, h, past, shadow } = PLATE;
@@ -175,6 +193,9 @@ function makeLogo(host, scale) {
       <mask id="${id}-fl" maskUnits="userSpaceOnUse" x="-20" y="-40" width="100" height="100"><path data-r="flmask" d="${FLIGHT_D}" stroke="#fff" stroke-width="3" pathLength="1" stroke-dasharray="1 2"/></mask>
       <clipPath id="${id}-vis"><polygon points="${VISIBLE}"/></clipPath>
       <clipPath id="${id}-blade"><path d="${BLADE.shape}"/></clipPath>
+      <clipPath id="${id}-gtext"><text x="19.1" y="27" text-anchor="middle" style="font:500 22px var(--sans); letter-spacing:-.04em">SP</text></clipPath>
+      <mask id="${id}-dfill" maskUnits="userSpaceOnUse" x="-5" y="-5" width="50" height="50">${LETTERS.map((d) => `<path d="${d}" stroke="#fff" stroke-width="1.75" stroke-linejoin="miter"/>`).join("")}</mask>
+      <mask id="${id}-dring" maskUnits="userSpaceOnUse" x="-5" y="-5" width="50" height="50">${LETTERS.map((d) => `<path d="${d}" stroke="#fff" stroke-width="2.25" stroke-linejoin="miter"/>`).join("")}${LETTERS.map((d) => `<path d="${d}" stroke="#000" stroke-width="1.25" stroke-linejoin="miter"/>`).join("")}</mask>
       <filter id="${id}-blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur data-r="blur" stdDeviation="0"/></filter>
     </defs>
 
@@ -184,18 +205,27 @@ function makeLogo(host, scale) {
 
     <g data-r="guidesG">${GUIDES.map((d) => `<path data-r="guide" d="${d}" stroke="var(--line)" stroke-width=".35" pathLength="1" stroke-dasharray="1 2"/>`).join("")}</g>
 
+    <g data-r="depth">
+      <g data-r="dDrafted"><rect x="-5" y="-5" width="50" height="50" fill="var(--line)" mask="url(#${id}-dring)" opacity=".6"/><g mask="url(#${id}-dfill)"><path d="${LHATCH}" stroke="var(--line)" stroke-width=".3" opacity=".55"/></g></g>
+      <g data-r="dGeist"><text x="19.1" y="27" text-anchor="middle" stroke="var(--line)" stroke-width=".4" opacity=".6" style="font:500 22px var(--sans); letter-spacing:-.04em">SP</text><g clip-path="url(#${id}-gtext)"><path d="${LHATCH}" stroke="var(--line)" stroke-width=".3" opacity=".55"/></g></g>
+    </g>
     <g data-r="drafted">${LETTERS.map((d) => `<path data-r="letter" d="${d}" stroke="var(--ink)" stroke-width="1.75" stroke-linecap="butt" stroke-linejoin="miter" pathLength="1" stroke-dasharray="1 2"/>`).join("")}</g>
     <text data-r="geist" x="19.1" y="27" text-anchor="middle" fill="var(--ink)" filter="url(#${id}-blur)" style="font:500 22px var(--sans); letter-spacing:-.04em">SP</text>
 
-    <path data-r="slit" d="${SLIT_LINE}" stroke="var(--ink)" stroke-width="1.1"/>
-    ${CRACKS.map((d) => `<path data-r="crack" d="${d}" stroke="var(--ink)" stroke-width=".6" pathLength="1" stroke-dasharray="1 2"/>`).join("")}
+    <!-- The cut it makes in the letter shows as a pale notch, with splits running back into the stroke. -->
+    <path data-r="slit" d="${SLIT_LINE}" stroke="var(--paper)" stroke-width=".75" opacity=".85"/>
+    ${CRACKS.map((d) => `<path data-r="crack" d="${d}" stroke="var(--paper)" stroke-width=".45" pathLength="1" stroke-dasharray="1 2"/>`).join("")}
 
     <g data-r="flightG" mask="url(#${id}-fl)"><path d="${FLIGHT_D}" stroke="var(--line-rest)" stroke-width=".5" stroke-dasharray="1.4 1.2"/></g>
     <g data-r="target" stroke="var(--accent)" stroke-width=".5">
-      <circle data-r="ring" cx="${TIP_AT.x}" cy="${TIP_AT.y}" r="1.8"/>
-      <path d="M${TIP_AT.x - 3.6} ${TIP_AT.y}H${TIP_AT.x - 2.4}M${TIP_AT.x + 2.4} ${TIP_AT.y}H${TIP_AT.x + 3.6}M${TIP_AT.x} ${TIP_AT.y - 3.6}V${TIP_AT.y - 2.4}M${TIP_AT.x} ${TIP_AT.y + 2.4}V${TIP_AT.y + 3.6}"/>
+      <circle data-r="ring" cx="${ENTRY.x}" cy="${ENTRY.y}" r="1.8"/>
+      <path d="M${ENTRY.x - 3.6} ${ENTRY.y}H${ENTRY.x - 2.4}M${ENTRY.x + 2.4} ${ENTRY.y}H${ENTRY.x + 3.6}M${ENTRY.x} ${ENTRY.y - 3.6}V${ENTRY.y - 2.4}M${ENTRY.x} ${ENTRY.y + 2.4}V${ENTRY.y + 3.6}"/>
     </g>
 
+    <g clip-path="url(#${id}-vis)"><g transform="matrix(${SHEAR})"><g data-r="bshadow"><g transform="rotate(${ANGLE})">
+      <path d="${BLADE.shape}" fill="var(--line)" opacity=".09"/>
+      <path d="${BLADE.edge}" stroke="var(--line)" stroke-width=".45" opacity=".5"/>
+    </g></g></g></g>
     <g clip-path="url(#${id}-vis)"><g data-r="blade">
       <g transform="rotate(${ANGLE})">
         <path d="${BLADE.edge}" stroke="var(--line)" stroke-width=".7" opacity=".45" transform="translate(.9 1.2)"/>
@@ -212,7 +242,8 @@ function makeLogo(host, scale) {
   const el = host.lastElementChild, q = (k) => [...el.querySelectorAll(`[data-r="${k}"]`)];
   return { el, frame: q("frame"), shadow: q("shadow")[0], hatch: q("hatch")[0], guide: q("guide"), guidesG: q("guidesG")[0], drafted: q("drafted")[0],
     letter: q("letter"), geist: q("geist")[0], blur: q("blur")[0], slit: q("slit")[0], crack: q("crack"), flmask: q("flmask")[0], flightG: q("flightG")[0],
-    target: q("target")[0], ring: q("ring")[0], blade: q("blade")[0], chip: q("chip") };
+    target: q("target")[0], ring: q("ring")[0], blade: q("blade")[0], bshadow: q("bshadow")[0], chip: q("chip"),
+    depth: q("depth")[0], dDrafted: q("dDrafted")[0], dGeist: q("dGeist")[0] };
 }
 
 /* ---------- Motion: every value is a function of time ---------- */
@@ -223,7 +254,7 @@ function bezier(x1, y1, x2, y2) {
 }
 const E = { soft: bezier(.22,.61,.36,1), expo: bezier(.16,1,.3,1), in: (t) => 1 - Math.cos(t * Math.PI / 2), lin: (t) => t, inOut: bezier(.45,0,.55,1) };
 
-const S = { frame:0, guides:0, letters:0, path:0, pathOp:0, target:0, blade:0, flight:1, spin:0, hit:0, mark:0, chips:1 };
+const S = { frame:0, guides:0, letters:0, depth:0, path:0, pathOp:0, target:0, blade:0, flight:1, spin:0, hit:0, mark:0, chips:1 };
 let tweens = [], clock = 0, last = 0, speed = 1, running = false;
 
 function play(list) {
@@ -247,7 +278,7 @@ function tick(now) {
 
 const clamp = (v) => Math.min(1, Math.max(0, v));
 const part = (v, a, b) => clamp((v - a) / (b - a));
-const opts = { letter: "drafted", guides: "on" };
+const opts = { letter: "geist", guides: "off", aim: "on", depthOn: "on" };
 
 function render() {
   for (const L of logos) {
@@ -264,9 +295,17 @@ function render() {
     L.geist.style.opacity = part(S.letters, 0, .8);
     L.blur.setAttribute("stdDeviation", f((1 - E.soft(S.letters)) * 2.2));
 
+    const dp = E.soft(S.depth);
+    L.depth.style.display = opts.depthOn === "on" ? "" : "none";
+    L.depth.setAttribute("transform", `translate(${f(DEPTH.x * dp)} ${f(DEPTH.y * dp)})`);
+    L.depth.style.opacity = part(S.depth, 0, .4);
+    L.dDrafted.style.display = drafted ? "" : "none";
+    L.dGeist.style.display = drafted ? "none" : "";
+
+    const aim = opts.aim === "on";
     L.flmask.style.strokeDashoffset = 1 - S.path;
-    L.flightG.style.opacity = S.pathOp;
-    L.target.style.opacity = S.target;
+    L.flightG.style.opacity = aim ? S.pathOp : 0;
+    L.target.style.opacity = aim ? S.target : 0;
     L.ring.setAttribute("r", f(1.8 + (1 - S.target) * 1.6));
 
     L.slit.style.opacity = S.mark * part(S.hit, 0, .25);
@@ -275,6 +314,8 @@ function render() {
     const tip = onFlight(S.flight), cx = tip.x + LODGED.x - TIP_AT.x, cy = tip.y + LODGED.y - TIP_AT.y;
     L.blade.setAttribute("transform", `translate(${f(cx)} ${f(cy)}) matrix(${TILT.join(" ")} 0 0) rotate(${f(S.spin)})`);
     L.blade.style.opacity = S.blade;
+    L.bshadow.setAttribute("transform", L.blade.getAttribute("transform"));
+    L.bshadow.style.opacity = S.blade;
 
     L.chip.forEach((p, i) => { const c = S.chips; p.setAttribute("transform", `translate(${f(CHIPS[i][0] * c)} ${f(CHIPS[i][1] * c)})`); p.style.opacity = c >= 1 ? 0 : Math.sin(c * Math.PI); });
   }
@@ -311,11 +352,12 @@ function pullOut(o = 0) {
 const lodged = () => S.blade > .5 && S.flight < .5;
 function rethrow() { play(lodged() ? [...pullOut(), ...throwIt(520)] : throwIt()); }
 function load() {
-  Object.assign(S, { frame:0, guides:0, letters:0, path:0, pathOp:0, target:0, blade:0, flight:1, spin:0, hit:0, mark:0, chips:1 });
+  Object.assign(S, { frame:0, guides:0, letters:0, depth:0, path:0, pathOp:0, target:0, blade:0, flight:1, spin:0, hit:0, mark:0, chips:1 });
   play([
     { k:"frame", to:1, dur:620, ease:E.expo },
     { k:"guides", to:1, at:160, dur:560 },
     { k:"letters", to:1, at:360, dur:760, ease:E.inOut },
+    { k:"depth", to:1, at:900, dur:650 },
     ...throwIt(1060),
   ]);
 }
@@ -323,7 +365,7 @@ function load() {
 /* ---------- Wiring ---------- */
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const logos = [makeLogo(document.getElementById("header-logo"), 1), makeLogo(document.getElementById("inspect"), 6)];
-if (still) { Object.assign(S, { frame:1, guides:1, letters:1, blade:1, flight:0, hit:1, mark:1 }); render(); } else load();
+if (still) { Object.assign(S, { frame:1, guides:1, letters:1, depth:1, blade:1, flight:0, hit:1, mark:1 }); render(); } else load();
 
 const stateEl = document.getElementById("state");
 let atTop = scrollY < 40;
