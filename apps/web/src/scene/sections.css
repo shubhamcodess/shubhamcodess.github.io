@@ -114,6 +114,13 @@
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   :is(.story-tool:hover, .story-mark:hover, .story-mark:focus-visible) .bp-icon > g { --bp-lift: var(--bp-lift-to, 1); --bp-pen: 1; transition: --bp-lift var(--dur-press) var(--ease-soft), --bp-pen var(--dur-icon) linear var(--dur-press); }
 }
+/* The frame's hatch rises from below, but stops at the figure: it's drawn per panel here instead of across the whole sheet, so the figure keeps only its grid. The tools take the frame's slope, and side by side the words carry on from where the tools end. */
+.story-frame[data-frame="on"] .pc-tex { display: none; }
+.story-frame[data-frame="on"] :is(.story-text, .story-tools) { position: relative; isolation: isolate; }
+.story-frame[data-frame="on"] :is(.story-text, .story-tools)::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .22; transition: --pc-rise 1s var(--ease-soft); background: repeating-linear-gradient(135deg, var(--line) 0 1px, transparent 1px 6px); }
+.story-frame[data-frame="on"] .story-tools::before { -webkit-mask-image: linear-gradient(to top, #000 0, transparent calc(var(--pc-rise) * 7)); mask-image: linear-gradient(to top, #000 0, transparent calc(var(--pc-rise) * 7)); }
+.story-frame[data-frame="on"] .story-text::before { --fade: linear-gradient(to top, rgb(0 0 0 / calc((var(--pc-rise) - 14%) * 2.4)) 0, transparent calc((var(--pc-rise) - 14%) * 1.5)); -webkit-mask-image: var(--fade); mask-image: var(--fade); }
+
 /* Without the frame: the same words on the same column, with nothing around them. */
 .story-frame[data-frame="off"] .story-strip { border-bottom: 0; grid-template-columns: auto 1fr; }
 .story-frame[data-frame="off"] .story-strip > * { padding: 0 12px 8px 0; border: 0; }
@@ -148,6 +155,7 @@
   .story-scene:last-child { --fig-min: clamp(262px, 66vw, 320px); } /* The last chapter's drawing has three rows. */
   .story-fig { border-left: 0; border-top: 1px solid var(--line-rest); }
   .story-frame[data-frame="off"] .story-fig { border-top: 0; }
+  .story-frame[data-frame="on"] .story-text::before { display: none; } /* The figure is between the words and the tools now, so nothing rises to them. */
   .story-role { white-space: normal; }
   .story-strip-title { display: none; }
   .story-strip { grid-template-columns: 1fr auto; }
