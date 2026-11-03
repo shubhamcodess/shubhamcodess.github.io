@@ -169,7 +169,7 @@ export const TokenFlow = (() => {
       // The wire.
       for (const s of [-1, 1]) {
         seg([LANE, s * RAIL, 0], [GATE, s * RAIL, 0], 200 + s, .7, colors.rest, .75);
-        seg([OUT, s * RAIL, 0], [END, s * RAIL, 0], 210 + s, .7, colors.rest, .75);
+        seg([OUT, s * RAIL, 0], [END + .1, s * RAIL, 0], 210 + s, .7, colors.rest, .75); // Runs on under the agent's panel, so both lines reach it.
       }
       // The two measures: drawn once there's something to measure, and to scale.
       const inMeasure = ease(span(t, .7, 2)) * gone, outMeasure = ease(span(t, rows[12].thru + .4, rows[12].thru + 1.5)) * gone;
@@ -205,18 +205,16 @@ export const TokenFlow = (() => {
         ctx.fillText(name, nameX + size * 2.1, y); ctx.globalAlpha = 1;
       }
 
-      // The agent: one flat square standing where the wire ends. It's in the scene's own camera, so it skews with the stream and sways with the pointer, and its mark turns inside it.
-      const AX = AGENT.x, AW = AGENT.w, AZ = AW / Math.sin(.8); // As tall on screen as it is wide.
-      // The camera's lean grows with height, so far out it would shear too much. Only a third of it is kept: enough to sit in the stream's perspective.
-      const onBox = (x, z) => { const p = at(x, 0, z), foot = at(x, 0, 0); return [foot[0] + (p[0] - foot[0]) * .34, p[1]]; };
-      const box = [[AX - AW, -AZ], [AX + AW, -AZ], [AX + AW, AZ], [AX - AW, AZ]].map(([x, z]) => onBox(x, z));
-      surface(box, 500, .04);
-      ctx.save(); ctx.beginPath(); box.forEach(([x, y], i) => ctx[i ? 'lineTo' : 'moveTo'](x, y)); ctx.closePath(); ctx.clip();
+      // The agent: a flat panel at the same angle and facing as the rack's front, with the wire arriving at its left edge. It leans a little with the pointer, and its mark turns inside it.
+      const dock = at(END, 0, 0), panelW = scale * .74, panelH = scale * .86, fall = (.5 / Math.cos(Math.PI / 6) + yawS * 2) * panelW, onPanel = (u, v) => [dock[0] + u * panelW, dock[1] - scale * .18 + (v - .5) * panelH + u * fall]; // Sits a little above the wire, which still reaches its left edge.
+      const panel = [onPanel(0, 0), onPanel(1, 0), onPanel(1, 1), onPanel(0, 1)];
+      surface(panel, 500, .05);
+      ctx.save(); ctx.beginPath(); panel.forEach(([x, y], i) => ctx[i ? 'lineTo' : 'moveTo'](x, y)); ctx.closePath(); ctx.clip();
       const agentTurn = (clock / PERIOD) * AGENTS.length, agentIndex = Math.floor(agentTurn) % AGENTS.length, agentSlide = ease(span(agentTurn % 1, .78, 1));
       for (let q = -1; q <= 2; q++) {
-        const off = q - agentSlide, near = Math.max(0, 1 - Math.abs(off)), alpha = (.08 + .92 * near * near) * clamp(1.5 - Math.abs(off)), k = (AW * 1.1 / 24) * (.72 + .28 * near);
+        const off = q - agentSlide, near = Math.max(0, 1 - Math.abs(off)), alpha = (.08 + .92 * near * near) * clamp(1.5 - Math.abs(off)), k = (.62 / 24) * (.72 + .28 * near);
         if (alpha <= .01) continue;
-        MARKS[AGENTS[(agentIndex + q + AGENTS.length) % AGENTS.length]].forEach((stroke, i) => pen(stroke.map(([gx, gy]) => onBox(AX + (gx - 12) * k, -(gy - 12) * k / Math.sin(.8) - off * AZ * 1.5)), 520 + q * 40 + i * 13, 1.1, colors.ink, alpha));
+        MARKS[AGENTS[(agentIndex + q + AGENTS.length) % AGENTS.length]].forEach((stroke, i) => pen(stroke.map(([gx, gy]) => onPanel(.5 + (gx - 12) * k, .5 + (gy - 12) * k * (panelW / panelH) + off * .86)), 520 + q * 40 + i * 13, 1.1, colors.ink, alpha));
       }
       ctx.restore();
 
@@ -228,7 +226,7 @@ export const TokenFlow = (() => {
         seg([x - half, y, z], [x + half, y, z + (hash(row.i + 4) - .5) * .12], row.i + 700, 1.1, colors.accent, (1 - e) * .95, [2, 2]);
       }
 
-      const agentTop = onBox(AX, AZ);
+      const agentTop = [onPanel(.5, 0)[0], onPanel(0, 0)[1]]; // Above the panel's highest corner, so the words clear its sloping top.
       for (const [word, x, y] of [['MCP SERVER', rackBox.left + rackSize * .46, rackBox.top - size * .9], ['YOUR AGENT', agentTop[0], agentTop[1] - size * 1.1]]) {
         ctx.font = `500 ${size}px ${font}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = colors.ink2; ctx.fillText(word, x, y);
       }
