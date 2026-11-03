@@ -56,7 +56,7 @@ describe("the line and the figure", () => {
     expect(lineProgress(1, COUNT)).toBe(1);
   });
   it("reaches each stop as its scene arrives", () => {
-    for (let i = 1; i < COUNT; i++) expect(lineProgress((i + 0.3) / COUNT, COUNT)).toBeCloseTo(i / (COUNT - 1), 5);
+    for (let i = 1; i < COUNT; i++) expect(lineProgress(i / COUNT, COUNT)).toBeCloseTo(i / (COUNT - 1), 5);
   });
   it("keeps the figure back until the story reaches now", () => {
     expect(figurePresence(0.5, COUNT)).toBe(0);
@@ -81,9 +81,11 @@ describe("the section's rules", () => {
     expect(scss).not.toMatch(/\.(sec|story)[^{]*\{[^}]*max-width/);
     expect(scss).not.toMatch(/\.story \{[^}]*--line:/);
   });
-  it("starts with words on the line and uses batarangs after, so the line has no other years", () => {
-    expect(site.story.scenes[0]?.stop.kind).toBe("text");
-    for (const scene of site.story.scenes.slice(1)) expect(scene.stop.kind).toBe("batarang");
+  it("runs from a start year to the current year, with batarangs between, so the line has no other years", () => {
+    const stops = site.story.scenes.map((scene) => scene.stop);
+    expect(stops[0]).toMatchObject({ kind: "text", text: expect.stringMatching(/^\d{4}$/) });
+    expect(stops.at(-1)).toEqual({ kind: "now" });
+    for (const stop of stops.slice(1, -1)) expect(stop.kind).toBe("batarang");
   });
   it("has a logo for every tool", () => {
     for (const tool of TOOLS) expect(TOOL_LOGOS[tool].plan.length).toBeGreaterThan(0);
@@ -94,7 +96,7 @@ describe("the story's words", () => {
   const all = JSON.stringify(site.story).toLowerCase();
   it("ends on what the role is now, matching the hero", () => {
     expect(site.story.scenes.at(-1)?.label).toBe("Now");
-    expect(site.story.scenes.at(-1)?.title).toContain("Full Stack Developer");
+    expect(site.story.scenes.at(-1)?.role).toContain(site.hero.role.rest); // the title tells the story; the role line carries the role
   });
   it("carries one year only: the first stop", () => {
     expect(all.match(/\b(19|20)\d\d\b/g)).toEqual(["2020"]);

@@ -16,7 +16,7 @@ const linkStats = z.union([
 ]).refine((s) => new Set(s.show).size === s.show.length, { message: "A number can only be shown once", path: ["show"] });
 
 export const LOG_VERBS = ["owned", "migrated", "built", "replaced", "made", "shipped", "led", "designed", "reworked", "turned"] as const;
-export const TOOLS = ["java", "spring", "angular", "react", "typescript", "openshift", "gke", "kubernetes", "github-actions", "azure-ad", "oracle", "rabbitmq", "mcp"] as const;
+export const TOOLS = ["java", "spring", "angular", "nextjs", "typescript", "openshift", "gke", "kubernetes", "github-actions", "azure-ad", "oracle", "rabbitmq", "mcp"] as const;
 export type Tool = (typeof TOOLS)[number];
 
 export const siteSchema = z
@@ -112,6 +112,8 @@ export const siteSchema = z
     /** Where it started and what it is now, as scenes the scroll plays through. Every word must be true, and clients stay unnamed. */
     story: z.strictObject({
       kicker: z.string().min(1),
+      title: z.tuple([z.string().min(1), z.string().min(1)]),
+      company: z.string().min(1),
       /** Screens of scrolling per scene. */
       pace: z.number().min(0.4).max(2),
       /** The blueprint frame around the scenes. The section works with it on or off. */
@@ -119,7 +121,7 @@ export const siteSchema = z
       figure: z.strictObject({ anchor: z.number().min(0).max(1), face: z.enum(["left", "right"]), minHeight: z.number().min(12).max(120), maxHeight: z.number().min(12).max(240), clearance: z.number().min(0).max(40) }),
       scenes: z.array(z.strictObject({
         /** Its milestone on the line: words, or a batarang. */
-        stop: z.discriminatedUnion("kind", [z.strictObject({ kind: z.literal("text"), text: z.string().min(1).max(8) }), z.strictObject({ kind: z.literal("batarang") })]),
+        stop: z.discriminatedUnion("kind", [z.strictObject({ kind: z.literal("text"), text: z.string().min(1).max(8) }), z.strictObject({ kind: z.literal("batarang") }), z.strictObject({ kind: z.literal("now") })]),
         label: z.string().min(1),
         title: z.string().min(1),
         role: z.string().min(1),
@@ -129,7 +131,7 @@ export const siteSchema = z
         /** What was done, one line each. */
         log: z.array(z.strictObject({ verb: z.enum(LOG_VERBS), what: z.string().min(1) })).min(3).max(5),
         /** What it was done with. Each one has a hand-drawn logo. */
-        tools: z.array(z.enum(TOOLS)).min(1).max(6),
+        tools: z.array(z.enum(TOOLS)).min(1).max(7),
       })).min(2).max(6),
     }),
     projects: z.strictObject({ kicker: z.string().min(1), title: z.tuple([z.string().min(1), z.string().min(1)]), description: z.string().min(1), columns: z.number().int().min(1).max(3) }),

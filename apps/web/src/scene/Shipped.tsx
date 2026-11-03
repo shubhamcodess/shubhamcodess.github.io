@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { featuredProjects } from "@portfolio/content";
 import { Button } from "@portfolio/design/button";
+import { MotionText } from "@portfolio/design/motion-text";
 import { site } from "@portfolio/site";
 import { ProjectCardLink } from "./ProjectCardLink";
 
@@ -14,8 +15,8 @@ export function Shipped() {
     <section id="featured" className="sec" data-block>
       <p className="kicker rv" data-layer="a">{kicker}</p>
       <h2 className="sec-title" data-layer="b">
-        <span className="ln"><span className="rv" style={{ "--i": 1 } as CSSProperties}>{title[0]}</span></span>
-        <span className="ln"><span className="rv dim" style={{ "--i": 2 } as CSSProperties}>{title[1]}</span></span>
+        <MotionText line text={title[0]} />
+        <MotionText line className="dim" text={title[1]} after={title[0].length} />
       </h2>
       <div className="project-grid" style={{ "--cols": columns } as CSSProperties}>
         {featuredProjects(site.shipped.items).map(({ project, layout, span }, i) => (

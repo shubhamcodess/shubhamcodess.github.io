@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import { listedProjects } from "@portfolio/content";
+import { MotionText } from "@portfolio/design/motion-text";
 import { site } from "@portfolio/site";
 import { ProjectCardLink } from "@/scene/ProjectCardLink";
 
@@ -12,8 +13,8 @@ export default function ProjectsPage() {
     <section className="sec sub-page" data-block>
       <p className="kicker rv" data-layer="a">{kicker}</p>
       <h1 className="sec-title" data-layer="b">
-        <span className="ln"><span className="rv" style={{ "--i": 1 } as CSSProperties}>{title[0]}</span></span>
-        <span className="ln"><span className="rv dim" style={{ "--i": 2 } as CSSProperties}>{title[1]}</span></span>
+        <MotionText line text={title[0]} />
+        <MotionText line className="dim" text={title[1]} after={title[0].length} />
       </h1>
       <div className="project-grid" style={{ "--cols": columns } as CSSProperties}>
         {listedProjects().map((project, i) => (

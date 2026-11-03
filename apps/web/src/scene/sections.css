@@ -2,7 +2,7 @@
 
 /* Sections below the hero: a numbered label, a two-tone heading, then the content. */
 .page-col { margin-left: var(--col-left); width: var(--col-w); }
-.sec { position: relative; margin-left: var(--col-left); width: var(--col-w); padding-block: clamp(70px, 13svh, 150px); }
+.sec { position: relative; margin-left: var(--col-left); width: var(--col-w); padding-block: var(--sec-pad); }
 /* Pages other than home leave the city its first part of the screen, as the hero does. */
 .sub-page { padding-top: clamp(190px, 46svh, 460px); }
 .kicker { display: flex; align-items: center; gap: 9px; margin: 0 0 18px; font: 500 12px/1 var(--font-note); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
@@ -14,7 +14,7 @@
 .dim { color: color-mix(in srgb, var(--ink) 58%, transparent); }
 
 /* Every shape comes from config: how many columns, and how many each card takes. A phone always stacks. */
-.project-grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: clamp(30px, 4vw, 52px); margin-top: clamp(36px, 6svh, 64px); }
+.project-grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: clamp(30px, 4vw, 52px); margin-top: var(--sec-gap); }
 .project-cell { display: grid; min-width: 0; grid-column: span var(--span); }
 @media (max-width: 820px) {
   .project-grid { grid-template-columns: minmax(0, 1fr); }
@@ -53,8 +53,14 @@
 .project-stack { max-width: 68ch; margin: 28px 0 0; padding-top: 14px; border-top: 1px solid var(--line-rest); font: 500 12px/1.5 var(--font-note); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); }
 
 /* The story. As plain text first: every scene in order inside the frame. The script turns that into a film if motion is welcome and it fits the screen. */
-.story { --story-drawn: 1; --now: 1; position: relative; padding-block: clamp(50px, 9svh, 110px); }
-.story-kicker { margin-bottom: clamp(10px, 1.6svh, 14px); }
+.story { --story-drawn: 1; --now: 1; position: relative; padding-block: var(--sec-pad); }
+/* Kicker and heading pin with the sheet, so they stay while the scenes play. */
+.story-head { position: relative; margin-bottom: var(--sec-gap); }
+/* The company's name, a touch heavier and in the theme's accent. */
+.company-name { font-weight: 650; color: var(--accent); }
+/* Now and Archive: two small tabs at the head's bottom right, on the sheet's top edge. */
+.story-tabs { position: absolute; right: 0; bottom: 0; display: flex; gap: 10px; }
+.story-tabs .bp[aria-selected="true"] { pointer-events: none; }
 /* The sheet is clear, like a button: the frame's texture rises from below and the page shows through. Its hover is the project card's. */
 .pc.story-frame { height: auto; }
 .story-strip { display: grid; grid-template-columns: auto 1fr auto; align-items: center; border-bottom: 1px solid var(--line-rest); font: 500 11px/1 var(--font-note); letter-spacing: .06em; text-transform: uppercase; }
@@ -86,9 +92,9 @@
 .story-what { font-size: clamp(12.5px, .92vw, 13.5px); line-height: 1.36; color: var(--ink-2); text-wrap: pretty; }
 /* The figure, waiting for its motion graphic. */
 .story-fig { position: relative; min-width: 0; min-height: 180px; margin: 0; border-left: 1px solid var(--line-rest); overflow: hidden; }
+.story-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; transform: scale(calc(1 + var(--drift, 0) * .05)); } /* Zooms slowly through its chapter, a touch faster than the words: parallax. */
 .story-fig svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .story-fig line { stroke: var(--line-rest); stroke-width: 1; vector-effect: non-scaling-stroke; stroke-dasharray: 3 6; opacity: .45; }
-.story-fig figcaption { position: absolute; left: 14px; bottom: 12px; font: 500 10.5px/1.3 var(--font-note); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); }
 /* What it was done with, along the bottom, each in the same pen as the icons. */
 .story-tools { grid-column: 1 / -1; display: flex; align-items: center; gap: clamp(10px, 1.4vw, 20px); padding: clamp(6px, 1.1svh, 10px) clamp(12px, 1.9vw, 28px); border-top: 1px solid var(--line-rest); }
 .story-tools-label { flex: none; font: 500 10.5px var(--font-note); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
@@ -108,7 +114,7 @@
 .story-frame[data-frame="off"] .story-tools { padding-inline: 0; }
 
 /* The line under the frame: words at the first stop, a fine batarang at the others, and the figure waiting by the last. */
-.story-track { display: flex; align-items: center; height: 40px; margin-top: clamp(14px, 3svh, 30px); }
+.story-track { position: relative; display: flex; align-items: center; height: 40px; margin-top: clamp(14px, 3svh, 30px); }
 .story-rule { position: relative; display: block; flex: 1; min-width: 0; height: 1px; margin: 0 16px 0 10px; }
 .story-rule-base, .story-rule-drawn { position: absolute; inset: 0; display: block; }
 .story-rule-base { background: color-mix(in srgb, var(--line-rest), transparent 45%); }
@@ -139,10 +145,20 @@
 }
 
 /* The film: the stage holds the screen while the scroll plays it. The frame is only as big as what's in it, in the middle of what's left. */
-.story[data-cine] { height: calc(100svh * (1 + var(--story-length, 3))); padding-block: 0; }
-.story[data-cine] .story-stage { position: sticky; top: 0; display: flex; flex-direction: column; justify-content: center; height: 100svh; padding-top: calc(var(--header-h) - 6px); padding-bottom: clamp(10px, 2svh, 22px); }
-.story[data-cine] .story-kicker { flex: none; }
+.story[data-cine] .story-stage { position: sticky; top: var(--stage-top, 0px); display: flex; flex-direction: column; } /* The script sets the section's height and centers the stage below the header. */
 .story[data-cine] .story-frame { flex: none; will-change: opacity, filter, transform; }
 .story[data-cine] .story-window { display: grid; overflow: hidden; }
 .story[data-cine] .story-window > li { grid-area: 1 / 1; border-top: 0; will-change: opacity, filter, transform; }
 .story[data-cine] .story-track { flex: none; }
+/* Pinned, the heading gives way on short screens so the whole stage still fits. */
+.story[data-cine] .story-head { margin-bottom: clamp(14px, 3.4svh, 64px); }
+.story[data-cine] .story-head .kicker { margin-bottom: clamp(10px, 1.6svh, 18px); }
+.story[data-cine] .story-head .sec-title { font-size: clamp(26px, min(4.4vw, 5.6svh), 56px); }
+/* The scroll hint under the line: a quiet note with a slowly settling chevron, there only while the film is pinned. */
+.story-hint { position: absolute; left: 50%; top: calc(100% + 6px); display: none; align-items: center; gap: 6px; margin: 0; transform: translateX(-50%); font: 500 10.5px/1 var(--font-note); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; color: var(--ink-2); opacity: var(--hint, 1); pointer-events: none; }
+.story[data-cine] .story-hint { display: flex; }
+.story-hint svg { width: 12px; height: 12px; fill: none; stroke: var(--accent); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+@media (prefers-reduced-motion: no-preference) { .story-hint svg { animation: story-hint 2.4s var(--ease-expo) infinite; } }
+@keyframes story-hint { 0%, 100% { transform: translateY(-1px); opacity: .5; } 50% { transform: translateY(2px); opacity: 1; } }
+/* A checkpoint's tooltip opens where the hint sits, so the hint steps aside meanwhile. */
+.story-track:has(.bp-tip[data-open]) .story-hint { opacity: 0; transition: opacity .25s; }

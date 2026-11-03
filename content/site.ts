@@ -30,7 +30,9 @@ const config = {
     seeAll: { label: "See all my builds", href: "/projects/" },
   },
   story: {
-    kicker: "How I got here",
+    kicker: "Experience",
+    title: ["My day job, at", "How it's been over the years."],
+    company: "IBM", // Set in the theme's accent after the first line.
     pace: 1.05,
     frame: true, // false takes the blueprint frame away; the words stay on the same column.
     figure: { anchor: 0.94, face: "left", minHeight: 22, maxHeight: 46, clearance: 6 },
@@ -38,7 +40,7 @@ const config = {
     scenes: [
       {
         stop: { kind: "text", text: "2020" },
-        label: "It started with", title: "Keeping it running.", role: "Associate System Engineer, IBM", figure: "A system that can't stop",
+        label: "It started with", title: "Keeping it running.", role: "Associate System Engineer, IBM", figure: "Three platforms, one pipeline",
         line: "The global tax engines behind every in-store and online sale of a multinational retailer.",
         log: [
           { verb: "owned", what: "production deployments and high-priority incidents" },
@@ -74,8 +76,8 @@ const config = {
         tools: ["java", "spring", "angular", "oracle", "openshift"],
       },
       {
-        stop: { kind: "batarang" },
-        label: "Now", title: "Cloud Full Stack Developer.", role: "IBM", figure: "Every layer, with agents on top",
+        stop: { kind: "now" }, // Shows the current year.
+        label: "Now", title: "Owning it, end to end.", role: "Cloud Full Stack Developer, IBM", figure: "Requirement to production, one flow",
         line: "Products from requirement to production: backend, frontend, schema and deployment. And AI agents for enterprise applications.",
         log: [
           { verb: "designed", what: "a reusable CI/CD framework, adopted across 10+ repositories" },
@@ -83,7 +85,7 @@ const config = {
           { verb: "built", what: "a workflow platform with a visual DAG builder and live run monitoring" },
           { verb: "led", what: "the team: PR reviews, code standards, architecture decisions" },
         ],
-        tools: ["java", "react", "kubernetes", "github-actions", "rabbitmq", "mcp"],
+        tools: ["java", "nextjs", "kubernetes", "gke", "github-actions", "rabbitmq", "mcp"],
       },
     ],
   },

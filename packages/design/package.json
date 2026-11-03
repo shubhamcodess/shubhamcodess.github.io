@@ -10,6 +10,7 @@
     "./tooltip": "./src/components/tooltip/Tooltip.tsx",
     "./scroll-motion": "./src/components/scroll-motion/ScrollMotion.tsx",
     "./rotating-text": "./src/components/rotating-text/RotatingText.tsx",
+    "./motion-text": "./src/components/motion-text/MotionText.tsx",
     "./project-card": "./src/components/project-card/ProjectCard.tsx",
     "./scroll-thumb": "./src/components/scroll-thumb/ScrollThumb.tsx",
     "./tokens.css": "./src/tokens.css",
