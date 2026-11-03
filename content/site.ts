@@ -38,7 +38,7 @@ const config = {
     scenes: [
       {
         stop: { kind: "text", text: "2020" },
-        label: "It started with", title: "Keeping it running.", role: "Associate System Engineer, IBM", figure: "A system that can't stop",
+        label: "It started with", title: "Keeping it running.", role: "Associate System Engineer, IBM", figure: "Three platforms, one pipeline",
         line: "The global tax engines behind every in-store and online sale of a multinational retailer.",
         log: [
           { verb: "owned", what: "production deployments and high-priority incidents" },

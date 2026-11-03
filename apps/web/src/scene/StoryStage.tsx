@@ -13,14 +13,14 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
   const ref = useRef<HTMLElement>(null);
   const clock = useRef({ progress: 0, live: false }); // The film's place, read by the figure drawing every frame.
 
-  // The figure: one Gotham drawing, loaded only when the story is on the page. Each chapter's canvas shows its part.
+  // The figures: blueprint drawings, loaded only when the story is on the page. Each chapter's canvas shows its part.
   useEffect(() => {
     const canvases = [...(ref.current?.querySelectorAll<HTMLCanvasElement>("canvas[data-chapter]") ?? [])];
     if (!canvases.length) return;
     let stops: (() => void)[] = [], gone = false;
-    void import("./drawings/gotham-story").then(({ GothamStory }) => {
+    void import("./drawings/story-figures").then(({ StoryFigures }) => {
       if (gone) return;
-      stops = canvases.map((canvas) => (GothamStory as StoryDrawing).mount(canvas, { chapter: Number(canvas.dataset.chapter), count, story: () => clock.current }));
+      stops = canvases.map((canvas) => (StoryFigures as StoryDrawing).mount(canvas, { chapter: Number(canvas.dataset.chapter), count, story: () => clock.current }));
     });
     return () => { gone = true; stops.forEach((stop) => stop()); };
   }, [count]);
