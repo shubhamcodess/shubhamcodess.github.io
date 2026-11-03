@@ -18,6 +18,17 @@
   [data-palette="storm"]     { --sky-0:#e8ded6; --sky-1:#dbcec8; --sky-2:#cbbcb8; --sky-3:#bbaaaa; --paper:#efe7e0; --ink:#201a1d; --ink-2:#483b42; --line:#3d3138; --line-rest:rgba(61,49,56,.7); --accent:#8f3a1f; --grid:rgba(61,49,56,.085); }
   [data-palette="oldGotham"] { --sky-0:#efe9d6; --sky-1:#d9d6c6; --sky-2:#c6c9c3; --sky-3:#b4bcbf; --paper:#f2eddf; --ink:#131c1f; --ink-2:#37403f; --line:#22292b; --line-rest:rgba(34,41,43,.7); --accent:#8a4a22; --grid:rgba(34,41,43,.085); }
 
+  [data-palette] {
+    /* The figure's tones: mixes of ink and paper, the same as apps/web/src/scene/scene.css. */
+    --f0:color-mix(in srgb,var(--ink),var(--paper) 8%); --f1:color-mix(in srgb,var(--ink),var(--paper) 24%); --f2:color-mix(in srgb,var(--ink),var(--paper) 42%);
+    --f3:color-mix(in srgb,var(--ink),var(--paper) 60%); --f4:color-mix(in srgb,var(--ink),var(--paper) 74%);
+  }
+  /* The batarang's finishes. */
+  [data-blade="rust"]  { --b-face:var(--accent); --b-side:color-mix(in srgb,var(--accent),var(--ink) 50%); --b-hi:color-mix(in srgb,var(--accent),var(--paper) 52%); --b-edge:color-mix(in srgb,var(--accent),var(--ink) 35%); }
+  [data-blade="suit"]  { --b-face:var(--f2); --b-side:var(--f1); --b-hi:var(--f4); --b-edge:var(--f1); }
+  [data-blade="cowl"]  { --b-face:var(--f1); --b-side:var(--f0); --b-hi:var(--f3); --b-edge:var(--f0); }
+  [data-blade="steel"] { --b-face:var(--f2); --b-side:var(--f1); --b-hi:var(--f4); --b-edge:var(--accent); }
+  [data-blade="outline"] .b-solid, body:not([data-blade="outline"]) .b-outline { display:none; }
   * { box-sizing:border-box; }
   html { background:var(--sky-2); }
   body { margin:0; font-family:var(--sans); color:var(--ink); background:linear-gradient(170deg,var(--sky-0),var(--sky-1) 35%,var(--sky-2) 70%,var(--sky-3)) fixed; -webkit-font-smoothing:antialiased; overflow-x:clip; transition:background 1.4s var(--soft); }
@@ -65,7 +76,7 @@
   .spacer { height:120svh; display:flex; align-items:flex-end; }
 </style>
 </head>
-<body data-palette="oldGotham">
+<body data-palette="oldGotham" data-blade="rust">
 
 <header class="header">
   <a class="logo" href="#top" aria-label="Home" id="header-logo"></a>
@@ -88,6 +99,9 @@
       </div>
       <div class="group"><span>Construction guides</span>
         <div class="seg" data-key="guides"><button data-v="on">On</button><button data-v="off" aria-pressed="true">Off</button></div>
+      </div>
+      <div class="group"><span>Batarang</span>
+        <div class="seg" data-key="blade"><button data-v="rust" aria-pressed="true">Rust plate</button><button data-v="suit">Suit grey</button><button data-v="cowl">Cowl dark</button><button data-v="steel">Grey, rust edge</button><button data-v="outline">Old outline</button></div>
       </div>
       <div class="group"><span>Letter depth</span>
         <div class="seg" data-key="depthOn"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div>
@@ -228,11 +242,20 @@ function makeLogo(host, scale) {
     </g></g></g></g>
     <g clip-path="url(#${id}-vis)"><g data-r="blade">
       <g transform="rotate(${ANGLE})">
-        <path d="${BLADE.edge}" stroke="var(--line)" stroke-width=".7" opacity=".45" transform="translate(.9 1.2)"/>
-        <path d="${BLADE.shape}" fill="var(--accent)" opacity=".16"/>
-        <g clip-path="url(#${id}-blade)"><path d="${BLADE.hatch}" stroke="var(--accent)" stroke-width=".35" opacity=".3"/></g>
-        <path d="${BLADE.bevel}" stroke="var(--accent)" stroke-width=".35" opacity=".45"/>
-        <path d="${BLADE.edge}" stroke="var(--accent)" stroke-width="1" stroke-linejoin="round"/>
+        <g class="b-outline">
+          <path d="${BLADE.edge}" stroke="var(--line)" stroke-width=".7" opacity=".45" transform="translate(.9 1.2)"/>
+          <path d="${BLADE.shape}" fill="var(--accent)" opacity=".16"/>
+          <g clip-path="url(#${id}-blade)"><path d="${BLADE.hatch}" stroke="var(--accent)" stroke-width=".35" opacity=".3"/></g>
+          <path d="${BLADE.bevel}" stroke="var(--accent)" stroke-width=".35" opacity=".45"/>
+          <path d="${BLADE.edge}" stroke="var(--accent)" stroke-width="1" stroke-linejoin="round"/>
+        </g>
+        <!-- A solid plate: its side (stacked copies, so the thickness is solid), the face, a pale bevel catching the light, and a thin crisp edge. -->
+        <g class="b-solid">
+          ${[.125, .25, .375, .5, .625, .75, .875, 1].map((t) => `<path d="${BLADE.shape}" fill="var(--b-side)" transform="translate(${f(.9 * t)} ${f(1.2 * t)})"/>`).join("")}
+          <path d="${BLADE.shape}" fill="var(--b-face)"/>
+          <path d="${BLADE.bevel}" stroke="var(--b-hi)" stroke-width=".45" stroke-linejoin="round"/>
+          <path d="${BLADE.shape}" stroke="var(--b-edge)" stroke-width=".45" stroke-linejoin="round"/>
+        </g>
       </g>
     </g></g>
 
@@ -390,6 +413,7 @@ document.querySelectorAll(".seg[data-key]").forEach((seg) => seg.addEventListene
   const k = seg.dataset.key, v = b.dataset.v;
   if (k === "speed") speed = +v;
   else if (k === "palette") document.body.dataset.palette = v;
+  else if (k === "blade") document.body.dataset.blade = v;
   else { opts[k] = v; render(); }
 }));
 </script>
