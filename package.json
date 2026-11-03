@@ -15,7 +15,8 @@
     "budget": "node scripts/check-budget.mjs",
     "phone": "node scripts/check-phone.mjs",
     "responsive": "node scripts/check-responsive.mjs",
-    "check": "pnpm typecheck && pnpm test && pnpm build && pnpm budget && pnpm responsive"
+    "perf": "node scripts/check-perf.mjs",
+    "check": "pnpm typecheck && pnpm test && pnpm build && pnpm budget && pnpm responsive && pnpm perf"
   },
   "devDependencies": {
     "@portfolio/content": "workspace:*",

@@ -175,6 +175,7 @@
 .story[data-cine] .story-window { display: grid; overflow: hidden; }
 .story[data-cine] .story-window > li { grid-area: 1 / 1; border-top: 0; will-change: opacity, filter, transform; }
 .story[data-cine] .story-track { flex: none; }
+@media (hover: none) and (pointer: coarse) { .story[data-cine] .story-frame, .story[data-cine] .story-window > li { will-change: opacity, transform; } } /* Never blurred here. */
 /* Too tall for the screen: the sheet shows what fits, and each card slides up inside it. */
 .story[data-pan] .story-window { height: var(--window-h); grid-template-rows: minmax(0, 1fr); }
 .story[data-pan] .story-window > li { align-self: start; min-height: 100%; }

@@ -586,23 +586,29 @@ export const StoryFigures = (() => {
     }
 
     const showing = () => visible && (!scene || Number(scene.style.opacity || 1) > .01);
+    const touch = matchMedia('(hover: none) and (pointer: coarse)').matches;
+    let held = false, drawn = 0; // `held`: the canvas has its pixels. Only the chapter on screen keeps them.
     function frame(now) {
       raf = 0;
-      if (!showing()) return;
+      if (!showing()) { if (held) { canvas.width = canvas.height = 0; held = false; } return; }
+      if (!held) { held = resize(); if (!held) return; readColors(); }
+      if (touch && !reduced && now - drawn < 28) { raf = requestAnimationFrame(frame); return; }
+      drawn = now;
       if (shownAt < 0 && (!scene || Number(scene.style.opacity || 1) > .95)) shownAt = now; // The pen starts once the scene is in focus.
       draw(now);
       if (!reduced) raf = requestAnimationFrame(frame);
     }
     const wake = () => { if (!raf) raf = requestAnimationFrame(frame); };
     const io = new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) wake(); });
-    const ro = new ResizeObserver(() => { if (resize()) { readColors(); draw(performance.now()); } });
+    const ro = new ResizeObserver(() => { held = false; wake(); });
     const mo = new MutationObserver(() => { readColors(); wake(); });
     io.observe(canvas); ro.observe(canvas);
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-palette', 'style', 'class'] });
     const page = document.getElementById('page');
     page?.addEventListener('scroll', wake, { passive: true });
     if (document.fonts) document.fonts.ready.then(() => { readColors(); wake(); });
-    readColors(); resize(); wake();
+    canvas.width = canvas.height = 0;
+    readColors(); wake();
     return () => { cancelAnimationFrame(raf); io.disconnect(); ro.disconnect(); mo.disconnect(); page?.removeEventListener('scroll', wake); };
   }
 

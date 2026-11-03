@@ -34,6 +34,8 @@ type Block = { el: HTMLElement; top: number; h: number; state: RevealState | und
  */
 export function startScrollMotion(page: HTMLElement, content: HTMLElement, options: ScrollMotionOptions) {
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* A finger scrolls on the browser's own thread, so a layer moved from this one always lands a frame apart from it, and that reads as judder. On touch the page scrolls natively, and only the reveals run. */
+  const touch = matchMedia("(hover: none) and (pointer: coarse)").matches;
   let layers: Layer[] = [], blocks: Block[] = [];
 
   const baseTop = (el: HTMLElement) => {
@@ -52,7 +54,7 @@ export function startScrollMotion(page: HTMLElement, content: HTMLElement, optio
   };
   measure();
 
-  const lenis = reduced || !options.lerp ? null : new Lenis({
+  const lenis = reduced || touch || !options.lerp ? null : new Lenis({
     wrapper: page, content, eventsTarget: document.documentElement, lerp: options.lerp, smoothWheel: true, syncTouch: false, autoRaf: false, anchors: true,
     // Things that scroll on their own keep their wheel.
     prevent: (node: HTMLElement) => !!node.closest?.("[data-scroll-own]"),
@@ -67,7 +69,7 @@ export function startScrollMotion(page: HTMLElement, content: HTMLElement, optio
       const state = nextRevealState(b.state, b.top - s, b.top - s + b.h, vh);
       if (state !== b.state) { b.state = state; b.el.dataset.state = state; }
     }
-    if (!reduced) {
+    if (!reduced && !touch) {
       for (const l of layers) {
         l.follow += (s - l.follow) * (1 - Math.exp(-dt * l.rate));
         // What starts on the first screen rests exactly where it was laid out. It only drifts once scrolling starts.
@@ -78,17 +80,20 @@ export function startScrollMotion(page: HTMLElement, content: HTMLElement, optio
         l.el.style.translate = `0 ${(late + place * l.drift * options.parallax).toFixed(2)}px`;
       }
     }
-    raf = requestAnimationFrame(frame);
+    raf = touch ? 0 : requestAnimationFrame(frame);
   };
   raf = requestAnimationFrame(frame);
+  const wake = () => { raf ||= requestAnimationFrame(frame); };
+  const remeasure = () => { measure(); if (touch) wake(); };
 
-  const watch = new ResizeObserver(measure);
+  if (touch) page.addEventListener("scroll", wake, { passive: true });
+  const watch = new ResizeObserver(remeasure);
   watch.observe(content);
-  addEventListener("resize", measure);
-  document.fonts?.ready.then(measure);
+  addEventListener("resize", remeasure);
+  document.fonts?.ready.then(remeasure);
 
   return () => {
-    cancelAnimationFrame(raf); watch.disconnect(); removeEventListener("resize", measure); lenis?.destroy();
+    cancelAnimationFrame(raf); page.removeEventListener("scroll", wake); watch.disconnect(); removeEventListener("resize", remeasure); lenis?.destroy();
     for (const l of layers) l.el.style.translate = "";
   };
 }

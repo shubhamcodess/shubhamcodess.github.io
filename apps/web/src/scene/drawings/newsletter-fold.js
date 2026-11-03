@@ -344,9 +344,11 @@ export const NewsletterFold = (() => {
       ctx.globalAlpha = 1;
     }
 
+    const touch = matchMedia('(hover: none) and (pointer: coarse)').matches; // A phone draws at 30 frames a second, however fast its screen.
     function frame(now) {
       raf = 0;
       if (!visible || document.hidden) return;
+      if (touch && !reduced && now - last < 28) { raf = requestAnimationFrame(frame); return; }
       const dt = Math.min(.05, (now - last) / 1000 || 0); last = now;
       const k = 1 - Math.exp(-dt * 3.2); // the camera follows the pointer slowly
       yawS += (yawT - yawS) * k; tiltS += (tiltT - tiltS) * k;

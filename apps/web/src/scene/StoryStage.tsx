@@ -15,16 +15,21 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
   const ref = useRef<HTMLElement>(null);
   const clock = useRef({ progress: 0, live: false, from: [] as (number | null)[] }); // The film's place, read by the figure drawing every frame.
 
-  // The figures: blueprint drawings, loaded only when the story is on the page. Each chapter's canvas shows its part.
+  // The figures: blueprint drawings, loaded only once the story is a screen away. Each chapter's canvas shows its part.
   useEffect(() => {
     const canvases = [...(ref.current?.querySelectorAll<HTMLCanvasElement>("canvas[data-chapter]") ?? [])];
     if (!canvases.length) return;
     let stops: (() => void)[] = [], gone = false;
-    void import("./drawings/story-figures").then(({ StoryFigures }) => {
-      if (gone) return;
-      stops = canvases.map((canvas) => (StoryFigures as StoryDrawing).mount(canvas, { chapter: Number(canvas.dataset.chapter), count, story: () => clock.current }));
-    });
-    return () => { gone = true; stops.forEach((stop) => stop()); };
+    const near = new IntersectionObserver(([e]) => {
+      if (!e?.isIntersecting) return;
+      near.disconnect();
+      void import("./drawings/story-figures").then(({ StoryFigures }) => {
+        if (gone) return;
+        stops = canvases.map((canvas) => (StoryFigures as StoryDrawing).mount(canvas, { chapter: Number(canvas.dataset.chapter), count, story: () => clock.current }));
+      });
+    }, { root: document.getElementById("page"), rootMargin: "100% 0px" });
+    near.observe(ref.current as HTMLElement);
+    return () => { gone = true; near.disconnect(); stops.forEach((stop) => stop()); };
   }, [count]);
 
   useEffect(() => {
@@ -37,6 +42,10 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
     const scenes = [...story.querySelectorAll<HTMLElement>("[data-scene]")];
     const marks = [...story.querySelectorAll<HTMLElement>("[data-mark]")];
     const sheet = story.querySelector<HTMLElement>("[data-sheet]"), strip = story.querySelector<HTMLElement>("[data-strip]");
+    const touch = matchMedia("(hover: none) and (pointer: coarse)").matches; // A phone's GPU can't blur a whole card every frame, so there it only fades and moves.
+    // Each value is written only on what reads it. Set on the section, it would restyle every element inside on every frame.
+    const drawn = story.querySelector<HTMLElement>(".story-rule-drawn"), present = story.querySelector<HTMLElement>(".story-figure");
+    const drifting = scenes.map((scene) => [...scene.querySelectorAll<HTMLElement>(".story-wire, .story-canvas")]);
 
     // Where the stage pins (px from the top), its place in the section, and how much scroll the film takes.
     let raf = 0, on = false, lastHere = -1, pinTop = 0, stageAt = 0, film = 0, sized = innerWidth, headRoom = 0, spare: number[] = [];
@@ -44,7 +53,9 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
       on = false; lastHere = -1; clock.current.live = false;
       headRoom = 0; spare = []; clock.current.from = [];
       delete story.dataset.cine; delete story.dataset.pan; delete story.dataset.slide; delete story.dataset.holdStart; delete story.dataset.holdLength;
-      for (const name of ["--story-drawn", "--now", "--hint", "--stage-top", "--window-h", "height"]) story.style.removeProperty(name);
+      for (const name of ["--stage-top", "--window-h", "height"]) story.style.removeProperty(name);
+      drawn?.style.removeProperty("--story-drawn"); present?.style.removeProperty("--now"); hint?.style.removeProperty("--hint");
+      for (const el of drifting.flat()) el.style.removeProperty("--drift");
       for (const el of [...scenes, frame, track, head]) el?.removeAttribute("style");
       for (const mark of marks) { delete mark.dataset.state; mark.removeAttribute("aria-current"); }
       if (sheet) sheet.textContent = pad(1);
@@ -62,23 +73,24 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
         const look = sceneLook(progress, i, count), hidden = look.opacity < 0.004;
         scene.style.opacity = look.opacity.toFixed(3);
         scene.style.pointerEvents = look.opacity > 0.5 ? "auto" : "none";
+        scene.style.visibility = hidden ? "hidden" : "";
         if (hidden) return;
-        scene.style.filter = look.blur < 0.05 ? "none" : `blur(${look.blur.toFixed(2)}px)`;
+        scene.style.filter = touch || look.blur < 0.05 ? "none" : `blur(${look.blur.toFixed(2)}px)`;
         const y = look.y - (spare[i] ?? 0) * scenePan(progress, i, count);
         scene.style.transform = `translate3d(0,${y.toFixed(2)}px,0) scale(${look.scale.toFixed(4)})`;
-        scene.style.setProperty("--drift", look.drift.toFixed(3));
+        for (const el of drifting[i] ?? []) el.style.setProperty("--drift", look.drift.toFixed(3));
       });
       if (head && headRoom) head.style.opacity = Math.min(1, Math.max(0, ahead / headRoom)).toFixed(3); // It's on its way out from under the header, so it fades before it gets there.
       const whole = frameLook(ahead, ahead + film + innerHeight, innerHeight);
       for (const el of [frame, track]) {
         if (!el) continue;
         el.style.opacity = whole.opacity.toFixed(3);
-        el.style.filter = whole.blur < 0.05 ? "none" : `blur(${whole.blur.toFixed(2)}px)`;
+        el.style.filter = touch || whole.blur < 0.05 ? "none" : `blur(${whole.blur.toFixed(2)}px)`;
         el.style.transform = whole.y < 0.05 ? "none" : `translate3d(0,${whole.y.toFixed(2)}px,0) scale(${whole.scale.toFixed(4)})`;
       }
-      story.style.setProperty("--story-drawn", lineProgress(progress, count).toFixed(4));
-      story.style.setProperty("--now", figurePresence(progress, count).toFixed(3));
-      story.style.setProperty("--hint", (1 - Math.min(1, Math.max(0, (progress - 0.94) / 0.05))).toFixed(3)); // The scroll hint stays through every chapter, and fades only as the last one ends.
+      drawn?.style.setProperty("--story-drawn", lineProgress(progress, count).toFixed(4));
+      present?.style.setProperty("--now", figurePresence(progress, count).toFixed(3));
+      hint?.style.setProperty("--hint", (1 - Math.min(1, Math.max(0, (progress - 0.94) / 0.05))).toFixed(3)); // The scroll hint stays through every chapter, and fades only as the last one ends.
       const here = currentScene(progress, count);
       if (here === lastHere) return;
       lastHere = here;

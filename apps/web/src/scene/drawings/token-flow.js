@@ -242,9 +242,11 @@ export const TokenFlow = (() => {
       if (wide) text('GITHUB ISSUE LIST, 40 ISSUES', 0, MTO.d + .82, 0, Math.max(9, size - 1), colors.ink2, ease(span(t, .4, 1.2)) * gone * .8);
     }
 
+    const touch = matchMedia('(hover: none) and (pointer: coarse)').matches; // A phone draws at 30 frames a second, however fast its screen.
     function frame(now) {
       raf = 0;
       if (!visible || document.hidden) return;
+      if (touch && !reduced && now - last < 28) { raf = requestAnimationFrame(frame); return; }
       const dt = Math.max(0, Math.min(.05, (now - last) / 1000 || 0)); last = now; // The first frame's stamp can come before `last`, which would run the clock backwards.
       const k = 1 - Math.exp(-dt * 3.2);
       yawS += (yawT - yawS) * k; tiltS += (tiltT - tiltS) * k;

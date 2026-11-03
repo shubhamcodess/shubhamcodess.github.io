@@ -49,7 +49,7 @@ function styleFor(p: Palette, l: Layer, W: number): Style {
   };
 }
 
-type Node = { el: HTMLDivElement; canvas: HTMLCanvasElement; z: number; fog: boolean; paint: (n: Node) => void };
+type Node = { el: HTMLDivElement; canvas: HTMLCanvasElement; z: number; fog: boolean; paint: (n: Node) => void; placed?: string; off?: boolean };
 
 /** The scroll the city follows: the page's, minus any stretch a pinned section holds still (`data-hold-start` and `data-hold-length`, in px of scroll). */
 function cityScroll(scroller: HTMLElement) {
@@ -64,12 +64,13 @@ function cityScroll(scroller: HTMLElement) {
 
 export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () => { palette: Palette; font: string; settings: SceneSettings }) {
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const touch = matchMedia("(hover: none) and (pointer: coarse)").matches; // On a phone the layers move only with the scroll, and the dust and bats draw at 30 frames a second.
   const stage = document.createElement("div"); stage.className = "g-stage"; host.append(stage);
   const live = document.createElement("canvas"); live.className = "g-live"; host.append(live);
   const liveX = live.getContext("2d") as Ctx;
   let { palette, font, settings } = read();
   let nodes: Node[] = [], W = 0, H = 0, overscan = 0, D = 1, liveD = 1;
-  let effects: ReturnType<Effect>[] = [];
+  let effects: ReturnType<Effect>[] = [], shownFade = "";
   const cam = { x: 0, y: 0, tx: 0, ty: 0, scroll: 0 };
 
   function fit(n: Node) {
@@ -125,8 +126,8 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
     here.forEach((m) => m.after?.(x, seeded(l.seed + 7), st, c));
   }
 
-  function paintFog(n: Node, seed: number, y0: number, y1: number, amount: number) {
-    const x = fit(n), r = seeded(seed), color = palette.sky[0];
+  function paintFog(x: Ctx, seed: number, y0: number, y1: number, amount: number) {
+    const r = seeded(seed), color = palette.sky[0];
     for (let i = 0; i < 70; i++) {
       const px = -overscan + r() * (W + overscan * 2), py = H * (y0 + r() * (y1 - y0)), rad = H * (0.05 + r() * 0.14);
       const g = x.createRadialGradient(px, py, 0, px, py, rad);
@@ -135,8 +136,8 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
     }
   }
 
-  function paintRays(n: Node) {
-    const x = fit(n), sx = W * SUN_X, sy = -H * 0.12, r = seeded(9), ray = hex((palette.glow.match(/\d+/g) as string[]).slice(0, 3).map(Number));
+  function paintRays(x: Ctx) {
+    const sx = W * SUN_X, sy = -H * 0.12, r = seeded(9), ray = hex((palette.glow.match(/\d+/g) as string[]).slice(0, 3).map(Number));
     x.globalCompositeOperation = "lighter";
     for (let i = 0; i < 9; i++) {
       const a = Math.PI * (0.52 + r() * 0.42), len = H * (1 + r() * 0.5), spread = 0.012 + r() * 0.036;
@@ -174,13 +175,21 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
   function buildNodes() {
     stage.innerHTML = ""; nodes = [];
     const phone = W < PHONE;
+    const fog = (x: Ctx, seed: number, y1: number, amount: number) => paintFog(x, seed, seed === 42 ? 0.05 : 0.08, y1, amount);
+    const air: Partial<Record<LayerId, (x: Ctx) => void>> = {
+      far: (x) => fog(x, 42, 0.62, 0.8),
+      distant: paintRays,
+      hero: (x) => fog(x, 47, 0.5, 0.75),
+    };
+    const lift: Partial<Record<LayerId, number>> = { far: 60, distant: 50, hero: 70 };
     addNode(-1150, "word", paintWord);
     for (const l of LAYERS) {
       if (phone && (l.id === "ridge" || l.id === "near")) continue;
+      const over = air[l.id];
+      // On a phone the air is painted into the layer behind it: three fewer full-screen layers for the GPU to stack.
+      if (over && touch) { addNode(l.z, l.id, (n) => { paintLayer(n, l); over(n.canvas.getContext("2d") as Ctx); }); continue; }
       addNode(l.z, l.id, (n) => paintLayer(n, l));
-      if (l.id === "far") addNode(l.z + 60, "fog", (n) => paintFog(n, 42, 0.05, 0.62, 0.8), true);
-      if (l.id === "distant") addNode(l.z + 50, "rays", paintRays);
-      if (l.id === "hero") addNode(l.z + 70, "fog", (n) => paintFog(n, 47, 0.08, 0.5, 0.75), true);
+      if (over) addNode(l.z + (lift[l.id] ?? 0), l.id === "distant" ? "rays" : "fog", (n) => over(fit(n)), l.id !== "distant");
     }
   }
 
@@ -195,7 +204,7 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
   function resize() {
     W = host.clientWidth; H = host.clientHeight;
     if (!W || !H) return;
-    D = Math.min(devicePixelRatio || 1, W < PHONE ? 1.5 : 1.75); liveD = Math.min(devicePixelRatio || 1, 1.5); overscan = Math.round(W * 0.1);
+    D = Math.min(devicePixelRatio || 1, touch ? 1.25 : W < PHONE ? 1.5 : 1.75); liveD = Math.min(devicePixelRatio || 1, 1.5); overscan = Math.round(W * 0.1);
     live.width = W * liveD; live.height = H * liveD;
     buildNodes(); paintAll();
   }
@@ -205,9 +214,10 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
   function place(t: number) {
     const k = settings.depth, s = cam.scroll;
     // The city steps back as content scrolls over it, so text always wins.
-    host.style.opacity = Math.max(0.38, 1 - s / (H * 0.9)).toFixed(3);
+    const fade = Math.max(0.38, 1 - s / (H * 0.9)).toFixed(3);
+    if (fade !== shownFade) host.style.opacity = shownFade = fade;
     const sway = reduced ? 0 : Math.sin(s / 520) * settings.sway;
-    const turnY = reduced ? 0 : ((cam.x * 1.9 + sway * 1.5) * k + Math.sin(t * 0.11) * 0.1) * (Math.PI / 180), turnX = reduced ? 0 : -cam.y * k * (Math.PI / 180);
+    const turnY = reduced ? 0 : ((cam.x * 1.9 + sway * 1.5) * k + (touch ? 0 : Math.sin(t * 0.11) * 0.1)) * (Math.PI / 180), turnX = reduced ? 0 : -cam.y * k * (Math.PI / 180);
     const dolly = reduced ? 0 : s * 0.05;
     for (const n of nodes) {
       const near = PERSPECTIVE / (PERSPECTIVE - n.z);
@@ -217,7 +227,11 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
       const lift = s * rise * (reduced ? 0.4 : 1), side = sway * depth * 46 * k, drift = !reduced && n.fog ? Math.sin(t * 0.05 + n.z) * 34 : 0;
       const x = (side + drift + n.z * Math.sin(turnY)) * near, y = (-lift - n.z * Math.sin(turnX)) * near;
       const zoom = (PERSPECTIVE - n.z) / (PERSPECTIVE - n.z + dolly);
-      n.el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${zoom.toFixed(4)})`;
+      const off = -y > H * 1.1; // Lifted clear of the screen: the GPU can forget it.
+      if (off !== n.off) { n.off = off; n.el.style.visibility = off ? "hidden" : ""; }
+      if (off) continue;
+      const placed = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${zoom.toFixed(4)})`;
+      if (placed !== n.placed) n.el.style.transform = n.placed = placed; // A layer that hasn't moved costs nothing.
     }
   }
   function drawLive(t: number) {
@@ -226,14 +240,16 @@ export function mountGotham(host: HTMLElement, scroller: HTMLElement, read: () =
     for (const draw of effects) draw(liveX, f);
   }
 
-  let raf = 0, last = 0;
+  let raf = 0, last = 0, drawn = 0;
   function frame(now: number) {
     raf = requestAnimationFrame(frame);
     const dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now;
     const q = 1 - Math.exp(-dt * 2.4);
     cam.x += (cam.tx - cam.x) * q; cam.y += (cam.ty - cam.y) * q;
     cam.scroll += (cityScroll(scroller) - cam.scroll) * (1 - Math.exp(-dt * 6));
-    place(now / 1000); drawLive(now / 1000);
+    place(now / 1000);
+    if (touch && now - drawn < 28) return;
+    drawn = now; drawLive(now / 1000);
   }
   const pointer = (e: PointerEvent) => { if (e.pointerType !== "touch") { cam.tx = e.clientX / innerWidth - 0.5; cam.ty = e.clientY / innerHeight - 0.5; } };
   const scrolledStill = () => { cam.scroll = cityScroll(scroller); place(0); drawLive(8); };

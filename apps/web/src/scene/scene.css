@@ -13,6 +13,13 @@ html, body { height: 100%; overflow: hidden; }
   mask-image: linear-gradient(transparent var(--header-h), #000 calc(var(--header-h) + var(--content-fade)));
 }
 .page::-webkit-scrollbar { display: none; }
+/* A phone can't afford that mask: the GPU would redo the whole screen through it on every scrolled frame. There the content is simply cut at the header, which costs nothing. */
+@media (hover: none) and (pointer: coarse) {
+  .page { -webkit-mask-image: none; mask-image: none; clip-path: inset(var(--header-h) 0 0 0); }
+  /* Blur is the costliest thing a phone can animate, so here things arrive and leave by fading and moving. */
+  .hero *, .rv, .mt-c, .link-stats { filter: none !important; }
+  .site-header { --bp-face-filter: none !important; }
+}
 
 /* The first screen, sized to the space under the city. Everything scales together from the name, and the gaps group who, what and where next. */
 .hero {
@@ -169,6 +176,7 @@ html, body { height: 100%; overflow: hidden; }
 @media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
   #scene { height: min(82vh, 172vw); }
 }
+@media (hover: none) and (pointer: coarse) { #scene { -webkit-mask-image: none; mask-image: none; } } /* Nothing but dust reaches that low on a phone, and the mask would be redone every frame. */
 .g-stage { position: absolute; inset: 0; }
 .g-layer { position: absolute; inset: 0; transform-origin: 62% 30%; will-change: transform; backface-visibility: hidden; }
 .g-layer canvas { position: absolute; }

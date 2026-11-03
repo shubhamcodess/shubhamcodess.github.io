@@ -214,6 +214,15 @@ Experience, told as a film. All content and whether it has a frame are `story` i
 ### Scroll motion: Approved
 Smooth scroll, content layers that follow a beat late, and reveal and hide. Mark content with `data-block` and `data-layer`, and text with `.rv` or `.ln`. Details are in decision 017.
 
+### Phones: lighter by rule
+Touch devices (`hover: none` and `pointer: coarse`) get the same look with less work per frame. `pnpm perf` checks these rules.
+- **Scrolling is native.** No smooth scroll, and no layer follows a finger from script, because it would land a frame apart from the browser's scroll. Reveals still run.
+- **No masks on what moves.** The page is cut at the header instead of fading there, and the city has no foot fade.
+- **No animated blur.** Things fade and move instead. No frosted header buttons.
+- **The city:** five layers at most, with fog and rays painted into the layer behind them. Layers move only with the scroll. Dust, bats and drawings run at 30 frames a second.
+- **Load near the screen.** A drawing's code loads as it nears the screen. Only a story chapter on screen holds canvas memory.
+- **Per-frame values go on what reads them,** never on a whole section, where an inherited variable restyles everything inside.
+
 ### Scroll thumb: Approved
 Code: `packages/design/src/components/scroll-thumb`. It replaces the visible scrollbar with one small draggable shape that takes up no width. The shape is passed in: this site uses a small batarang, standing on end. It rests at `--scroll-thumb-top`, which this site sets to the bottom of the header. On hover it grows by 1.4 and darkens, softly. It's for pointers, while keyboards, wheels and touch scroll natively.
 
