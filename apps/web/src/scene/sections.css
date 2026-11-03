@@ -160,3 +160,5 @@
 .story-hint svg { width: 12px; height: 12px; fill: none; stroke: var(--accent); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
 @media (prefers-reduced-motion: no-preference) { .story-hint svg { animation: story-hint 2.4s var(--ease-expo) infinite; } }
 @keyframes story-hint { 0%, 100% { transform: translateY(-1px); opacity: .5; } 50% { transform: translateY(2px); opacity: 1; } }
+/* A checkpoint's tooltip opens where the hint sits, so the hint steps aside meanwhile. */
+.story-track:has(.bp-tip[data-open]) .story-hint { opacity: 0; transition: opacity .25s; }

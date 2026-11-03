@@ -1,0 +1,14 @@
+/* Motion-blur text. Letters slide in from the left, stretched and blurred, and settle sharp in turn; leaving, they slide on to the right and blur away, last letter first.
+   Soft motion only: no overshoot, nothing bounces. */
+.mt-line { display:block; }
+.mt-w { display:inline-block; white-space:pre; }
+.mt-c { display:inline-block; transform-origin:0 60%; }
+@media (prefers-reduced-motion:no-preference) {
+  .mt-c {
+    transition:transform .95s var(--ease-expo), filter .8s var(--ease-expo), opacity .55s var(--ease-expo);
+    transition-delay:calc(var(--i) * 16ms);
+  }
+  .mt[data-state="below"] .mt-c, .mt[data-state="above"] .mt-c { opacity:0; filter:blur(7px); }
+  .mt[data-state="below"] .mt-c { transform:translateX(-.55em) scaleX(1.45); }
+  .mt[data-state="above"] .mt-c { transform:translateX(.45em) scaleX(1.35); transform-origin:100% 60%; transition-duration:.5s, .45s, .4s; transition-delay:calc((var(--n) - var(--i)) * 8ms); }
+}

@@ -36,8 +36,8 @@ export const lineProgress = (progress: number, count: number) => (count < 2 ? 1 
 /** How present the figure at the end of the line is: only once the story has got there. */
 export const figurePresence = (progress: number, count: number) => ease(clamp((progress * count - (count - 1)) / ENTER));
 
-/** Where to scroll to, 0 to 1, to read a scene: the middle of its hold. */
-export const sceneTarget = (index: number, count: number) => (index === 0 ? 0 : index === count - 1 ? 1 : (index + (ENTER + LEAVE) / 2) / count);
+/** Where to scroll to, 0 to 1, for a scene: the moment it's fully arrived, so its figure plays from the start as you scroll on. */
+export const sceneTarget = (index: number, count: number) => (index === 0 ? 0 : (index + ENTER) / count);
 
 /** Which scene is the one being read: it takes over halfway through arriving. */
 export const currentScene = (progress: number, count: number) => Math.max(0, Math.min(count - 1, Math.floor(progress * count - ENTER / 2)));

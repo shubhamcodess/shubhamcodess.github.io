@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { fullProject, listedProjects } from "@portfolio/content";
 import { Button } from "@portfolio/design/button";
+import { MotionText } from "@portfolio/design/motion-text";
 import { site } from "@portfolio/site";
 import { ProjectLinks, projectMeta } from "@/scene/ProjectCardLink";
 import { ProjectStage } from "@/scene/ProjectStage";
@@ -30,7 +31,7 @@ export default async function ProjectPage({ params }: Props) {
           <p className="pc-meta rv" style={{ "--i": 1 } as CSSProperties} data-layer="a">
             {projectMeta(project).map((m) => <span key={m.text} className={m.live ? "live" : undefined}>{m.text}</span>)}
           </p>
-          <h1 className="sec-title" data-layer="b"><span className="ln"><span className="rv" style={{ "--i": 2 } as CSSProperties}>{project.title}</span></span></h1>
+          <h1 className="sec-title" data-layer="b"><MotionText line text={project.title} /></h1>
           <p className="project-line rv" data-layer="b" style={{ "--i": 3 } as CSSProperties}>{project.line}</p>
           {project.links.length > 0 && <div className="pc-actions rv" style={{ "--i": 4 } as CSSProperties}><ProjectLinks project={project} /></div>}
         </div>

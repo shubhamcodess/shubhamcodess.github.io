@@ -71,7 +71,7 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
       }
       story.style.setProperty("--story-drawn", lineProgress(progress, count).toFixed(4));
       story.style.setProperty("--now", figurePresence(progress, count).toFixed(3));
-      story.style.setProperty("--hint", (1 - Math.min(1, Math.max(0, (progress * count - 0.5) / 0.4))).toFixed(3)); // The scroll hint fades once the first chapter is under way.
+      story.style.setProperty("--hint", (1 - Math.min(1, Math.max(0, (progress - 0.94) / 0.05))).toFixed(3)); // The scroll hint stays through every chapter, and fades only as the last one ends.
       const here = currentScene(progress, count);
       if (here === lastHere) return;
       lastHere = here;

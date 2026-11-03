@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { Button, planStrokes } from "@portfolio/design/button";
 import { SheetFrame } from "@portfolio/design/project-card";
 import { Tooltip } from "@portfolio/design/tooltip";
+import { MotionText } from "@portfolio/design/motion-text";
 import { site } from "@portfolio/site";
 import { BATARANG_EDGES, BATARANG_OUTLINE } from "./batarang-shape";
 import { BatFigure } from "./figure/BatFigure";
@@ -31,13 +32,13 @@ export function Story() {
   const titles = scenes.map((scene) => scene.title);
   const stops = scenes.slice(1), last = scenes.at(-1);
   return (
-    <StoryStage id="story" count={scenes.length} pace={pace} titles={titles}>
+    <StoryStage id="experience" count={scenes.length} pace={pace} titles={titles}>
       <div className="story-stage page-col">
         <header className="story-head">
           <p className="kicker">{kicker}</p>
           <h2 className="sec-title">
-            <span className="ln"><span className="rv" style={{ "--i": 1 } as CSSProperties}>{title[0]} <span className="company-name">{company}</span></span></span>
-            <span className="ln"><span className="rv dim" style={{ "--i": 2 } as CSSProperties}>{title[1]}</span></span>
+            <span className="mt-line"><MotionText text={title[0]} /> <MotionText className="company-name" text={company} after={title[0].length} /></span>
+            <MotionText line className="dim" text={title[1]} after={title[0].length + company.length} />
           </h2>
           {/* Now is this company; Archive will hold the ones before it. */}
           <div className="story-tabs" role="tablist" aria-label="Which job">
@@ -52,7 +53,7 @@ export function Story() {
           <div className="story-strip">
             <span className="story-sheet">Sheet <b data-sheet>{pad(1)}</b> / {pad(scenes.length)}</span>
             <span className="story-strip-title" data-strip>{titles[0]}</span>
-            <span className="story-org">IBM</span>
+            <span className="story-org">{company}</span>
           </div>
           <ol className="story-window">
             {scenes.map((scene, i) => (
