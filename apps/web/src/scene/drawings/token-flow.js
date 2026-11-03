@@ -197,7 +197,7 @@ export const TokenFlow = (() => {
       // The server stands where the wire starts, with its side on the wire, and its logo and name turn underneath.
       const wireStart = at(LANE, 0, 0), rackSize = scale * .66, rackBox = rack(wireStart[0] - rackSize * .46, wireStart[1] - rackSize * .45, rackSize, 400, clock); // Stands above the wire, clear of the measure under it.
       const serverTurn = (clock / PERIOD) * SERVER_TURNS, serverIndex = Math.floor(serverTurn), serverSlide = ease(span(serverTurn % 1, .84, 1));
-      const nameY = rackBox.bottom + size + 7, nameX = rackBox.left + rackSize * .1;
+      const nameY = at(LANE, RAIL + .68, 0)[1], nameX = Math.max(6, rackBox.left - size * .6); // On the measure's label row, left of its line, so neither crosses the other.
       for (const q of [0, 1]) {
         const name = SERVERS[(serverIndex + q) % SERVERS.length], alpha = q ? serverSlide : 1 - serverSlide, y = nameY + (q - serverSlide) * size * 1.4;
         mark(name, nameX + size * .8, y, size * 1.5, alpha, 660 + q * 20);
@@ -207,14 +207,16 @@ export const TokenFlow = (() => {
 
       // The agent: one flat square standing where the wire ends. It's in the scene's own camera, so it skews with the stream and sways with the pointer, and its mark turns inside it.
       const AX = AGENT.x, AW = AGENT.w, AZ = AW / Math.sin(.8); // As tall on screen as it is wide.
-      face([[AX - AW, 0, -AZ], [AX + AW, 0, -AZ], [AX + AW, 0, AZ], [AX - AW, 0, AZ]], 500);
-      const box = [[AX - AW, -AZ], [AX + AW, -AZ], [AX + AW, AZ], [AX - AW, AZ]].map(([x, z]) => at(x, 0, z));
+      // The camera's lean grows with height, so far out it would shear too much. Only a third of it is kept: enough to sit in the stream's perspective.
+      const onBox = (x, z) => { const p = at(x, 0, z), foot = at(x, 0, 0); return [foot[0] + (p[0] - foot[0]) * .34, p[1]]; };
+      const box = [[AX - AW, -AZ], [AX + AW, -AZ], [AX + AW, AZ], [AX - AW, AZ]].map(([x, z]) => onBox(x, z));
+      surface(box, 500, .04);
       ctx.save(); ctx.beginPath(); box.forEach(([x, y], i) => ctx[i ? 'lineTo' : 'moveTo'](x, y)); ctx.closePath(); ctx.clip();
       const agentTurn = (clock / PERIOD) * AGENTS.length, agentIndex = Math.floor(agentTurn) % AGENTS.length, agentSlide = ease(span(agentTurn % 1, .78, 1));
       for (let q = -1; q <= 2; q++) {
         const off = q - agentSlide, near = Math.max(0, 1 - Math.abs(off)), alpha = (.08 + .92 * near * near) * clamp(1.5 - Math.abs(off)), k = (AW * 1.1 / 24) * (.72 + .28 * near);
         if (alpha <= .01) continue;
-        MARKS[AGENTS[(agentIndex + q + AGENTS.length) % AGENTS.length]].forEach((stroke, i) => pen(stroke.map(([gx, gy]) => at(AX + (gx - 12) * k, 0, -(gy - 12) * k / Math.sin(.8) - off * AZ * 1.5)), 520 + q * 40 + i * 13, 1.1, colors.ink, alpha));
+        MARKS[AGENTS[(agentIndex + q + AGENTS.length) % AGENTS.length]].forEach((stroke, i) => pen(stroke.map(([gx, gy]) => onBox(AX + (gx - 12) * k, -(gy - 12) * k / Math.sin(.8) - off * AZ * 1.5)), 520 + q * 40 + i * 13, 1.1, colors.ink, alpha));
       }
       ctx.restore();
 
@@ -226,7 +228,7 @@ export const TokenFlow = (() => {
         seg([x - half, y, z], [x + half, y, z + (hash(row.i + 4) - .5) * .12], row.i + 700, 1.1, colors.accent, (1 - e) * .95, [2, 2]);
       }
 
-      const agentTop = at(AX, 0, AZ);
+      const agentTop = onBox(AX, AZ);
       for (const [word, x, y] of [['MCP SERVER', rackBox.left + rackSize * .46, rackBox.top - size * .9], ['YOUR AGENT', agentTop[0], agentTop[1] - size * 1.1]]) {
         ctx.font = `500 ${size}px ${font}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = colors.ink2; ctx.fillText(word, x, y);
       }
