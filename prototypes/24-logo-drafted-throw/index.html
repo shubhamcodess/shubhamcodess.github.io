@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drafted Throw</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sans:"Geist",system-ui,sans-serif; --note:"Geist Mono",ui-monospace,Menlo,monospace;
+    --header-h:68px; --gutter:clamp(18px,4vw,48px);
+    --soft:cubic-bezier(.22,.61,.36,1);
+  }
+  [data-palette="dust"]      { --sky-0:#ebdfc8; --sky-1:#dfd0b9; --sky-2:#d0c0ae; --sky-3:#c6b6a8; --paper:#efe6d4; --ink:#221b17; --ink-2:#544539; --line:#43352b; --line-rest:rgba(67,53,43,.68); --accent:#9c4a1b; --grid:rgba(67,53,43,.08); }
+  [data-palette="sodium"]    { --sky-0:#f2dcbd; --sky-1:#e9caa8; --sky-2:#ddb697; --sky-3:#cda489; --paper:#f5e6ce; --ink:#1f1410; --ink-2:#4c3227; --line:#42281c; --line-rest:rgba(66,40,28,.7); --accent:#873813; --grid:rgba(66,40,28,.085); }
+  [data-palette="smog"]      { --sky-0:#dddcd5; --sky-1:#cfd1ce; --sky-2:#bfc4c6; --sky-3:#aeb6bb; --paper:#e5e5e0; --ink:#14181b; --ink-2:#3a4347; --line:#2a3338; --line-rest:rgba(42,51,56,.7); --accent:#7a4a10; --grid:rgba(42,51,56,.085); }
+  [data-palette="storm"]     { --sky-0:#e8ded6; --sky-1:#dbcec8; --sky-2:#cbbcb8; --sky-3:#bbaaaa; --paper:#efe7e0; --ink:#201a1d; --ink-2:#483b42; --line:#3d3138; --line-rest:rgba(61,49,56,.7); --accent:#8f3a1f; --grid:rgba(61,49,56,.085); }
+  [data-palette="oldGotham"] { --sky-0:#efe9d6; --sky-1:#d9d6c6; --sky-2:#c6c9c3; --sky-3:#b4bcbf; --paper:#f2eddf; --ink:#131c1f; --ink-2:#37403f; --line:#22292b; --line-rest:rgba(34,41,43,.7); --accent:#8a4a22; --grid:rgba(34,41,43,.085); }
+
+  [data-palette] {
+    /* The figure's tones: mixes of ink and paper, the same as apps/web/src/scene/scene.css. */
+    --f0:color-mix(in srgb,var(--ink),var(--paper) 8%); --f1:color-mix(in srgb,var(--ink),var(--paper) 24%); --f2:color-mix(in srgb,var(--ink),var(--paper) 42%);
+    --f3:color-mix(in srgb,var(--ink),var(--paper) 60%); --f4:color-mix(in srgb,var(--ink),var(--paper) 74%);
+  }
+  /* The batarang's finishes. */
+  [data-blade="rust"]  { --b-face:var(--accent); --b-side:color-mix(in srgb,var(--accent),var(--ink) 50%); --b-hi:color-mix(in srgb,var(--accent),var(--paper) 52%); --b-edge:color-mix(in srgb,var(--accent),var(--ink) 35%); }
+  [data-blade="suit"]  { --b-face:var(--f2); --b-side:var(--f1); --b-hi:var(--f4); --b-edge:var(--f1); }
+  [data-blade="cowl"]  { --b-face:var(--f1); --b-side:var(--f0); --b-hi:var(--f3); --b-edge:var(--f0); }
+  [data-blade="steel"] { --b-face:var(--f2); --b-side:var(--f1); --b-hi:var(--f4); --b-edge:var(--accent); }
+  [data-blade="outline"] .b-solid, body:not([data-blade="outline"]) .b-outline { display:none; }
+  * { box-sizing:border-box; }
+  html { background:var(--sky-2); }
+  body { margin:0; font-family:var(--sans); color:var(--ink); background:linear-gradient(170deg,var(--sky-0),var(--sky-1) 35%,var(--sky-2) 70%,var(--sky-3)) fixed; -webkit-font-smoothing:antialiased; overflow-x:clip; transition:background 1.4s var(--soft); }
+  ::selection { background:var(--accent); color:var(--paper); }
+
+  .header { position:fixed; z-index:10; inset:0 0 auto 0; height:var(--header-h); display:flex; align-items:center; justify-content:space-between; padding:0 var(--gutter); pointer-events:none; }
+  .header > * { pointer-events:auto; }
+  .state { font:500 11px var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
+
+  .logo { position:relative; display:block; color:inherit; line-height:0; }
+  .logo::before { content:""; position:absolute; inset:-4px 0; }
+  .logo:focus-visible { outline:1.5px dashed var(--accent); outline-offset:4px; }
+  .logo svg, .inspect svg { display:block; overflow:visible; }
+
+  main { padding:calc(var(--header-h) + 32px) var(--gutter) 40svh; max-width:1120px; margin:0 auto;
+    -webkit-mask-image:linear-gradient(transparent var(--header-h), #000 calc(var(--header-h) + 44px)); mask-image:linear-gradient(transparent var(--header-h), #000 calc(var(--header-h) + 44px)); }
+  .kicker { display:flex; align-items:center; gap:9px; margin:0 0 16px; font:500 12px/1 var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
+  .kicker::before,.kicker::after { content:""; flex:none; height:11px; background:linear-gradient(var(--line-rest),var(--line-rest)) 0 50%/100% 1px no-repeat; }
+  .kicker::before { width:16px; border-left:1px solid var(--accent); }
+  .kicker::after { width:clamp(40px,7vw,88px); border-right:1px solid var(--accent); }
+  h1 { margin:0 0 10px; font-weight:500; font-size:clamp(30px,4vw,48px); line-height:1.06; letter-spacing:-.035em; }
+  h1 span { color:var(--ink-2); }
+  p { max-width:60ch; line-height:1.55; color:var(--ink-2); }
+
+  /* The bench: the same logo, six times up, on a grid plate. */
+  .bench { position:relative; margin:34px 0 0; display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:0; }
+  @media (max-width:760px) { .bench { grid-template-columns:1fr; } }
+  .bench::before { content:""; position:absolute; inset:0; border:1px solid var(--line); pointer-events:none; }
+  .inspect { position:relative; min-height:420px; display:grid; place-items:center; padding:120px 120px 50px 40px; overflow:hidden;
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px); background-size:22px 22px; }
+  @media (max-width:760px) { .inspect { padding:90px 70px 36px 20px; min-height:300px; } }
+  .inspect .tag { position:absolute; left:12px; top:12px; font:500 11px var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
+  .controls { border-left:1px solid var(--line); padding:16px; display:flex; flex-direction:column; gap:16px; font:500 11px var(--note); letter-spacing:.06em; text-transform:uppercase; }
+  @media (max-width:760px) { .controls { border-left:0; border-top:1px solid var(--line); } }
+  .group { display:flex; flex-direction:column; gap:7px; }
+  .group > span { color:var(--ink-2); }
+  .seg { display:flex; flex-wrap:wrap; gap:6px; }
+  button { font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink); background:color-mix(in srgb,var(--paper) 70%,transparent); border:1px solid var(--line); border-radius:0; padding:7px 9px; cursor:pointer; min-height:32px; }
+  button[aria-pressed="true"] { background:var(--ink); color:var(--paper); }
+  button:focus-visible { outline:1.5px dashed var(--accent); outline-offset:3px; }
+
+  .notes { margin-top:34px; display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px 34px; }
+  .notes h3 { margin:0 0 6px; font:500 12px var(--note); letter-spacing:.06em; text-transform:uppercase; }
+  .notes p { margin:0; font-size:15px; }
+  .spacer { height:120svh; display:flex; align-items:flex-end; }
+</style>
+</head>
+<body data-palette="oldGotham" data-blade="rust">
+
+<header class="header">
+  <a class="logo" href="#top" aria-label="Home" id="header-logo"></a>
+  <span class="state" id="state">At the top</span>
+</header>
+
+<main id="top">
+  <p class="kicker">Prototype 24 · Logo</p>
+  <h1>Drafted throw.<br><span>Scroll-aware.</span></h1>
+  <p>The logo at real size is in the header. Below it is the same logo at six times its size, playing the same frames. Scroll down and the batarang pulls back out. Scroll back to the top, or click the logo, and it's thrown again. Hover the logo to re-throw.</p>
+
+  <section class="bench">
+    <div class="inspect" id="inspect"><span class="tag">×6</span></div>
+    <div class="controls">
+      <div class="group"><span>Play</span>
+        <div class="seg"><button id="b-load">Replay load</button><button id="b-throw">Throw</button><button id="b-pull">Pull out</button></div>
+      </div>
+      <div class="group"><span>Lettering</span>
+        <div class="seg" data-key="letter"><button data-v="geist" aria-pressed="true">Geist</button><button data-v="drafted">Drafted</button></div>
+      </div>
+      <div class="group"><span>Construction guides</span>
+        <div class="seg" data-key="guides"><button data-v="on">On</button><button data-v="off" aria-pressed="true">Off</button></div>
+      </div>
+      <div class="group"><span>Batarang</span>
+        <div class="seg" data-key="blade"><button data-v="rust" aria-pressed="true">Rust plate</button><button data-v="suit">Suit grey</button><button data-v="cowl">Cowl dark</button><button data-v="steel">Grey, rust edge</button><button data-v="outline">Old outline</button></div>
+      </div>
+      <div class="group"><span>Letter depth</span>
+        <div class="seg" data-key="depthOn"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div>
+      </div>
+      <div class="group"><span>Aim line and target</span>
+        <div class="seg" data-key="aim"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div>
+      </div>
+      <div class="group"><span>Speed</span>
+        <div class="seg" data-key="speed"><button data-v="1" aria-pressed="true">1×</button><button data-v=".5">½×</button><button data-v=".2">⅕×</button></div>
+      </div>
+      <div class="group"><span>Theme</span>
+        <div class="seg" data-key="palette"><button data-v="dust">Dust</button><button data-v="sodium">Sodium</button><button data-v="smog">Smog</button><button data-v="storm">Storm</button><button data-v="oldGotham" aria-pressed="true">Old Gotham</button></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="notes">
+    <div><h3>Lettering</h3><p>The Drafted option builds SP like drafting lettering: straight strokes and arcs of a single 4-unit radius, square ends, the same weight everywhere. It sits on three faint guides (cap line, mid line, baseline) that are drawn first, as a draftsman would. No wobble.</p></div>
+    <div><h3>The throw</h3><p>A dashed flight line is drawn from outside the plate to the top right of the P's bowl, with an amber target mark (both can be switched off). The batarang follows it, spinning, and buries its tip in the letter. Its shadow falls on the plate and closes in on the entry point as it lands, and the cut shows as a pale notch in the P. Nothing shakes or bounces.</p></div>
+    <div><h3>Depth</h3><p>SP has a 2.5D wireframe copy set back down and to the right, faintly hatched, the same depth cue as the hero name. It slides out once the letters are drawn.</p></div>
+    <div><h3>Scroll</h3><p>Leaving the top pulls the batarang back out along its line, and only the cut mark is left. Back at the top, the flight line is drawn again and the batarang is thrown again. Reduced motion shows it lodged and still.</p></div>
+  </div>
+
+  <div class="spacer"><p class="kicker">Now scroll back up</p></div>
+</main>
+
+<script>
+/* ---------- Geometry, in the plate's own 38-unit space ---------- */
+const PLATE = { w:38, h:38, past:5, shadow:4 };
+const f = (v) => v.toFixed(2);
+
+// The batarang, the same shape as apps/web/src/scene/batarang-shape.ts.
+const curve = (a, c, b, steps = 7) => Array.from({ length: steps + 1 }, (_, i) => { const t = i / steps, u = 1 - t; return [u*u*a[0] + 2*u*t*c[0] + t*t*b[0], u*u*a[1] + 2*u*t*c[1] + t*t*b[1]]; });
+const RIGHT = [
+  [[0,-.11],[.035,-.11]], [[.035,-.11],[.07,-.2]], [[.07,-.2],[.1,-.05]],
+  curve([.1,-.05],[.25,.01],[.36,-.21]), [[.36,-.21],[1,-.22]],
+  curve([1,-.22],[.84,-.04],[.74,.17]), curve([.74,.17],[.29,-.01],[0,.49]),
+];
+const EDGES = [...RIGHT, ...RIGHT.map((e) => e.map(([x, y]) => [-x, y]))];
+const right = RIGHT.flat(), OUTLINE = [...right, ...[...right].reverse().map(([x, y]) => [-x, y])];
+const TILT = [1, -.03, -.1, .9], ANGLE = -44, R = 12.5;
+const line = (pts) => `M${pts.map(([x, y]) => `${f(x)} ${f(y)}`).join("L")}`;
+const BLADE = {
+  shape: line(OUTLINE.map(([x, y]) => [x * R, y * R])) + "Z",
+  edge: EDGES.map((e) => line(e.map(([x, y]) => [x * R, y * R]))).join(" "),
+  bevel: EDGES.map((e) => line(e.map(([x, y]) => [x * R * .82, y * R * .82 + .5]))).join(" "),
+  hatch: Array.from({ length: 32 }, (_, i) => { const c = -R * 1.4 + i * 1.8; return `M${f(c - 5)} -6L${f(c + 5)} 10`; }).join(" "),
+};
+const rad = ANGLE * Math.PI / 180, cos = Math.cos(rad), sin = Math.sin(rad);
+const place = (x, y) => { const rx = x*cos - y*sin, ry = x*sin + y*cos; return { x: TILT[0]*rx + TILT[2]*ry, y: TILT[1]*rx + TILT[3]*ry }; };
+
+const al = place(1, 0), al_l = Math.hypot(al.x, al.y), U = { x: al.x / al_l, y: al.y / al_l }, N = { x: -U.y, y: U.x };
+// It goes in through the top right of the P's bowl, and its tip is buried a little way inside the letter.
+const ENTRY = { x: 30.1, y: 12.7 }, BURIED = 4.6;
+const TIP_AT = { x: ENTRY.x - U.x * BURIED, y: ENTRY.y - U.y * BURIED };
+const TIP = place(-R, -.22 * R);                          // the tip, from the batarang's centre
+const LODGED = { x: TIP_AT.x - TIP.x, y: TIP_AT.y - TIP.y };
+const SLIT = ENTRY, BIG = 200;
+const VISIBLE = [[SLIT.x - N.x*BIG, SLIT.y - N.y*BIG], [SLIT.x + N.x*BIG, SLIT.y + N.y*BIG], [SLIT.x + N.x*BIG + U.x*BIG, SLIT.y + N.y*BIG + U.y*BIG], [SLIT.x - N.x*BIG + U.x*BIG, SLIT.y - N.y*BIG + U.y*BIG]].map(([x, y]) => `${f(x)},${f(y)}`).join(" ");
+const from = (a, b) => `${f(SLIT.x + U.x*a + N.x*b)} ${f(SLIT.y + U.y*a + N.y*b)}`;
+const SLIT_LINE = `M${from(0, -1.6)}L${from(0, 2.1)}`;
+const CRACKS = [`M${from(0,-1.6)}L${from(-3,-3.4)}`, `M${from(0,1.6)}L${from(-2.6,3.6)}`, `M${from(-1,0)}L${from(-4,.4)}`];
+const FLECK = `M${from(0,-.6)}L${from(.9,.3)}`;
+const CHIPS = [[-5,-7],[1,-9],[6,-6],[-8,-2]];
+
+// The flight line: a slight arc in from beyond the top right, ending where the blade enters the P.
+const START = { x: ENTRY.x + U.x * 34, y: ENTRY.y + U.y * 34 };
+const CTRL = { x: (START.x + ENTRY.x) / 2 - N.x * 4, y: (START.y + ENTRY.y) / 2 - N.y * 4 };
+const FLIGHT_D = `M${f(START.x)} ${f(START.y)}Q${f(CTRL.x)} ${f(CTRL.y)} ${f(ENTRY.x)} ${f(ENTRY.y)}`;
+const onFlight = (s) => { const t = 1 - s, a = (1-t)*(1-t), b = 2*(1-t)*t, c = t*t; return { x: a*START.x + b*CTRL.x + c*ENTRY.x, y: a*START.y + b*CTRL.y + c*ENTRY.y }; };
+
+// The blade's shadow on the plate. It falls down and to the right, like every shadow here, and the further a point is from
+// where the blade goes in, the further its shadow falls. So in flight the shadow trails off, and it closes on the entry as the blade lands.
+const SH_K = .16, SH_D = { x: .55, y: .84 }, sDot = SLIT.x * U.x + SLIT.y * U.y;
+const SHEAR = [1 + SH_K*SH_D.x*U.x, SH_K*SH_D.y*U.x, SH_K*SH_D.x*U.y, 1 + SH_K*SH_D.y*U.y, -SH_K*SH_D.x*sDot, -SH_K*SH_D.y*sDot].map(f).join(" ");
+
+// The letters' depth: a wireframe copy set back down and to the right, faintly hatched inside.
+const DEPTH = { x: 1.3, y: 1.3 };
+const LHATCH = Array.from({ length: 34 }, (_, i) => { const c = -10 + i * 1.5; return `M${c} 40L${c + 30} 0`; }).join(" ");
+
+// The plate.
+const { w, h, past, shadow } = PLATE;
+const FRAME = [`M${-past} 0H${w + past}`, `M${w} ${-past}V${h + past}`, `M${w + past} ${h}H${-past}`, `M0 ${h + past}V${-past}`];
+const SHADOW = `M${w} 0L${w+shadow} ${shadow}V${h+shadow}H${shadow}L0 ${h}M${w} ${h}L${w+shadow} ${h+shadow}`;
+const HATCH = Array.from({ length: 20 }, (_, i) => { const c = -h + i * 4; return `M${c} ${h}L${c + h} 0`; }).join(" ");
+
+// SP as drafting lettering: strokes and arcs of one radius, on a cap line (11), a mid line (19) and a baseline (27).
+const LETTERS = [
+  "M17.4 11H11.4A4 4 0 0 0 11.4 19H13.4A4 4 0 0 1 13.4 27H6.8",
+  "M21.2 27V11H27.4A4 4 0 0 1 27.4 19H21.2",
+];
+const GUIDES = [11, 19, 27].map((y) => `M3 ${y}H35`);
+
+/* ---------- One drawing, rendered into any number of places ---------- */
+let uid = 0;
+function makeLogo(host, scale) {
+  const id = `l${uid++}`;
+  const svg = `
+  <svg viewBox="0 0 ${w} ${h}" width="${w*scale}" height="${h*scale}" fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="${id}-rise" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#000"/></linearGradient>
+      <mask id="${id}-tex" maskUnits="userSpaceOnUse" x="0" y="0" width="${w}" height="${h}"><rect width="${w}" height="${h}" fill="url(#${id}-rise)"/></mask>
+      <mask id="${id}-fl" maskUnits="userSpaceOnUse" x="-20" y="-40" width="100" height="100"><path data-r="flmask" d="${FLIGHT_D}" stroke="#fff" stroke-width="3" pathLength="1" stroke-dasharray="1 2"/></mask>
+      <clipPath id="${id}-vis"><polygon points="${VISIBLE}"/></clipPath>
+      <clipPath id="${id}-blade"><path d="${BLADE.shape}"/></clipPath>
+      <clipPath id="${id}-gtext"><text x="19.1" y="27" text-anchor="middle" style="font:500 22px var(--sans); letter-spacing:-.04em">SP</text></clipPath>
+      <mask id="${id}-dfill" maskUnits="userSpaceOnUse" x="-5" y="-5" width="50" height="50">${LETTERS.map((d) => `<path d="${d}" stroke="#fff" stroke-width="1.75" stroke-linejoin="miter"/>`).join("")}</mask>
+      <mask id="${id}-dring" maskUnits="userSpaceOnUse" x="-5" y="-5" width="50" height="50">${LETTERS.map((d) => `<path d="${d}" stroke="#fff" stroke-width="2.25" stroke-linejoin="miter"/>`).join("")}${LETTERS.map((d) => `<path d="${d}" stroke="#000" stroke-width="1.25" stroke-linejoin="miter"/>`).join("")}</mask>
+      <filter id="${id}-blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur data-r="blur" stdDeviation="0"/></filter>
+    </defs>
+
+    <path data-r="shadow" d="${SHADOW}" stroke="var(--line)" stroke-width=".75"/>
+    <g data-r="hatch" mask="url(#${id}-tex)"><path d="${HATCH}" stroke="var(--line)" stroke-width=".55"/></g>
+    ${FRAME.map((d) => `<path data-r="frame" d="${d}" stroke="var(--line)" stroke-width="1" pathLength="1" stroke-dasharray="1 2"/>`).join("")}
+
+    <g data-r="guidesG">${GUIDES.map((d) => `<path data-r="guide" d="${d}" stroke="var(--line)" stroke-width=".35" pathLength="1" stroke-dasharray="1 2"/>`).join("")}</g>
+
+    <g data-r="depth">
+      <g data-r="dDrafted"><rect x="-5" y="-5" width="50" height="50" fill="var(--line)" mask="url(#${id}-dring)" opacity=".6"/><g mask="url(#${id}-dfill)"><path d="${LHATCH}" stroke="var(--line)" stroke-width=".3" opacity=".55"/></g></g>
+      <g data-r="dGeist"><text x="19.1" y="27" text-anchor="middle" stroke="var(--line)" stroke-width=".4" opacity=".6" style="font:500 22px var(--sans); letter-spacing:-.04em">SP</text><g clip-path="url(#${id}-gtext)"><path d="${LHATCH}" stroke="var(--line)" stroke-width=".3" opacity=".55"/></g></g>
+    </g>
+    <g data-r="drafted">${LETTERS.map((d) => `<path data-r="letter" d="${d}" stroke="var(--ink)" stroke-width="1.75" stroke-linecap="butt" stroke-linejoin="miter" pathLength="1" stroke-dasharray="1 2"/>`).join("")}</g>
+    <text data-r="geist" x="19.1" y="27" text-anchor="middle" fill="var(--ink)" filter="url(#${id}-blur)" style="font:500 22px var(--sans); letter-spacing:-.04em">SP</text>
+
+    <!-- The cut it makes in the letter shows as a pale notch, with splits running back into the stroke. -->
+    <path data-r="slit" d="${SLIT_LINE}" stroke="var(--paper)" stroke-width=".75" opacity=".85"/>
+    ${CRACKS.map((d) => `<path data-r="crack" d="${d}" stroke="var(--paper)" stroke-width=".45" pathLength="1" stroke-dasharray="1 2"/>`).join("")}
+
+    <g data-r="flightG" mask="url(#${id}-fl)"><path d="${FLIGHT_D}" stroke="var(--line-rest)" stroke-width=".5" stroke-dasharray="1.4 1.2"/></g>
+    <g data-r="target" stroke="var(--accent)" stroke-width=".5">
+      <circle data-r="ring" cx="${ENTRY.x}" cy="${ENTRY.y}" r="1.8"/>
+      <path d="M${ENTRY.x - 3.6} ${ENTRY.y}H${ENTRY.x - 2.4}M${ENTRY.x + 2.4} ${ENTRY.y}H${ENTRY.x + 3.6}M${ENTRY.x} ${ENTRY.y - 3.6}V${ENTRY.y - 2.4}M${ENTRY.x} ${ENTRY.y + 2.4}V${ENTRY.y + 3.6}"/>
+    </g>
+
+    <g clip-path="url(#${id}-vis)"><g transform="matrix(${SHEAR})"><g data-r="bshadow"><g transform="rotate(${ANGLE})">
+      <path d="${BLADE.shape}" fill="var(--line)" opacity=".09"/>
+      <path d="${BLADE.edge}" stroke="var(--line)" stroke-width=".45" opacity=".5"/>
+    </g></g></g></g>
+    <g clip-path="url(#${id}-vis)"><g data-r="blade">
+      <g transform="rotate(${ANGLE})">
+        <g class="b-outline">
+          <path d="${BLADE.edge}" stroke="var(--line)" stroke-width=".7" opacity=".45" transform="translate(.9 1.2)"/>
+          <path d="${BLADE.shape}" fill="var(--accent)" opacity=".16"/>
+          <g clip-path="url(#${id}-blade)"><path d="${BLADE.hatch}" stroke="var(--accent)" stroke-width=".35" opacity=".3"/></g>
+          <path d="${BLADE.bevel}" stroke="var(--accent)" stroke-width=".35" opacity=".45"/>
+          <path d="${BLADE.edge}" stroke="var(--accent)" stroke-width="1" stroke-linejoin="round"/>
+        </g>
+        <!-- A solid plate: its side (stacked copies, so the thickness is solid), the face, a pale bevel catching the light, and a thin crisp edge. -->
+        <g class="b-solid">
+          ${[.125, .25, .375, .5, .625, .75, .875, 1].map((t) => `<path d="${BLADE.shape}" fill="var(--b-side)" transform="translate(${f(.9 * t)} ${f(1.2 * t)})"/>`).join("")}
+          <path d="${BLADE.shape}" fill="var(--b-face)"/>
+          <path d="${BLADE.bevel}" stroke="var(--b-hi)" stroke-width=".45" stroke-linejoin="round"/>
+          <path d="${BLADE.shape}" stroke="var(--b-edge)" stroke-width=".45" stroke-linejoin="round"/>
+        </g>
+      </g>
+    </g></g>
+
+    ${CHIPS.map(() => `<path data-r="chip" d="${FLECK}" stroke="var(--ink)" stroke-width=".55"/>`).join("")}
+  </svg>`;
+  host.insertAdjacentHTML("beforeend", svg);
+  const el = host.lastElementChild, q = (k) => [...el.querySelectorAll(`[data-r="${k}"]`)];
+  return { el, frame: q("frame"), shadow: q("shadow")[0], hatch: q("hatch")[0], guide: q("guide"), guidesG: q("guidesG")[0], drafted: q("drafted")[0],
+    letter: q("letter"), geist: q("geist")[0], blur: q("blur")[0], slit: q("slit")[0], crack: q("crack"), flmask: q("flmask")[0], flightG: q("flightG")[0],
+    target: q("target")[0], ring: q("ring")[0], blade: q("blade")[0], bshadow: q("bshadow")[0], chip: q("chip"),
+    depth: q("depth")[0], dDrafted: q("dDrafted")[0], dGeist: q("dGeist")[0] };
+}
+
+/* ---------- Motion: every value is a function of time ---------- */
+function bezier(x1, y1, x2, y2) {
+  const cx = 3*x1, bx = 3*(x2-x1) - cx, ax = 1 - cx - bx, cy = 3*y1, by = 3*(y2-y1) - cy, ay = 1 - cy - by;
+  const X = (t) => ((ax*t + bx)*t + cx)*t, Y = (t) => ((ay*t + by)*t + cy)*t, dX = (t) => (3*ax*t + 2*bx)*t + cx;
+  return (x) => { let t = x; for (let i = 0; i < 8; i++) { const e = X(t) - x, d = dX(t); if (Math.abs(e) < 1e-5 || !d) break; t -= e / d; } return Y(Math.min(1, Math.max(0, t))); };
+}
+const E = { soft: bezier(.22,.61,.36,1), expo: bezier(.16,1,.3,1), in: (t) => 1 - Math.cos(t * Math.PI / 2), lin: (t) => t, inOut: bezier(.45,0,.55,1) };
+
+const S = { frame:0, guides:0, letters:0, depth:0, path:0, pathOp:0, target:0, blade:0, flight:1, spin:0, hit:0, mark:0, chips:1 };
+let tweens = [], clock = 0, last = 0, speed = 1, running = false;
+
+function play(list) {
+  const keys = new Set(list.map((t) => t.k));
+  tweens = tweens.filter((t) => !keys.has(t.k)).concat(list.map((t) => ({ ...t, at: clock + (t.at || 0), ease: t.ease || E.soft, started: false })));
+  if (!running) { running = true; last = performance.now(); requestAnimationFrame(tick); }
+}
+function tick(now) {
+  clock += (now - last) * speed; last = now;
+  for (const t of tweens) {
+    if (clock < t.at) continue;
+    if (!t.started) { t.started = true; t.f = t.from ?? S[t.k]; }
+    const p = t.dur ? Math.min(1, (clock - t.at) / t.dur) : 1;
+    S[t.k] = t.f + (t.to - t.f) * t.ease(p);
+    t.done = p >= 1;
+  }
+  tweens = tweens.filter((t) => !t.done);
+  render();
+  if (tweens.length) requestAnimationFrame(tick); else running = false;
+}
+
+const clamp = (v) => Math.min(1, Math.max(0, v));
+const part = (v, a, b) => clamp((v - a) / (b - a));
+const opts = { letter: "geist", guides: "off", aim: "on", depthOn: "on" };
+
+function render() {
+  for (const L of logos) {
+    L.frame.forEach((p, i) => p.style.strokeDashoffset = 1 - E.soft(part(S.frame, i * .14, i * .14 + .58)));
+    L.shadow.style.opacity = .5 * part(S.frame, .55, 1);
+    L.hatch.style.opacity = .5 * part(S.frame, .4, 1);
+    L.guidesG.style.display = opts.guides === "on" ? "" : "none";
+    L.guide.forEach((p, i) => { p.style.strokeDashoffset = 1 - E.soft(part(S.guides, i * .12, i * .12 + .7)); p.style.opacity = .55 - .2 * part(S.letters, .6, 1); });
+    const drafted = opts.letter === "drafted";
+    L.drafted.style.display = drafted ? "" : "none";
+    L.geist.style.display = drafted ? "none" : "";
+    L.letter[0].style.strokeDashoffset = 1 - part(S.letters, 0, .56);
+    L.letter[1].style.strokeDashoffset = 1 - part(S.letters, .44, 1);
+    L.geist.style.opacity = part(S.letters, 0, .8);
+    L.blur.setAttribute("stdDeviation", f((1 - E.soft(S.letters)) * 2.2));
+
+    const dp = E.soft(S.depth);
+    L.depth.style.display = opts.depthOn === "on" ? "" : "none";
+    L.depth.setAttribute("transform", `translate(${f(DEPTH.x * dp)} ${f(DEPTH.y * dp)})`);
+    L.depth.style.opacity = part(S.depth, 0, .4);
+    L.dDrafted.style.display = drafted ? "" : "none";
+    L.dGeist.style.display = drafted ? "none" : "";
+
+    const aim = opts.aim === "on";
+    L.flmask.style.strokeDashoffset = 1 - S.path;
+    L.flightG.style.opacity = aim ? S.pathOp : 0;
+    L.target.style.opacity = aim ? S.target : 0;
+    L.ring.setAttribute("r", f(1.8 + (1 - S.target) * 1.6));
+
+    L.slit.style.opacity = S.mark * part(S.hit, 0, .25);
+    L.crack.forEach((p, i) => { p.style.strokeDashoffset = 1 - part(S.hit, i * .12, i * .12 + .7); p.style.opacity = .8 * S.mark; });
+
+    const tip = onFlight(S.flight), cx = tip.x + LODGED.x - TIP_AT.x, cy = tip.y + LODGED.y - TIP_AT.y;
+    L.blade.setAttribute("transform", `translate(${f(cx)} ${f(cy)}) matrix(${TILT.join(" ")} 0 0) rotate(${f(S.spin)})`);
+    L.blade.style.opacity = S.blade;
+    L.bshadow.setAttribute("transform", L.blade.getAttribute("transform"));
+    L.bshadow.style.opacity = S.blade;
+
+    L.chip.forEach((p, i) => { const c = S.chips; p.setAttribute("transform", `translate(${f(CHIPS[i][0] * c)} ${f(CHIPS[i][1] * c)})`); p.style.opacity = c >= 1 ? 0 : Math.sin(c * Math.PI); });
+  }
+}
+
+/* ---------- The scenes ---------- */
+const HIT = 1000;   // ms into a throw when it strikes
+function throwIt(o = 0) {
+  return [
+    { k:"chips", to:1, dur:0, at:o },
+    { k:"path", from:0, to:1, at:o, dur:440 },
+    { k:"pathOp", to:1, at:o, dur:180 },
+    { k:"target", from:0, to:1, at:o + 220, dur:300 },
+    { k:"blade", from:0, to:1, at:o + 480, dur:90, ease:E.lin },
+    { k:"flight", from:1, to:0, at:o + 480, dur:HIT - 480, ease:E.in },
+    { k:"spin", from:720, to:0, at:o + 480, dur:HIT - 480, ease:E.lin },
+    { k:"hit", to:1, at:o + HIT, dur:180 },
+    { k:"mark", to:1, at:o + HIT, dur:40, ease:E.lin },
+    { k:"chips", from:0, to:1, at:o + HIT, dur:560 },
+    { k:"target", to:0, at:o + HIT + 60, dur:420 },
+    { k:"pathOp", to:0, at:o + HIT + 260, dur:700 },
+  ];
+}
+function pullOut(o = 0) {
+  return [
+    { k:"flight", to:1, at:o, dur:460, ease:E.in },
+    { k:"spin", to:-540, at:o, dur:460, ease:E.in },
+    { k:"blade", to:0, at:o + 300, dur:160 },
+    { k:"mark", to:.45, at:o + 120, dur:500 },
+    { k:"pathOp", to:0, at:o, dur:200 },
+    { k:"target", to:0, at:o, dur:200 },
+  ];
+}
+const lodged = () => S.blade > .5 && S.flight < .5;
+function rethrow() { play(lodged() ? [...pullOut(), ...throwIt(520)] : throwIt()); }
+function load() {
+  Object.assign(S, { frame:0, guides:0, letters:0, depth:0, path:0, pathOp:0, target:0, blade:0, flight:1, spin:0, hit:0, mark:0, chips:1 });
+  play([
+    { k:"frame", to:1, dur:620, ease:E.expo },
+    { k:"guides", to:1, at:160, dur:560 },
+    { k:"letters", to:1, at:360, dur:760, ease:E.inOut },
+    { k:"depth", to:1, at:900, dur:650 },
+    ...throwIt(1060),
+  ]);
+}
+
+/* ---------- Wiring ---------- */
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const logos = [makeLogo(document.getElementById("header-logo"), 1), makeLogo(document.getElementById("inspect"), 6)];
+if (still) { Object.assign(S, { frame:1, guides:1, letters:1, depth:1, blade:1, flight:0, hit:1, mark:1 }); render(); } else load();
+
+const stateEl = document.getElementById("state");
+let atTop = scrollY < 40;
+addEventListener("scroll", () => {
+  const top = scrollY < 40;
+  if (top === atTop || still) return;
+  atTop = top;
+  stateEl.textContent = top ? "At the top" : "Scrolled";
+  if (top) { if (!lodged()) play(throwIt()); } else if (S.blade > 0) play(pullOut());
+}, { passive: true });
+
+const headerLogo = document.getElementById("header-logo");
+headerLogo.addEventListener("pointerenter", (e) => { if (e.pointerType !== "touch" && !still && !tweens.length) rethrow(); });
+headerLogo.addEventListener("click", (e) => { e.preventDefault(); scrollTo({ top: 0, behavior: still ? "auto" : "smooth" }); });
+
+document.getElementById("b-load").onclick = () => { scrollTo({ top: 0 }); atTop = true; load(); };
+document.getElementById("b-throw").onclick = rethrow;
+document.getElementById("b-pull").onclick = () => play(pullOut());
+document.querySelectorAll(".seg[data-key]").forEach((seg) => seg.addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  seg.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  const k = seg.dataset.key, v = b.dataset.v;
+  if (k === "speed") speed = +v;
+  else if (k === "palette") document.body.dataset.palette = v;
+  else if (k === "blade") document.body.dataset.blade = v;
+  else { opts[k] = v; render(); }
+}));
+</script>
+</body>
+</html>

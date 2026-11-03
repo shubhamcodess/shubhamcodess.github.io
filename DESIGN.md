@@ -124,8 +124,38 @@ Code: `packages/design/src/components/button`. The options are listed once in `o
 
 **Own icon:** `glyph` takes any icon in place of a sketched `icon`. A button with no text needs an `aria-label`. `SketchIcon` draws a sketched icon on its own.
 
-### Header logo and theme button: Draft
-The logo is a clear, square blueprint plate at button height, with SP in ink pen strokes, and a rust line-work batarang, faintly hatched inside, driven into its face. The throw plays on load. The theme button is the sm `Button` with one sun that shifts per theme. Details are in decision 015. Both live in the site, not the library, because they're Batman scenes.
+### Header logo: Approved
+Code: `apps/web/src/scene/SiteLogo.tsx`, with the geometry in `logo-drawing.ts` and the motion in `logo-motion.ts`. Prototype: `prototypes/24-logo-drafted-throw`. It lives in the site, not the library, because it's a Batman scene.
+
+- **Parts:** a clear square plate at button height (38px) with four overshooting drafting lines, a wireframe shadow and rising hatch; SP; and a batarang buried in the top right of the P's bowl.
+- **Settings:** `site.logo` in `content/site.ts`, typed by the schema. The options are listed once in `packages/content/src/logo-options.ts`.
+
+| Setting | Options | Default |
+|---|---|---|
+| `lettering` | geist (the site font), drafted (strokes and arcs of one radius, square ends) | geist |
+| `guides` | Faint cap, mid and base lines under the letters | off |
+| `depth` | A hatched wireframe copy of SP set back down and to the right, for 2.5D | on |
+| `blade` | suit (figure's mid grey), rust (accent), cowl (figure's dark grey), steel (suit grey, rust edge), outline (the earlier line drawing) | suit |
+| `aim` | The dashed flight line and amber target drawn before each throw | off |
+| `intro` | Draw the plate and letters on load before the throw | on |
+| `hover` | Pull out and throw again when a mouse comes over it | on |
+| `scroll` | `pull`: pull the batarang out past `threshold` px, throw again back at the top | pull, 40 |
+| `speed`, `spins` | Playback speed (0.25 to 3), full turns in flight (0 to 4) | 1, 2 |
+
+| State | What happens |
+|---|---|
+| Load | The frame draws in, then the guides, then the letters (Geist blurs into focus), then their depth slides out, then the throw. |
+| Throw | With `aim`, the flight line is drawn and the target appears. The batarang flies in along the line, spinning, and its tip goes into the P. Its shadow on the plate closes in on the entry as it lands. A pale notch and splits are drawn in the letter, and flecks fly back. Nothing shakes. |
+| Scrolled | It pulls back out along its line and is gone; the cut stays, fainter. |
+| Back at the top, or clicked | It's thrown again. A click on the home page glides to the top first. |
+| Reduced motion, or `flags.motion` off | The finished logo, still. |
+
+- **Color:** the solid batarang is a face, a stacked side for its thickness, a pale bevel and a thin edge, all from the theme: the figure's ink and paper mixes (`--f0` to `--f4`), or the accent. Never pure ink, so it stays apart from the letters and frame.
+- **Rule:** the server sends the finished logo. Where motion will play, it stays hidden until the first frame (all of it with the intro, otherwise just the batarang and cut), so it never shows and then jumps back.
+- **Rule:** every value is a function of time, from one timeline (`Timeline`). A new scene takes over from wherever the values are, so a scroll or hover mid-throw never jumps.
+
+### Theme button: Draft
+The sm `Button` with one sun that shifts per theme. It lives in the site, not the library.
 
 ### Tooltip: Draft
 A small paper box with four drafting lines running past its corners, and the label font in ink. It appears after a short beat on mouse hover or keyboard focus, stays while the pointer is on it, and Escape dismisses it. `open` holds it open, for example to confirm a tap. It's only visual, so what it points at keeps its own accessible name. The header's menus use the same box.

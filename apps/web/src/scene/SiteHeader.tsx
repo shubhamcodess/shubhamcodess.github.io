@@ -14,7 +14,7 @@ const sections: MenuLink[] = [{ label: "Projects", href: "/projects/" }, { label
 export function SiteHeader() {
   return (
     <header className="site-header">
-      <SiteLogo />
+      <SiteLogo settings={site.logo} motion={site.flags.motion} />
       <nav aria-label="Main" className="header-nav">
         <div className="header-wide">
           <Button {...style} as={Link} href="/projects/" icon="folder">Projects</Button>

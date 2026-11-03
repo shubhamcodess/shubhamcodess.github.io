@@ -46,11 +46,8 @@ html, body { height: 100%; overflow: hidden; }
 .hero-dim-short::before, .hero-dim-long::after { content: ""; position: absolute; top: -5px; width: 1px; height: 11px; background: var(--accent); }
 .hero-dim-short::before { left: 0; }
 .hero-dim-long::after { right: 0; }
-/* A small figure standing on a line, in the theme's own ink and paper: darkest for the edge, the cowl and the gloves, then the cape, the suit's shadow and light, the belt, the face and the eyes.
-   The depth is in the drawing. Its two groups part a little with the hero's pointer tilt, when there is one. */
-.bat-figure {
-  --figure-h: clamp(22px, calc(var(--name) * .46), 52px);
-  --figure-w: calc(var(--figure-h) * 0.504);
+/* The figure's tones: every shade a mix of the theme's ink and paper. The logo's batarang uses them too. */
+.bat-figure, .site-logo {
   --f7: var(--ink);
   --f0: color-mix(in srgb, var(--ink), var(--paper) 8%);
   --f1: color-mix(in srgb, var(--ink), var(--paper) 24%);
@@ -59,6 +56,12 @@ html, body { height: 100%; overflow: hidden; }
   --f4: color-mix(in srgb, var(--ink), var(--paper) 74%);
   --f5: color-mix(in srgb, var(--ink), var(--paper) 86%);
   --f6: var(--paper);
+}
+/* A small figure standing on a line, in the theme's own ink and paper: darkest for the edge, the cowl and the gloves, then the cape, the suit's shadow and light, the belt, the face and the eyes.
+   The depth is in the drawing. Its two groups part a little with the hero's pointer tilt, when there is one. */
+.bat-figure {
+  --figure-h: clamp(22px, calc(var(--name) * .46), 52px);
+  --figure-w: calc(var(--figure-h) * 0.504);
   --inset: calc(var(--figure-w) * .6 + 5px);
   position: absolute; bottom: 0; left: calc(var(--inset) + (100% - var(--inset) * 2) * var(--anchor));
   width: var(--figure-w); height: var(--figure-h); margin-left: calc(var(--figure-w) / -2); pointer-events: none;
@@ -139,10 +142,16 @@ html, body { height: 100%; overflow: hidden; }
 .site-logo { position: relative; display: block; flex: none; color: inherit; border-radius: 0; }
 .site-logo svg { display: block; overflow: visible; }
 .site-logo::before { content: ""; position: absolute; inset: -4px 0; } /* the same touch target as a small button */
-/* Where the throw will play, the batarang stays out of sight until it starts, so it never shows lodged and then jumps away. */
+/* Where the motion will play, the server's finished logo stays out of sight until it starts, so it never shows and then jumps back:
+   all of it when the intro draws it, otherwise just the batarang and its cut. */
 @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
-  .site-logo:not([data-thrown]) .logo-hit { visibility: hidden; }
+  .site-logo[data-intro]:not([data-live]) svg, .site-logo:not([data-live]) .logo-hit { visibility: hidden; }
 }
+/* The batarang's finishes (site.logo.blade). The solid ones are a face, a side for its thickness, a pale bevel and a thin edge. */
+.site-logo[data-blade="suit"]  { --logo-blade-face: var(--f2); --logo-blade-side: var(--f1); --logo-blade-bevel: var(--f4); --logo-blade-edge: var(--f1); }
+.site-logo[data-blade="rust"]  { --logo-blade-face: var(--accent); --logo-blade-side: color-mix(in srgb, var(--accent), var(--ink) 50%); --logo-blade-bevel: color-mix(in srgb, var(--accent), var(--paper) 52%); --logo-blade-edge: color-mix(in srgb, var(--accent), var(--ink) 35%); }
+.site-logo[data-blade="cowl"]  { --logo-blade-face: var(--f1); --logo-blade-side: var(--f0); --logo-blade-bevel: var(--f3); --logo-blade-edge: var(--f0); }
+.site-logo[data-blade="steel"] { --logo-blade-face: var(--f2); --logo-blade-side: var(--f1); --logo-blade-bevel: var(--f4); --logo-blade-edge: var(--accent); }
 .site-logo:focus-visible { outline: 1.5px dashed var(--accent); outline-offset: 4px; }
 
 /* The theme button: every theme's sun is here, stacked, and the active one shows, so it's right from the first paint.

@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./schema": "./src/schema.ts",
-    "./scene-options": "./src/scene-options.ts"
+    "./scene-options": "./src/scene-options.ts",
+    "./logo-options": "./src/logo-options.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

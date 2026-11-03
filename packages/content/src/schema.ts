@@ -1,9 +1,10 @@
 import { PALETTE_IDS } from "@portfolio/design/palettes";
 import { BUTTON_OPTIONS } from "@portfolio/design/button-options";
 import { z } from "zod";
+import { LOGO_OPTIONS } from "./logo-options";
 import { SCENE_OPTIONS } from "./scene-options";
 
-export { SCENE_OPTIONS };
+export { LOGO_OPTIONS, SCENE_OPTIONS };
 
 const url = z.url({ protocol: /^https?$/ });
 
@@ -41,6 +42,27 @@ export const siteSchema = z
     buttonMotion: z.strictObject({
       iconHover: z.enum(BUTTON_OPTIONS.iconHover),
       textHover: z.enum(BUTTON_OPTIONS.textHover),
+    }),
+    /** The header logo: a blueprint plate with SP on it and a batarang thrown into the P. See `SiteLogo`. */
+    logo: z.strictObject({
+      lettering: z.enum(LOGO_OPTIONS.lettering),
+      /** Faint cap, mid and base lines under the letters. */
+      guides: z.boolean(),
+      /** A hatched wireframe copy of SP, set back down and to the right, for a 2.5D look. */
+      depth: z.boolean(),
+      blade: z.enum(LOGO_OPTIONS.blade),
+      /** The dashed flight line and amber target drawn before each throw. */
+      aim: z.boolean(),
+      /** On load, draw the plate and the letters before the throw. Off, the plate is there from the first paint and only the throw plays. */
+      intro: z.boolean(),
+      /** Pulling it out and throwing it again when a mouse comes over the logo. */
+      hover: z.boolean(),
+      /** Pull the batarang out once the page scrolls past `threshold` pixels, and throw it again back at the top. */
+      scroll: z.strictObject({ pull: z.boolean(), threshold: z.number().int().min(1).max(600) }),
+      /** Playback speed. 1 is the designed timing. */
+      speed: z.number().min(0.25).max(3),
+      /** Full turns in flight. */
+      spins: z.number().min(0).max(4),
     }),
     hero: z.strictObject({
       lead: z.string().min(1),
@@ -99,6 +121,8 @@ export const siteSchema = z
   })
   .strict();
 export type SiteConfig = z.input<typeof siteSchema>;
+/** The logo's settings, after parsing. */
+export type LogoSettings = z.output<typeof siteSchema>["logo"];
 
 export const projectSchema = z
   .strictObject({
