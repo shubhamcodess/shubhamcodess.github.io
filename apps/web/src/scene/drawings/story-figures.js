@@ -340,79 +340,103 @@ export const StoryFigures = (() => {
     }
   }
 
-  /* ---------- Chapter 4: requirement to production, assembled ---------- */
-  // The finale is a funnel, read top to bottom as the work flows: requirements pour in, then design, then the code itself in its layers, then AI review and automation, then CI/CD, then deployment on GKE. It all rests on a wide foundation of engineering principles.
-  // It assembles as a reverse explosion: the foundation first, then each stage in the order the work reaches it, flying in from the side and turning solid. Then a stream runs through it all, top to bottom.
-  const FLOW = [
-    { name: 'REQUIREMENTS', half: 1.24, dx: .03 },
-    { name: 'DESIGN · HLD / LLD', half: 1.13, dx: -.03 },
-    { name: 'NEXT.JS · ANGULAR', half: 1.03, dx: .02, code: true },
-    { name: 'JAVA · SPRING BOOT · RABBITMQ', half: .97, dx: -.02, code: true },
-    { name: 'DATA · SCHEMA', half: .91, dx: .03, code: true },
-    { name: 'AI AGENTS · MCP', half: .85, dx: -.03, code: true, ai: true },
-    { name: 'AI CODE REVIEW · AUTOMATION', half: .77, dx: .02, ai: true },
-    { name: 'CI/CD · GITHUB ACTIONS', half: .69, dx: -.02, cicd: true },
-    { name: 'DEPLOY · GKE / K8S', half: .6, dx: 0 },
+  /* ---------- Chapter 4: requirement to production, one stream ---------- */
+  // The finale reads as one stream, rising from the card's bottom-left to its top-right: requirements come in, then design, then the code (a tower of layers that flies together), then AI review and automation, then CI/CD, then production on GKE. A long foundation of engineering principles runs under it all.
+  // Each station has room of its own. Once they're all in place, work flows along the stream and requirements keep arriving at its start.
+  const D4 = 2.05; // distance between stations, along the stream
+  const STATIONS = [
+    { key: 'req', name: 'REQUIREMENTS', half: .42 },
+    { key: 'design', name: 'DESIGN', sub: 'HLD / LLD', half: .42 },
+    { key: 'code', name: 'DEVELOPMENT', half: .58 },
+    { key: 'review', name: 'AI CODE REVIEW', sub: 'AUTOMATION', half: .42, ai: true },
+    { key: 'cicd', name: 'CI/CD', sub: 'GITHUB ACTIONS', half: .42 },
+    { key: 'prod', name: 'PROD', sub: 'GKE / K8S', half: .55 },
   ];
-  const BASE = { name: 'ENGINEERING PRINCIPLES', half: 1.32, t: .18 }, GAP = .38, LAYER = .1, LIFT = .45;
-  const zOf = (k) => LIFT + (FLOW.length - 1 - k) * GAP; // the first stage is highest
+  const TOWER = [
+    { name: 'DATA · SCHEMA' },
+    { name: 'RABBITMQ' },
+    { name: 'JAVA · SPRING BOOT' },
+    { name: 'NEXT.JS · ANGULAR' },
+    { name: 'AI AGENTS · MCP', ai: true },
+  ];
+  const TW = { t: .12, gap: .08 };
+  const APPEAR = [[.08, .15], [.14, .21], null, [.46, .53], [.53, .6], [.6, .68]]; // when each station draws in; the tower flies in between
+  const TOWER_AT = (k) => [.22 + k * .047, .29 + k * .047];
 
   function chapterFour(g) {
     const { ctx, w: W, h: H, colors, intro, c, time, pen, label } = g;
-    const top = zOf(0) + LAYER + FLOW[0].half, s = Math.min(W / 10.4, H / (top + BASE.half + 1.3)), X0 = W / 2 - 1.55 * s, Y0 = H / 2 + ((top - BASE.half) / 2) * s + 6;
+    const n = STATIONS.length - 1, run = n * D4;
+    const s = Math.min(W / (run * COS + 4.4), H / (run * SIN + 3.6));
+    const X0 = W / 2 - (run * COS * s) / 2 + .2 * s, Y0 = H / 2 + (run * SIN * s) / 2 + .1 * s;
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const box = boxTool(ctx, iso, pen);
-    const col = X0 + BASE.half * 2 * COS * s + 22;
-    const step = (k) => [.12 + k * .062, .22 + k * .062]; // when stage k flies in: they're all in by about .72
-    const row = (z, t, k, text, color, alpha) => {
-      const [ax, ay] = iso(FLOW[k] ? FLOW[k].half : BASE.half, -(FLOW[k] ? FLOW[k].half : BASE.half), z + t / 2);
-      ctx.strokeStyle = colors.line; ctx.globalAlpha = .6 * alpha; pen(1800 + k, [ax + 3, ay], [col - 5, ay], alpha, .8);
-      label(text, col, ay, color, .92 * alpha, 'left');
-    };
+    const at = (k) => -k * D4; // a station's place along the stream (iso y)
+    const appear = (k) => (APPEAR[k] ? ease(span(c, APPEAR[k][0], APPEAR[k][1])) : ease(span(c, TOWER_AT(0)[0], TOWER_AT(0)[1]))); // the code station arrives with its first layer
 
-    // The foundation: wide, toned, in first.
-    const base = ease(span(c, .02, .12)), baseShown = span(intro, .05, .4);
-    if (baseShown) {
-      box(-BASE.half, -BASE.half, -.9 * (1 - base), BASE.half * 2, BASE.half * 2, BASE.t, 1790, (base >= 1 ? .9 : .4 + .4 * base) * baseShown, base >= 1 ? colors.ink : colors.line, .16, base >= 1 ? null : [4, 4]);
-      if (base >= 1) { row(0, BASE.t, 99, BASE.name, colors.ink, ease(span(c, .1, .16))); const [fx, fy] = iso(BASE.half, BASE.half, 0); label('STANDARDS · REVIEWS · ARCHITECTURE', fx, fy + 16, colors.ink2, .8 * ease(span(c, .1, .16))); }
+    // The foundation: a long low rail under the whole stream, first in.
+    const base = ease(span(c, .02, .1));
+    if (base > 0) {
+      const y0 = at(0) + .8, y1 = at(n) - .8, hw = .66;
+      box(-hw, y1 + (y0 - y1) * (1 - base), -.2, hw * 2, (y0 - y1) * base, .1, 1900, .7, colors.line, .08);
+      // Its name in the open corner at bottom right, with a leader up to the rail.
+      const named = ease(span(c, .08, .14)), [ax, ay] = iso(hw, at(n - 1), -.2), lx = W - 14, ly = H - 30;
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .6 * named; pen(1901, [ax, ay + 2], [ax, ly - 8], named, .8);
+      label('ENGINEERING PRINCIPLES', lx, ly, colors.ink, .95 * named, 'right');
+      label('STANDARDS · REVIEWS · ARCHITECTURE', lx, ly + 14, colors.ink2, .8 * named, 'right');
     }
 
-    // The stages: each flies in from its side, dashed and faint, and turns solid as it settles. Each differs a little in size, place and tone, so no two read the same.
-    FLOW.forEach((L, k) => {
-      const [a, b] = step(k), fly = ease(span(c, a, b)), shown = span(intro, .1 + k * .04, .45 + k * .04);
-      if (!shown) return;
-      const side = k % 2 ? 1 : -1, z = zOf(k) + .5 * (1 - fly), x = L.dx + side * 1.0 * (1 - fly), y = L.dx - side * 1.0 * (1 - fly);
-      const landed = fly >= 1, color = L.ai ? colors.accent : colors.ink, tone = .03 + k * .013;
-      box(x - L.half, y - L.half, z, L.half * 2, L.half * 2, LAYER, 1810 + k, (landed ? .88 : .3 + .4 * fly) * shown, landed ? color : colors.line, L.ai && landed ? .12 : tone, landed ? null : [4, 4]);
-      const named = ease(span(c, b - .02, b + .05));
-      if (named > 0) row(zOf(k), LAYER, k, L.name, L.ai ? colors.accent : L.code ? colors.ink2 : colors.ink, named);
+    // The stations, in the order the work reaches them. Names sit above each, where the stream never goes.
+    STATIONS.forEach((st, k) => {
+      const on = appear(k), y = at(k), h = st.half;
+      if (on <= 0) return;
+      if (st.key !== 'code') {
+        const lift = .5 * (1 - on);
+        box(-h, y - h, lift, h * 2, h * 2, .14, 1910 + k, .9 * on, st.ai ? colors.accent : colors.ink, st.ai ? .14 : .06 + k * .012);
+      }
+      // What sits on each station, minimal: requirement sheets, two design plates, pods in production.
+      if (st.key === 'design') { box(-.28, y - .3, .14, .5, .5, .04, 1950, .8 * on, colors.line, .08); box(-.2, y - .22, .2, .5, .5, .04, 1951, .8 * on, colors.line, .08); }
+      if (st.key === 'prod') [[-.3, -.25], [.08, -.25], [-.1, .15]].forEach(([px, py], q) => box(px - .12, y + py - .12, .14, .24, .24, .26 * ease(span(c, APPEAR[k][1] + q * .02, APPEAR[k][1] + .06 + q * .02)), 1960 + q, .9 * on, colors.ink, .1));
+      // Its name below the stream, under the rail's near edge: each one steps up with its station, so none overlap.
+      const [lx, ly] = iso(.66, y + .66, -.2); // just below the rail's outer edge, at this station's place, starting a little left of it
+      label(st.name, lx - 10, ly + 15, st.ai ? colors.accent : colors.ink, .95 * on, 'left');
+      if (st.sub) label(st.sub, lx - 10, ly + 28, colors.ink2, .85 * on, 'left');
     });
-    // The code layers carry one bracket on the left, named once.
-    const coded = ease(span(c, step(5)[1], step(5)[1] + .06));
-    if (coded > 0) {
-      const xL = iso(-FLOW[2].half, FLOW[2].half, 0)[0] - 10, yT = iso(0, 0, zOf(2) + LAYER)[1], yB = iso(0, 0, zOf(5))[1];
-      ctx.strokeStyle = colors.line; ctx.globalAlpha = .7 * coded; ctx.lineWidth = .9;
-      ctx.beginPath(); ctx.moveTo(xL + 5, yT); ctx.lineTo(xL, yT); ctx.lineTo(xL, yB); ctx.lineTo(xL + 5, yB); ctx.stroke();
-      label('DEVELOPMENT', xL - 6, (yT + yB) / 2, colors.ink2, .9 * coded, 'right');
+
+    // The code: a tower of layers that flies together from both sides, each a touch different in size and tone. Its layers are named to its left, in the open space above the stream's start.
+    const ty = at(2), th = STATIONS[2].half;
+    TOWER.forEach((L, k) => {
+      const [a, b] = TOWER_AT(k), fly = ease(span(c, a, b)), shown = span(intro, .1 + k * .05, .45 + k * .05);
+      if (!shown || fly <= 0 && c < a - .1) return;
+      const side = k % 2 ? 1 : -1, hh = th - k * .035, z = TW.gap + k * (TW.t + TW.gap) + .6 * (1 - fly), dx = side * .9 * (1 - fly);
+      const landed = fly >= 1;
+      box(-hh + dx, ty - hh - dx, z, hh * 2, hh * 2, TW.t, 1970 + k, (landed ? .9 : .3 + .45 * fly) * shown, landed ? (L.ai ? colors.accent : colors.ink) : colors.line, L.ai ? .14 : .05 + k * .02, landed ? null : [4, 4]);
+      const named = ease(span(c, b - .01, b + .05));
+      if (named > 0) {
+        const zc = TW.gap + k * (TW.t + TW.gap) + TW.t / 2, [ax, ay] = iso(-hh, ty + hh, zc), x = ax - 22;
+        ctx.strokeStyle = colors.line; ctx.globalAlpha = .6 * named; pen(1990 + k, [ax - 3, ay], [x + 4, ay], named, .8);
+        label(L.name, x, ay, L.ai ? colors.accent : colors.ink2, .92 * named, 'right');
+      }
+    });
+
+    // The stream: a dashed line along the stations' tops, bottom-left to top-right, and work moving along it.
+    const flow = ease(span(c, .7, .78));
+    if (flow > 0) {
+      const tops = STATIONS.map((st, k) => iso(0, at(k), k === 2 ? TW.gap + TOWER.length * (TW.t + TW.gap) : .3));
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .65 * flow; ctx.lineWidth = .9; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); tops.forEach(([px, py], q) => (q ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.stroke(); ctx.setLineDash([]);
+      const along = (u) => { const f = u * n, q = Math.min(n - 1, Math.floor(f)), r = f - q; return [tops[q][0] + (tops[q + 1][0] - tops[q][0]) * r, tops[q][1] + (tops[q + 1][1] - tops[q][1]) * r]; };
+      ctx.fillStyle = colors.accent;
+      for (let q = 0; q < 3; q++) { const u = (time * .09 + q / 3) % 1, [px, py] = along(u); ctx.globalAlpha = .9 * flow * Math.min(1, Math.sin(Math.PI * u) * 3); ctx.fillRect(px - 3, py - 3, 6, 6); }
+      // CI/CD keeps circling its own rim.
+      const h = STATIONS[4].half, y = at(4), P = [[-h, -h], [h, -h], [h, h], [-h, h]];
+      for (let q = 0; q < 2; q++) { const e = ((time * .35 + q / 2) % 1) * 4, sd = Math.floor(e), f = e - sd, p = P[sd], o = P[(sd + 1) % 4], [px, py] = iso(p[0] + (o[0] - p[0]) * f, y + p[1] + (o[1] - p[1]) * f, .14); ctx.globalAlpha = .9 * flow; ctx.fillRect(px - 2.5, py - 2.5, 5, 5); }
     }
 
-    // The stream: once it's all in place, work runs down the middle from requirements to deploy, and the CI/CD stage's rim keeps circling.
-    const run = ease(span(c, .74, .84));
-    if (run > 0) {
-      const [ax, ay] = iso(0, 0, zOf(0) + .55), [bx, by] = iso(0, 0, zOf(FLOW.length - 1) - .12);
-      ctx.strokeStyle = colors.line; ctx.globalAlpha = .5 * run; ctx.setLineDash([2, 4]); ctx.lineWidth = .9;
-      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.setLineDash([]);
-      ctx.fillStyle = colors.accent;
-      for (let q = 0; q < 3; q++) { const u = (time * .22 + q / 3) % 1; ctx.globalAlpha = .9 * run * Math.sin(Math.PI * u); ctx.fillRect(ax - 3, ay + (by - ay) * u - 3, 6, 6); }
-      const ci = FLOW.findIndex((L) => L.cicd), h = FLOW[ci].half, zc = zOf(ci) + LAYER;
-      const rim = (u) => { const e = (u % 1) * 4, side = Math.floor(e), f = e - side, P = [[-h, -h], [h, -h], [h, h], [-h, h]], p = P[side], q = P[(side + 1) % 4]; return iso(p[0] + (q[0] - p[0]) * f + FLOW[ci].dx, p[1] + (q[1] - p[1]) * f + FLOW[ci].dx, zc); };
-      for (let q = 0; q < 2; q++) { const [px, py] = rim(time * .3 + q / 2); ctx.globalAlpha = .9 * run; ctx.fillRect(px - 2.5, py - 2.5, 5, 5); }
-    }
-    // Requirements pour in from above, onto the first stage.
+    // Requirements keep arriving at the start, from the left: small amber sheets that land on the first station.
     const asks = ease(span(c, .8, .9));
     if (asks > 0) {
-      for (let q = 0; q < 3; q++) {
-        const u = ((time * .3 + q / 3) % 1), x = (q - 1) * .45, [px, py] = iso(x, -x, zOf(0) + LAYER + .9 * (1 - ease(u)));
+      for (let q = 0; q < 2; q++) {
+        const u = ((time * .3 + q / 2) % 1), [px, py] = iso(-1.6 * (1 - ease(u)), at(0) + 1.6 * (1 - ease(u)), .2 + .4 * (1 - ease(u)));
         ctx.strokeStyle = colors.accent; ctx.globalAlpha = asks * Math.sin(Math.PI * u) * .9; ctx.lineWidth = 1;
         ctx.strokeRect(px - 6, py - 4, 12, 8); ctx.beginPath(); ctx.moveTo(px - 3, py - 1); ctx.lineTo(px + 3, py - 1); ctx.moveTo(px - 3, py + 1.5); ctx.lineTo(px + 1, py + 1.5); ctx.stroke();
       }
