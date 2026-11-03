@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Stats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky-0:#efe9d6; --sky-1:#d9d6c6; --sky-2:#c6c9c3; --sky-3:#b4bcbf; --paper:#f2eddf; --ink:#131c1f; --ink-2:#37403f; --line:#22292b; --line-rest:rgba(34,41,43,.7); --accent:#8a4a22; --grid:rgba(34,41,43,.085);
+    --sans:"Geist",system-ui,sans-serif; --note:"Geist Mono",ui-monospace,Menlo,monospace;
+    --soft:cubic-bezier(.22,.61,.36,1); --gutter:clamp(16px,4vw,48px);
+  }
+  * { box-sizing:border-box; }
+  html { background:var(--sky-2); }
+  body { margin:0; font-family:var(--sans); color:var(--ink); background:linear-gradient(170deg,var(--sky-0),var(--sky-1) 35%,var(--sky-2) 70%,var(--sky-3)) fixed; -webkit-font-smoothing:antialiased; overflow-x:clip; }
+  main { max-width:1180px; margin:0 auto; padding:48px var(--gutter) 90px; }
+  .kicker { display:flex; align-items:center; gap:9px; margin:0 0 16px; font:500 12px/1 var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
+  .kicker::before,.kicker::after { content:""; flex:none; height:11px; background:linear-gradient(var(--line-rest),var(--line-rest)) 0 50%/100% 1px no-repeat; }
+  .kicker::before { width:16px; border-left:1px solid var(--accent); }
+  .kicker::after { width:clamp(40px,7vw,88px); border-right:1px solid var(--accent); }
+  h1 { margin:0 0 10px; font-weight:500; font-size:clamp(30px,4vw,48px); line-height:1.06; letter-spacing:-.035em; }
+  h1 span { color:var(--ink-2); }
+  h2 { margin:44px 0 14px; font:500 12px var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
+  p { max-width:66ch; line-height:1.55; color:var(--ink-2); }
+  code { font:500 .86em var(--note); }
+
+  /* A blueprint box: four lines running past the corners. */
+  .box { position:relative; background:color-mix(in srgb,var(--paper) 62%,transparent); }
+  .box::before,.box::after { content:""; position:absolute; pointer-events:none; }
+  .box::before { inset:0 -6px; border-block:1px solid var(--line-rest); }
+  .box::after { inset:-6px 0; border-inline:1px solid var(--line-rest); }
+
+  /* The card, simplified: only its text and links matter here. */
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr)); gap:30px; }
+  .card { padding:22px 22px 20px; display:flex; flex-direction:column; gap:10px; }
+  .card h3 { margin:0; font-weight:500; font-size:24px; letter-spacing:-.03em; }
+  .card .line { margin:0; font-size:15px; line-height:1.45; color:var(--ink); }
+  .meta { display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; font:500 11px var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
+  .actions { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:8px; }
+
+  /* The xs secondary button, simplified. */
+  .btn { position:relative; display:inline-flex; align-items:center; gap:7px; height:30px; padding:0 10px; border:1px solid var(--line); color:var(--ink); background:color-mix(in srgb,var(--paper) 55%,transparent); text-decoration:none; font:500 12px/1 var(--sans); letter-spacing:.07em; text-transform:uppercase; white-space:nowrap; }
+  .btn:hover { background:color-mix(in srgb,var(--line) 8%,var(--paper)); }
+  .btn:focus-visible { outline:1.5px dashed var(--accent); outline-offset:4px; }
+  .btn svg.ic { width:14px; height:14px; stroke:var(--ink); fill:none; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* The numbers. Mono, a step down from the label, in the soft ink. A hairline divides them from the label inside a button. */
+  .stat { display:inline-flex; align-items:center; gap:6px; font:500 11px/1 var(--note); letter-spacing:.02em; text-transform:none; color:var(--ink-2); font-variant-numeric:tabular-nums; }
+  .btn .stat { padding-left:8px; margin-left:1px; border-left:1px solid var(--line-rest); height:14px; }
+  .stat .n { display:inline-flex; align-items:center; gap:2px; }
+  .stat .u { opacity:.75; }
+  .stat .dot { width:2px; height:2px; background:currentColor; opacity:.6; }
+  .stat svg { width:9px; height:9px; stroke:currentColor; fill:none; stroke-width:1.3; stroke-linecap:round; stroke-linejoin:round; }
+  .stat svg.star { width:10px; height:10px; }
+  .chip { height:30px; padding:0 2px; }
+  .stat-in { animation:stat-in .6s var(--soft) both; }
+  @keyframes stat-in { from { opacity:0; filter:blur(3px); } }
+
+  /* The refresh: a small dotted ring with an arrowhead. It turns once, softly, when pressed. */
+  .reload { position:relative; display:inline-grid; place-items:center; width:30px; height:30px; padding:0; border:0; background:none; color:var(--ink-2); cursor:pointer; }
+  .reload svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; transition:rotate .95s var(--soft); }
+  .reload .ring { stroke-width:1.5; stroke-dasharray:0 2.6; }
+  .reload .head { stroke-width:1.2; }
+  .reload:hover { color:var(--ink); }
+  .reload:focus-visible { outline:1.5px dashed var(--accent); outline-offset:2px; }
+  .reload[data-busy] svg { animation:turn 1.1s linear infinite; }
+  @keyframes turn { to { rotate:360deg; } }
+  /* Our own tooltip, never a native title. */
+  .reload::after { content:attr(aria-label); position:absolute; bottom:calc(100% + 8px); left:50%; translate:-50% 3px; padding:6px 9px; white-space:nowrap; background:var(--paper); outline:1px solid var(--line); font:500 11px var(--note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink); opacity:0; pointer-events:none; transition:opacity .3s var(--soft) .25s, translate .3s var(--soft) .25s; }
+  .reload:hover::after,.reload:focus-visible::after { opacity:1; translate:-50% 0; }
+
+  /* The bench. */
+  .bench { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:34px; align-items:start; }
+  @media (max-width:880px) { .bench { grid-template-columns:1fr; } }
+  .panel { padding:16px; font:500 11px var(--note); letter-spacing:.04em; }
+  .controls { display:flex; flex-direction:column; gap:15px; text-transform:uppercase; letter-spacing:.06em; }
+  .group { display:flex; flex-direction:column; gap:7px; }
+  .group > span { color:var(--ink-2); }
+  .seg { display:flex; flex-wrap:wrap; gap:6px; }
+  .seg button, .nums input { font:inherit; letter-spacing:inherit; color:var(--ink); background:color-mix(in srgb,var(--paper) 70%,transparent); border:1px solid var(--line); border-radius:0; padding:6px 8px; min-height:30px; cursor:pointer; text-transform:uppercase; }
+  .seg button[aria-pressed="true"] { background:var(--ink); color:var(--paper); }
+  .seg button:focus-visible, .nums input:focus-visible { outline:1.5px dashed var(--accent); outline-offset:2px; }
+  .nums { display:grid; grid-template-columns:1fr 84px; gap:6px 8px; align-items:center; text-transform:none; }
+  .nums input { width:100%; cursor:text; text-transform:none; }
+  .nums[hidden] { display:none; }
+
+  table { width:100%; border-collapse:collapse; font:500 12px var(--note); }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid color-mix(in srgb,var(--line) 22%,transparent); vertical-align:top; }
+  th { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); font-weight:500; }
+  td.v { font-variant-numeric:tabular-nums; }
+  .ok { color:var(--ink); } .no { color:var(--ink-2); opacity:.7; } .why { color:var(--ink-2); }
+  .src-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 10px 4px; }
+  .src-head b { font-weight:500; }
+  .src-state { color:var(--ink-2); }
+  .scroll-x { overflow-x:auto; }
+
+  pre { margin:0; padding:16px 18px; overflow:auto; font:500 12px/1.6 var(--note); color:var(--ink); }
+  .notes { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:18px 34px; }
+  .notes h3 { margin:0 0 6px; font:500 12px var(--note); letter-spacing:.06em; text-transform:uppercase; }
+  .notes p { margin:0; font-size:15px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">Prototype 25 · Live stats</p>
+  <h1>Real numbers, fetched.<br><span>Shown only when they say something.</span></h1>
+  <p>A small module fetches GitHub and npm numbers in the browser, keeps them in a two-hour cache, and decides per number whether it's worth showing. Below, the npm button on the mcp-token-optimizer card shows weekly and monthly downloads, and the Code buttons show stars when there are enough. The dotted ring refreshes them.</p>
+
+  <h2>On the cards</h2>
+  <div class="cards" id="cards"></div>
+
+  <h2>What was fetched, and what's shown</h2>
+  <div class="bench">
+    <div class="box panel" style="padding:6px 6px 12px" id="inspect"></div>
+    <div class="box panel controls">
+      <div class="group"><span>Data</span>
+        <div class="seg" data-key="data"><button data-v="live" aria-pressed="true">Live</button><button data-v="sample">Sample</button></div>
+      </div>
+      <div class="nums" id="sample" hidden>
+        <label for="s-stars">Stars, each repo</label><input id="s-stars" type="number" min="0" value="12">
+        <label for="s-week">npm weekly</label><input id="s-week" type="number" min="0" value="455">
+        <label for="s-month">npm monthly</label><input id="s-month" type="number" min="0" value="1840">
+      </div>
+      <div class="group"><span>Show only from</span>
+        <div class="nums">
+          <label for="t-stars">Stars ≥</label><input id="t-stars" type="number" min="0" value="5">
+          <label for="t-dl">Downloads ≥</label><input id="t-dl" type="number" min="0" value="5">
+        </div>
+      </div>
+      <div class="group"><span>Monthly equal to weekly</span>
+        <div class="seg" data-key="same"><button data-v="hide" aria-pressed="true">Weekly only</button><button data-v="show">Show both</button></div>
+      </div>
+      <div class="group"><span>Placement</span>
+        <div class="seg" data-key="place"><button data-v="inside" aria-pressed="true">In the button</button><button data-v="after">After it</button><button data-v="meta">Meta line</button></div>
+      </div>
+      <div class="group"><span>Cache lasts</span>
+        <div class="seg" data-key="ttl"><button data-v="7200000" aria-pressed="true">2 h</button><button data-v="600000">10 min</button><button data-v="20000">20 s</button></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>The typed interface it becomes</h2>
+  <div class="box"><pre id="api"></pre></div>
+
+  <h2>Notes</h2>
+  <div class="notes">
+    <div><h3>Where it runs</h3><p>The site is a static export, so the numbers are fetched in the visitor's browser from public endpoints: <code>api.github.com</code> and <code>api.npmjs.org</code>, both open to the browser. No token, no server. GitHub allows 60 calls an hour per visitor without one; the cache keeps a visitor to about one call per repo per two hours.</p></div>
+    <div><h3>Visits</h3><p>Repo views and clones come from GitHub's traffic API, which needs a token with push access. That can't go in a public page. It can be done later at build time, in a GitHub Action with a secret, writing the numbers into the build. Stars, forks, watchers, issues and npm downloads need nothing.</p></div>
+    <div><h3>The cache</h3><p>A small map of key to value and time, each entry good for the TTL (two hours by default), with calls in flight shared so two buttons asking for the same repo make one request. It's mirrored to this browser's storage, so a reload within the TTL doesn't call again. The ring clears those keys and fetches fresh.</p></div>
+    <div><h3>Smart showing</h3><p>A number shows only at or above its threshold, so a new repo never says "1 star". Monthly hides when it equals weekly (the package is under a month old) or falls below the line. If a fetch fails, the button is simply plain: never a zero, a dash or a spinner left behind.</p></div>
+  </div>
+</main>
+
+<script>
+/* =====================================================================
+   The stats module. Plain and portable: no framework, no page access.
+   In the app it becomes typed TypeScript (see "The typed interface").
+   ===================================================================== */
+
+/** A small TTL hashmap, optionally mirrored to storage so a reload inside the TTL needs no call. */
+function createTtlCache({ ttlMs, now = () => Date.now(), storage = null, prefix = "stats:" }) {
+  const map = new Map(); // key -> { value, at }
+  const read = (key) => {
+    if (map.has(key)) return map.get(key);
+    if (!storage) return undefined;
+    try { const raw = storage.getItem(prefix + key); if (raw) { const e = JSON.parse(raw); map.set(key, e); return e; } } catch {}
+    return undefined;
+  };
+  return {
+    get ttlMs() { return ttlMs; }, set ttlMs(v) { ttlMs = v; },
+    /** The entry if it's still fresh. */
+    get(key) { const e = read(key); return e && now() - e.at < ttlMs ? e : undefined; },
+    set(key, value) { const e = { value, at: now() }; map.set(key, e); try { storage?.setItem(prefix + key, JSON.stringify(e)); } catch {} return e; },
+    delete(key) { map.delete(key); try { storage?.removeItem(prefix + key); } catch {} },
+    clear() { for (const k of [...map.keys()]) this.delete(k); },
+  };
+}
+
+/** Each source: its cache key, and how to fetch and read it. Adding a source is one entry here. */
+const SOURCES = {
+  github: {
+    key: (s) => `github:${s.repo}`,
+    async load(s, fetchJson) {
+      const j = await fetchJson(`https://api.github.com/repos/${s.repo}`);
+      return { stars: j.stargazers_count, forks: j.forks_count, watchers: j.subscribers_count, openIssues: j.open_issues_count, pushedAt: j.pushed_at };
+    },
+  },
+  npm: {
+    key: (s) => `npm:${s.pkg}`,
+    async load(s, fetchJson) {
+      const [w, m, latest] = await Promise.all([
+        fetchJson(`https://api.npmjs.org/downloads/point/last-week/${s.pkg}`),
+        fetchJson(`https://api.npmjs.org/downloads/point/last-month/${s.pkg}`),
+        fetchJson(`https://registry.npmjs.org/${s.pkg}/latest`).catch(() => null),
+      ]);
+      return { weekly: w.downloads, monthly: m.downloads, version: latest?.version ?? null };
+    },
+  },
+};
+
+/** Fetches through the cache. Calls in flight are shared, so two places asking for one repo make one request. */
+function createStats({ cache, fetch: f = (...a) => fetch(...a) }) {
+  const inflight = new Map();
+  const fetchJson = async (url) => { const r = await f(url, { headers: { accept: "application/json" } }); if (!r.ok) throw new Error(`${r.status} from ${new URL(url).host}`); return r.json(); };
+  return {
+    cache,
+    /** { value, at, from: "cache" | "network" } or throws. `fresh` skips the cache. */
+    async get(source, { fresh = false } = {}) {
+      const def = SOURCES[source.kind], key = def.key(source);
+      if (!fresh) { const hit = cache.get(key); if (hit) return { ...hit, from: "cache" }; }
+      if (!inflight.has(key)) inflight.set(key, def.load(source, fetchJson).then((v) => cache.set(key, v)).finally(() => inflight.delete(key)));
+      return { ...(await inflight.get(key)), from: "network" };
+    },
+    forget(sources) { for (const s of sources) cache.delete(SOURCES[s.kind].key(s)); },
+  };
+}
+
+/** 455, 1.2k, 12k, 1.2M. */
+function compact(n) {
+  if (n < 1000) return String(n);
+  const [d, u] = n < 1e6 ? [1e3, "k"] : [1e6, "M"], v = n / d;
+  return (v < 10 ? Math.floor(v * 10) / 10 : Math.floor(v)).toString().replace(/\.0$/, "") + u;
+}
+
+/** Which numbers to show, and why not the others. */
+function decide(kind, value, rules) {
+  if (!value) return [];
+  if (kind === "github") {
+    const ok = value.stars >= rules.minStars;
+    return [{ metric: "stars", n: value.stars, show: ok, why: ok ? "" : `under ${rules.minStars}` }];
+  }
+  const w = value.weekly >= rules.minDownloads;
+  const mUnder = value.monthly < rules.minDownloads, mSame = rules.hideSameMonthly && value.monthly === value.weekly;
+  return [
+    { metric: "weekly", n: value.weekly, show: w, why: w ? "" : `under ${rules.minDownloads}` },
+    { metric: "monthly", n: value.monthly, show: !mUnder && !mSame, why: mUnder ? `under ${rules.minDownloads}` : mSame ? "same as weekly" : "" },
+  ];
+}
+
+/* =====================================================================
+   The page.
+   ===================================================================== */
+const PROJECTS = [
+  { title: "EverythingTech", line: "A daily tech newspaper with no human editor. It reads 45+ sources overnight, merges the duplicates and writes each story from the full article.", meta: ["Python · GitHub Actions", "Live, daily 08:30 IST"],
+    links: [{ label: "Today's paper", icon: "browser" }, { label: "Code", icon: "github", stats: { kind: "github", repo: "shubhamcodess/everything-tech-newsletter" } }, { label: "RSS", icon: "rss" }] },
+  { title: "mcp-token-optimizer", line: "A self-hosted proxy between your AI agent and its MCP servers. It shrinks every tool response without changing what the agent can do.", meta: ["TypeScript · Node.js", "Open source, Apache-2.0"],
+    links: [{ label: "Project site", icon: "browser" }, { label: "Code", icon: "github", stats: { kind: "github", repo: "shubhamcodess/mcp-token-optimizer" } }, { label: "npm", icon: "npm", stats: { kind: "npm", pkg: "@shubhamcodess/mcp-token-optimizer" } }] },
+];
+const HREF = { "Today's paper": "https://shubhamcodess.github.io/everything-tech-newsletter/", RSS: "https://shubhamcodess.github.io/everything-tech-newsletter/feed.xml", "Project site": "https://shubhamcodess.github.io/mcp-token-optimizer/" };
+const linkHref = (l) => l.stats?.kind === "github" ? `https://github.com/${l.stats.repo}` : l.stats?.kind === "npm" ? `https://www.npmjs.com/package/${l.stats.pkg}` : HREF[l.label];
+const ICON = {
+  browser: '<rect x="2" y="3" width="12" height="10"/><path d="M2 6h12"/>',
+  github: '<path d="M6 13c-3 1-3-1.5-4-2M10 14v-2.2c0-.7.1-1-.4-1.5 1.7-.2 3.4-.8 3.4-3.6 0-.8-.3-1.5-.8-2 .1-.6.1-1.3-.1-1.9 0 0-.7-.2-2.1.8a7 7 0 0 0-3.8 0C4.8 2.6 4.1 2.8 4.1 2.8c-.2.6-.2 1.3-.1 1.9-.5.5-.8 1.2-.8 2 0 2.8 1.7 3.4 3.4 3.6-.4.4-.4.9-.4 1.5V14"/>',
+  rss: '<path d="M3 3a10 10 0 0 1 10 10M3 7a6 6 0 0 1 6 6"/><circle cx="3.6" cy="12.4" r=".9"/>',
+  npm: '<path d="M2 4h12v7H8v1.5H5V11H2z"/><path d="M5 6v3.5M8 6v3.5h1.5M11 6v3.5"/>',
+};
+const DOWN = '<svg viewBox="0 0 9 9" aria-hidden="true"><path d="M4.5 1v6.4M1.6 4.8l2.9 2.8 2.9-2.8"/></svg>';
+const STAR = '<svg class="star" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 .9l1.2 2.6 2.8.3-2.1 1.9.6 2.8L5 7.1 2.5 8.5l.6-2.8L1 3.8l2.8-.3z"/></svg>';
+
+const opts = { data: "live", same: "hide", place: "inside", ttl: 7200000 };
+const cache = createTtlCache({ ttlMs: opts.ttl, storage: (() => { try { return localStorage; } catch { return null; } })() });
+const stats = createStats({ cache });
+const results = new Map(); // key -> { value, at, from } | { error }
+let busy = false, firstPaint = true;
+
+const rules = () => ({ minStars: +document.getElementById("t-stars").value || 0, minDownloads: +document.getElementById("t-dl").value || 0, hideSameMonthly: opts.same === "hide" });
+const sample = (s) => s.kind === "github"
+  ? { value: { stars: +document.getElementById("s-stars").value, forks: 2, watchers: 1, openIssues: 0, pushedAt: new Date().toISOString() }, at: Date.now(), from: "sample" }
+  : { value: { weekly: +document.getElementById("s-week").value, monthly: +document.getElementById("s-month").value, version: "1.0.0" }, at: Date.now(), from: "sample" };
+const resultFor = (s) => opts.data === "sample" ? sample(s) : results.get(SOURCES[s.kind].key(s));
+
+/** The numbers for one link, as markup: nothing at all when there's nothing worth showing. */
+function statMarkup(s) {
+  const r = resultFor(s); if (!r || r.error) return "";
+  const shown = decide(s.kind, r.value, rules()).filter((d) => d.show);
+  if (!shown.length) return "";
+  const label = shown.map((d) => d.metric === "stars" ? `${d.n} stars` : `${d.n} downloads ${d.metric === "weekly" ? "this week" : "this month"}`).join(", ");
+  const parts = shown.map((d) => d.metric === "stars"
+    ? `<span class="n">${STAR}${compact(d.n)}</span>`
+    : `<span class="n">${DOWN}${compact(d.n)}<span class="u">&thinsp;${d.metric === "weekly" ? "w" : "m"}</span></span>`);
+  return `<span class="stat${firstPaint ? "" : " stat-in"}" aria-label="${label}"><span aria-hidden="true" style="display:contents">${parts.join('<i class="dot"></i>')}</span></span>`;
+}
+
+function renderCards() {
+  document.getElementById("cards").innerHTML = PROJECTS.map((p) => {
+    const statLinks = p.links.filter((l) => l.stats);
+    const metaStats = opts.place === "meta" ? statLinks.map((l) => statMarkup(l.stats)).filter(Boolean) : [];
+    const buttons = p.links.map((l) => {
+      const st = l.stats && opts.place !== "meta" ? statMarkup(l.stats) : "";
+      const btn = `<a class="btn" href="${linkHref(l)}" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true">${ICON[l.icon]}</svg>${l.label}${opts.place === "inside" ? st : ""}</a>`;
+      return opts.place === "after" && st ? `${btn}<span class="chip stat-wrap" style="display:inline-flex;align-items:center">${st}</span>` : btn;
+    }).join("");
+    const reload = statLinks.length ? `<button class="reload" type="button" aria-label="Refresh stats" ${busy ? "data-busy" : ""}><svg viewBox="0 0 16 16" aria-hidden="true"><path class="ring" d="M13.2 5.2A5.6 5.6 0 1 0 13.6 9"/><path class="head" d="M13.6 2.2v3.2h-3.2"/></svg></button>` : "";
+    return `<article class="box card">
+      <h3>${p.title}</h3><p class="line">${p.line}</p>
+      <div class="meta">${p.meta.map((m) => `<span>${m}</span>`).join("")}${metaStats.join("")}</div>
+      <div class="actions">${buttons}${reload}</div></article>`;
+  }).join("");
+  document.querySelectorAll(".reload").forEach((b) => b.addEventListener("click", refresh));
+}
+
+const ago = (ms) => ms < 60e3 ? `${Math.round(ms / 1e3)} s` : ms < 3600e3 ? `${Math.round(ms / 60e3)} min` : `${(ms / 3600e3).toFixed(1)} h`;
+function renderInspect() {
+  const all = PROJECTS.flatMap((p) => p.links.filter((l) => l.stats).map((l) => l.stats));
+  document.getElementById("inspect").innerHTML = all.map((s) => {
+    const key = SOURCES[s.kind].key(s), r = resultFor(s);
+    const state = !r ? "fetching…" : r.error ? `failed: ${r.error}` : r.from === "sample" ? "sample numbers" : `${r.from === "cache" ? "from cache" : "fetched"}, ${ago(Date.now() - r.at)} old, ${ago(Math.max(0, r.at + opts.ttl - Date.now()))} left`;
+    const rows = r?.value ? decide(s.kind, r.value, rules()).map((d) => `<tr><td>${d.metric}</td><td class="v">${d.n}</td><td class="v">${compact(d.n)}</td><td class="${d.show ? "ok" : "no"}">${d.show ? "shown" : `hidden, ${d.why}`}</td></tr>`).join("") : "";
+    const extra = r?.value ? Object.entries(r.value).filter(([k]) => !["stars", "weekly", "monthly"].includes(k)).map(([k, v]) => `<tr><td>${k}</td><td class="v" colspan="2">${v ?? "none"}</td><td class="why">available</td></tr>`).join("") : "";
+    return `<div class="src-head"><b>${key}</b><span class="src-state">${state}</span></div>
+      <div class="scroll-x"><table><thead><tr><th>Number</th><th>Raw</th><th>Shown as</th><th>Decision</th></tr></thead><tbody>${rows}${extra}</tbody></table></div>`;
+  }).join("");
+}
+
+function render() { renderCards(); renderInspect(); }
+
+async function load(fresh = false) {
+  const all = PROJECTS.flatMap((p) => p.links.filter((l) => l.stats).map((l) => l.stats));
+  if (fresh) stats.forget(all);
+  busy = true; render();
+  await Promise.all(all.map(async (s) => {
+    const key = SOURCES[s.kind].key(s);
+    try { results.set(key, await stats.get(s, { fresh })); } catch (e) { results.set(key, { error: e.message }); }
+  }));
+  busy = false; firstPaint = false; render();
+}
+const refresh = () => { if (!busy) load(true); };
+
+document.querySelectorAll(".seg[data-key]").forEach((seg) => seg.addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  seg.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  const k = seg.dataset.key, v = b.dataset.v;
+  opts[k] = k === "ttl" ? +v : v;
+  if (k === "ttl") cache.ttlMs = +v;
+  if (k === "data") document.getElementById("sample").hidden = v !== "sample";
+  render();
+}));
+document.querySelectorAll(".nums input").forEach((i) => i.addEventListener("input", render));
+setInterval(renderInspect, 1000);
+
+document.getElementById("api").textContent = `// packages/stats: portable, no React or Next. Typed, and tested without a network.
+type Source =
+  | { kind: "github"; repo: \`\${string}/\${string}\` }
+  | { kind: "npm"; pkg: string };
+
+type GithubStats = { stars: number; forks: number; watchers: number; openIssues: number; pushedAt: string };
+type NpmStats    = { weekly: number; monthly: number; version: string | null };
+type StatsOf<S extends Source> = S extends { kind: "github" } ? GithubStats : NpmStats;
+
+const stats = createStats({ ttlMs: 2 * 60 * 60 * 1000, storage: localStorage });
+const npm = await stats.get({ kind: "npm", pkg: "@shubhamcodess/mcp-token-optimizer" }); // NpmStats, cached
+stats.forget([...]); // the dotted ring
+
+// content/site.ts: thresholds and placement, checked by the schema
+stats: {
+  ttlMinutes: 120,
+  show: { stars: { min: 5 }, downloads: { min: 5, monthlyWhenSameAsWeekly: false } },
+  places: { projectLinks: ["stars", "weekly", "monthly"] },   // where, decided later
+}
+
+// content/projects/*.md: which numbers belong to a link
+links:
+  - { label: npm,  href: ..., kind: package, stats: { npm: "@shubhamcodess/mcp-token-optimizer" } }
+  - { label: Code, href: ..., kind: code,    stats: { github: "shubhamcodess/mcp-token-optimizer" } }`;
+
+render();
+load();
+</script>
+</body>
+</html>

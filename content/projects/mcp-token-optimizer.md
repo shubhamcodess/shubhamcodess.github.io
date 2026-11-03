@@ -17,7 +17,7 @@ private: false
 links:
   - { label: Project site, href: "https://shubhamcodess.github.io/mcp-token-optimizer/", kind: site }
   - { label: Code, href: "https://github.com/shubhamcodess/mcp-token-optimizer", kind: code }
-  - { label: npm, href: "https://www.npmjs.com/package/@shubhamcodess/mcp-token-optimizer", kind: package }
+  - { label: npm, href: "https://www.npmjs.com/package/@shubhamcodess/mcp-token-optimizer", kind: package, stats: { npm: "@shubhamcodess/mcp-token-optimizer", show: [weekly, monthly] } }
 ---
 
 Every token an MCP tool returns is paid for and fills the model's context window, and real tool output is mostly noise: null fields, hypermedia URLs, ids, repeated blocks, ANSI and progress-bar spam. This proxy sits between the agent and its MCP servers, and shrinks each response by pruning, TOON encoding and local-LLM summarization.

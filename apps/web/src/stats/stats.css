@@ -1,0 +1,22 @@
+/* Live numbers inside a link's label. Mono, a step down from the label, in the soft ink, behind a hairline. Colors only from tokens. */
+.link-stats { display: inline-flex; align-items: center; margin-left: 7px; padding-left: 7px; height: 1.15em; border-left: 1px solid var(--line-rest); animation: link-stats-in .6s var(--ease-soft) both; }
+.link-stats-row { display: inline-flex; align-items: center; gap: 5px; font: 500 .86em/1 var(--font-note); letter-spacing: .02em; text-transform: none; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.link-stat { display: inline-flex; align-items: center; gap: 2px; }
+.link-stat svg { width: .8em; height: .8em; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.link-stat-unit { margin-left: 1px; opacity: .75; }
+.link-stat-dot { width: 2px; height: 2px; margin-right: 3px; background: currentColor; opacity: .6; }
+@keyframes link-stats-in { from { opacity: 0; filter: blur(3px); } }
+
+/* The refresh: a dotted ring with an arrowhead, the touch size of an xs button. It turns while fetching. */
+.stats-refresh { display: inline-grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 0; background: none; color: var(--ink-2); cursor: pointer; transition: color var(--dur-small-part) var(--ease-soft); }
+.stats-refresh svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+.stats-refresh-ring { stroke-width: 1.5; stroke-dasharray: 0 2.6; }
+.stats-refresh-head { stroke-width: 1.2; }
+.stats-refresh:hover { color: var(--ink); }
+.stats-refresh:focus-visible { outline: 1.5px dashed var(--accent); outline-offset: 2px; }
+.stats-refresh[data-busy] svg { animation: stats-turn 1.1s linear infinite; }
+@keyframes stats-turn { to { rotate: 360deg; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .link-stats, .stats-refresh[data-busy] svg { animation: none; }
+}

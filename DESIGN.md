@@ -159,6 +159,16 @@ The sm `Button` with one sun that shifts per theme. It lives in the site, not th
 ### Tooltip: Draft
 A small paper box with four drafting lines running past its corners, and the label font in ink. It appears after a short beat on mouse hover or keyboard focus, stays while the pointer is on it, and Escape dismisses it. `open` holds it open, for example to confirm a tap. It's only visual, so what it points at keeps its own accessible name. The header's menus use the same box.
 
+### Live numbers: Draft
+Code: `packages/stats` (portable, no framework), and `apps/web/src/stats/` for the site's use of it. Prototype: `prototypes/25-live-stats`.
+
+- **The module:** `createStats({ ttlMs, storage })` gives `get(query)`, which returns typed JSON and never throws: `{ ok: true, values, fetchedAt, from }` with exactly the metrics asked for, or `{ ok: false, error }`. A query is `{ kind: "npm", pkg, metrics }` (weekly, monthly, version) or `{ kind: "github", repo, metrics }` (stars, forks, watchers, openIssues, pushedAt). Only the endpoints a query needs are called. `visibleStats(result, rules)` says which numbers are worth showing and writes them short. Anything can call it, with any package or repo.
+- **Cache:** a TTL map, two hours by default (`site.stats.ttlMinutes`), mirrored to the visitor's storage when `persist` is on. Calls in flight are shared.
+- **Where it shows:** a project link with `stats` in its project file, for example `stats: { npm: "...", show: [weekly, monthly] }`. Today: the mcp-token-optimizer npm button.
+- **Look:** inside the label, after a hairline: Geist Mono a step down, in `--ink-2`, a drawn down arrow for downloads, `w` and `m` for week and month, a small dot between. It fades in once fetched.
+- **Rule:** a number shows only at or above its `site.stats.min`. Monthly hides when it equals weekly unless `monthlyWhenSameAsWeekly`. A failed fetch shows nothing, never a zero or a dash, and a failed refresh keeps the last good numbers.
+- **Refresh:** a dotted ring after the links (`site.stats.refresh`), with our tooltip. It drops the cache and fetches fresh for every link on the page, and turns while fetching. Reduced motion stops the turn.
+
 ### Text selection
 Paper text on the active theme's accent color, set in `tokens.css`. A test keeps it readable in every theme.
 

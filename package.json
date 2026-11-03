@@ -20,6 +20,7 @@
     "@portfolio/content": "workspace:*",
     "@portfolio/design": "workspace:*",
     "@portfolio/site": "workspace:*",
+    "@portfolio/stats": "workspace:*",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
