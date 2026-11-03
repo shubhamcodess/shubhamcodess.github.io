@@ -15,7 +15,8 @@
     "./scroll-thumb": "./src/components/scroll-thumb/ScrollThumb.tsx",
     "./tokens.css": "./src/tokens.css",
     "./environment.css": "./src/environment.css",
-    "./button-options": "./src/components/button/options.ts"
+    "./button-options": "./src/components/button/options.ts",
+    "./project-card-options": "./src/components/project-card/options.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

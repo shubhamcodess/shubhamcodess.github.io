@@ -32,14 +32,29 @@
 .pc:has(.pc-main:focus-visible) .pc-frame::after { content:""; position:absolute; inset:-5px; border:1.5px dashed var(--accent); }
 
 /* The drafting plate. */
-.pc-stage { position:relative; flex:none; aspect-ratio:16/10.6; overflow:hidden; background:linear-gradient(color-mix(in srgb, var(--line) 9%, transparent) 1px, transparent 1px) 0 0 / 22px 22px, linear-gradient(90deg, color-mix(in srgb, var(--line) 9%, transparent) 1px, transparent 1px) 0 0 / 22px 22px; }
+.pc-stage { position:relative; flex:1 0 auto; aspect-ratio:16/10.6; overflow:hidden; } /* Takes any height the row leaves over. */
+/* Drafting paper behind a drawing: a 22px grid with a heavier line every fifth, over a low wash of paper, rising from the bottom and gone before the top, so what's behind still shows through. Shared by the story's figures. */
+.sheet-plate::before { content:""; position:absolute; inset:0; pointer-events:none; --minor:color-mix(in srgb, var(--line) 7%, transparent); --major:color-mix(in srgb, var(--line) 10%, transparent); --wash:color-mix(in srgb, var(--paper) 30%, transparent);
+  background:
+    linear-gradient(var(--major) 1px, transparent 1px) 0 100% / 110px 110px,
+    linear-gradient(90deg, var(--major) 1px, transparent 1px) 0 100% / 110px 110px,
+    linear-gradient(var(--minor) 1px, transparent 1px) 0 100% / 22px 22px,
+    linear-gradient(90deg, var(--minor) 1px, transparent 1px) 0 100% / 22px 22px,
+    linear-gradient(var(--wash), var(--wash));
+  -webkit-mask-image:linear-gradient(to top, #000 0, transparent 92%); mask-image:linear-gradient(to top, #000 0, transparent 92%); }
+.sheet-plate[data-plate="grid"]::before { --minor:color-mix(in srgb, var(--line) 9%, transparent); --major:var(--minor); --wash:transparent; -webkit-mask-image:none; mask-image:none; }
+.sheet-plate[data-plate="none"]::before { display:none; }
 .pc-stage::after { content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:var(--line-rest); }
 .pc-stage canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
 .pc-reg { position:absolute; z-index:1; width:9px; height:9px; pointer-events:none; opacity:.5; background:linear-gradient(var(--line),var(--line)) 50% 50% / 100% 1px no-repeat, linear-gradient(var(--line),var(--line)) 50% 50% / 1px 100% no-repeat; }
 .pc-reg.tl { left:9px; top:9px; }
 .pc-reg.tr { right:9px; top:9px; }
 
-.pc-sheet { display:flex; flex-direction:column; flex:1; gap:10px; padding:18px 20px 22px; }
+.pc-sheet { position:relative; isolation:isolate; display:flex; flex-direction:column; flex:none; gap:10px; padding:18px 20px 22px; }
+/* The frame's hatch, kept to the words so the drawing has only its grid. It keeps the frame's rise; `--hatch-k` turns that share of the card into a share of the words. */
+.pc[data-hatch="text"] { --hatch-k:2.2; }
+.pc[data-hatch="text"] .pc-tex { display:none; }
+.pc[data-hatch="text"] .pc-sheet::before { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:.22; transition:--pc-rise 1s var(--ease-soft); background:repeating-linear-gradient(135deg, var(--line) 0 1px, transparent 1px 6px); --fade:linear-gradient(to top, #000 0, transparent calc(var(--pc-rise) * var(--hatch-k))); -webkit-mask-image:var(--fade); mask-image:var(--fade); }
 .pc-meta { display:flex; flex-wrap:wrap; gap:3px 14px; margin:0; font:500 11px/1.4 var(--font-note); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); }
 .pc-meta .live::before { content:""; display:inline-block; width:6px; height:6px; margin-right:6px; vertical-align:1px; background:var(--accent); animation:pc-breathe 3.6s ease-in-out infinite; }
 @keyframes pc-breathe { 50% { opacity:.3; } }
@@ -58,6 +73,15 @@
   .pc[data-layout="horizontal"] .pc-sheet { flex:1; min-width:0; padding:26px; }
   .pc[data-layout="horizontal"] .pc-title { font-size:clamp(28px, 4.4cqi, 38px); }
   .pc[data-layout="horizontal"] .pc-actions { margin-top:auto; }
+  .pc[data-layout="horizontal"][data-hatch="text"] { --hatch-k:1; }
+  /* Wide: the drawing across the top. Under it the note and title run the full width, then the description on the left and the links on the right. */
+  .pc[data-layout="wide"] { --hatch-k:3.4; }
+  .pc[data-layout="wide"] .pc-stage { aspect-ratio:16/6.6; }
+  .pc[data-layout="wide"] .pc-sheet { display:grid; grid-template-columns:minmax(0, 1.45fr) minmax(0, 1fr); gap:8px clamp(24px, 4cqi, 56px); padding:20px 26px 24px; }
+  .pc[data-layout="wide"] .pc-meta, .pc[data-layout="wide"] .pc-title { grid-column:1 / -1; }
+  .pc[data-layout="wide"] .pc-title { justify-content:flex-start; font-size:clamp(28px, 4.4cqi, 38px); }
+  .pc[data-layout="wide"] .pc-actions { align-self:end; justify-content:flex-end; margin:0; padding:0; }
+  .pc[data-layout="wide"] .pc-actions .bp-tip[data-align="center"] { left:auto; right:0; transform:none; } /* The links reach the card's right edge, so a tooltip opens inward. */
 }
 /* The whole card is one link, so its arrow redraws for the whole card, not only when the pointer is on the arrow. */
 @media (hover:hover) and (prefers-reduced-motion:no-preference) {

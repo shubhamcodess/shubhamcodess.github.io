@@ -221,12 +221,14 @@ Code: `packages/design/src/components/scroll-thumb`. It replaces the visible scr
 Prototype: `prototypes/06-project-card`, with its detail page at `projects/everything-tech/`.
 
 - **Parts:** frame, wireframe shadow, texture, stage (drafting plate with a live drawing), meta line, title with arrow, one description, up to three links.
+- **Two tones, set once for every card:** `cards` in `content/site.ts`, typed by `CARD_OPTIONS` in `packages/design/src/components/project-card/options.ts`. The default is `face: "clear"` (the words on a clear sheet), `plate: "drafting"` (the drawing on the same drafting paper as the story's figures, class `sheet-plate`) and `hatch: "text"` (the rising hatch only behind the words, never the drawing).
 - **Click:** the whole card opens `/projects/<slug>`. Links sit above it and go straight to the site, code or feed. Private projects have no links.
 - **Link icons:** a link that leaves the site opens in a new tab and has a tilted arrow, plus an icon for what it is: browser window for a site, GitHub for code, RSS for a feed, npm for a package. A link within the site has a straight arrow.
 - **Hover:** overshoot 6px to 9px, texture rises 18% to 34%, shadow slides out 9px over .8s, arrow moves 5px and redraws, and the drawing leans slowly towards the pointer. The card doesn't sway, because shaking a large surface is jarring.
 - **Keyboard focus:** dashed amber line around the frame.
-- **Over the cave:** use Frost (62% base tint, 4px blur).
-- **Layouts:** stacked for the grid, and side by side for a featured project.
+- **Over the cave:** `face: "frost"` (62% base tint, 4px blur) is still available, for when words sit over something busy.
+- **Layouts:** `vertical` for the grid, `horizontal` side by side, and `wide` for a card spanning columns: the drawing across the top, then note and title, then the description on the left and links on the right. A card under 620px always stacks. In a stacked card the plate takes any height the row leaves over.
+- **Featured rank:** mcp-token-optimizer is the wide hero, because its drawing is wide; EverythingTech sits beside it stacked, because its newspaper is portrait.
 - **To the detail page:** the stage grows into the page header using a view transition.
 
 **Production layout:** a configurable grid of 1 to 3 columns, where each card sets its shape and span. The card chooses side by side from its own width, so it fits any cell. A plate with no drawing shows the project's real numbers as a schedule. Component: `@portfolio/design/project-card`.

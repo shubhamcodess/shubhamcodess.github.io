@@ -18,14 +18,16 @@ const config = {
     tilt: { y: 5, x: 2, reach: 3.5 }, // Degrees at rest, and how far the pointer moves it.
     figure: { enabled: true, props: { anchor: 1, face: "left", minHeight: 22, maxHeight: 52, clearance: 4 } },
   },
+  // How every project card looks, here and on the projects page. Words on a clear sheet, the drawing on drafting paper, and the hatch only behind the words. Options: CARD_OPTIONS in packages/design.
+  cards: { face: "clear", plate: "drafting", hatch: "text" },
   shipped: {
     kicker: "Featured builds",
     title: ["What I shipped recently.", "Open source, real impact."],
     columns: 3,
-    // Rank is this order. Try: both vertical with columns 2 and span 1, both horizontal with columns 1, or three cards with columns 3 and span 1.
+    // Rank is this order. Try: both vertical with columns 2 and span 1, both wide with columns 1, or three cards with columns 3 and span 1.
     items: [
-      { slug: "everything-tech", layout: "horizontal", span: 2 },
-      { slug: "mcp-token-optimizer", layout: "vertical", span: 1 },
+      { slug: "mcp-token-optimizer", layout: "wide", span: 2 },
+      { slug: "everything-tech", layout: "vertical", span: 1 },
     ],
     seeAll: { label: "See all my builds", href: "/projects/" },
   },

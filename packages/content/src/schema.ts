@@ -1,5 +1,6 @@
 import { PALETTE_IDS } from "@portfolio/design/palettes";
 import { BUTTON_OPTIONS } from "@portfolio/design/button-options";
+import { CARD_OPTIONS } from "@portfolio/design/project-card-options";
 import { z } from "zod";
 import { COUNT_METRICS, GITHUB_METRICS, NPM_METRICS, NPM_PATTERN, REPO_PATTERN } from "@portfolio/stats/metrics";
 import { LOGO_OPTIONS } from "./logo-options";
@@ -99,12 +100,14 @@ export const siteSchema = z
     }),
     /** Smooth scroll, content layers and reveals. Set `lerp` to 0 for native scrolling. */
     scroll: z.strictObject({ lerp: z.number().min(0).max(1), lag: z.number().min(0).max(3), parallax: z.number().min(0).max(3), reveal: z.enum(["none", "fade", "rise", "mask"]), hide: z.boolean() }),
+    /** How every project card looks, here and on the projects page. Each card picks only its layout. */
+    cards: z.strictObject({ face: z.enum(CARD_OPTIONS.face), plate: z.enum(CARD_OPTIONS.plate), hatch: z.enum(CARD_OPTIONS.hatch) }),
     /** The section after the hero. Rank is the order of `items`. `span` is how many of the `columns` a card takes. */
     shipped: z.strictObject({
       kicker: z.string().min(1),
       title: z.tuple([z.string().min(1), z.string().min(1)]),
       columns: z.number().int().min(1).max(3),
-      items: z.array(z.strictObject({ slug: z.string().min(1), layout: z.enum(["vertical", "horizontal"]), span: z.number().int().min(1).max(3) })).min(1).max(6),
+      items: z.array(z.strictObject({ slug: z.string().min(1), layout: z.enum(CARD_OPTIONS.layout), span: z.number().int().min(1).max(3) })).min(1).max(6),
       seeAll: z.strictObject({ label: z.string().min(1), href: z.string().min(1) }),
     }).refine((s) => s.items.every((i) => i.span <= s.columns), { message: "A card can't span more than the columns", path: ["items"] })
       .refine((s) => new Set(s.items.map((i) => i.slug)).size === s.items.length, { message: "A project can only be featured once", path: ["items"] }),
