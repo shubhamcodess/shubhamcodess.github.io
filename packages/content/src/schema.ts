@@ -79,7 +79,7 @@ export const siteSchema = z
       figure: z.strictObject({ anchor: z.number().min(0).max(1), face: z.enum(["left", "right"]), minHeight: z.number().min(12).max(120), maxHeight: z.number().min(12).max(240), clearance: z.number().min(0).max(40) }),
       scenes: z.array(z.strictObject({
         /** Its milestone on the line: words, or a batarang. */
-        stop: z.discriminatedUnion("kind", [z.strictObject({ kind: z.literal("text"), text: z.string().min(1).max(8) }), z.strictObject({ kind: z.literal("batarang") })]),
+        stop: z.discriminatedUnion("kind", [z.strictObject({ kind: z.literal("text"), text: z.string().min(1).max(8) }), z.strictObject({ kind: z.literal("batarang") }), z.strictObject({ kind: z.literal("now") })]),
         label: z.string().min(1),
         title: z.string().min(1),
         role: z.string().min(1),
