@@ -340,84 +340,82 @@ export const StoryFigures = (() => {
     }
   }
 
-  /* ---------- Chapter 4: everything, assembled ---------- */
-  // The finale. A stack flies together from all sides, foundation first: engineering principles, data, backend, frontend, then AI on top. The Kubernetes frame draws round it, a CI/CD loop starts circling above, and requirements drop in through the loop into the stack.
-  const STACK = [
-    { name: 'ENGINEERING PRINCIPLES', half: 1.1, t: .2, z: 0, from: [0, 0, -.9], base: true },
-    { name: 'DATA · SCHEMA', half: .8, t: .18, z: .42, from: [-1.3, 1.3, .1] },
-    { name: 'JAVA · SPRING · RABBITMQ', half: .8, t: .18, z: .8, from: [1.4, -1.4, .2] },
-    { name: 'NEXT.JS', half: .8, t: .18, z: 1.18, from: [-1.1, 1.1, .6] },
-    { name: 'AI AGENTS · MCP', half: .8, t: .18, z: 1.56, from: [0, 0, 1.1], ai: true },
+  /* ---------- Chapter 4: requirement to production, assembled ---------- */
+  // The finale is a funnel, read top to bottom as the work flows: requirements pour in, then design, then the code itself in its layers, then AI review and automation, then CI/CD, then deployment on GKE. It all rests on a wide foundation of engineering principles.
+  // It assembles as a reverse explosion: the foundation first, then each stage in the order the work reaches it, flying in from the side and turning solid. Then a stream runs through it all, top to bottom.
+  const FLOW = [
+    { name: 'REQUIREMENTS', half: 1.24, dx: .03 },
+    { name: 'DESIGN · HLD / LLD', half: 1.13, dx: -.03 },
+    { name: 'NEXT.JS · ANGULAR', half: 1.03, dx: .02, code: true },
+    { name: 'JAVA · SPRING BOOT · RABBITMQ', half: .97, dx: -.02, code: true },
+    { name: 'DATA · SCHEMA', half: .91, dx: .03, code: true },
+    { name: 'AI AGENTS · MCP', half: .85, dx: -.03, code: true, ai: true },
+    { name: 'AI CODE REVIEW · AUTOMATION', half: .77, dx: .02, ai: true },
+    { name: 'CI/CD · GITHUB ACTIONS', half: .69, dx: -.02, cicd: true },
+    { name: 'DEPLOY · GKE / K8S', half: .6, dx: 0 },
   ];
-  const LOOP = { z: 2.75, r: .78 }, FRAME = { half: .94, z0: .32, z1: 1.86 };
+  const BASE = { name: 'ENGINEERING PRINCIPLES', half: 1.32, t: .18 }, GAP = .38, LAYER = .1, LIFT = .45;
+  const zOf = (k) => LIFT + (FLOW.length - 1 - k) * GAP; // the first stage is highest
 
   function chapterFour(g) {
     const { ctx, w: W, h: H, colors, intro, c, time, pen, label } = g;
-    const s = Math.min(W / 9.4, H / 5.9), X0 = W / 2 - .9 * s, Y0 = H / 2 + 1.15 * s;
+    const top = zOf(0) + LAYER + FLOW[0].half, s = Math.min(W / 10.4, H / (top + BASE.half + 1.3)), X0 = W / 2 - 1.55 * s, Y0 = H / 2 + ((top - BASE.half) / 2) * s + 6;
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const box = boxTool(ctx, iso, pen);
-    const col = X0 + 1.1 * 2 * COS * s + 26; // the label column, past the foundation's right corner
+    const col = X0 + BASE.half * 2 * COS * s + 22;
+    const step = (k) => [.12 + k * .062, .22 + k * .062]; // when stage k flies in: they're all in by about .72
+    const row = (z, t, k, text, color, alpha) => {
+      const [ax, ay] = iso(FLOW[k] ? FLOW[k].half : BASE.half, -(FLOW[k] ? FLOW[k].half : BASE.half), z + t / 2);
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .6 * alpha; pen(1800 + k, [ax + 3, ay], [col - 5, ay], alpha, .8);
+      label(text, col, ay, color, .92 * alpha, 'left');
+    };
 
-    // The layers: each starts apart as a faint dashed outline, flies in and turns solid as it settles. Foundation first, AI last.
-    STACK.forEach((L, k) => {
-      const fly = ease(span(c, .04 + k * .1, .2 + k * .1)), shown = span(intro, .05 + k * .06, .4 + k * .06);
+    // The foundation: wide, toned, in first.
+    const base = ease(span(c, .02, .12)), baseShown = span(intro, .05, .4);
+    if (baseShown) {
+      box(-BASE.half, -BASE.half, -.9 * (1 - base), BASE.half * 2, BASE.half * 2, BASE.t, 1790, (base >= 1 ? .9 : .4 + .4 * base) * baseShown, base >= 1 ? colors.ink : colors.line, .16, base >= 1 ? null : [4, 4]);
+      if (base >= 1) { row(0, BASE.t, 99, BASE.name, colors.ink, ease(span(c, .1, .16))); const [fx, fy] = iso(BASE.half, BASE.half, 0); label('STANDARDS · REVIEWS · ARCHITECTURE', fx, fy + 16, colors.ink2, .8 * ease(span(c, .1, .16))); }
+    }
+
+    // The stages: each flies in from its side, dashed and faint, and turns solid as it settles. Each differs a little in size, place and tone, so no two read the same.
+    FLOW.forEach((L, k) => {
+      const [a, b] = step(k), fly = ease(span(c, a, b)), shown = span(intro, .1 + k * .04, .45 + k * .04);
       if (!shown) return;
-      const [fx, fy, fz] = L.from, x = fx * (1 - fly), y = fy * (1 - fly), z = L.z + fz * (1 - fly);
-      const landed = fly >= 1, color = L.ai && landed ? colors.accent : colors.ink;
-      box(x - L.half, y - L.half, z, L.half * 2, L.half * 2, L.t, 1600 + k, (landed ? .9 : .35 + .4 * fly) * shown, landed ? color : colors.line, L.base ? .16 : L.ai && landed ? .14 : .05, landed ? null : [4, 4]);
-      // Its name, in the column, with a leader back to its right corner, once it's in place.
-      const named = ease(span(c, .14 + k * .1, .22 + k * .1));
-      if (named > 0) {
-        const [ax, ay] = iso(L.half, -L.half, L.z + L.t / 2);
-        ctx.strokeStyle = colors.line; ctx.globalAlpha = .65 * named; pen(1650 + k, [ax + 3, ay], [col - 5, ay], named, .8);
-        label(L.name, col, ay, L.ai ? colors.accent : L.base ? colors.ink : colors.ink2, .92 * named, 'left');
-      }
+      const side = k % 2 ? 1 : -1, z = zOf(k) + .5 * (1 - fly), x = L.dx + side * 1.0 * (1 - fly), y = L.dx - side * 1.0 * (1 - fly);
+      const landed = fly >= 1, color = L.ai ? colors.accent : colors.ink, tone = .03 + k * .013;
+      box(x - L.half, y - L.half, z, L.half * 2, L.half * 2, LAYER, 1810 + k, (landed ? .88 : .3 + .4 * fly) * shown, landed ? color : colors.line, L.ai && landed ? .12 : tone, landed ? null : [4, 4]);
+      const named = ease(span(c, b - .02, b + .05));
+      if (named > 0) row(zOf(k), LAYER, k, L.name, L.ai ? colors.accent : L.code ? colors.ink2 : colors.ink, named);
     });
-    // The foundation's note, under its lowest corner.
-    { const n = ease(span(c, .14, .22)); if (n > 0) { const [fx, fy] = iso(1.1, 1.1, 0); label('STANDARDS · REVIEWS · ARCHITECTURE', fx, fy + 16, colors.ink2, .8 * n); } }
-
-    // The platform: a dashed Kubernetes frame drawn round everything above the foundation.
-    const framed = ease(span(c, .6, .7));
-    if (framed > 0) {
-      const { half: f, z0, z1 } = FRAME;
-      box(-f, -f, z0, f * 2, f * 2, (z1 - z0) * framed, 1700, .6, colors.line, 0, [3, 4]);
-      const [lx, ly] = iso(-f, f, (z0 + z1) / 2);
-      label('KUBERNETES', lx - 8, ly - 6, colors.ink2, .9 * framed, 'right');
-      label('ON GKE', lx - 8, ly + 7, colors.ink2, .9 * framed, 'right');
+    // The code layers carry one bracket on the left, named once.
+    const coded = ease(span(c, step(5)[1], step(5)[1] + .06));
+    if (coded > 0) {
+      const xL = iso(-FLOW[2].half, FLOW[2].half, 0)[0] - 10, yT = iso(0, 0, zOf(2) + LAYER)[1], yB = iso(0, 0, zOf(5))[1];
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .7 * coded; ctx.lineWidth = .9;
+      ctx.beginPath(); ctx.moveTo(xL + 5, yT); ctx.lineTo(xL, yT); ctx.lineTo(xL, yB); ctx.lineTo(xL + 5, yB); ctx.stroke();
+      label('DEVELOPMENT', xL - 6, (yT + yB) / 2, colors.ink2, .9 * coded, 'right');
     }
 
-    // On top, the CI/CD loop: drawn round, then circling with builds, tests and deploys that drop into the stack.
-    const looped = ease(span(c, .68, .78)), running = ease(span(c, .74, .82));
-    if (looped > 0) {
-      const pt = (a) => iso(Math.cos(a) * LOOP.r, Math.sin(a) * LOOP.r, LOOP.z);
-      ctx.strokeStyle = colors.ink; ctx.globalAlpha = .8; ctx.lineWidth = 1;
-      ctx.beginPath(); const n = 64;
-      for (let i = 0; i <= Math.round(n * looped); i++) { const [px, py] = pt((i / n) * Math.PI * 2); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
-      ctx.stroke();
-      const [lx, ly] = pt(Math.PI * .75);
-      label('CI/CD', lx - 10, ly - 7, colors.ink, .95 * looped, 'right');
-      label('GITHUB ACTIONS', lx - 10, ly + 6, colors.ink2, .9 * looped, 'right');
-      if (running > 0) {
-        ctx.fillStyle = colors.accent;
-        for (let q = 0; q < 3; q++) { const [px, py] = pt(time * 1.3 + q * (Math.PI * 2 / 3)); ctx.globalAlpha = .9 * running; ctx.fillRect(px - 3, py - 3, 6, 6); }
-        // A deploy dropping from the loop into the top of the stack.
-        const d = (time % 1.6) / 1.6, [ax, ay] = iso(0, 0, LOOP.z), [bx, by] = iso(0, 0, FRAME.z1 - .1);
-        ctx.strokeStyle = colors.line; ctx.globalAlpha = .55 * running; ctx.setLineDash([2, 4]); ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.setLineDash([]);
-        ctx.globalAlpha = .9 * running * Math.sin(Math.PI * d); ctx.fillRect(ax - 2.5, ay + (by - ay) * ease(d) - 2.5, 5, 5);
-      }
+    // The stream: once it's all in place, work runs down the middle from requirements to deploy, and the CI/CD stage's rim keeps circling.
+    const run = ease(span(c, .74, .84));
+    if (run > 0) {
+      const [ax, ay] = iso(0, 0, zOf(0) + .55), [bx, by] = iso(0, 0, zOf(FLOW.length - 1) - .12);
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .5 * run; ctx.setLineDash([2, 4]); ctx.lineWidth = .9;
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = colors.accent;
+      for (let q = 0; q < 3; q++) { const u = (time * .22 + q / 3) % 1; ctx.globalAlpha = .9 * run * Math.sin(Math.PI * u); ctx.fillRect(ax - 3, ay + (by - ay) * u - 3, 6, 6); }
+      const ci = FLOW.findIndex((L) => L.cicd), h = FLOW[ci].half, zc = zOf(ci) + LAYER;
+      const rim = (u) => { const e = (u % 1) * 4, side = Math.floor(e), f = e - side, P = [[-h, -h], [h, -h], [h, h], [-h, h]], p = P[side], q = P[(side + 1) % 4]; return iso(p[0] + (q[0] - p[0]) * f + FLOW[ci].dx, p[1] + (q[1] - p[1]) * f + FLOW[ci].dx, zc); };
+      for (let q = 0; q < 2; q++) { const [px, py] = rim(time * .3 + q / 2); ctx.globalAlpha = .9 * run; ctx.fillRect(px - 2.5, py - 2.5, 5, 5); }
     }
-
-    // Requirements drop in from above, through the loop: small amber cards, one after another, once it's all running.
-    const asks = ease(span(c, .84, .94));
+    // Requirements pour in from above, onto the first stage.
+    const asks = ease(span(c, .8, .9));
     if (asks > 0) {
       for (let q = 0; q < 3; q++) {
-        const u = ((time * .32 + q / 3) % 1), z = LOOP.z + .95 * (1 - ease(u)), x = (q - 1) * .25;
-        const [px, py] = iso(x, -x, z);
+        const u = ((time * .3 + q / 3) % 1), x = (q - 1) * .45, [px, py] = iso(x, -x, zOf(0) + LAYER + .9 * (1 - ease(u)));
         ctx.strokeStyle = colors.accent; ctx.globalAlpha = asks * Math.sin(Math.PI * u) * .9; ctx.lineWidth = 1;
         ctx.strokeRect(px - 6, py - 4, 12, 8); ctx.beginPath(); ctx.moveTo(px - 3, py - 1); ctx.lineTo(px + 3, py - 1); ctx.moveTo(px - 3, py + 1.5); ctx.lineTo(px + 1, py + 1.5); ctx.stroke();
       }
-      const [rx, ry] = iso(0, 0, LOOP.z + .95); // left of where the cards fall
-      label('REQUIREMENTS', rx - .6 * s, ry + 4, colors.accent, .85 * asks, 'right');
     }
   }
 
