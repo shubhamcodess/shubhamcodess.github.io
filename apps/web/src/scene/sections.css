@@ -140,6 +140,7 @@
   .story-text { padding: calc(12px * var(--k)) 12px calc(10px * var(--k)); }
   .story-label { margin-bottom: calc(2px * var(--k)); font-size: calc(14px * var(--k)); }
   .story-title { font-size: calc(27px * var(--k)); }
+  .story-wire { translate: calc(1px + var(--drift, 0) * 2px) 1px; } /* The shadow's reach shrinks with the type. */
   .story-role { margin-top: calc(7px * var(--k)); }
   .story-line { margin-top: calc(6px * var(--k)); font-size: calc(14px * var(--k)); line-height: 1.34; }
   .story-log { margin-top: calc(8px * var(--k)); }
