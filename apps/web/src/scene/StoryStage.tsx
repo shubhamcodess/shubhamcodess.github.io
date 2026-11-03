@@ -6,6 +6,7 @@ import { currentScene, figureInView, figurePresence, frameLook, lineProgress, pa
 type StoryDrawing = { mount(canvas: HTMLCanvasElement, options: { chapter: number; count: number; story: () => { progress: number; live: boolean; from: (number | null)[] } }): () => void };
 
 const pad = (n: number) => String(n).padStart(2, "0");
+const FIT_STEPS = [1, 0.96, 0.92, 0.88]; // How far a stacked card's type and spacing may tighten. Below this the words get too small to read.
 const MIN_WINDOW = 150; // The least of a card worth showing at once. Below this the story stays a plain stack.
 
 /* Turns the story into a film: the stage pins to the screen and the scroll plays it, one scene at a time, and the stops on the line jump between scenes.
@@ -42,7 +43,7 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
     const clear = () => {
       on = false; lastHere = -1; clock.current.live = false;
       headRoom = 0; spare = []; clock.current.from = [];
-      delete story.dataset.cine; delete story.dataset.pan; delete story.dataset.holdStart; delete story.dataset.holdLength;
+      delete story.dataset.cine; delete story.dataset.pan; delete story.dataset.slide; delete story.dataset.holdStart; delete story.dataset.holdLength;
       for (const name of ["--story-drawn", "--now", "--hint", "--stage-top", "--window-h", "height"]) story.style.removeProperty(name);
       for (const el of [...scenes, frame, track, head]) el?.removeAttribute("style");
       for (const mark of marks) { delete mark.dataset.state; mark.removeAttribute("aria-current"); }
@@ -101,16 +102,21 @@ export function StoryStage({ count, pace, id, titles, children }: { count: numbe
       if (h + hintH <= room - 12) pinTop = header + (room - h - hintH) / 2;
       else {
         if (!stacked.matches) { clear(); return; }
-        const natural = Math.max(...scenes.map((scene) => scene.offsetHeight));
         const below = track.getBoundingClientRect().bottom - win.getBoundingClientRect().bottom + hintH;
         const chrome = win.getBoundingClientRect().top - frame.getBoundingClientRect().top + below;
         const gap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--content-fade")) || 8; // Clear of the page's fade under the header.
         const avail = room - gap - 8 - chrome;
         if (avail < MIN_WINDOW) { clear(); return; }
-        story.dataset.pan = "";
-        const shown = Math.min(avail, natural);
+        story.dataset.pan = ""; // From here each card is its own height, so it can be measured alone.
+        // Tighten each card a step at a time until it fits, so a long one doesn't shrink the rest, and a card only slides on a screen too small for that.
+        for (const scene of scenes) for (const k of FIT_STEPS) {
+          scene.style.setProperty("--story-k", String(k));
+          if (scene.offsetHeight <= avail) break;
+        }
+        const shown = Math.min(avail, Math.max(...scenes.map((scene) => scene.offsetHeight)));
         story.style.setProperty("--window-h", `${Math.round(shown)}px`);
         spare = scenes.map((scene) => Math.max(0, scene.offsetHeight - shown));
+        story.dataset.slide = String(Math.max(...spare)); // For the responsive gate.
         // A figure below the fold starts its drawing when it slides into view, not before.
         clock.current.from = scenes.map((scene, i) => {
           const fig = scene.querySelector<HTMLElement>(".story-fig");

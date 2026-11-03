@@ -21,9 +21,11 @@ export const StoryFigures = (() => {
   const MOVE = { build: [0, .12], deploy: [.12, .5], ready: [.52, .6], cut: [.66, .84], retire: [.86, 1] };
 
   function chapterOne(g) {
-    const { ctx, s, X0, colors, intro, c, time, pen, label } = g;
+    const { ctx, w: W, h: H, colors, intro, c, time, pen, label } = g;
+    // Narrow, the Helm chart's labels and the gate names take a fixed height on top of the drawing's own, so the scale leaves room for both.
+    const narrow = W < NARROW, s = narrow ? Math.min(g.s, (H - 92) / 2.1) : g.s, X0 = narrow ? W / 2 - 2 * STEP * COS * s : g.X0;
     // The pipeline sits high enough to clear the platforms' names with the Helm chart's two lines between. On a narrow plate that takes more than the drawing's own proportion, so the block drops by half the difference to stay centred.
-    const rise = Math.max(2.2 * s, (SLAB.w + SLAB.d) / 2 * SIN * s + 63), Y0 = g.Y0 + (rise - 2.2 * s) / 2;
+    const rise = Math.max(2.2 * s, (SLAB.w + SLAB.d) / 2 * SIN * s + 63), Y0 = narrow ? (H - (rise + 21 + 1.3 * s)) / 2 + 21 + rise : g.Y0 + (rise - 2.2 * s) / 2;
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const at = (k) => [k * STEP, -k * STEP]; // A platform's centre: the row runs across the screen.
     const reveal = (a) => span(intro, a, a + .35);
@@ -256,7 +258,7 @@ export const StoryFigures = (() => {
 
   function chapterThree(g) {
     const { ctx, w: W, h: H, colors, intro, c, time, pen, label } = g;
-    const narrow = W < NARROW, s = Math.min(W / 10.4, H / 4.6), X0 = W / 2 - .8 * s + (narrow ? 12 : 0), Y0 = H / 2 + .1 * s - 8;
+    const narrow = W < NARROW, s = Math.min(W / 10.4, narrow ? (H - 70) / 4.4 : H / 4.6), X0 = W / 2 - .8 * s + (narrow ? 12 : 0), Y0 = H / 2 + .1 * s - (narrow ? 11 : 8); // Narrow: leaves room for the fixed-height labels above and the dimension line below.
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const reveal = (a) => span(intro, a, a + .35);
     const box = boxTool(ctx, iso, pen);
@@ -349,11 +351,14 @@ export const StoryFigures = (() => {
   const P4 = { w: .95, d: .65, t: .14, step: 1.95 };
   const T4 = { row1: [.04, .16], docs: [.12, .2], drop1: [.2, .25], code: [.25, .36], ai: [.36, .46], auto: [.46, .56], drop2: [.56, .6], row3: [.6, .68], gates: [.66, .74], out: [.72, .78], flow: [.78, .86] };
 
+  const LABELS4 = 166; // Chapter 4's fixed label height when narrow: the top row's clearance, the name rows, and the CI/CD line under the frame.
+
   function chapterFour(g) {
     const { ctx, w: W, h: H, colors, c, time, pen, label } = g;
-    const s = Math.min(W / 10.4, H / 5.8), X0 = W / 2 - 2 * P4.step * COS * s;
+    // Narrow, its rows take a fixed height of labels on top of the drawing's own, so the scale has to leave room for both or the last row gets cut.
+    const narrow = W < NARROW, s = Math.min(W / 10.4, H / 5.8, narrow ? (H - LABELS4) / 2.35 : Infinity), X0 = W / 2 - 2 * P4.step * COS * s;
     // The top row's two lines of labels and the platforms' three lines of names need this much between them. As in chapter one, a narrow plate takes more than the proportion.
-    const rise = Math.max(2.45 * s, (P4.w + P4.d) * SIN * s + 92), Y0 = H / 2 + .25 * s + (rise - 2.45 * s) / 2;
+    const rise = Math.max(2.45 * s, (P4.w + P4.d) * SIN * s + (narrow ? 66 : 92)), Y0 = narrow ? (H - (rise + 30 + 1.55 * s + 62)) / 2 + 32 + rise : H / 2 + .25 * s + (rise - 2.45 * s) / 2;
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const box = boxTool(ctx, iso, pen);
     const ph = (r) => ease(span(c, r[0], r[1]));
@@ -410,7 +415,7 @@ export const StoryFigures = (() => {
       ctx.strokeStyle = colors.line; ctx.globalAlpha = .7 * rv; ctx.setLineDash([3, 4]);
       ctx.beginPath(); ctx.moveTo(xRev, y1 - 10); ctx.quadraticCurveTo((xRev + dLL) / 2, y1 - 44, dLL + 11, y1 - 13); ctx.stroke(); ctx.setLineDash([]);
       ctx.globalAlpha = .8 * rv; ctx.beginPath(); ctx.moveTo(dLL + 17, y1 - 19); ctx.lineTo(dLL + 11, y1 - 13); ctx.lineTo(dLL + 19, y1 - 12); ctx.stroke();
-      label('REVIEW', xRev, y1 + 24, colors.ink, .95 * rv); label('FEEDBACK LOOP', xRev, y1 + 37, colors.ink2, .85 * rv);
+      if (narrow) label('REVIEW · FEEDBACK LOOP', xRev, y1 + 24, colors.ink, .95 * rv); else { label('REVIEW', xRev, y1 + 24, colors.ink, .95 * rv); label('FEEDBACK LOOP', xRev, y1 + 37, colors.ink2, .85 * rv); } // Narrow, one line, for the height.
     }
     // Drop into the code platform, at the right.
     const dr1 = ph(T4.drop1), top2 = right2;
@@ -422,7 +427,7 @@ export const StoryFigures = (() => {
       slab(2, code, true);
       const [x, y] = at(2); // the stack: three layers set down one on another, each its own size and tone
       [[.62, .44, .07], [.54, .38, .12], [.46, .32, .17]].forEach(([hw, hd, tone], q) => { const z = q * .17 + .3 * (1 - ease(span(code, q * .25, q * .25 + .5))); box(x - hw, y - hd, z, hw * 2, hd * 2, .12, 3200 + q, .9 * ease(span(code, q * .25, q * .25 + .5)), colors.ink, tone); });
-      names(2, [['CODE', colors.ink], ['NEXT.JS · ANGULAR', colors.ink2], ['JAVA · SPRING BOOT', colors.ink2]], code);
+      names(2, narrow ? [['CODE · NEXT.JS · ANGULAR', colors.ink2], ['JAVA · SPRING BOOT', colors.ink2]] : [['CODE', colors.ink], ['NEXT.JS · ANGULAR', colors.ink2], ['JAVA · SPRING BOOT', colors.ink2]], code);
     }
     if (ai > 0) {
       slab(1, ai, false);

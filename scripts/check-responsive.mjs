@@ -65,6 +65,31 @@ for (const [width, height] of WIDTHS) {
   }
   await page.close();
 }
+// Common phones, with the browser's bars taking their share: a card must fit its sheet without sliding, and no figure may run past its panel. Sizes the widths above don't cover.
+for (const [width, height, slides] of [[412, 790, false], [393, 852, false], [360, 640, true], [320, 568, true]]) {
+  const page = await browser.newPage({ viewport: { width, height }, hasTouch: true, isMobile: true });
+  await page.goto(`${base}/`, { waitUntil: "networkidle" });
+  const story = await page.evaluate(() => { const s = document.querySelector(".story"); return s ? { start: Number(s.dataset.holdStart), length: Number(s.dataset.holdLength), slide: Number(s.dataset.slide ?? 0) } : null; });
+  const problems = [];
+  if (!story) problems.push("no story");
+  else {
+    if (!slides && story.slide > 0) problems.push(`a card slides by ${story.slide}px`);
+    for (let i = 0; i < 4; i++) {
+      await page.evaluate(({ top }) => { document.getElementById("page").scrollTop = top; }, { top: story.start + story.length * (i === 3 ? 1 : (i + 0.79) / 4) });
+      await page.waitForTimeout(1500); // Long enough for the drawing to finish coming in.
+      const cut = await page.evaluate((n) => {
+        const canvas = document.querySelector(`canvas[data-chapter="${n}"]`);
+        if (!canvas) return null;
+        const row = (y) => canvas.getContext("2d").getImageData(0, y, canvas.width, 1).data.some((v, q) => q % 4 === 3 && v > 8);
+        return row(0) || row(canvas.height - 1);
+      }, i);
+      if (cut) problems.push(`chapter ${i + 1}'s figure runs past its panel`);
+    }
+  }
+  if (problems.length) failures.push(`${width}x${height} story: ${problems.join("; ")}`);
+  console.log(`${problems.length ? "FAIL" : "ok  "} ${String(width).padStart(4)}x${height}  story fits`);
+  await page.close();
+}
 // A font that fails to load must not stop the city. This once left phones with a plain background.
 {
   const page = await browser.newPage({ viewport: { width: 375, height: 812 } });

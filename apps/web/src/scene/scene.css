@@ -1,5 +1,6 @@
 /* How the header, the Gotham scene and the page meet. Options come from `scene` in content/site.ts. */
 :root { --header-h: 68px; --content-fade: 44px; --scroll-thumb-top: 68px; }
+@media (max-width: 860px) { :root { --content-fade: 18px; } } /* A phone can't spare the height. */
 [data-content-fade="short"] { --content-fade: 22px; }
 [data-content-fade="long"] { --content-fade: 86px; }
 
