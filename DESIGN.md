@@ -228,7 +228,7 @@ Prototype: `prototypes/06-project-card`, with its detail page at `projects/every
 - **Keyboard focus:** dashed amber line around the frame.
 - **Over the cave:** `face: "frost"` (62% base tint, 4px blur) is still available, for when words sit over something busy.
 - **Layouts:** `vertical` for the grid, `horizontal` side by side, and `wide` for a card spanning columns: the drawing across the top and the words under it, with the links on the last line, level with the card beside it. A card under 620px always stacks. In a stacked card the plate takes any height the row leaves over.
-- **mcp-token-optimizer's drawing:** `drawings/token-flow.js`. A server stripped to its lines with rotating server names under it, a sketched cube for mto, line tokens running through it with a to-scale measure below, and only a rotating hand-drawn mark for the agent. Prototypes 26 to 28 are other ways this was tried.
+- **mcp-token-optimizer's drawing:** `drawings/token-flow.js`. A rack of four units with a rotating logo and name under it, a sketched cube for mto, line tokens running through it with a to-scale measure below, and a plain 2D square on the wire's end with a rotating hand-drawn mark inside for the agent. Not everything needs 3D: a flat enclosure is fine where it connects better. Prototypes 26 to 28 are other ways this was tried.
 - **Featured rank:** mcp-token-optimizer is the wide hero, because its drawing is wide; EverythingTech sits beside it stacked, because its newspaper is portrait.
 - **To the detail page:** the stage grows into the page header using a view transition.
 

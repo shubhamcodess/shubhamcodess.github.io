@@ -13,6 +13,9 @@ export const TokenFlow = (() => {
   const spokes = (cx, cy, a, b, n, start = -90) => Array.from({ length: n }, (_, i) => { const t = ((start + (360 * i) / n) * Math.PI) / 180; return [[cx + Math.cos(t) * a, cy + Math.sin(t) * a], [cx + Math.cos(t) * b, cy + Math.sin(t) * b]]; });
   /* Hand-sketched references to each agent's mark, in a 24px square. */
   const MARKS = {
+    github: [[[16, 22], [16, 18], [15.1, 15.5], [18.5, 14.8], [21.3, 12], [21.5, 8.5], [20, 4.8], [19.9, 1.4], [16, 2.6], [12.5, 2.1], [9, 2.6], [5.1, 1.4], [5, 4.8], [3.5, 8.5], [3.7, 12], [6.5, 14.8], [9.9, 15.5], [9, 18], [9, 22]], [[9, 19], [5.5, 19.8], [3.8, 17.5], [2, 16]]],
+    kubernetes: [ring(12, 12, 10.6, 7), arc(12, 12, 3), ...spokes(12, 12, 3, 7.6, 7)],
+    filesystem: [[[2.4, 6], [9, 6], [11, 8.4], [21.6, 8.4], [21.6, 19.4], [2.4, 19.4], [2.4, 6]]],
     claudeCode: [[[3, 4.5], [21, 4.5], [21, 10.5], [23.6, 10.5], [23.6, 13.5], [21, 13.5], [21, 16.5], [19.5, 16.5], [19.5, 19.5], [18, 19.5], [18, 16.5], [16.5, 16.5], [16.5, 19.5], [15, 19.5], [15, 16.5], [9, 16.5], [9, 19.5], [7.5, 19.5], [7.5, 16.5], [6, 16.5], [6, 19.5], [4.5, 19.5], [4.5, 16.5], [3, 16.5], [3, 13.5], [.4, 13.5], [.4, 10.5], [3, 10.5], [3, 4.5]], [[6, 7.5], [7.5, 7.5], [7.5, 10.5], [6, 10.5], [6, 7.5]], [[16.5, 7.5], [18, 7.5], [18, 10.5], [16.5, 10.5], [16.5, 7.5]]],
     claudeDesktop: spokes(12, 12, 1.6, 10.8, 12, -82).map(([a, b], i) => [a, [12 + (b[0] - 12) * (i % 2 ? .78 : 1), 12 + (b[1] - 12) * (i % 2 ? .78 : 1)]]),
     copilot: [arc(8, 8.2, 4.2, 3.8), arc(16, 8.2, 4.2, 3.8), [[12, 8], [12, 11]], [[3.8, 9.2], [2.2, 12], [2, 16.2], [6, 19.6], [12, 21], [18, 19.6], [22, 16.2], [21.8, 12], [20.2, 9.2]], [[9, 14], [9, 17]], [[15, 14], [15, 17]]],
@@ -23,9 +26,10 @@ export const TokenFlow = (() => {
   };
   const AGENTS = ['claudeCode', 'claudeDesktop', 'copilot', 'cursor', 'windsurf', 'gemini', 'cline'];
   const SERVERS = ['github', 'kubernetes', 'filesystem']; // The servers on the project's own site.
+  const SERVER_TURNS = 9; // Names shown in a loop, so they change about every three seconds and still close on themselves.
 
-  // A server, a cube and an agent on one wire. Everything is measured from these.
-  const SERVER = { x: -2.25, w: .3, d: .28, h: 1.02, units: 4 }, MTO = { x: 0, w: .46, d: .44, h: .9 }, AGENT = { x: 2.25, w: .42 };
+  // A server, a cube and an agent's square on one wire. Everything is measured from these.
+  const SERVER = { x: -2.25, w: .3 }, MTO = { x: 0, w: .46, d: .44, h: .9 }, AGENT = { x: 2.25, w: .42 };
   const LANE = SERVER.x + SERVER.w, GATE = MTO.x - MTO.w, OUT = MTO.x + MTO.w, END = AGENT.x - AGENT.w, RAIL = .27;
   const RATIO = 13244 / 37355;
 
@@ -112,13 +116,34 @@ export const TokenFlow = (() => {
       seg([b, y - .08, 0], [b, y + .08, 0], seed + 2, .9, colors.line, alpha * (alpha > .98 ? 1 : 0));
     }
 
-    // The server stripped down to its lines: an outline and its units.
-    function rack({ x, w: bw, d, h: bh, units }, seed) {
-      const l = x - bw, r = x + bw;
-      face([[r, -d, 0], [r, d, 0], [r, d, bh], [r, -d, bh]], seed + 10);
-      face([[l, d, 0], [r, d, 0], [r, d, bh], [l, d, bh]], seed + 20);
-      face([[l, -d, bh], [r, -d, bh], [r, d, bh], [l, d, bh]], seed + 30);
-      for (let i = 1; i < units; i++) { const z = bh * i / units; seg([l, d, z], [r, d, z], seed + 40 + i, .8, colors.line, .8); seg([r, d, z], [r, -d, z], seed + 50 + i, .7, colors.line, .55); }
+    // A straight pen line on the page rather than in the scene.
+    function flat(a, b, seed, width, color, alpha) {
+      const n = Math.max(2, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / 22));
+      pen(Array.from({ length: n + 1 }, (_, i) => [a[0] + (b[0] - a[0]) * i / n, a[1] + (b[1] - a[1]) * i / n]), seed, width, color, alpha);
+    }
+    function surface(pts, seed, tint) {
+      ctx.beginPath(); pts.forEach(([x, y], i) => ctx[i ? 'lineTo' : 'moveTo'](x, y)); ctx.closePath();
+      ctx.globalCompositeOperation = 'destination-out'; ctx.fillStyle = '#000'; ctx.fill();
+      ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = tint; ctx.fillStyle = colors.ink; ctx.fill(); ctx.globalAlpha = 1;
+      pts.forEach((p, i) => { const n = pts[(i + 1) % pts.length]; flat(p, n, seed + i, 1, colors.ink, .78); flat(p, n, seed + i + 40, .5, colors.line, .3); });
+    }
+    // The server: a rack of four units, each with vents and a light. It's drawn on the page, with its side where the wire leaves.
+    function rack(cx, cy, size, seed, t) {
+      const C = Math.cos(Math.PI / 6), S = .5, a = .34 * size, d = .78 * size, H = 1.34 * size, O = [cx + (d - a) * C / 2, cy + H / 2 + (a + d) * S / 2];
+      const u = [a * C, -a * S], v = [-d * C, -d * S], add = (p, q, k = 1) => [p[0] + q[0] * k, p[1] + q[1] * k], up = (p, k = 1) => [p[0], p[1] - H * k];
+      for (const [p, q] of [[O, add(O, u)], [O, add(O, v)]]) flat([p[0] + 7, p[1] + 4], [q[0] + 7, q[1] + 4], seed + 60 + q[0], .6, colors.rest, .55);
+      surface([add(O, v), O, up(O), up(add(O, v))], seed, .07);
+      surface([O, add(O, u), up(add(O, u)), up(O)], seed + 10, .1);
+      surface([up(O), up(add(O, u)), up(add(add(O, u), v)), up(add(O, v))], seed + 20, .05);
+      const units = 4;
+      for (let i = 0; i < units; i++) {
+        const k0 = (i + .12) / units, k1 = (i + .88) / units, L = (m, q) => up(add(O, v, m), q);
+        for (const [p, q, n] of [[L(.08, k1), L(.92, k1), 30], [L(.08, k0), L(.92, k0), 34], [L(.08, k0), L(.08, k1), 38], [L(.92, k0), L(.92, k1), 42]]) flat(p, q, seed + n + i, .7, colors.line, .6);
+        for (let q = 0; q < 3; q++) flat(L(.42 + q * .13, k0 + .22 / units), L(.42 + q * .13, k1 - .22 / units), seed + 46 + q, .6, colors.rest, .6);
+        const on = Math.sin(t * 2.4 + i * 2.1) > -.1, [lx, ly] = L(.2, (k0 + k1) / 2);
+        ctx.globalAlpha = on ? .95 : .3; ctx.fillStyle = on ? colors.accent : colors.line; ctx.fillRect(lx - 1.5, ly - 1.5, 3, 3); ctx.globalAlpha = 1;
+      }
+      return { top: up(add(add(O, u), v))[1], bottom: O[1], left: O[0] + v[0] };
     }
     // mto's cube, sketched: its edges run a little past each corner, and the top is hatched.
     function cube({ x, w: bw, d, h: bh }, seed) {
@@ -167,23 +192,30 @@ export const TokenFlow = (() => {
         }
       }
 
-      rack(SERVER, 400); cube(MTO, 600);
+      cube(MTO, 600);
 
-      // Under the server, its name turning: only the one in the slot is sharp.
-      const serverAt = at(SERVER.x, SERVER.d + .2, 0), serverTurn = (clock / PERIOD) * SERVERS.length, serverIndex = Math.floor(serverTurn) % SERVERS.length, serverSlide = ease(span(serverTurn % 1, .9, 1));
-      ctx.font = `500 ${size}px ${font}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = colors.ink;
+      // The server stands where the wire starts, with its side on the wire, and its logo and name turn underneath.
+      const wireStart = at(LANE, 0, 0), rackSize = scale * .82, rackBox = rack(wireStart[0] - rackSize * .46, wireStart[1] - rackSize * .45, rackSize, 400, clock); // Stands above the wire, clear of the measure under it.
+      const serverTurn = (clock / PERIOD) * SERVER_TURNS, serverIndex = Math.floor(serverTurn), serverSlide = ease(span(serverTurn % 1, .84, 1));
+      const nameY = rackBox.bottom + size + 7, nameX = rackBox.left + rackSize * .1;
       for (const q of [0, 1]) {
-        ctx.globalAlpha = q ? serverSlide : 1 - serverSlide;
-        ctx.fillText(SERVERS[(serverIndex + q) % SERVERS.length], serverAt[0], serverAt[1] + (q - serverSlide) * size * 1.5);
+        const name = SERVERS[(serverIndex + q) % SERVERS.length], alpha = q ? serverSlide : 1 - serverSlide, y = nameY + (q - serverSlide) * size * 1.4;
+        mark(name, nameX + size * .8, y, size * 1.5, alpha, 660 + q * 20);
+        ctx.font = `500 ${size}px ${font}`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = colors.ink; ctx.globalAlpha = alpha;
+        ctx.fillText(name, nameX + size * 2.1, y); ctx.globalAlpha = 1;
       }
-      ctx.globalAlpha = 1;
 
-      // The agent: just its mark, turning to the next, with the ones either side fading away.
-      const [agentX, agentY] = at(AGENT.x, 0, .42), markSize = Math.max(30, Math.min(58, scale * .78)), agentTurn = (clock / PERIOD) * AGENTS.length, agentIndex = Math.floor(agentTurn) % AGENTS.length, agentSlide = ease(span(agentTurn % 1, .78, 1));
+      // The agent: a plain square on the page, where the wire ends, with its mark turning inside.
+      const wireEnd = at(END, 0, 0), half = at(AGENT.x, 0, 0)[0] - wireEnd[0], agentX = wireEnd[0] + half, agentY = wireEnd[1];
+      const square = [[agentX - half, agentY - half], [agentX + half, agentY - half], [agentX + half, agentY + half], [agentX - half, agentY + half]];
+      surface(square, 500, .04);
+      const markSize = half * 1.15, agentTurn = (clock / PERIOD) * AGENTS.length, agentIndex = Math.floor(agentTurn) % AGENTS.length, agentSlide = ease(span(agentTurn % 1, .78, 1));
+      ctx.save(); ctx.beginPath(); ctx.rect(agentX - half + 1, agentY - half + 1, half * 2 - 2, half * 2 - 2); ctx.clip();
       for (let q = -1; q <= 2; q++) {
         const off = q - agentSlide, near = Math.max(0, 1 - Math.abs(off));
-        mark(AGENTS[(agentIndex + q + AGENTS.length) % AGENTS.length], agentX, agentY + off * markSize * 1.3, markSize * (.72 + .28 * near), (.08 + .92 * near * near) * clamp(1.5 - Math.abs(off)), 500 + q * 40);
+        mark(AGENTS[(agentIndex + q + AGENTS.length) % AGENTS.length], agentX, agentY + off * half * 1.5, markSize * (.72 + .28 * near), (.08 + .92 * near * near) * clamp(1.5 - Math.abs(off)), 520 + q * 40);
       }
+      ctx.restore();
 
       // Noise drops out of the front of mto.
       for (const row of flecks) {
@@ -193,8 +225,9 @@ export const TokenFlow = (() => {
         seg([x - half, y, z], [x + half, y, z + (hash(row.i + 4) - .5) * .12], row.i + 700, 1.1, colors.accent, (1 - e) * .95, [2, 2]);
       }
 
-      text('MCP SERVER', SERVER.x, -SERVER.d, SERVER.h + .16, size, colors.ink2);
-      text('YOUR AGENT', AGENT.x, 0, 1.32, size, colors.ink2);
+      for (const [word, x, y] of [['MCP SERVER', rackBox.left + rackSize * .46, rackBox.top - size * .9], ['YOUR AGENT', agentX, agentY - half - size * 1.1]]) {
+        ctx.font = `500 ${size}px ${font}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = colors.ink2; ctx.fillText(word, x, y);
+      }
       text('MTO', MTO.x, -MTO.d, MTO.h + .16, Math.min(size + 1, 12), colors.ink);
 
       // Each measure sits under its line, clear of the blocks.
@@ -210,7 +243,7 @@ export const TokenFlow = (() => {
     function frame(now) {
       raf = 0;
       if (!visible || document.hidden) return;
-      const dt = Math.min(.05, (now - last) / 1000 || 0); last = now;
+      const dt = Math.max(0, Math.min(.05, (now - last) / 1000 || 0)); last = now; // The first frame's stamp can come before `last`, which would run the clock backwards.
       const k = 1 - Math.exp(-dt * 3.2);
       yawS += (yawT - yawS) * k; tiltS += (tiltT - tiltS) * k;
       if (!reduced && (plays === 'always' || hovered)) time = (time + dt) % PERIOD;
