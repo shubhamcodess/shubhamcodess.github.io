@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@portfolio/design": "workspace:*",
+    "@portfolio/stats": "workspace:*",
     "gray-matter": "^4.0.3",
     "marked": "latest",
     "zod": "^4.6.7"

@@ -1,12 +1,19 @@
 import { PALETTE_IDS } from "@portfolio/design/palettes";
 import { BUTTON_OPTIONS } from "@portfolio/design/button-options";
 import { z } from "zod";
+import { COUNT_METRICS, GITHUB_METRICS, NPM_METRICS, NPM_PATTERN, REPO_PATTERN } from "@portfolio/stats/metrics";
 import { LOGO_OPTIONS } from "./logo-options";
 import { SCENE_OPTIONS } from "./scene-options";
 
 export { LOGO_OPTIONS, SCENE_OPTIONS };
 
 const url = z.url({ protocol: /^https?$/ });
+
+/** Live numbers on a link: which repo or package, and which of its numbers, in the order shown. See `@portfolio/stats`. */
+const linkStats = z.union([
+  z.strictObject({ npm: z.string().regex(NPM_PATTERN), show: z.array(z.enum(NPM_METRICS)).min(1).max(NPM_METRICS.length) }),
+  z.strictObject({ github: z.string().regex(REPO_PATTERN), show: z.array(z.enum(GITHUB_METRICS)).min(1).max(GITHUB_METRICS.length) }),
+]).refine((s) => new Set(s.show).size === s.show.length, { message: "A number can only be shown once", path: ["show"] });
 
 export const LOG_VERBS = ["owned", "migrated", "built", "replaced", "made", "shipped", "led", "designed", "reworked", "turned"] as const;
 export const TOOLS = ["java", "spring", "angular", "react", "typescript", "openshift", "gke", "kubernetes", "github-actions", "azure-ad", "oracle", "rabbitmq", "mcp"] as const;
@@ -42,6 +49,19 @@ export const siteSchema = z
     buttonMotion: z.strictObject({
       iconHover: z.enum(BUTTON_OPTIONS.iconHover),
       textHover: z.enum(BUTTON_OPTIONS.textHover),
+    }),
+    /** Live GitHub and npm numbers, wherever a link asks for them (a link's `stats` in its project file). Fetched in the visitor's browser. */
+    stats: z.strictObject({
+      /** How long fetched numbers are kept before fetching again. */
+      ttlMinutes: z.number().int().min(1).max(24 * 60),
+      /** Keep them across reloads, in the visitor's browser storage. */
+      persist: z.boolean(),
+      /** The least each count must be to show. Below it, the number is left off and the link stays plain. */
+      min: z.strictObject(Object.fromEntries(COUNT_METRICS.map((m) => [m, z.number().int().min(0)])) as Record<(typeof COUNT_METRICS)[number], z.ZodNumber>),
+      /** Show monthly downloads even when they equal weekly (a package under a month old). */
+      monthlyWhenSameAsWeekly: z.boolean(),
+      /** The small dotted ring after the links that clears the cache and fetches fresh. */
+      refresh: z.boolean(),
     }),
     /** The header logo: a blueprint plate with SP on it and a batarang thrown into the P. See `SiteLogo`. */
     logo: z.strictObject({
@@ -119,6 +139,8 @@ export const siteSchema = z
   })
   .strict();
 export type SiteConfig = z.input<typeof siteSchema>;
+/** The live numbers' settings, after parsing. */
+export type StatsSettings = z.output<typeof siteSchema>["stats"];
 /** The logo's settings, after parsing. */
 export type LogoSettings = z.output<typeof siteSchema>["logo"];
 
@@ -142,7 +164,7 @@ export const projectSchema = z
     order: z.number().int().nonnegative(),
     private: z.boolean(),
     mount: z.enum(["path", "subdomain"]).default("path"),
-    links: z.array(z.strictObject({ label: z.string().min(1), href: url, kind: z.enum(["site", "code", "feed", "package"]) })).max(3),
+    links: z.array(z.strictObject({ label: z.string().min(1), href: url, kind: z.enum(["site", "code", "feed", "package"]), stats: linkStats.optional() })).max(3),
   })
   .refine((p) => !p.private || p.links.length === 0, { message: "Private projects have no links", path: ["links"] });
 /** The short version, for cards. Everything in it comes from the file's frontmatter. */

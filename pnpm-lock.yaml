@@ -175,6 +175,9 @@ importers:
       '@portfolio/site':
         specifier: workspace:*
         version: link:content
+      '@portfolio/stats':
+        specifier: workspace:*
+        version: link:packages/stats
       '@types/node':
         specifier: ^26.6.6
         version: 26.6.6
@@ -214,6 +217,9 @@ importers:
       '@portfolio/site':
         specifier: workspace:*
         version: link:../../content
+      '@portfolio/stats':
+        specifier: workspace:*
+        version: link:../../packages/stats
       motion:
         specifier: ^14.9.0
         version: 14.9.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -245,6 +251,9 @@ importers:
       '@portfolio/design':
         specifier: workspace:*
         version: link:../design
+      '@portfolio/stats':
+        specifier: workspace:*
+        version: link:../stats
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -267,6 +276,8 @@ importers:
       react:
         specifier: ^19
         version: 19.3.1
+
+  packages/stats: {}
 
 packages:
 
