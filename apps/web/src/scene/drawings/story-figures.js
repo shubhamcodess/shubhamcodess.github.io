@@ -340,168 +340,131 @@ export const StoryFigures = (() => {
     }
   }
 
-  /* ---------- Chapter 4: requirement to production, one stream ---------- */
-  // The finale is one stream rising across the card, bottom-left to top-right, over a dotted rail of engineering principles. Requirements fly in through a ring portal; design is drawn; the code snaps together as a stack of Lego-like bricks, AI on top; an AI review marks the code; CI/CD runs its loop; it lands in the cloud on GKE; and shipped work leaves through a second portal.
-  // Every piece is its own shape, and every name is a callout set out in the open canvas, never stacked in one column.
-  const D4 = 1.6, N4 = 6; // distance between stations along the stream, and the last station's index
-  const BRICKS = [ // studs across x, studs along y, offset across, offset along
-    { name: 'DATA · SCHEMA', nx: 4, ny: 3, ox: 0, oy: 0 },
-    { name: 'RABBITMQ', nx: 2, ny: 3, ox: .2, oy: .05 },
-    { name: 'JAVA · SPRING BOOT', nx: 4, ny: 2, ox: -.06, oy: -.06 },
-    { name: 'NEXT.JS · ANGULAR', nx: 3, ny: 2, ox: .1, oy: .08 },
-    { name: 'AI AGENTS · MCP', nx: 2, ny: 2, ox: -.02, oy: -.02, ai: true },
-  ];
-  const PITCH = .3, BH = .2, STUD = { r: .07, h: .055 };
-  const T4 = { rail: [.02, .1], portIn: [.05, .13], design: [.12, .2], brick: (k) => [.2 + k * .05, .27 + k * .05], review: [.46, .53], cicd: [.53, .6], prod: [.6, .67], portOut: [.65, .72], stream: [.7, .78] };
+  /* ---------- Chapter 4: requirement to production, a three-row funnel ---------- */
+  // Laid out as cleanly as the first chapter, and read like a snake down the card. Top row, left to right: requirements come in through a thin portal and become design docs, HLD and LLD. Middle row, right to left, three platforms: the code, the AI agents, the AI review and automation. Bottom row, left to right: CI/CD gates, production on GKE, and out through a second portal.
+  const P4 = { w: .95, d: .65, t: .14, step: 1.95 };
+  const T4 = { row1: [.04, .16], docs: [.12, .2], drop1: [.2, .25], code: [.25, .36], ai: [.36, .46], auto: [.46, .56], drop2: [.56, .6], row3: [.6, .68], gates: [.66, .74], out: [.72, .78], flow: [.78, .86] };
 
   function chapterFour(g) {
-    const { ctx, w: W, h: H, colors, intro, c, time, pen, label } = g;
-    const run = N4 * D4, s = Math.min(W / (run * COS + 3.4), H / (run * SIN + 3.6));
-    const X0 = W / 2 - (run * COS * s) / 2 + .1 * s, Y0 = H / 2 + (run * SIN * s) / 2 + .35 * s;
+    const { ctx, w: W, h: H, colors, c, time, pen, label } = g;
+    const s = Math.min(W / 10.4, H / 5.8), X0 = W / 2 - 2 * P4.step * COS * s, Y0 = H / 2 + .25 * s;
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const box = boxTool(ctx, iso, pen);
-    const at = (k) => -k * D4;
     const ph = (r) => ease(span(c, r[0], r[1]));
-    const shown = (a) => span(intro, a, a + .35);
-    // A callout: a dot on the thing, a leader out into open space, then its name. Left of the thing it's right-aligned; right of it, left-aligned.
-    const callout = ([ax, ay], dx, dy, lines, k, alpha, align) => {
-      if (alpha <= 0) return;
-      const ex = ax + dx, ey = ay + dy, side = Math.sign(dx) || 1;
-      ctx.fillStyle = colors.ink; ctx.globalAlpha = .7 * alpha; ctx.beginPath(); ctx.arc(ax, ay, 1.6, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = colors.line; ctx.globalAlpha = .6 * alpha; pen(2100 + k, [ax, ay], [ex - side * 10, ey], alpha, .8); pen(2150 + k, [ex - side * 10, ey], [ex - side * 3, ey], alpha, .8);
-      lines.forEach(([text, color], q) => label(text, ex, ey + q * 13, color, .95 * alpha, align ?? (side < 0 ? 'right' : 'left')));
+    const at = (k) => [k * P4.step, -k * P4.step]; // slab k's centre; 0 is left
+    const cx = (k) => iso(...at(k), 0)[0];
+    const right2 = iso(at(2)[0] + P4.w, at(2)[1] - P4.d, 0); // the code platform's right corner, where the top row drops in
+    const y1 = Y0 - 2.45 * s, y3 = Y0 + 1.55 * s, xL = cx(0) - .55 * s, xR = right2[0];
+    // A thin portal: a narrow upright ellipse, like a ring seen nearly edge-on.
+    const portal = (x, y, alpha) => { if (alpha <= 0) return; ctx.strokeStyle = colors.ink; ctx.globalAlpha = .85 * alpha; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y, 5, 13, 0, 0, Math.PI * 2); ctx.stroke(); };
+    const arrow = (x, y, dir, alpha) => { ctx.globalAlpha = alpha; ctx.beginPath(); ctx.moveTo(x - dir * 6, y - 4); ctx.lineTo(x, y); ctx.lineTo(x - dir * 6, y + 4); ctx.stroke(); };
+    const sheet = (x, y, k, alpha) => { // a design doc: a page with a few lines
+      ctx.strokeStyle = colors.ink; ctx.globalAlpha = .85 * alpha; ctx.lineWidth = 1; ctx.strokeRect(x - 9, y - 12, 18, 24);
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .7 * alpha; for (let q = 0; q < 4; q++) pen(3000 + k * 5 + q, [x - 5, y - 6 + q * 4.5], [x + 5 - (q === 3 ? 4 : 0), y - 6 + q * 4.5], alpha, .7);
     };
-    // An upright ring across the stream: the portal. Its inner edge turns slowly so it reads as open.
-    const portal = (y, z, r, alpha, k) => {
-      if (alpha <= 0) return;
-      const ring = (rad, a0 = 0, a1 = Math.PI * 2, steps = 48) => { ctx.beginPath(); for (let q = 0; q <= steps; q++) { const a = a0 + (a1 - a0) * q / steps, [px, py] = iso(Math.cos(a) * rad, y, z + Math.sin(a) * rad); q ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.stroke(); };
-      ctx.lineWidth = 1.2; ctx.strokeStyle = colors.ink; ctx.globalAlpha = .85 * alpha; ring(r);
-      ctx.lineWidth = .8; ctx.strokeStyle = colors.line; ctx.globalAlpha = .6 * alpha; ring(r * .84);
-      ctx.strokeStyle = colors.accent; ctx.lineWidth = 1.4; ctx.globalAlpha = .75 * alpha; ctx.setLineDash([5, 9]); ctx.lineDashOffset = -time * 14 * (k ? -1 : 1); ring(r * .92); ctx.setLineDash([]); ctx.lineDashOffset = 0;
+    const slab = (k, alpha, live) => {
+      const [x, y] = at(k), { w, d, t } = P4;
+      const top = [[x - w, y - d], [x + w, y - d], [x + w, y + d], [x - w, y + d]].map(([px, py]) => iso(px, py, 0));
+      const low = [[x + w, y - d], [x + w, y + d], [x - w, y + d]].map(([px, py]) => iso(px, py, -t));
+      ctx.strokeStyle = live ? colors.ink : colors.line; ctx.globalAlpha = .85 * alpha;
+      for (let e = 0; e < 4; e++) pen(3100 + k * 10 + e, top[e], top[(e + 1) % 4], alpha, 1.1);
+      pen(3105 + k * 10, top[1], low[0], alpha); pen(3106 + k * 10, top[2], low[1], alpha); pen(3107 + k * 10, top[3], low[2], alpha);
+      pen(3108 + k * 10, low[0], low[1], alpha); pen(3109 + k * 10, low[1], low[2], alpha);
     };
+    const names = (k, lines, alpha) => { const [lx, ly] = iso(at(k)[0] - P4.w, at(k)[1] - P4.d, 0); lines.forEach(([text, color], q) => label(text, lx, ly - 13 - (lines.length - 1 - q) * 13, color, .95 * alpha)); };
 
-    // The rail: only a dotted outline now, the stream's floor, under everything.
-    const rail = ph(T4.rail);
-    if (rail > 0) {
-      const y0 = at(0) + .6, y1 = at(N4) - .6, hw = .72, len = (y0 - y1) * rail;
-      ctx.strokeStyle = colors.line; ctx.globalAlpha = .55; ctx.lineWidth = .9; ctx.setLineDash([1.5, 4]);
-      for (const x of [-hw, hw]) { const [a1, b1] = iso(x, y0, -.15), [a2, b2] = iso(x, y0 - len, -.15); ctx.beginPath(); ctx.moveTo(a1, b1); ctx.lineTo(a2, b2); ctx.stroke(); }
-      ctx.setLineDash([]);
-      const named = ph([.08, .14]), [ax, ay] = iso(hw, at(2.4), -.15);
-      callout([ax, ay], Math.max(30, W - 250 - ax), H - 34 - ay, [['ENGINEERING PRINCIPLES', colors.ink], ['STANDARDS · REVIEWS · ARCHITECTURE', colors.ink2]], 0, named); // set in the bottom-right corner
+    // Top row: the in-portal, the line, and two design docs.
+    const r1 = ph(T4.row1), docs = ph(T4.docs);
+    portal(xL, y1, r1);
+    label('REQUIREMENTS', xL, y1 + 24, colors.ink2, .9 * r1);
+    const dHL = X0 + 1.5 * s, dLL = dHL + 34;
+    if (r1 > 0) { ctx.strokeStyle = colors.line; ctx.globalAlpha = .75; pen(3010, [xL + 8, y1], [xR, y1], r1, 1); arrow(dHL - 16, y1, 1, .75 * r1); }
+    if (docs > 0) {
+      sheet(dHL, y1, 0, docs); sheet(dLL, y1, 1, docs);
+      label('HLD', dHL, y1 + 24, colors.ink2, .9 * docs); label('LLD', dLL, y1 + 24, colors.ink2, .9 * docs);
+      label('DESIGN', (dHL + dLL) / 2, y1 - 22, colors.ink, .95 * docs);
     }
+    // Drop into the code platform, at the right.
+    const dr1 = ph(T4.drop1), top2 = right2;
+    if (dr1 > 0) { ctx.strokeStyle = colors.line; ctx.globalAlpha = .8; ctx.setLineDash([3, 4]); pen(3021, [xR, y1], [xR, right2[1] - 3], dr1, .9); ctx.setLineDash([]); arrow(xR, right2[1] - 3, 0, 0); ctx.beginPath(); ctx.globalAlpha = .8 * dr1; ctx.moveTo(xR - 4, right2[1] - 9); ctx.lineTo(xR, right2[1] - 3); ctx.lineTo(xR + 4, right2[1] - 9); ctx.stroke(); }
 
-    // In: the requirements portal, and sheets flying in through it once the stream runs.
-    const pin = ph(T4.portIn), yIn = at(0), zIn = .62, rIn = .52;
-    portal(yIn, zIn, rIn, pin * shown(.05), 0);
-    callout(iso(rIn * .7, yIn, zIn - rIn * .7), 34, 42, [['REQUIREMENTS', colors.ink]], 1, pin);
-
-    // Design: two floating sheets, a high-level plan over a low-level one, each with a small diagram.
-    const des = ph(T4.design), yD = at(1);
-    if (des > 0) {
-      [[.18, 'line'], [.42, 'ink']].forEach(([z, tone], q) => {
-        const zz = z + .3 * (1 - des), o = q ? -.08 : .08;
-        box(-.42 + o, yD - .42 - o, zz, .84, .84, .025, 2200 + q, .85 * des, tone === 'ink' ? colors.ink : colors.line, .06);
-        ctx.strokeStyle = colors.line; ctx.globalAlpha = .6 * des;
-        const n = [[-.22, -.18], [.16, -.2], [-.02, .18]].map(([x, y]) => [x + o, yD + y - o]);
-        n.forEach(([x, y], e) => { const pts = [[x - .07, y - .07], [x + .07, y - .07], [x + .07, y + .07], [x - .07, y + .07]].map(([px, py]) => iso(px, py, zz + .03)); for (let f = 0; f < 4; f++) pen(2210 + q * 20 + e * 4 + f, pts[f], pts[(f + 1) % 4], des, .7); });
-        pen(2260 + q, iso(n[0][0], n[0][1], zz + .03), iso(n[1][0], n[1][1], zz + .03), des, .7); pen(2262 + q, iso(n[0][0], n[0][1], zz + .03), iso(n[2][0], n[2][1], zz + .03), des, .7);
-      });
-      callout(iso(.42, yD + .3, .2), 42, 44, [['DESIGN', colors.ink], ['HLD / LLD', colors.ink2]], 2, des);
+    // Middle row, right to left: code, AI agents, AI review and automation.
+    const code = ph(T4.code), ai = ph(T4.ai), auto = ph(T4.auto);
+    if (code > 0) {
+      slab(2, code, true);
+      const [x, y] = at(2); // the stack: three layers set down one on another, each its own size and tone
+      [[.62, .44, .07], [.54, .38, .12], [.46, .32, .17]].forEach(([hw, hd, tone], q) => { const z = q * .17 + .3 * (1 - ease(span(code, q * .25, q * .25 + .5))); box(x - hw, y - hd, z, hw * 2, hd * 2, .12, 3200 + q, .9 * ease(span(code, q * .25, q * .25 + .5)), colors.ink, tone); });
+      names(2, [['CODE', colors.ink], ['NEXT.JS · ANGULAR', colors.ink2], ['JAVA · SPRING BOOT', colors.ink2]], code);
     }
-
-    // Development: Lego-like bricks, each a different size, snapping on from alternating sides. Studs on top. AI on top, in amber.
-    const yC = at(2);
-    let zTop = 0;
-    BRICKS.forEach((B, k) => {
-      const fly = ph(T4.brick(k)), seen = shown(.1 + k * .05);
-      if (!seen || fly <= 0) { zTop += BH; return; }
-      const w = B.nx * PITCH, d = B.ny * PITCH, side = k % 2 ? 1 : -1, z = k * BH + .7 * (1 - fly);
-      const x0 = -w / 2 + B.ox + side * 1.1 * (1 - fly), y0 = yC - d / 2 + B.oy - side * 1.1 * (1 - fly), landed = fly >= 1;
-      const color = landed ? (B.ai ? colors.accent : colors.ink) : colors.line;
-      box(x0, y0, z, w, d, BH, 2300 + k, (landed ? .9 : .35 + .45 * fly) * seen, color, B.ai ? .14 : .04 + k * .022, landed ? null : [4, 4]);
-      // Studs: a small cylinder on each grid point of its top.
-      ctx.strokeStyle = color; ctx.globalAlpha = (landed ? .8 : .4) * seen; ctx.lineWidth = .8;
-      for (let i = 0; i < B.nx; i++) for (let j = 0; j < B.ny; j++) {
-        const cx = x0 + PITCH * (i + .5), cy = y0 + PITCH * (j + .5), zt = z + BH;
-        const ring = (zz) => { ctx.beginPath(); for (let q = 0; q <= 16; q++) { const a = (q / 16) * Math.PI * 2, [px, py] = iso(cx + Math.cos(a) * STUD.r, cy + Math.sin(a) * STUD.r, zz); q ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.stroke(); };
-        ring(zt + STUD.h);
-        const [l1x, l1y] = iso(cx + STUD.r * .7, cy - STUD.r * .7, zt), [l2x, l2y] = iso(cx + STUD.r * .7, cy - STUD.r * .7, zt + STUD.h), [r1x, r1y] = iso(cx - STUD.r * .7, cy + STUD.r * .7, zt), [r2x, r2y] = iso(cx - STUD.r * .7, cy + STUD.r * .7, zt + STUD.h);
-        ctx.beginPath(); ctx.moveTo(l1x, l1y); ctx.lineTo(l2x, l2y); ctx.moveTo(r1x, r1y); ctx.lineTo(r2x, r2y); ctx.stroke();
-      }
-      // Its name: staggered out into the open space up and to the left, each at its own distance.
-      const named = ph([T4.brick(k)[1] - .01, T4.brick(k)[1] + .05]);
-      callout(iso(x0, y0 + d, z + BH / 2), -50, -(30 + k * 20), [[B.name, B.ai ? colors.accent : colors.ink2]], 3 + k, named); // a staircase up and to the left, one step per brick
-      zTop = z + BH;
-    });
-    { const named = ph([T4.brick(0)[0], T4.brick(0)[1]]); callout(iso(BRICKS[0].nx * PITCH / 2, yC + BRICKS[0].ny * PITCH / 2, .02), 40, 40, [['DEVELOPMENT', colors.ink]], 9, named); }
-
-    // AI code review: a page of code with a spark over it that marks lines as it reads them.
-    const rev = ph(T4.review), yR = at(3);
-    if (rev > 0) {
-      const zP = .3 + .3 * (1 - rev);
-      box(-.36, yR - .46, zP, .72, .92, .025, 2400, .9 * rev, colors.accent, .08);
-      ctx.strokeStyle = colors.ink2; ctx.globalAlpha = .7 * rev;
-      for (let q = 0; q < 6; q++) { const x = -.24 + (q % 3 === 2 ? .12 : 0), len = .28 + hash(q + 40) * .26; pen(2410 + q, iso(x, yR - .34 + q * .13, zP + .03), iso(x + len, yR - .34 + q * .13, zP + .03), rev, .8); }
-      // The spark: a four-pointed star that pulses, hovering over the line it's reviewing.
-      const line = Math.floor(time * 1.2) % 6, [sx, sy] = iso(.2, yR - .34 + line * .13, zP + .45), pulse = 1 + .18 * Math.sin(time * 5), r = 7 * pulse;
-      ctx.fillStyle = colors.accent; ctx.globalAlpha = .9 * rev;
+    if (ai > 0) {
+      slab(1, ai, false);
+      const [x, y] = at(1), hub = [x, y], spokes = [[x - .5, y - .3], [x + .45, y - .35], [x + .05, y + .42]];
+      ctx.strokeStyle = colors.accent; ctx.globalAlpha = .7 * ai; spokes.forEach(([px, py], q) => pen(3300 + q, iso(...hub, .12), iso(px, py, .1), ai, .9));
+      spokes.forEach(([px, py], q) => box(px - .1, py - .1, 0, .2, .2, .2, 3310 + q, .9 * ai, colors.accent, .14));
+      box(hub[0] - .14, hub[1] - .14, 0, .28, .28, .26, 3320, .95 * ai, colors.accent, .2);
+      names(1, [['AI AGENTS · MCP', colors.accent]], ai);
+    }
+    if (auto > 0) {
+      slab(0, auto, false);
+      const [x, y] = at(0); // a page of code on the platform, a spark over the line it's reviewing
+      box(x - .38, y - .45, 0, .76, .9, .03, 3400, .9 * auto, colors.ink, .06);
+      ctx.strokeStyle = colors.ink2; ctx.globalAlpha = .7 * auto;
+      for (let q = 0; q < 5; q++) pen(3410 + q, iso(x - .26, y - .32 + q * .16, .04), iso(x - .26 + .3 + hash(q + 7) * .26, y - .32 + q * .16, .04), auto, .8);
+      const line = Math.floor(time * 1.2) % 5, [sx, sy] = iso(x + .28, y - .32 + line * .16, .5), r = 6 * (1 + .15 * Math.sin(time * 5));
+      ctx.fillStyle = colors.accent; ctx.globalAlpha = .9 * auto;
       ctx.beginPath(); ctx.moveTo(sx, sy - r); ctx.quadraticCurveTo(sx, sy, sx + r, sy); ctx.quadraticCurveTo(sx, sy, sx, sy + r); ctx.quadraticCurveTo(sx, sy, sx - r, sy); ctx.quadraticCurveTo(sx, sy, sx, sy - r); ctx.fill();
-      const [mx, my] = iso(.06, yR - .34 + line * .13, zP + .03); ctx.strokeStyle = colors.accent; ctx.globalAlpha = .6 * rev; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(sx, sy + r); ctx.lineTo(mx, my); ctx.stroke();
-      callout(iso(.36, yR + .3, zP), 44, 46, [['AI CODE REVIEW', colors.accent], ['AUTOMATION', colors.ink2]], 10, rev);
+      names(0, [['AI CODE REVIEW', colors.accent], ['AUTOMATION', colors.ink2]], auto);
     }
+    // Arrows between the platforms, pointing the way the work goes: right to left.
+    [[2, 1, code * ai], [1, 0, ai * auto]].forEach(([from, to, a], q) => {
+      if (a <= 0) return;
+      const p = iso(at(from)[0] - P4.w - .12, at(from)[1] + .2, .05), e = iso(at(to)[0] + P4.w + .12, at(to)[1] - .2, .05);
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .7; ctx.setLineDash([3, 4]); pen(3500 + q, p, e, a, .9); ctx.setLineDash([]);
+      const ang = Math.atan2(e[1] - p[1], e[0] - p[0]); ctx.globalAlpha = .8 * a; ctx.beginPath(); ctx.moveTo(e[0] - Math.cos(ang - .4) * 7, e[1] - Math.sin(ang - .4) * 7); ctx.lineTo(e[0], e[1]); ctx.lineTo(e[0] - Math.cos(ang + .4) * 7, e[1] - Math.sin(ang + .4) * 7); ctx.stroke();
+    });
 
-    // CI/CD: the endless loop, flat in the stream, with a build going round it.
-    const ci = ph(T4.cicd), yI = at(4);
-    if (ci > 0) {
-      const a = .66, pt = (t) => { const d = 1 + Math.sin(t) ** 2; return iso((a * Math.sin(t) * Math.cos(t)) / d * 1.1, yI + (a * Math.cos(t)) / d, .22); };
-      ctx.strokeStyle = colors.ink; ctx.globalAlpha = .85; ctx.lineWidth = 1.3;
-      ctx.beginPath(); for (let q = 0; q <= Math.round(80 * ci); q++) { const [px, py] = pt((q / 80) * Math.PI * 2); q ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.stroke();
-      if (ci >= 1) { ctx.fillStyle = colors.accent; for (let q = 0; q < 2; q++) { const [px, py] = pt(time * 1.6 + q * Math.PI); ctx.globalAlpha = .95; ctx.beginPath(); ctx.arc(px, py, 3.2, 0, Math.PI * 2); ctx.fill(); } }
-      callout(iso(-.3, yI + .4, .22), -40, -54, [['CI/CD', colors.ink], ['GITHUB ACTIONS', colors.ink2]], 11, ci);
+    // Down from the automation platform to the bottom row.
+    const dr2 = ph(T4.drop2), low0 = iso(at(0)[0] + P4.w, at(0)[1] + P4.d, -P4.t);
+    if (dr2 > 0) { ctx.strokeStyle = colors.line; ctx.globalAlpha = .8; ctx.setLineDash([3, 4]); pen(3600, [low0[0], low0[1] + 4], [low0[0], y3], dr2, .9); ctx.setLineDash([]); }
+
+    // Bottom row, left to right: CI/CD gates, production on GKE, and out through the second portal.
+    const r3 = ph(T4.row3), gates = ph(T4.gates), out = ph(T4.out), gx = [low0[0] + 1.1 * s, low0[0] + 2.2 * s, low0[0] + 3.3 * s], cloudX = low0[0] + 4.7 * s, xOut = cloudX + 1.5 * s;
+    if (r3 > 0) {
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .75; pen(3610, [low0[0], y3], [xOut - 8, y3], r3, 1);
+      label('CI/CD', low0[0] - 8, y3 - 7, colors.ink, .95 * r3, 'right'); label('GITHUB ACTIONS', low0[0] - 8, y3 + 7, colors.ink2, .9 * r3, 'right');
     }
-
-    // Prod: a cloud with the service's pods under it, on GKE.
-    const prod = ph(T4.prod), yP = at(5);
-    if (prod > 0) {
-      [[-.22, -.18], [.16, -.2], [-.02, .2]].forEach(([px, py], q) => box(px - .11, yP + py - .11, 0, .22, .22, .24 * ease(span(prod, .3 + q * .15, .7 + q * .15)), 2500 + q, .9 * prod, colors.ink, .1));
-      const [cx, cy] = iso(0, yP, 1.0), r = .26 * s;
-      const bumps = [[-1.5, .35, .62], [-.75, -.2, .82], [.25, -.45, 1], [1.2, -.05, .78], [1.75, .4, .55]];
-      ctx.strokeStyle = colors.ink; ctx.globalAlpha = .85 * prod; ctx.lineWidth = 1.1;
-      ctx.beginPath();
-      bumps.forEach(([bx, by, br]) => { ctx.moveTo(cx + bx * r + br * r, cy + by * r); ctx.arc(cx + bx * r, cy + by * r, br * r, 0, Math.PI * 2); });
-      ctx.save(); ctx.clip(); ctx.restore();
-      // Draw only the outer edge: stroke each bump, then cover the insides with a soft fill so the overlaps don't show.
-      ctx.globalAlpha = .07 * prod; ctx.fillStyle = colors.line; ctx.fill();
-      ctx.globalAlpha = .85 * prod; ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx - 2.1 * r, cy + .95 * r); ctx.lineTo(cx + 2.3 * r, cy + .95 * r); ctx.stroke();
-      callout(iso(.3, yP + .3, 0), 40, 44, [['PROD', colors.ink], ['GKE / K8S', colors.ink2]], 12, prod);
+    const cycle = (time % 3.4) / 3.4, live = ph(T4.flow);
+    ['BUILD', 'TEST', 'DEPLOY'].forEach((name, k) => {
+      if (gates <= 0) return;
+      const x = gx[k], passed = live > 0 && cycle > .3 + k * .12 && cycle < .95;
+      ctx.strokeStyle = passed ? colors.accent : colors.line; ctx.globalAlpha = .9 * gates; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, y3 - 7); ctx.lineTo(x + 7, y3); ctx.lineTo(x, y3 + 7); ctx.lineTo(x - 7, y3); ctx.closePath(); ctx.stroke();
+      if (passed) { ctx.beginPath(); ctx.moveTo(x - 3, y3); ctx.lineTo(x - .5, y3 + 2.5); ctx.lineTo(x + 3.5, y3 - 3); ctx.stroke(); }
+      label(name, x, y3 + 18, passed ? colors.accent : colors.ink2, .9 * gates);
+    });
+    if (gates > 0) { // production: a small cloud sitting on the line
+      const r = .2 * s; ctx.strokeStyle = colors.ink; ctx.globalAlpha = .9 * gates; ctx.lineWidth = 1.1;
+      ctx.beginPath(); ctx.moveTo(cloudX - 2.2 * r, y3 + .8 * r); ctx.lineTo(cloudX + 2.2 * r, y3 + .8 * r);
+      ctx.arc(cloudX + 1.4 * r, y3, .8 * r, Math.PI * .5, Math.PI * 1.5, true); ctx.moveTo(cloudX + 1.4 * r, y3 - .8 * r);
+      ctx.arc(cloudX + .2 * r, y3 - .6 * r, 1.25 * r, -Math.PI * .05, -Math.PI * .95, true);
+      ctx.arc(cloudX - 1.4 * r, y3, .8 * r, -Math.PI * .5, Math.PI * .5, true); ctx.stroke();
+      label('PROD', cloudX, y3 + 18, colors.ink, .95 * gates); label('GKE / K8S', cloudX, y3 + 31, colors.ink2, .9 * gates);
     }
+    portal(xOut, y3, out);
+    label('SHIPPED', xOut, y3 + 24, colors.accent, .9 * out);
 
-    // Out: the shipping portal. Work that reaches production leaves through it.
-    const pout = ph(T4.portOut), yO = at(N4), zO = .7, rO = .5;
-    portal(yO, zO, rO, pout, 1);
-    callout(iso(-rO * .7, yO, zO + rO * .7), -36, -30, [['SHIPPED', colors.accent]], 13, pout);
-
-    // The stream: a dashed path through every station, and work moving along it, in through one portal and out through the other.
-    const flow = ph(T4.stream);
-    if (flow > 0) {
-      const way = [iso(0, at(0), zIn), iso(0, at(1), .5), iso(0, at(2), zTop + .15), iso(0, at(3), .4), iso(0, at(4), .28), iso(0, at(5), .7), iso(0, at(N4), zO)];
-      ctx.strokeStyle = colors.line; ctx.globalAlpha = .55 * flow; ctx.lineWidth = .9; ctx.setLineDash([3, 4]);
-      ctx.beginPath(); way.forEach(([px, py], q) => (q ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.stroke(); ctx.setLineDash([]);
-      const along = (u) => { const f = u * (way.length - 1), q = Math.min(way.length - 2, Math.floor(f)), r = f - q; return [way[q][0] + (way[q + 1][0] - way[q][0]) * r, way[q][1] + (way[q + 1][1] - way[q][1]) * r]; };
+    // Work moving through it all, once it's in place: in through the first portal, along every row, and out through the second.
+    if (live > 0) {
+      const way = [[xL, y1], [xR, y1], top2, iso(...at(1), .45), iso(...at(0), .3), [low0[0], low0[1] + 4], [low0[0], y3], [xOut, y3]];
+      const lens = way.slice(1).map((p, q) => Math.hypot(p[0] - way[q][0], p[1] - way[q][1])), total = lens.reduce((a, b) => a + b, 0);
+      const along = (u) => { let d = u * total, q = 0; while (q < lens.length - 1 && d > lens[q]) { d -= lens[q]; q++; } const f = d / lens[q]; return [way[q][0] + (way[q + 1][0] - way[q][0]) * f, way[q][1] + (way[q + 1][1] - way[q][1]) * f]; };
       ctx.fillStyle = colors.accent;
-      for (let q = 0; q < 4; q++) { const u = (time * .075 + q / 4) % 1, [px, py] = along(u); ctx.globalAlpha = .9 * flow * Math.min(1, u * 8, (1 - u) * 8); ctx.fillRect(px - 2.5, py - 2.5, 5, 5); }
-    }
-
-    // Requirement sheets fly in from off the left and through the in-portal.
-    const asks = ph([.78, .88]);
-    if (asks > 0) {
+      for (let q = 0; q < 3; q++) { const u = (time * .07 + q / 3) % 1, [px, py] = along(u); ctx.globalAlpha = .9 * live * Math.min(1, u * 12, (1 - u) * 12); ctx.fillRect(px - 3, py - 3, 6, 6); }
+      // Requirement sheets fly in from off the left, into the first portal.
       for (let q = 0; q < 2; q++) {
-        const u = (time * .28 + q / 2) % 1, k = ease(u), [px, py] = iso(0, at(0) + 2.6 * (1 - k), zIn + .5 * (1 - k)), sc = .7 + .3 * (1 - k);
-        ctx.strokeStyle = colors.accent; ctx.globalAlpha = asks * Math.min(1, (1 - u) * 6, u * 6) * .95; ctx.lineWidth = 1;
-        ctx.save(); ctx.translate(px, py); ctx.rotate(-.35 + .35 * k); ctx.scale(sc, sc);
-        ctx.strokeRect(-7, -5, 14, 10); ctx.beginPath(); ctx.moveTo(-4, -1.5); ctx.lineTo(4, -1.5); ctx.moveTo(-4, 1.5); ctx.lineTo(1.5, 1.5); ctx.stroke(); ctx.restore();
+        const u = (time * .3 + q / 2) % 1, k = ease(u), px = xL - 70 * (1 - k), py = y1 - 18 * (1 - k);
+        ctx.strokeStyle = colors.accent; ctx.globalAlpha = live * Math.min(1, u * 6, (1 - u) * 6) * .9; ctx.lineWidth = 1;
+        ctx.save(); ctx.translate(px, py); ctx.rotate(-.3 * (1 - k)); ctx.strokeRect(-6, -4, 12, 8); ctx.restore();
       }
     }
   }
