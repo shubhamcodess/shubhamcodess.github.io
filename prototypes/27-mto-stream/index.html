@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>27 MTO stream</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--font-note:"Geist Mono",ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;min-height:100vh;color:var(--ink);font:14px/1.45 system-ui,sans-serif;background:linear-gradient(var(--s0),var(--s1) 40%,var(--s2) 75%,var(--s3))}
+h1{font-size:20px;margin:0 0 4px}.bar{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 22px;align-items:center}
+button{font:500 11px var(--font-note);text-transform:uppercase;padding:6px 10px;background:none;border:1px solid var(--rest);color:var(--ink);cursor:pointer}button[aria-pressed=true]{background:var(--ink);color:var(--s0)}
+.plates{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-start}figure{margin:0}figcaption{font:500 11px var(--font-note);color:var(--ink2);margin-bottom:6px}
+.plate{position:relative;border:1px solid var(--rest);overflow:hidden}.plate canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.plate::before{content:"";position:absolute;inset:0;pointer-events:none;--minor:color-mix(in srgb,var(--line) 7%,transparent);--major:color-mix(in srgb,var(--line) 10%,transparent);--wash:color-mix(in srgb,var(--paper) 30%,transparent);background:linear-gradient(var(--major) 1px,transparent 1px) 0 100%/110px 110px,linear-gradient(90deg,var(--major) 1px,transparent 1px) 0 100%/110px 110px,linear-gradient(var(--minor) 1px,transparent 1px) 0 100%/22px 22px,linear-gradient(90deg,var(--minor) 1px,transparent 1px) 0 100%/22px 22px,linear-gradient(var(--wash),var(--wash));-webkit-mask-image:linear-gradient(to top,#000 0,transparent 92%);mask-image:linear-gradient(to top,#000 0,transparent 92%)}
+</style></head><body>
+<h1>MTO stream</h1><p>Kept simple: an outlined server, anonymous JSON, and a stream of tokens. Sizes: the wide hero on a laptop, on a big screen, and a phone.</p>
+<div class="bar" id="themes"></div><div class="bar" id="beats"></div>
+<div class="plates">
+<figure><figcaption>Hero, 763 x 367</figcaption><div class="plate" style="width:763px;height:367px"><canvas></canvas></div></figure>
+<figure><figcaption>Big screen, 1120 x 460</figcaption><div class="plate" style="width:1120px;height:460px;max-width:100%"><canvas></canvas></div></figure>
+<figure><figcaption>Phone, 357 x 237</figcaption><div class="plate" style="width:357px;height:237px"><canvas></canvas></div></figure>
+</div>
+<script type="module">
+import { MtoStream as MtoFlow } from "./mto-stream.js";
+const THEMES = {"dust": {"sky": ["#ebdfc8", "#dfd0b9", "#d0c0ae", "#c6b6a8"], "ink": "#221b17", "ink2": "#544539", "line": "#43352b", "rest": "rgba(67,53,43,.68)", "accent": "#9c4a1b", "paper": "#efe6d4"}, "sodium": {"sky": ["#f2dcbd", "#e9caa8", "#ddb697", "#cda489"], "ink": "#1f1410", "ink2": "#4c3227", "line": "#42281c", "rest": "rgba(66,40,28,.7)", "accent": "#873813", "paper": "#f5e6ce"}, "smog": {"sky": ["#dddcd5", "#cfd1ce", "#bfc4c6", "#aeb6bb"], "ink": "#14181b", "ink2": "#3a4347", "line": "#2a3338", "rest": "rgba(42,51,56,.7)", "accent": "#7a4a10", "paper": "#e5e5e0"}, "storm": {"sky": ["#e8ded6", "#dbcec8", "#cbbcb8", "#bbaaaa"], "ink": "#201a1d", "ink2": "#483b42", "line": "#3d3138", "rest": "rgba(61,49,56,.7)", "accent": "#8f3a1f", "paper": "#efe7e0"}, "oldGotham": {"sky": ["#efe9d6", "#d9d6c6", "#c6c9c3", "#b4bcbf"], "ink": "#131c1f", "ink2": "#37403f", "line": "#22292b", "rest": "rgba(34,41,43,.7)", "accent": "#8a4a22", "paper": "#f2eddf"}};
+const root = document.documentElement;
+const theme = (id) => { const v = THEMES[id]; v.sky.forEach((c, i) => root.style.setProperty(`--s${i}`, c)); for (const [k, n] of [["ink","--ink"],["ink2","--ink-2"],["line","--line"],["rest","--line-rest"],["accent","--accent"],["paper","--paper"]]) root.style.setProperty(n, v[k]); root.dataset.palette = id; document.querySelectorAll("#themes button").forEach((b) => b.setAttribute("aria-pressed", b.textContent === id)); };
+for (const id of Object.keys(THEMES)) { const b = document.createElement("button"); b.textContent = id; b.onclick = () => theme(id); themes.append(b); }
+theme(new URLSearchParams(location.search).get("theme") || "oldGotham");
+const drawings = [...document.querySelectorAll("canvas")].map((c) => MtoFlow.mount(c, { pointerHost: c.parentElement, plays: "always", startAt: 0 }));
+const seek = (t) => drawings.forEach((d) => d.seek(t));
+window.seek = seek;
+for (const [name, t] of [["Play", null], ["Writing", 1.6], ["Striking", 5], ["Settled", 9.5]]) { const b = document.createElement("button"); b.textContent = name; b.onclick = () => (t === null ? location.reload() : seek(t)); beats.append(b); }
+const start = new URLSearchParams(location.search).get("t"); if (start) seek(Number(start));
+</script></body></html>
