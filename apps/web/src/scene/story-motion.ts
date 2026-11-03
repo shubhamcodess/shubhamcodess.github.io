@@ -30,6 +30,24 @@ export function frameLook(top: number, bottom: number, height: number): FrameLoo
   return { opacity: come * (1 - go), blur: (1 - come) * 18 + go * 14, y: (1 - come) * 34, scale: 1.03 - come * 0.03 };
 }
 
+const PAN_END = 0.65;
+/** How far a card taller than its sheet has slid up to show the rest, 0 to 1: it reads from the top once it has arrived, and reaches the bottom before it leaves. */
+export function scenePan(progress: number, index: number, count: number) {
+  const t = progress * count - index;
+  const from = index === 0 ? 0.05 : ENTER + 0.05, to = index === 0 ? 0.6 : PAN_END;
+  return ease(clamp((t - from) / (to - from)));
+}
+
+/** The most scrolling one card can slide through without moving faster than the finger. */
+export const panRoom = (filmPerScene: number) => filmPerScene * (PAN_END - ENTER - 0.05);
+
+/** How far through its slot a card has to be for `needed` px of its slide to have happened: when its figure comes into view. */
+export function figureInView(needed: number, spare: number, index: number, count: number) {
+  if (needed <= 0 || spare <= 0) return null;
+  for (let t = 0; t <= 1; t += 0.01) if (spare * scenePan((index + t) / count, index, count) >= needed) return t;
+  return PAN_END;
+}
+
 /** How far the line has drawn. It reaches each stop as that scene starts to arrive, so a chapter plays out along its own stretch of the line. */
 export const lineProgress = (progress: number, count: number) => (count < 2 ? 1 : clamp((progress * count) / (count - 1)));
 

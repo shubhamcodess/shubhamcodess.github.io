@@ -46,6 +46,19 @@ for (const [width, height] of WIDTHS) {
       return Math.round(box.left / 3) * 3; // Within a hair: the hero's plate is turned slightly.
     }))]);
     if (edges.length > 1) failures.push(`${width}x${height} ${path}: left edges differ: ${edges.join(", ")}`);
+    // On the home page the story has to pin on every size here, and its sheet, line and hint all have to be on screen once it has.
+    if (path === "/") {
+      await page.evaluate(() => document.querySelector(".story")?.scrollIntoView());
+      await page.waitForTimeout(300);
+      const story = await page.evaluate(() => {
+        const s = document.querySelector(".story");
+        if (!s) return { cine: true, top: 0, bottom: 0 };
+        document.getElementById("page").scrollTop = Number(s.dataset.holdStart) + Number(s.dataset.holdLength) / 2;
+        return new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => done({ cine: "cine" in s.dataset, top: s.querySelector(".story-frame").getBoundingClientRect().top, bottom: s.querySelector(".story-hint").getBoundingClientRect().bottom, header: parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) }))));
+      });
+      if (!story.cine) failures.push(`${width}x${height}: the story didn't pin`);
+      else if (story.top < story.header || story.bottom > height) failures.push(`${width}x${height}: the pinned story runs off the screen: ${JSON.stringify(story)}`);
+    }
     const ok = overflow.drawn && !overflow.scroll && !overflow.wide && !errors.length;
     if (!ok) failures.push(`${width}x${height} ${path}: ${JSON.stringify(overflow)} ${errors.join("; ")}`);
     console.log(`${ok ? "ok  " : "FAIL"} ${String(width).padStart(4)}x${height}  ${path}`);

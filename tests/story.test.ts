@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { currentScene, figurePresence, frameLook, lineProgress, sceneLook, sceneTarget } from "../apps/web/src/scene/story-motion";
+import { currentScene, figurePresence, frameLook, lineProgress, figureInView, panRoom, sceneLook, scenePan, sceneTarget } from "../apps/web/src/scene/story-motion";
 import { TOOL_LOGOS } from "../apps/web/src/scene/tool-logos";
 import { TOOLS } from "../packages/content/src/schema";
 import { site } from "../content/site";
@@ -61,6 +61,26 @@ describe("the line and the figure", () => {
   it("keeps the figure back until the story reaches now", () => {
     expect(figurePresence(0.5, COUNT)).toBe(0);
     expect(figurePresence(1, COUNT)).toBe(1);
+  });
+});
+
+describe("a card taller than the sheet", () => {
+  it("starts at the top when it lands, and shows its bottom before it goes", () => {
+    for (let i = 0; i < COUNT; i++) {
+      expect(scenePan(sceneTarget(i, COUNT), i, COUNT)).toBe(0);
+      const look = (at: number) => sceneLook((i + at) / COUNT, i, COUNT);
+      expect(scenePan((i + 0.8) / COUNT, i, COUNT)).toBe(1);
+      expect(look(0.8).opacity).toBe(1);
+    }
+  });
+  it("has finished sliding while there's still time for its figure to play", () => {
+    expect(figureInView(400, 400, 1, COUNT)).toBeLessThan(0.8);
+    expect(figureInView(0, 400, 1, COUNT)).toBeNull();
+    expect(panRoom(1000)).toBeGreaterThan(0);
+  });
+  it("slides the same way scrolling back", () => {
+    let last = -1;
+    for (let p = 1 / COUNT; p < 2 / COUNT; p += 0.002) { const pan = scenePan(p, 1, COUNT); expect(pan).toBeGreaterThanOrEqual(last); last = pan; }
   });
 });
 

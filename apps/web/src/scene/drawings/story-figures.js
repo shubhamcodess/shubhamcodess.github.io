@@ -21,7 +21,9 @@ export const StoryFigures = (() => {
   const MOVE = { build: [0, .12], deploy: [.12, .5], ready: [.52, .6], cut: [.66, .84], retire: [.86, 1] };
 
   function chapterOne(g) {
-    const { ctx, s, X0, Y0, colors, intro, c, time, pen, label } = g;
+    const { ctx, s, X0, colors, intro, c, time, pen, label } = g;
+    // The pipeline sits high enough to clear the platforms' names with the Helm chart's two lines between. On a narrow plate that takes more than the drawing's own proportion, so the block drops by half the difference to stay centred.
+    const rise = Math.max(2.2 * s, (SLAB.w + SLAB.d) / 2 * SIN * s + 63), Y0 = g.Y0 + (rise - 2.2 * s) / 2;
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const at = (k) => [k * STEP, -k * STEP]; // A platform's centre: the row runs across the screen.
     const reveal = (a) => span(intro, a, a + .35);
@@ -91,7 +93,7 @@ export const StoryFigures = (() => {
     label('TRAFFIC', startX, busY - 11, colors.ink2, .9 * tIn, 'left');
 
     // The pipeline above: a Helm chart with its revision, three gates, and a drop into whichever platform serves. Releases run through it the whole time.
-    const mid = X0 + 2 * STEP * COS * s, pipeIn = reveal(.3), lineY = Y0 - 2.2 * s, x0 = mid - 4.3 * s, x1 = mid + 3.3 * s;
+    const mid = X0 + 2 * STEP * COS * s, pipeIn = reveal(.3), lineY = Y0 - rise, x0 = mid - 4.3 * s, x1 = mid + 3.3 * s;
     const gateX = GATES.map((_, k) => x0 + (x1 - x0) * (.34 + k * .25));
     const dropTo = iso(at(0)[0] + (at(1)[0] - at(0)[0]) * traffic, at(0)[1] + (at(1)[1] - at(0)[1]) * traffic, .5);
     ctx.strokeStyle = colors.line; ctx.globalAlpha = .75 * pipeIn;
@@ -104,7 +106,7 @@ export const StoryFigures = (() => {
     for (let q = 0; q < 7; q++) { const a = (q / 7) * Math.PI * 2 - Math.PI / 2; pen(410 + q, [x0 + Math.cos(a) * 3, lineY + Math.sin(a) * 3], [x0 + Math.cos(a) * 13, lineY + Math.sin(a) * 13], pipeIn, 1); }
     // The revision counts every release since it first showed: the same chart, the same history, on every platform.
     const rev = 1 + Math.floor(time / RELEASE);
-    label('HELM CHART', x0, lineY + 26, colors.ink2, .9 * pipeIn);
+    label('HELM CHART', Math.max(x0, 30), lineY + 26, colors.ink2, .9 * pipeIn);
     label(`REV ${rev}`, x0, lineY + 39, colors.ink2, .6 * pipeIn);
 
     const cycle = (time % RELEASE) / RELEASE, along = ease(span(cycle, .05, .62)), drop = ease(span(cycle, .62, .86));
@@ -139,6 +141,8 @@ export const StoryFigures = (() => {
     };
   }
 
+  const NARROW = 480; // Below this plate width, labels stop spacing their letters and the drawings leave them more room.
+
   /* ---------- Chapter 2: the pilot first, then the rest ---------- */
   // A legacy block in five slices. The pilot slice is cut out first, rebuilt on the platform as a clean two-layer app, and approved; then the rest follow the same path, faster, onto the same stack, and a shared-standards strip runs under them all.
   const LEGACY = { x0: -2.4, y0: 1.0, d: 1.2, h: 1.1, slice: .32, n: 5 };
@@ -149,7 +153,7 @@ export const StoryFigures = (() => {
 
   function chapterTwo(g) {
     const { ctx, w: W, h: H, colors, intro, c, pen, label } = g;
-    const s = Math.min(W / 12.4, H / 4.4), X0 = W / 2 - 1.35 * s, Y0 = H / 2 + .3 * s;
+    const narrow = W < NARROW, s = Math.min(W / (narrow ? 13.6 : 12.4), H / 4.4), X0 = W / 2 - 1.35 * s - (narrow ? 10 : 0), Y0 = H / 2 + .3 * s; // Narrow: a little smaller and to the left, so the pilot's notes fit past it.
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const reveal = (a) => span(intro, a, a + .35);
     const poly = (pts) => { ctx.beginPath(); pts.forEach(([px, py], q) => (q ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.closePath(); };
@@ -252,7 +256,7 @@ export const StoryFigures = (() => {
 
   function chapterThree(g) {
     const { ctx, w: W, h: H, colors, intro, c, time, pen, label } = g;
-    const s = Math.min(W / 10.4, H / 4.6), X0 = W / 2 - .8 * s, Y0 = H / 2 + .1 * s - 8;
+    const narrow = W < NARROW, s = Math.min(W / 10.4, H / 4.6), X0 = W / 2 - .8 * s + (narrow ? 12 : 0), Y0 = H / 2 + .1 * s - 8;
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const reveal = (a) => span(intro, a, a + .35);
     const box = boxTool(ctx, iso, pen);
@@ -311,8 +315,8 @@ export const StoryFigures = (() => {
     const platIn = reveal(.2);
     box(PLAT.x, PLAT.y, 0, PLAT.w, PLAT.d, PLAT.h, 1400, .9 * platIn, colors.ink, .1);
     const [bx, by] = iso(PLAT.x, PLAT.y, PLAT.h);
-    label('ORDER PLATFORM', bx, by - 13, colors.ink2, .9 * platIn);
-    label('LIVE ✓', bx, by - 27, colors.accent, ease(span(c, .7, .78)));
+    label('ORDER PLATFORM', bx + (narrow ? 14 : 0), by - 13, colors.ink2, .9 * platIn);
+    label('LIVE ✓', bx + (narrow ? 14 : 0), by - 27, colors.accent, ease(span(c, .7, .78)));
 
     // Bounded lanes from the rail into the platform, and the work moving through them, a few at a time.
     if (flow > 0) {
@@ -347,14 +351,16 @@ export const StoryFigures = (() => {
 
   function chapterFour(g) {
     const { ctx, w: W, h: H, colors, c, time, pen, label } = g;
-    const s = Math.min(W / 10.4, H / 5.8), X0 = W / 2 - 2 * P4.step * COS * s, Y0 = H / 2 + .25 * s;
+    const s = Math.min(W / 10.4, H / 5.8), X0 = W / 2 - 2 * P4.step * COS * s;
+    // The top row's two lines of labels and the platforms' three lines of names need this much between them. As in chapter one, a narrow plate takes more than the proportion.
+    const rise = Math.max(2.45 * s, (P4.w + P4.d) * SIN * s + 92), Y0 = H / 2 + .25 * s + (rise - 2.45 * s) / 2;
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const box = boxTool(ctx, iso, pen);
     const ph = (r) => ease(span(c, r[0], r[1]));
     const at = (k) => [k * P4.step, -k * P4.step]; // slab k's centre; 0 is left
     const cx = (k) => iso(...at(k), 0)[0];
     const right2 = iso(at(2)[0] + P4.w, at(2)[1] - P4.d, 0); // the code platform's right corner, where the top row drops in
-    const y1 = Y0 - 2.45 * s, y3 = Y0 + 1.55 * s, xL = cx(0) - .55 * s, xR = right2[0];
+    const y1 = Y0 - rise, y3 = Y0 + 1.55 * s, xL = cx(0) - .55 * s, xR = right2[0];
     // A thin portal: a narrow upright ellipse, like a ring seen nearly edge-on.
     const portal = (x, y, alpha) => { if (alpha <= 0) return; ctx.strokeStyle = colors.accent; ctx.globalAlpha = .9 * alpha; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.ellipse(x, y, 5, 13, 0, 0, Math.PI * 2); ctx.stroke(); };
     const arrow = (x, y, dir, alpha) => { ctx.globalAlpha = alpha; ctx.beginPath(); ctx.moveTo(x - dir * 6, y - 4); ctx.lineTo(x, y); ctx.lineTo(x - dir * 6, y + 4); ctx.stroke(); };
@@ -458,7 +464,7 @@ export const StoryFigures = (() => {
       const fx0 = gx[0] - 26, fx1 = gx[2] + 26, fy0 = y3 - 20, fy1 = y3 + 28, o = 4;
       ctx.strokeStyle = colors.ink; ctx.globalAlpha = .75 * gates; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(fx0 - o, fy0); ctx.lineTo(fx1 + o, fy0); ctx.moveTo(fx0 - o, fy1); ctx.lineTo(fx1 + o, fy1); ctx.moveTo(fx0, fy0 - o); ctx.lineTo(fx0, fy1 + o); ctx.moveTo(fx1, fy0 - o); ctx.lineTo(fx1, fy1 + o); ctx.stroke();
-      const gr = 5.5, gcx = fx0 + 11, gcy = fy1 + 13, turn = time * .8; // the gear and name sit under the frame, clear of the platforms above
+      const gr = 5.5, gcx = fx0 + 11, gcy = fy1 + (W < NARROW ? 22 : 13), turn = time * .8; // the gear and name sit under the frame, clear of the platforms above
       ctx.beginPath(); for (let q = 0; q <= 48; q++) { const a = turn + (q / 48) * Math.PI * 2, rr = gr + (Math.floor(q / 4) % 2 ? 1.6 : 0); q ? ctx.lineTo(gcx + Math.cos(a) * rr, gcy + Math.sin(a) * rr) : ctx.moveTo(gcx + Math.cos(a) * rr, gcy + Math.sin(a) * rr); } ctx.closePath(); ctx.stroke();
       ctx.beginPath(); ctx.arc(gcx, gcy, 2, 0, Math.PI * 2); ctx.stroke();
       label('CI/CD · GITHUB ACTIONS', fx0 + 24, gcy, colors.ink, .95 * gates, 'left');
@@ -544,7 +550,7 @@ export const StoryFigures = (() => {
       const st = story();
       if (!st.live || reduced) return 1;
       // A chapter after the first waits until its scene has fully arrived and its words are sharp.
-      const start = chapter ? ARRIVED : 0;
+      const start = st.from?.[chapter] ?? (chapter ? ARRIVED : 0);
       return clamp((st.progress * count - chapter - start) / (DONE - start));
     }
 
@@ -568,7 +574,7 @@ export const StoryFigures = (() => {
       const label = (text, x, y, color, alpha, align = 'center') => {
         if (alpha <= 0) return;
         ctx.globalAlpha = alpha; ctx.fillStyle = color; ctx.font = `500 ${Math.max(8.5, Math.min(10.5, s * .2))}px ${font}`;
-        ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillText(text.split('').join(' '), x, y);
+        ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillText(w < NARROW ? text : text.split('').join(' '), x, y); // Spaced out where there's room; on a narrow plate the width matters more.
       };
       paint({ ctx, w, h, s, X0, Y0, colors, intro, c: beat(), time, pen, label });
       ctx.globalAlpha = 1;
