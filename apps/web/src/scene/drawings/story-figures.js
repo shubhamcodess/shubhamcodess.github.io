@@ -10,99 +10,102 @@ export const StoryFigures = (() => {
   const INTRO = 1.8; // Seconds the pen takes to lay the drawing down.
   const COS = Math.cos(Math.PI / 6), SIN = Math.sin(Math.PI / 6);
 
-  /* ---------- Chapter 1: three platforms, one workload, one pipeline ---------- */
+  /* ---------- Chapter 1: one service, three platforms, one pipeline, and traffic that never drops ---------- */
   const PLATFORMS = ['OpenShift 3', 'OpenShift 4', 'GKE'];
-  const SLAB = { w: 1.9, d: 1.3, t: .16 }, STEP = 1.95; // A slab's size, and how far apart they sit (in iso units along x and -y).
-  const PODS = [[-.5, -.28], [.05, .28], [.5, -.12]]; // Where the three pods stand on a slab.
+  const SLAB = { w: 1.9, d: 1.3, t: .16 }, STEP = 1.95; // A platform's size, and how far apart they sit (iso units along x and -y).
+  const PODS = [[.15, -.3], [.62, -.3], [.4, .3]]; // Where the pods stand, on the cluster's two nodes.
   const GATES = ['Template', 'Stage', 'Prod'];
   const RELEASE = 3.4; // Seconds between releases.
+  // Each move, in the share of its own stretch: the new platform is built, the service is deployed onto it, it reports ready, traffic swings over, and only then the old one retires.
+  const MOVE = { build: [0, .12], deploy: [.12, .5], ready: [.52, .6], cut: [.66, .84], retire: [.86, 1] };
 
   function chapterOne(g) {
     const { ctx, s, X0, Y0, colors, intro, c, time, pen, label } = g;
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
-    const at = (k) => [k * STEP, -k * STEP]; // A slab's centre: the row runs across the screen.
+    const at = (k) => [k * STEP, -k * STEP]; // A platform's centre: the row runs across the screen.
     const reveal = (a) => span(intro, a, a + .35);
+    const moves = [span(c, .06, .47), span(c, .53, .94)];
+    const phase = (k, [a, b]) => (k < 0 || k > 1 ? 0 : ease(span(moves[k], a, b)));
+    const traffic = phase(0, MOVE.cut) + phase(1, MOVE.cut); // 0 to 2: which platform serves, and the swing between.
+    const w = SLAB.w / 2, d = SLAB.d / 2, t = SLAB.t;
+    const poly = (pts) => { ctx.beginPath(); pts.forEach(([px, py], q) => (q ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.closePath(); };
 
-    // The move: 0 to 2 platforms along. Each move takes the pods across one after another.
-    const m1 = span(c, .14, .5), m2 = span(c, .56, .92), here = ease(m1) + ease(m2);
-    const podAt = (i) => {
-      const stage = m2 > 0 ? 1 : 0, local = stage ? m2 : m1;
-      const p = ease(span(local, i * .16, i * .16 + .62));
-      const [ax, ay] = at(stage), [bx, by] = at(stage + 1), [ox, oy] = PODS[i];
-      return { x: ax + ox + (bx - ax) * p, y: ay + oy + (by - ay) * p, z: Math.sin(Math.PI * p) * .9, moving: p > 0 && p < 1 };
+    const cube = (x, y, z, sx, sy, sz, k, alpha, color) => {
+      if (alpha <= 0) return;
+      const P = (dx, dy, dz) => iso(x + dx, y + dy, z + dz), a = sx / 2, b = sy / 2;
+      const t0 = P(-a, -b, sz), t1 = P(a, -b, sz), t2 = P(a, b, sz), t3 = P(-a, b, sz), b1 = P(a, -b, 0), b2 = P(a, b, 0), b3 = P(-a, b, 0);
+      ctx.globalAlpha = alpha * .1; ctx.fillStyle = color; poly([t0, t1, b1, b2, b3, t3]); ctx.fill();
+      ctx.strokeStyle = color; ctx.globalAlpha = alpha * .9;
+      [[t0, t1], [t1, t2], [t2, t3], [t3, t0], [t1, b1], [t2, b2], [t3, b3], [b1, b2], [b2, b3]].forEach(([p, q], e) => pen(k * 20 + e, p, q, 1, 1));
     };
 
-    // The slabs: solid where the workload is or was, dashed where it hasn't got to yet. The one it left goes quiet.
     PLATFORMS.forEach((name, k) => {
       const [cx, cy] = at(k), r = reveal(.05 + k * .1);
       if (!r) return;
-      const live = 1 - Math.min(1, Math.abs(here - k)), reached = here > k - .5, left = here > k + .5;
-      const w = SLAB.w / 2, d = SLAB.d / 2, t = SLAB.t;
+      const built = k === 0 ? 1 : phase(k - 1, MOVE.build), retired = phase(k, MOVE.retire);
+      const serving = 1 - Math.min(1, Math.abs(traffic - k));
+      // The platform: dashed construction lines until it's built, quiet once it's retired.
       const top = [[cx - w, cy - d], [cx + w, cy - d], [cx + w, cy + d], [cx - w, cy + d]].map(([x, y]) => iso(x, y, 0));
       const low = [[cx + w, cy - d], [cx + w, cy + d], [cx - w, cy + d]].map(([x, y]) => iso(x, y, -t));
-      ctx.setLineDash(reached ? [] : [4, 5]);
-      ctx.strokeStyle = live > .5 ? colors.ink : colors.line;
-      ctx.globalAlpha = (left ? .4 : reached ? .85 : .5) * r;
-      for (let e = 0; e < 4; e++) pen(k * 10 + e, top[e], top[(e + 1) % 4], r, live > .5 ? 1.2 : .9);
+      ctx.setLineDash(built > .5 ? [] : [4, 5]);
+      ctx.strokeStyle = serving > .5 ? colors.ink : colors.line;
+      ctx.globalAlpha = (.5 + .4 * built - .55 * retired) * r;
+      for (let e = 0; e < 4; e++) pen(k * 10 + e, top[e], top[(e + 1) % 4], r, serving > .5 ? 1.2 : .9);
       pen(k * 10 + 5, top[1], low[0], r); pen(k * 10 + 6, top[2], low[1], r); pen(k * 10 + 7, top[3], low[2], r);
       pen(k * 10 + 8, low[0], low[1], r); pen(k * 10 + 9, low[1], low[2], r);
       ctx.setLineDash([]);
-      // A faint grid on the live slab's top: the cluster's nodes.
-      if (reached && !left) {
-        ctx.strokeStyle = colors.rest; ctx.globalAlpha = .35 * r * Math.max(.3, live);
-        for (let q = 1; q < 4; q++) { const x = cx - w + (2 * w * q) / 4; pen(k * 50 + q, iso(x, cy - d, 0), iso(x, cy + d, 0), r, .6); }
-        pen(k * 50 + 9, iso(cx - w, cy, 0), iso(cx + w, cy, 0), r, .6);
+      // The cluster on it: a control plane and two worker nodes, drawn as it's built.
+      const cluster = built * (1 - retired * .7) * r;
+      if (cluster > .01) {
+        ctx.strokeStyle = colors.line; ctx.globalAlpha = .5 * cluster;
+        for (const [y0, y1] of [[-.58, -.04], [.04, .58]]) {
+          const n = [[cx - .12, cy + y0], [cx + .86, cy + y0], [cx + .86, cy + y1], [cx - .12, cy + y1]].map(([x, y]) => iso(x, y, 0));
+          for (let e = 0; e < 4; e++) pen(k * 60 + e + (y0 > 0 ? 5 : 0), n[e], n[(e + 1) % 4], built, .7);
+        }
+        cube(cx - .58, cy, 0, .42, .62, .26, 500 + k, cluster * .8, colors.line);
       }
-      // Its name, under its lowest corner, and a tick when it's the one running.
-      const [lx, ly] = iso(cx + w, cy + d, -t);
-      label(name.toUpperCase(), lx, ly + 16, live > .5 ? colors.accent : colors.ink2, (left ? .45 : reached ? .95 : .6) * r);
+      // The service's pods: deployed one by one onto a new platform while the old one keeps serving, and gone once it retires.
+      PODS.forEach(([ox, oy], i) => {
+        const up = k === 0 ? ease(span(intro, .45, .8)) : ease(span(phase(k - 1, MOVE.deploy), i * .28, i * .28 + .44));
+        const fresh = up > 0 && up < 1;
+        cube(cx + ox, cy + oy, 0, .3, .3, .34 * up, 100 + k * 3 + i, up * (1 - retired), fresh ? colors.accent : colors.ink);
+      });
+      // Ready: a tick over the new platform before any traffic reaches it.
+      const ready = k > 0 ? phase(k - 1, MOVE.ready) * (1 - phase(k - 1, MOVE.retire)) : 0;
+      if (ready > .01) { const [rx, ry] = iso(cx + w, cy - d, 0); label('READY ✓', rx + 4, ry - 12, colors.accent, ready); }
+      // Its name, over its back corner.
+      const [lx, ly] = iso(cx - w, cy - d, 0);
+      label(name.toUpperCase(), lx, ly - 13, serving > .5 ? colors.accent : colors.ink2, (built > .5 ? .95 - .5 * retired : .6) * r);
     });
 
-    // The arrows between platforms: dimension-style leaders, drawn as each move begins.
-    for (let k = 0; k < 2; k++) {
-      const local = k ? m2 : m1;
-      if (!local) continue;
-      const [ax, ay] = at(k), [bx, by] = at(k + 1);
-      const a = iso(ax + SLAB.w / 2 + .12, ay - .2, .05), b = iso(bx - SLAB.w / 2 - .12, by + .2, .05);
-      ctx.strokeStyle = colors.line; ctx.globalAlpha = .7;
-      ctx.setLineDash([3, 4]); pen(300 + k, a, b, ease(span(local, 0, .3)), .9); ctx.setLineDash([]);
-      const e = ease(span(local, .25, .35));
-      if (e) { const ang = Math.atan2(b[1] - a[1], b[0] - a[0]); ctx.globalAlpha = .8 * e; ctx.beginPath(); ctx.moveTo(b[0] - Math.cos(ang - .4) * 7, b[1] - Math.sin(ang - .4) * 7); ctx.lineTo(b[0], b[1]); ctx.lineTo(b[0] - Math.cos(ang + .4) * 7, b[1] - Math.sin(ang + .4) * 7); ctx.stroke(); }
-    }
+    // Traffic: a line along the bottom that rises into whichever platform serves. It flows the whole time and swings over without a break.
+    const tIn = reveal(.4), corner = (k) => iso(at(k)[0] + w, at(k)[1] + d, -t);
+    const busY = Y0 + 1.3 * s, startX = iso(-w, d, 0)[0] - .2 * s;
+    const riser = corner(0).map((v, q) => v + (corner(1)[q] - corner(0)[q]) * Math.min(1, traffic) + (corner(2)[q] - corner(1)[q]) * Math.max(0, traffic - 1));
+    ctx.strokeStyle = colors.ink; ctx.globalAlpha = .75 * tIn; ctx.lineWidth = 1.1;
+    ctx.setLineDash([6, 5]); ctx.lineDashOffset = -time * 22;
+    ctx.beginPath(); ctx.moveTo(startX, busY); ctx.lineTo(riser[0], busY); ctx.lineTo(riser[0], riser[1] + 4); ctx.stroke();
+    ctx.setLineDash([]); ctx.lineDashOffset = 0;
+    ctx.beginPath(); ctx.moveTo(riser[0] - 4, riser[1] + 10); ctx.lineTo(riser[0], riser[1] + 4); ctx.lineTo(riser[0] + 4, riser[1] + 10); ctx.stroke();
+    label('TRAFFIC', startX, busY - 11, colors.ink2, .9 * tIn, 'left');
 
-    // The pods: small cubes that cross in an arc, one at a time.
-    const cube = (x, y, z, size, k, alpha, lit) => {
-      const h = size / 2, P = (dx, dy, dz) => iso(x + dx, y + dy, z + dz);
-      const t0 = P(-h, -h, size), t1 = P(h, -h, size), t2 = P(h, h, size), t3 = P(-h, h, size), b1 = P(h, -h, 0), b2 = P(h, h, 0), b3 = P(-h, h, 0);
-      ctx.globalAlpha = alpha * .1; ctx.fillStyle = lit ? colors.accent : colors.line;
-      ctx.beginPath(); [t0, t1, b1, b2, b3, t3].forEach(([px, py], q) => (q ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = lit ? colors.accent : colors.ink; ctx.globalAlpha = alpha * .9;
-      [[t0, t1], [t1, t2], [t2, t3], [t3, t0], [t1, b1], [t2, b2], [t3, b3], [b1, b2], [b2, b3]].forEach(([p, q], e) => pen(k * 20 + e, p, q, 1, 1));
-    };
-    const podsIn = ease(span(intro, .45, .8));
-    PODS.forEach((_, i) => {
-      const p = podAt(i);
-      // Its shadow on the slab below while it's in the air.
-      if (p.z > .02) { const [sx, sy] = iso(p.x, p.y, 0); ctx.globalAlpha = .18 * podsIn; ctx.fillStyle = colors.line; ctx.beginPath(); ctx.ellipse(sx, sy, 9, 4.5, 0, 0, Math.PI * 2); ctx.fill(); }
-      cube(p.x, p.y, p.z, .34, 100 + i, podsIn, p.moving);
-    });
-
-    // The pipeline above: a Helm chart, three gates, and a drop into whichever platform is live. Releases run through it the whole time.
-    const mid = X0 + 2 * STEP * COS * s, pipeIn = reveal(.3), lineY = Y0 - 2.15 * s, x0 = mid - 4.1 * s, x1 = mid + 3.3 * s;
-    const gateX = GATES.map((_, k) => x0 + (x1 - x0) * (.32 + k * .26));
-    const dropTo = iso(...at(0).map((v, q) => v + (at(1)[q] - at(0)[q]) * here), .45);
+    // The pipeline above: a Helm chart with its revision, three gates, and a drop into whichever platform serves. Releases run through it the whole time.
+    const mid = X0 + 2 * STEP * COS * s, pipeIn = reveal(.3), lineY = Y0 - 2.2 * s, x0 = mid - 4.3 * s, x1 = mid + 3.3 * s;
+    const gateX = GATES.map((_, k) => x0 + (x1 - x0) * (.34 + k * .25));
+    const dropTo = iso(at(0)[0] + (at(1)[0] - at(0)[0]) * traffic, at(0)[1] + (at(1)[1] - at(0)[1]) * traffic, .5);
     ctx.strokeStyle = colors.line; ctx.globalAlpha = .75 * pipeIn;
     pen(400, [x0 + 22, lineY], [x1, lineY], pipeIn, 1);
     pen(401, [x1, lineY], [x1, lineY + 14], pipeIn, 1);
     ctx.setLineDash([3, 4]); pen(402, [x1, lineY + 14], dropTo, pipeIn, .9); ctx.setLineDash([]);
-    // The chart: a ship's wheel, sketched.
     ctx.strokeStyle = colors.ink; ctx.globalAlpha = .85 * pipeIn; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.arc(x0, lineY, 9, 0, Math.PI * 2); ctx.stroke();
     ctx.beginPath(); ctx.arc(x0, lineY, 3, 0, Math.PI * 2); ctx.stroke();
     for (let q = 0; q < 7; q++) { const a = (q / 7) * Math.PI * 2 - Math.PI / 2; pen(410 + q, [x0 + Math.cos(a) * 3, lineY + Math.sin(a) * 3], [x0 + Math.cos(a) * 13, lineY + Math.sin(a) * 13], pipeIn, 1); }
-    label('HELM CHART', x0, lineY + 28, colors.ink2, .9 * pipeIn);
+    // The revision counts every release since it first showed: the same chart, the same history, on every platform.
+    const rev = 1 + Math.floor(time / RELEASE);
+    label('HELM CHART', x0, lineY + 26, colors.ink2, .9 * pipeIn);
+    label(`REV ${rev}`, x0, lineY + 39, colors.ink2, .6 * pipeIn);
 
-    // A release: a small sheet that travels the line, ticks each gate as it passes, then drops into the live platform.
     const cycle = (time % RELEASE) / RELEASE, along = ease(span(cycle, .05, .62)), drop = ease(span(cycle, .62, .86));
     const relX = x0 + 22 + (x1 - x0 - 22) * along;
     GATES.forEach((name, k) => {
@@ -117,9 +120,8 @@ export const StoryFigures = (() => {
       if (drop > 0) { px = x1 + (dropTo[0] - x1) * drop; py = lineY + 14 + (dropTo[1] - lineY - 14) * drop; }
       ctx.globalAlpha = (1 - span(cycle, .82, .9)) * .95; ctx.fillStyle = colors.accent; ctx.fillRect(px - 4, py - 4, 8, 8);
     }
-    // Where it lands: a short ring on the live platform.
     const ring = span(cycle, .84, 1);
-    if (ring > 0 && ring < 1) { ctx.strokeStyle = colors.accent; ctx.globalAlpha = (1 - ring) * .7; ctx.beginPath(); ctx.ellipse(dropTo[0], dropTo[1] + .45 * s, 6 + ring * 26, (6 + ring * 26) * .5, 0, 0, Math.PI * 2); ctx.stroke(); }
+    if (ring > 0 && ring < 1) { ctx.strokeStyle = colors.accent; ctx.globalAlpha = (1 - ring) * .7; ctx.beginPath(); ctx.ellipse(dropTo[0], dropTo[1] + .5 * s, 6 + ring * 26, (6 + ring * 26) * .5, 0, 0, Math.PI * 2); ctx.stroke(); }
   }
 
   const CHAPTERS = [chapterOne];
@@ -156,7 +158,7 @@ export const StoryFigures = (() => {
       if (!paint || !w) return;
       const time = reduced ? RELEASE * .5 : (now - t0) / 1000;
       const intro = reduced ? 1 : shownAt < 0 ? 0 : clamp((now - shownAt) / 1000 / INTRO);
-      const s = Math.min(w / 10.4, h / 4.6), X0 = w / 2 - 2 * STEP * COS * s, Y0 = h / 2 + .62 * s; // The block, pipeline to labels, sits centred.
+      const s = Math.min(w / 10.4, h / 4.5), X0 = w / 2 - 2 * STEP * COS * s, Y0 = h / 2 + .45 * s; // The block, pipeline to labels, sits centred.
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
       ctx.lineCap = 'round'; ctx.lineJoin = 'round';
@@ -169,10 +171,10 @@ export const StoryFigures = (() => {
         for (let i = 1; i <= n; i++) { const t = i / n, j = (hash(k * 31 + i) - .5) * .8 * Math.sin(Math.PI * t); ctx.lineTo(ax + (bx - ax) * t + nx * j, ay + (by - ay) * t + ny * j); }
         ctx.stroke();
       };
-      const label = (text, x, y, color, alpha) => {
+      const label = (text, x, y, color, alpha, align = 'center') => {
         if (alpha <= 0) return;
         ctx.globalAlpha = alpha; ctx.fillStyle = color; ctx.font = `500 ${Math.max(8.5, Math.min(10.5, s * .2))}px ${font}`;
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text.split('').join(' '), x, y);
+        ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillText(text.split('').join(' '), x, y);
       };
       paint({ ctx, s, X0, Y0, colors, intro, c: beat(), time, pen, label });
       ctx.globalAlpha = 1;
