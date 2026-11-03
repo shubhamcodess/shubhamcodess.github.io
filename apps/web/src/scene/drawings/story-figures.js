@@ -7,6 +7,7 @@ export const StoryFigures = (() => {
   const span = (t, a, b) => clamp((t - a) / (b - a));
   const hash = (n) => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
   const DONE = 0.78; // A chapter's drawing finishes here in its slot: about 80% of the way along its stretch of the line, just before the scene leaves.
+  const ARRIVED = 0.3; // Matches story-motion's ENTER: the share of its slot a scene spends coming into focus.
   const INTRO = 1.8; // Seconds the pen takes to lay the drawing down.
   const COS = Math.cos(Math.PI / 6), SIN = Math.sin(Math.PI / 6);
 
@@ -134,7 +135,7 @@ export const StoryFigures = (() => {
 
   function chapterTwo(g) {
     const { ctx, w: W, h: H, colors, intro, c, pen, label } = g;
-    const s = Math.min(W / 12.4, H / 4.4), X0 = W / 2 - 1.15 * s, Y0 = H / 2 + .3 * s;
+    const s = Math.min(W / 12.4, H / 4.4), X0 = W / 2 - 1.35 * s, Y0 = H / 2 + .3 * s;
     const iso = (x, y, z) => [X0 + (x - y) * COS * s, Y0 + (x + y) * SIN * s - z * s];
     const reveal = (a) => span(intro, a, a + .35);
     const poly = (pts) => { ctx.beginPath(); pts.forEach(([px, py], q) => (q ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.closePath(); };
@@ -149,7 +150,7 @@ export const StoryFigures = (() => {
       ctx.setLineDash([]);
     };
 
-    // The platform it all lands on: the same GKE platform the first chapter ended on.
+    // The platform it all lands on: containers on Kubernetes, released with Helm.
     const deckIn = reveal(.15);
     if (deckIn) {
       const { x, y, w, d, t } = DECK2;
@@ -159,8 +160,8 @@ export const StoryFigures = (() => {
       for (let e = 0; e < 4; e++) pen(700 + e, top[e], top[(e + 1) % 4], deckIn, 1.1);
       pen(705, top[1], low[0], deckIn); pen(706, top[2], low[1], deckIn); pen(707, top[3], low[2], deckIn);
       pen(708, low[0], low[1], deckIn); pen(709, low[1], low[2], deckIn);
-      const [lx, ly] = iso(x - w, y + d, -t); // under its left corner: the apps rise above its back edge
-      label('GKE', lx, ly + 16, colors.ink2, .9 * deckIn);
+      const [lx, ly] = iso(x + w, y + d, -t); // under its lowest corner, where nothing is drawn
+      label('DOCKER / K8S \u00b7 HELM', lx, ly + 18, colors.ink2, .9 * deckIn);
     }
 
     // The shared-standards strip under every app, laid down once they've all arrived.
@@ -169,7 +170,7 @@ export const StoryFigures = (() => {
       const a = iso(slotX(0) - .12, DECK2.y + .38, 0), b = iso(slotX(4) + APP.w + .12, DECK2.y + .38, 0);
       ctx.strokeStyle = colors.accent; ctx.globalAlpha = .85; pen(720, a, b, strip, 1.6);
       const [lx, ly] = iso(DECK2.x + DECK2.w, DECK2.y + DECK2.d, -DECK2.t); // under the platform's lowest corner, clear of every line
-      label('SHARED STANDARDS', lx, ly + 18, colors.accent, strip);
+      label('SHARED STANDARDS', lx, ly + 33, colors.accent, strip);
     }
 
     // The legacy block: whatever slices haven't left yet, with the tangle running across their faces. Once it's empty it's a dashed outline.
@@ -212,6 +213,9 @@ export const StoryFigures = (() => {
       // Landed: Spring Boot below, Angular above, with a small gap opening between them.
       box(x, y, 0, APP.w, APP.d, APP.low, 920 + k, .9, colors.ink, .1);
       box(x, y, APP.low + APP.gap * split, APP.w, APP.d, APP.high + (APP.gap) * (1 - split), 940 + k, .9, colors.ink, .1);
+      // Then it's packed into its container: a dashed frame around both layers.
+      const pack = ease(span(fly, .9, 1)), m = .05;
+      box(x - m, y - m, 0, APP.w + m * 2, APP.d + m * 2, APP.low + APP.gap + APP.high + m, 960 + k, .55 * pack, colors.line, 0, [3, 3]);
     }
 
     // The pilot's notes: a column past the platform's right corner, with leaders back to the pilot, so nothing lands on them.
@@ -219,6 +223,11 @@ export const StoryFigures = (() => {
     if (pilot > 0) {
       const x = slotX(4) + APP.w, y = DECK2.y - APP.d / 2, col = iso(DECK2.x + DECK2.w, DECK2.y - DECK2.d, 0)[0] + 14;
       const rows = [['ANGULAR', APP.low + APP.gap + APP.high / 2], ['SPRING BOOT', APP.low / 2]];
+      // Under Spring Boot, its tests; under that, the container it ships in.
+      const [, ty] = iso(x, y + APP.d / 2, APP.low / 2), [dx, dy] = iso(x + .05, y + APP.d / 2 + .05, -.02);
+      label('+ TESTS', col, ty + 14, colors.ink2, .75 * pilot, 'left');
+      ctx.strokeStyle = colors.line; ctx.globalAlpha = .7 * pilot; pen(983, [dx + 3, dy + 10], [col - 4, ty + 28], pilot, .8);
+      label('DOCKER IMAGE', col, ty + 28, colors.ink2, .9 * pilot, 'left');
       rows.forEach(([text, z], q) => {
         const [ax, ay] = iso(x, y + APP.d / 2, z);
         ctx.strokeStyle = colors.line; ctx.globalAlpha = .7 * pilot; pen(980 + q, [ax + 3, ay], [col - 4, ay], pilot, .8);
@@ -257,7 +266,9 @@ export const StoryFigures = (() => {
     function beat() {
       const st = story();
       if (!st.live || reduced) return 1;
-      return clamp((st.progress * count - chapter) / DONE);
+      // A chapter after the first waits until its scene has fully arrived and its words are sharp.
+      const start = chapter ? ARRIVED : 0;
+      return clamp((st.progress * count - chapter - start) / (DONE - start));
     }
 
     function draw(now) {
@@ -290,7 +301,7 @@ export const StoryFigures = (() => {
     function frame(now) {
       raf = 0;
       if (!showing()) return;
-      if (shownAt < 0) shownAt = now;
+      if (shownAt < 0 && (!scene || Number(scene.style.opacity || 1) > .95)) shownAt = now; // The pen starts once the scene is in focus.
       draw(now);
       if (!reduced) raf = requestAnimationFrame(frame);
     }
