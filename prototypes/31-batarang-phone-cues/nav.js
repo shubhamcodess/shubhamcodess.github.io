@@ -73,13 +73,13 @@
       const a = marks[i], b = marks[i + 1];
       return a.t + (b.t - a.t) * Math.min(1, Math.max(0, (s - a.at) / (b.at - a.at || 1)));
     }
-    // Crossing into a section, a phone shows its name beside the batarang for a moment.
+    // Crossing into a section shows its name beside the batarang for a moment.
     const now = nav.querySelector(".bn-now");
     let shown = -1, nameIn = 0, nameOut = 0;
     function sayName(i) {
       clearTimeout(nameIn); clearTimeout(nameOut);
       nameIn = setTimeout(() => {
-        if (!narrow.matches || nav.hasAttribute("data-open") || nav.hasAttribute("data-peek")) return;
+        if (nav.hasAttribute("data-open") || nav.hasAttribute("data-peek")) return;
         now.textContent = STOPS[i].label;
         now.dataset.on = "";
         nameOut = setTimeout(() => { delete now.dataset.on; }, 1500);

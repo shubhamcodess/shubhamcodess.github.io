@@ -1,6 +1,6 @@
 # 31. Batarang navigation, with phone cues
 
-Prototype 30, plus two clues on a phone: on a first visit the menu peeks once and pulls back, and crossing into a section shows its name beside the batarang. Add `?peek` to the address to see the peek again.
+Prototype 30, plus two clues: on a phone's first visit the menu peeks once and pulls back, and on any screen, crossing into a section shows its name beside the batarang. Add `?peek` to the address to see the peek again.
 
 Prototype 30 was 29 with three changes: the whole right edge opens it on a computer, a faint scale at rest shows it's there, and the stops are only this page's sections, ending on a new Where to find me. Projects is reached from See all my builds. It runs over the real built site, so nothing in `apps/web` changes.
 
