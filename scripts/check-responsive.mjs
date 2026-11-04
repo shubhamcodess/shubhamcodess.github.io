@@ -109,6 +109,25 @@ for (const [width, height] of [[1920, 1000], [1512, 860], [1440, 800], [1366, 65
   console.log(`${ok ? "ok  " : "FAIL"} ${String(width).padStart(4)}x${height}  featured fits`);
   await page.close();
 }
+// Every section lands the same: heading on the shared line, the same size, and the box under it at the same height, so travelling between them only changes what's below.
+for (const [width, height] of [[2000, 1150], [1920, 1000], [1512, 860], [1440, 800], [1366, 650], [1280, 720], [1024, 768], [412, 790], [393, 852]]) {
+  const page = await browser.newPage({ viewport: { width, height } });
+  await page.goto(`${base}/`, { waitUntil: "networkidle" });
+  const land = async (id, frame) => {
+    await page.evaluate((id) => { const p = document.getElementById("page"); p.scrollTop += document.getElementById(id).getBoundingClientRect().top; }, id);
+    await page.waitForTimeout(1600);
+    return page.evaluate(([id, frame]) => { const s = document.getElementById(id), box = (q) => s.querySelector(q).getBoundingClientRect(); return { kicker: box(".kicker").top, title: parseFloat(getComputedStyle(s.querySelector(".sec-title")).fontSize), frame: box(frame).top, pinned: id !== "experience" || "cine" in s.dataset, line: parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) + parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--content-fade")) }; }, [id, frame]);
+  };
+  const a = await land("featured", ".project-grid"), b = await land("experience", ".story-frame");
+  const problems = [];
+  if (!b.pinned) problems.push("the story isn't pinned");
+  if (Math.abs(a.kicker - a.line) > 3 || Math.abs(b.kicker - b.line) > 3) problems.push(`headings land at ${a.kicker} and ${b.kicker}, not ${a.line}`);
+  if (a.title !== b.title) problems.push(`heading sizes differ: ${a.title} and ${b.title}`);
+  if (width > 860 && Math.abs(a.frame - b.frame) > 3) problems.push(`boxes start at ${a.frame} and ${b.frame}`);
+  if (problems.length) failures.push(`${width}x${height} landing: ${problems.join("; ")}`);
+  console.log(`${problems.length ? "FAIL" : "ok  "} ${String(width).padStart(4)}x${height}  sections land the same`);
+  await page.close();
+}
 // A font that fails to load must not stop the city. This once left phones with a plain background.
 {
   const page = await browser.newPage({ viewport: { width: 375, height: 812 } });

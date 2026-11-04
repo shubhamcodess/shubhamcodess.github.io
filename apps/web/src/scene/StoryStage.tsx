@@ -105,7 +105,7 @@ export function StoryStage({ count, pace, id, figureMotion, children }: { count:
       });
     };
     const onScroll = () => { raf ||= requestAnimationFrame(draw); };
-    /** Pins if the whole stage fits below the header, centered there, so the section above sits at the usual distance. If the cards are stacked and it doesn't fit, it pins the sheet alone instead, and the cards slide inside it. */
+    /** Pins if the whole stage fits below the header, on the landing line every section shares. If the cards are stacked and it doesn't fit, it pins the sheet alone instead, and the cards slide inside it. */
     const fit = () => {
       if (!stage || !frame || !track || !win) return;
       clear();
@@ -113,7 +113,8 @@ export function StoryStage({ count, pace, id, figureMotion, children }: { count:
       story.dataset.cine = "";
       const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 0;
       let h = stage.offsetHeight;
-      const room = innerHeight - header, hintH = hint ? hint.offsetHeight + 6 : 0;
+      const gap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--content-fade")) || 8; // Clear of the page's fade under the header.
+      const room = innerHeight - header - gap, hintH = hint ? hint.offsetHeight + 6 : 0;
       const tighten = (scene: HTMLElement, { k, g }: (typeof FIT_STEPS)[number]) => { scene.style.setProperty("--story-k", String(k)); scene.style.setProperty("--story-g", String(g)); };
       // Stacked cards tighten together first, if that keeps the heading on screen with them.
       if (stacked.matches) for (const step of FIT_STEPS) {
@@ -121,13 +122,12 @@ export function StoryStage({ count, pace, id, figureMotion, children }: { count:
         h = stage.offsetHeight;
         if (h + hintH <= room - 12) break;
       }
-      if (h + hintH <= room - 12) pinTop = header + (room - h - hintH) / 2;
+      if (h + hintH <= room - 12) pinTop = header + gap; // The landing line every section's heading shares (`--sec-top`).
       else {
         if (!stacked.matches) { clear(); return; }
         const below = track.getBoundingClientRect().bottom - win.getBoundingClientRect().bottom + hintH;
         const chrome = win.getBoundingClientRect().top - frame.getBoundingClientRect().top + below;
-        const gap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--content-fade")) || 8; // Clear of the page's fade under the header.
-        const avail = room - gap - 8 - chrome;
+        const avail = room - 8 - chrome;
         if (avail < MIN_WINDOW) { clear(); return; }
         story.dataset.pan = ""; // From here each card is its own height, so it can be measured alone.
         // Tighten each card a step at a time until it fits, so a long one doesn't shrink the rest, and a card only slides on a screen too small for that.

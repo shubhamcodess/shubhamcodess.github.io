@@ -202,7 +202,7 @@ Experience, told as a film. All content and whether it has a frame are `story` i
 - **Log:** what was done, one line each, with the verb as the column you scan. Verbs are a fixed list.
 - **Tools:** hand-sketched references to each logo, in the icons' pen, and they redraw on hover. `Tool` is a fixed list and each must have a logo, or the build fails.
 - **Phones and narrow screens (under 860px):** each card runs top to bottom: words, figure, tools. If the whole stage fits, it pins as usual. If not, the heading scrolls away and fades, the sheet pins below the header's fade, and each card tightens its type and spacing on its own, down to 88%, until it fits. Only a card that still doesn't fit slides up inside the sheet as you scroll, which happens on small screens, not on common phones. Figures under 480px wide stop spacing their label letters and open up their rows.
-- **Spacing:** the words get room to sit. Side by side, every gap grows with the height to spare (`--air`, from 650px tall), so a short laptop keeps the film pinned. Stacked, a card that doesn't fit tightens its spacing first (`--g`) and its type only a little (`--k`).
+- **Spacing:** the words get room to sit. Side by side, every gap grows with the height to spare (`--air`, from 680px tall), so a short laptop keeps the film pinned. Stacked, a card that doesn't fit tightens its spacing first (`--g`) and its type only a little (`--k`).
 - **What a card shows:** `content` sets it apart for narrow (under 860px) and wide screens: `full`, `text` (the words alone) or `text-tools`. Now narrow is `text-tools` and wide is `full`. Hidden figures aren't fetched, and their words stay in the HTML.
 - **Tools on narrow screens:** always one row, however many there are. The rest are a swipe away, and the row's end fades to say so, with no marquee.
 - **What plays a figure:** `figureMotion`. `scroll` draws a chapter as you scroll. `loop` (now, on trial) has the card play it by itself, 8s drawing, 6s holding and a quick rewind, so scrolling only moves between cards. It starts from nothing each time a card arrives, and when a stop on the line is pressed.
@@ -230,8 +230,11 @@ Touch devices (`hover: none` and `pointer: coarse`) get the same look with less 
 ### Scroll thumb: Approved
 Code: `packages/design/src/components/scroll-thumb`. It replaces the visible scrollbar with one small draggable shape that takes up no width. The shape is passed in: this site uses a small batarang, standing on end. It rests at `--scroll-thumb-top`, which this site sets to the bottom of the header. On hover it grows by 1.4 and darkens, softly. It's for pointers, while keyboards, wheels and touch scroll natively.
 
+### Section landing
+Every section that fits a screen lands the same: its kicker on `--sec-top` (the header plus its fade), the same heading size (`clamp(26px, min(4.4vw, 5.6svh), 56px)`), and side by side, its box the same distance below. Only what's below changes as you travel between them. New sections follow this, and `pnpm responsive` checks it.
+
 ### Project card: Approved
-- **Featured fits one screen:** `shipped.fit: "screen"`. Once cards sit side by side (over 860px), the section is one screen tall, centered below the header's fade, so a jump lands with all of it in view. "See all my builds" sits beside the heading, where the story keeps its tabs. The drawings take only the height left over, and type stays as it is, except that on screens 700px tall or less the heading takes the pinned story's smaller size. Stacked cards scroll as usual. `"free"` restores the drawings' own proportions.
+- **Featured fits one screen:** `shipped.fit: "screen"`. Once cards sit side by side (over 860px), the section is one screen tall, so a jump lands with all of it in view. Its heading lands exactly where the story's does. "See all my builds" sits beside the heading, where the story keeps its tabs. The drawings take only the height left over. Stacked cards scroll as usual. `"free"` restores the drawings' own proportions.
 Prototype: `prototypes/06-project-card`, with its detail page at `projects/everything-tech/`.
 
 - **Parts:** frame, wireframe shadow, texture, stage (drafting plate with a live drawing), meta line, title with arrow, one description, up to three links.

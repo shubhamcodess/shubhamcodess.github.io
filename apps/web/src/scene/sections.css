@@ -21,22 +21,26 @@
   .project-cell { grid-column: auto; }
 }
 .sec-more { display: flex; justify-content: flex-end; margin-top: clamp(30px, 5svh, 52px); }
-/* Side by side, the section fits one screen, like the story. The link moves up beside the heading, where the story keeps its tabs, and the drawings take only the height left over. Type stays as it is. */
+/* A section that fits one screen starts on the shared landing line, with the story's heading, so travelling between them only changes what's below it. */
+.sec[data-fit="screen"] { min-height: 100svh; padding-top: var(--sec-top); }
+.sec[data-fit="screen"] .kicker, .story[data-cine] .story-head .kicker { margin-bottom: var(--sec-kicker-gap); }
+.sec[data-fit="screen"] .sec-title { font-size: clamp(26px, min(4.4vw, 5.6svh), 56px); }
+.sec[data-fit="screen"] .project-grid { margin-top: var(--sec-head-gap); }
+/* Side by side, the link moves up beside the heading, where the story keeps its tabs, and the drawings take only the height left over. */
 @media (min-width: 861px) {
-  /* A screen tall and centered below the header's fade, so a jump to it lands with all of it in view. */
-  .sec[data-fit="screen"] { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: center; min-height: 100svh; padding-block: calc(var(--header-h) + var(--content-fade)) 12px; }
+  .sec[data-fit="screen"] { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: start; padding-bottom: 12px; }
   .sec[data-fit="screen"] > :is(.kicker, .project-grid) { grid-column: 1 / -1; }
   .sec[data-fit="screen"] > .sec-title { grid-column: 1; }
   .sec[data-fit="screen"] > .sec-more { grid-column: 2; grid-row: 2; align-self: end; margin-top: 0; }
-  .sec[data-fit="screen"] .project-grid { gap: clamp(20px, 2.6vw, 40px); margin-top: clamp(16px, 3svh, 32px); }
-  .sec[data-fit="screen"] .pc-stage { aspect-ratio: auto; height: clamp(100px, calc(100svh - 590px), 300px); }
+  .sec[data-fit="screen"] .project-grid { gap: clamp(20px, 2.6vw, 40px); }
+  .sec[data-fit="screen"] .pc-stage { aspect-ratio: auto; height: clamp(100px, calc(100svh - 540px), 300px); }
 }
+@media (min-width: 861px) and (max-width: 1100px) { .sec[data-fit="screen"] .pc-stage { height: clamp(100px, calc(100svh - 570px), 300px); } } /* Narrower cards wrap more lines. */
+@media (min-width: 861px) and (max-height: 700px) { .story[data-cine] .story-track { margin-top: 12px; } }
 @media (min-width: 861px) and (max-height: 780px) {
-  .sec[data-fit="screen"] .kicker { margin-bottom: 12px; }
   .sec[data-fit="screen"] .pc-sheet { padding-block: 14px 16px; }
   .sec[data-fit="screen"] .pc-actions { padding-top: 12px; }
 }
-@media (min-width: 861px) and (max-height: 700px) { .sec[data-fit="screen"] .sec-title { font-size: clamp(26px, min(4.4vw, 5.6svh), 56px); } } /* On a screen this short, the same heading as the pinned story. */
 
 /* A plate with no drawing yet: its real numbers, set out like a drawing's schedule. */
 .stage-facts { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: clamp(10px, 3cqi, 20px); margin: 0; padding: 30px clamp(18px, 7%, 40px) 22px; }
@@ -69,9 +73,9 @@
 .project-stack { max-width: 68ch; margin: 28px 0 0; padding-top: 14px; border-top: 1px solid var(--line-rest); font: 500 12px/1.5 var(--font-note); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); }
 
 /* The story. As plain text first: every scene in order inside the frame. The script turns that into a film if motion is welcome and it fits the screen. */
-.story { --story-drawn: 1; --now: 1; --air: clamp(0px, calc(100svh - 650px), 300px); position: relative; padding-block: var(--sec-pad); } /* `--air` is the height to spare: side by side, the words open up with it, while a short laptop keeps the film pinned. */
+.story { --story-drawn: 1; --now: 1; --air: clamp(0px, calc(100svh - 680px), 300px); position: relative; padding-block: var(--sec-top) var(--sec-pad); } /* `--air` is the height to spare: side by side, the words open up with it, while a short laptop keeps the film pinned. */
 /* Kicker and heading pin with the sheet, so they stay while the scenes play. */
-.story-head { position: relative; margin-bottom: var(--sec-gap); }
+.story-head { position: relative; margin-bottom: var(--sec-head-gap); }
 /* The company's name, a touch heavier and in the theme's accent. */
 .company-name { font-weight: 650; color: var(--accent); }
 /* Now and Archive: two small tabs at the head's bottom right, on the sheet's top edge. */
@@ -203,8 +207,6 @@
 .story[data-pan] .story-window { height: var(--window-h); grid-template-rows: minmax(0, 1fr); }
 .story[data-pan] .story-window > li { align-self: start; min-height: 100%; }
 /* Pinned, the heading gives way on short screens so the whole stage still fits. */
-.story[data-cine] .story-head { margin-bottom: clamp(14px, 3.4svh, 64px); }
-.story[data-cine] .story-head .kicker { margin-bottom: clamp(10px, 1.6svh, 18px); }
 .story[data-cine] .story-head .sec-title { font-size: clamp(26px, min(4.4vw, 5.6svh), 56px); }
 /* The scroll hint under the line: a quiet note with a slowly settling chevron, there only while the film is pinned. */
 .story-hint { position: absolute; left: 50%; top: calc(100% + 6px); display: none; align-items: center; gap: 6px; margin: 0; transform: translateX(-50%); font: 500 10.5px/1 var(--font-note); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; color: var(--ink-2); opacity: var(--hint, 1); pointer-events: none; }

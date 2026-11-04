@@ -1,6 +1,10 @@
 /* How the header, the Gotham scene and the page meet. Options come from `scene` in content/site.ts. */
 :root { --header-h: 68px; --content-fade: 44px; --scroll-thumb-top: 68px; }
+@media (max-height: 900px) { :root { --content-fade: 22px; } } /* Nor can a laptop. */
+@media (max-height: 700px) { :root { --content-fade: 12px; } }
 @media (max-width: 860px) { :root { --content-fade: 18px; } } /* A phone can't spare the height. */
+/* Where every section's heading lands when you travel to it: just clear of the fade under the header. */
+:root { --sec-top: calc(var(--header-h) + var(--content-fade)); --sec-kicker-gap: clamp(10px, 1.6svh, 18px); --sec-head-gap: clamp(16px, 3svh, 32px); }
 [data-content-fade="short"] { --content-fade: 22px; }
 [data-content-fade="long"] { --content-fade: 86px; }
 
