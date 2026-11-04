@@ -101,13 +101,31 @@
     document.addEventListener("pointerdown", (e) => { if (isOpen() && !e.target.closest(".bn-bat, .bn-stop, .header-nav > :last-child")) setOpen(false); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && isOpen()) { setOpen(false); bat.focus(); } });
 
+    /* A smooth trip that treats the pinned film as having no length: it steps straight across, so passing Experience doesn't play its cards. */
+    let trip = 0;
+    const stopTrip = () => { cancelAnimationFrame(trip); trip = 0; };
+    ["wheel", "touchstart", "pointerdown"].forEach((name) => page.addEventListener(name, stopTrip, { passive: true }));
+    function travel(to) {
+      stopTrip();
+      if (reduced) { page.scrollTop = to; return; }
+      const film = document.querySelector(".story"), a = Number(film?.dataset.holdStart), length = Number(film?.dataset.holdLength) || 0, b = a + length;
+      const flat = (s) => (!length || s <= a ? s : s >= b ? s - length : a), full = (v) => (!length || v <= a ? v : v + length);
+      const from = flat(page.scrollTop), end = flat(to), began = performance.now(), time = Math.min(1100, 450 + Math.abs(end - from) * 0.35);
+      const step = (now) => {
+        const k = Math.min(1, (now - began) / time), e = k < 0.5 ? 4 * k ** 3 : 1 - (-2 * k + 2) ** 3 / 2;
+        page.scrollTop = k === 1 ? to : full(from + (end - from) * e);
+        trip = k < 1 ? requestAnimationFrame(step) : 0;
+      };
+      trip = requestAnimationFrame(step);
+    }
+
     // A stop on this page scrolls there. Anywhere else goes there.
     links.forEach((a, i) => a.addEventListener("click", (e) => {
       setOpen(false);
       const s = STOPS[i];
       if (!onHome()) return;
       e.preventDefault();
-      page.scrollTo({ top: sectionTop(s), behavior: reduced ? "auto" : "smooth" });
+      travel(sectionTop(s));
     }));
 
     measure();
