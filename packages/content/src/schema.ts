@@ -106,6 +106,8 @@ export const siteSchema = z
     cards: z.strictObject({ face: z.enum(CARD_OPTIONS.face), plate: z.enum(CARD_OPTIONS.plate), hatch: z.enum(CARD_OPTIONS.hatch) }),
     /** The section after the hero. Rank is the order of `items`. `span` is how many of the `columns` a card takes. */
     shipped: z.strictObject({
+      /** "screen": once the cards sit side by side, the section fits one screen, like the story, by giving the drawings only the height left over. "free": the drawings keep their own proportions. */
+      fit: z.enum(["screen", "free"]),
       kicker: z.string().min(1),
       title: z.tuple([z.string().min(1), z.string().min(1)]),
       columns: z.number().int().min(1).max(3),

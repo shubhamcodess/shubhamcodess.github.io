@@ -231,6 +231,7 @@ Touch devices (`hover: none` and `pointer: coarse`) get the same look with less 
 Code: `packages/design/src/components/scroll-thumb`. It replaces the visible scrollbar with one small draggable shape that takes up no width. The shape is passed in: this site uses a small batarang, standing on end. It rests at `--scroll-thumb-top`, which this site sets to the bottom of the header. On hover it grows by 1.4 and darkens, softly. It's for pointers, while keyboards, wheels and touch scroll natively.
 
 ### Project card: Approved
+- **Featured fits one screen:** `shipped.fit: "screen"`. Once cards sit side by side (over 860px), the section is one screen tall, centered below the header's fade, so a jump lands with all of it in view. "See all my builds" sits beside the heading, where the story keeps its tabs. The drawings take only the height left over, and type stays as it is, except that on screens 700px tall or less the heading takes the pinned story's smaller size. Stacked cards scroll as usual. `"free"` restores the drawings' own proportions.
 Prototype: `prototypes/06-project-card`, with its detail page at `projects/everything-tech/`.
 
 - **Parts:** frame, wireframe shadow, texture, stage (drafting plate with a live drawing), meta line, title with arrow, one description, up to three links.

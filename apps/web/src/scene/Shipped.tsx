@@ -10,9 +10,9 @@ const LAYERS = ["c", "d", "c", "d", "c", "d"];
 
 /* The first section after the hero. Which projects, their rank, how many columns and each card's shape all come from `shipped` in content/site.ts. */
 export function Shipped() {
-  const { kicker, title, columns, seeAll } = site.shipped;
+  const { kicker, title, columns, fit, seeAll } = site.shipped;
   return (
-    <section id="featured" className="sec" data-block>
+    <section id="featured" className="sec" data-block data-fit={fit}>
       <p className="kicker rv" data-layer="a">{kicker}</p>
       <h2 className="sec-title" data-layer="b">
         <MotionText line text={title[0]} />

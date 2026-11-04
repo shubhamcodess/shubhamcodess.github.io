@@ -94,6 +94,21 @@ for (const [width, height, slides] of [[412, 790, false], [393, 852, false], [36
   console.log(`${problems.length ? "FAIL" : "ok  "} ${String(width).padStart(4)}x${height}  story fits`);
   await page.close();
 }
+// Featured fits one screen once its cards sit side by side: a jump to it shows the heading, every card and the link.
+for (const [width, height] of [[1920, 1000], [1512, 860], [1440, 800], [1366, 650], [1280, 720], [1024, 768], [900, 700]]) {
+  const page = await browser.newPage({ viewport: { width, height } });
+  await page.goto(`${base}/`, { waitUntil: "networkidle" });
+  const fit = await page.evaluate(() => {
+    const sec = document.getElementById("featured"), root = getComputedStyle(document.documentElement);
+    document.getElementById("page").scrollTop += sec.getBoundingClientRect().top;
+    const parts = [".kicker", ".project-grid", ".sec-more"].map((q) => { const el = sec.querySelector(q); return { top: el.offsetTop, bottom: el.offsetTop + el.offsetHeight }; });
+    return { top: Math.min(...parts.map((p) => p.top)), bottom: Math.max(...parts.map((p) => p.bottom)), clear: parseFloat(root.getPropertyValue("--header-h")) + parseFloat(root.getPropertyValue("--content-fade")) };
+  });
+  const ok = fit.top >= fit.clear - 1 && fit.bottom <= height;
+  if (!ok) failures.push(`${width}x${height} featured doesn't fit one screen: ${JSON.stringify(fit)}`);
+  console.log(`${ok ? "ok  " : "FAIL"} ${String(width).padStart(4)}x${height}  featured fits`);
+  await page.close();
+}
 // A font that fails to load must not stop the city. This once left phones with a plain background.
 {
   const page = await browser.newPage({ viewport: { width: 375, height: 812 } });

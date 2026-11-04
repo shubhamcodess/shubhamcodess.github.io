@@ -24,6 +24,7 @@ const config = {
     kicker: "Featured builds",
     title: ["What I shipped recently.", "Open source, real impact."],
     columns: 3,
+    fit: "screen", // "free" lets the drawings keep their own proportions, however tall that makes the section.
     // Rank is this order. Try: both vertical with columns 2 and span 1, both wide with columns 1, or three cards with columns 3 and span 1.
     items: [
       { slug: "mcp-token-optimizer", layout: "wide", span: 2 },
