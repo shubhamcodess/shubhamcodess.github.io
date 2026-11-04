@@ -1,0 +1,71 @@
+/* What the batarang replaces. */
+.scroll-thumb { display: none !important; }
+.header-wide { display: flex !important; }
+.header-wide > :is(:nth-child(1), :nth-child(3)), .header-narrow { display: none !important; }
+
+.bn { --rail-top: calc(var(--header-h) + 28px); --ease: cubic-bezier(.16, 1, .3, 1); font: 500 12px/1 var(--font-note); }
+.bn-bat { position: fixed; z-index: 50; top: 0; right: 0; width: 40px; height: 52px; margin: -26px 0 0; padding: 0; display: grid; place-items: center; border: 0; background: none; color: var(--ink); cursor: pointer; will-change: transform; -webkit-tap-highlight-color: transparent; }
+.bn-now { display: none; }
+.bn-bat span { display: block; opacity: .55; transition: opacity .3s, transform .45s var(--ease); }
+.bn-bat:hover span, .bn[data-open] .bn-bat span { opacity: 1; transform: scale(1.3); }
+.bn-bat:focus-visible { outline: 1.5px dashed var(--accent); outline-offset: -6px; }
+
+.bn-wash { position: fixed; z-index: 9; inset: 0 0 0 auto; width: min(420px, 60vw); pointer-events: none; opacity: 0; transition: opacity .35s; background: linear-gradient(to left, color-mix(in srgb, var(--sky-1) 88%, transparent) 40%, transparent); }
+.bn-panel { position: fixed; z-index: 40; top: 0; right: 0; bottom: 0; width: 250px; visibility: hidden; pointer-events: none; transition: visibility 0s .35s; }
+.bn[data-open] .bn-wash { opacity: 1; }
+.bn[data-open] .bn-panel { visibility: visible; pointer-events: auto; transition-delay: 0s; }
+
+/* The line draws from the top. */
+.bn-line { position: absolute; right: 19.5px; top: var(--rail-top); width: 1px; height: var(--rail-h); transform: scaleY(0); transform-origin: 0 0; transition: transform .25s; background: var(--line-rest); }
+.bn[data-open] .bn-line { transform: scaleY(1); transition: transform .6s var(--ease); }
+.bn-stop { position: absolute; right: 0; top: calc(var(--rail-top) + var(--rail-h) * var(--t)); height: 44px; margin-top: -22px; padding-right: 40px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: 100%; color: var(--ink-2); text-decoration: none; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; opacity: 0; transform: translateY(-8px); transition: opacity .15s, transform .15s, color .2s; }
+.bn-stop::after { content: ""; position: absolute; right: 15px; top: 50%; width: 9px; height: 1px; background: var(--line); }
+.bn[data-open] .bn-stop { opacity: 1; transform: none; transition: opacity .4s var(--ease) calc(var(--i) * 80ms + 90ms), transform .5s var(--ease) calc(var(--i) * 80ms + 90ms), color .2s; }
+.bn-stop:hover, .bn-stop:focus-visible { color: var(--ink); outline: none; }
+.bn-stop[aria-current] { color: var(--accent); }
+
+/* At rest, a computer shows a faint scale down the edge, so it reads as something to reach for. The whole edge opens it. */
+.bn-edge { position: fixed; z-index: 39; top: 0; right: 0; bottom: 0; width: 56px; }
+.bn-cue { position: fixed; z-index: 8; right: 19.5px; top: var(--rail-top); width: 1px; height: var(--rail-h); background: color-mix(in srgb, var(--line-rest), transparent 45%); pointer-events: none; transition: opacity .3s; }
+.bn-cue i { position: absolute; right: -4px; top: calc(100% * var(--t)); width: 9px; height: 1px; background: var(--line-rest); }
+.bn-edge:hover ~ .bn-cue { opacity: 0; }
+.bn[data-open] .bn-cue { opacity: 0; }
+
+/* Where to find me. */
+.bn-find { grid-column: 1 / -1; margin: var(--sec-head-gap) 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line-rest); }
+.bn-find li { border-bottom: 1px solid var(--line-rest); }
+.bn-find a { display: flex; align-items: baseline; gap: 18px; padding: clamp(16px, 3svh, 30px) 0; color: var(--ink); text-decoration: none; }
+.bn-find-name { font: 500 clamp(27px, 3.3vw, 50px)/1.05 var(--sans); letter-spacing: -.035em; }
+.bn-find-who { font: 500 12px var(--font-note); letter-spacing: .06em; color: var(--ink-2); min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.bn-find svg { flex: none; width: 16px; height: 16px; margin-left: auto; align-self: center; fill: none; stroke: var(--accent); stroke-width: 1; transition: transform .45s var(--ease, ease); }
+.bn-find a:hover svg { transform: translate(3px, -3px); }
+
+/* A phone: the whole screen becomes the menu, in big type, like an app's own screen. */
+@media (max-width: 860px) {
+  .bn-bat { width: 48px; height: 60px; margin-top: -30px; }
+  .bn-bat span { opacity: .7; }
+  /* The name of the section you've just crossed into. */
+  .bn-now { display: block; position: absolute; right: 100%; top: 50%; padding: 5px 8px; font: 500 11px/1 var(--font-note); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; color: var(--ink); background: color-mix(in srgb, var(--sky-1) 82%, transparent); opacity: 0; transform: translate(6px, -50%); transition: opacity .3s, transform .45s var(--ease); pointer-events: none; }
+  .bn-now[data-on] { opacity: 1; transform: translate(0, -50%); }
+  /* The peek: the same line and stops, small, over the page instead of covering it. */
+  .bn[data-peek] .bn-panel { visibility: visible; transition-delay: 0s; }
+  .bn[data-peek] .bn-line { transform: scaleY(1); transition: transform .6s var(--ease); }
+  .bn[data-peek] .bn-stop { opacity: 1; transform: none; transition: opacity .4s var(--ease) calc(var(--i) * 80ms + 90ms), transform .5s var(--ease) calc(var(--i) * 80ms + 90ms); }
+  .bn[data-peek] .bn-wash { opacity: 1; }
+  .bn-wash { inset: 0; width: auto; pointer-events: none; background: color-mix(in srgb, var(--sky-1) 94%, transparent); }
+  .bn[data-open] .bn-wash { pointer-events: auto; touch-action: none; }
+  .bn-panel { width: 100%; pointer-events: none !important; }
+  .bn-stop { pointer-events: auto; }
+  .bn-edge, .bn-cue { display: none; }
+  .bn-line { right: 23.5px; }
+  .bn-stop { height: 64px; margin-top: -32px; padding-right: 46px; font: 500 30px/1 var(--sans); letter-spacing: -.03em; text-transform: none; }
+  .bn-stop::after { right: 18px; width: 11px; }
+  /* The top holds only Resume. The theme waits in the menu, at its foot. */
+  .header-nav > :last-child { display: none; }
+  body:has(.bn[data-open]) .header-nav > :last-child { display: block; position: fixed; left: 16px; bottom: 16px; }
+}
+@media (max-width: 860px) {
+  .bn[data-peek-style] .bn-stop { height: 44px; margin-top: -22px; padding-right: 40px; font: 500 12px/1 var(--font-note); letter-spacing: .08em; text-transform: uppercase; pointer-events: none; }
+  .bn[data-peek-style] .bn-wash { inset: 0 0 0 auto; width: 62vw; pointer-events: none; background: linear-gradient(to left, color-mix(in srgb, var(--sky-1) 88%, transparent) 45%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) { .bn *, .bn { transition-duration: .01s !important; transition-delay: 0s !important; } }
