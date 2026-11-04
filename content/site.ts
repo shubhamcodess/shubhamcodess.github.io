@@ -5,7 +5,7 @@ const config = {
   name: "Shubham Prakash",
   description: "Shubham Prakash's corner of the internet.",
   background: { default: "oldGotham", onLoad: "config" },
-  scene: { face: "clear", contentFade: "mid", depth: "big", sway: "low", haze: "full", dust: "full", density: "normal", reach: "mid", word: "faint" },
+  scene: { face: "clear", contentFade: "mid", depth: "big", sway: "full", haze: "full", dust: "full", density: "normal", reach: "mid", word: "faint" },
   headerButton: { texture: "hatch", shadow: "br", hover: "shadow", press: "keycap", sway: "off" },
   stats: { ttlMinutes: 120, persist: true, min: { stars: 5, forks: 5, watchers: 5, openIssues: 1, weekly: 5, monthly: 5 }, monthlyWhenSameAsWeekly: false, refresh: true },
   logo: { lettering: "geist", guides: false, depth: true, blade: "suit", aim: false, intro: true, hover: true, scroll: { pull: true, threshold: 40 }, speed: 1, spins: 2 },
@@ -95,7 +95,7 @@ const config = {
     ],
   },
   projects: { kicker: "All projects", title: ["All my builds.", "The list is still growing."], description: "Projects by Shubham Prakash.", columns: 2 },
-  scroll: { lerp: 0.14, lag: 1, parallax: 1, reveal: "mask", hide: true },
+  scroll: { lerp: 0.14, lag: 0.25, parallax: 0.25, reveal: "mask", hide: true }, // `lag` and `parallax` are how far cards and buttons glide as you scroll: 0 is none, 1 was the old strength, 3 the most.
   buttonMotion: { iconHover: "trace", textHover: "grow" },
   socials: [
     { label: "GitHub", href: "https://github.com/shubhamcodess" },
