@@ -5,7 +5,7 @@ const config = {
   name: "Shubham Prakash",
   description: "Shubham Prakash's corner of the internet.",
   background: { default: "oldGotham", onLoad: "config" },
-  scene: { face: "clear", contentFade: "mid", depth: "big", sway: "full", haze: "full", dust: "full", density: "normal", reach: "mid", word: "faint" },
+  scene: { face: "clear", contentFade: "mid", depth: "big", sway: "low", haze: "full", dust: "full", density: "normal", reach: "mid", word: "faint" },
   headerButton: { texture: "hatch", shadow: "br", hover: "shadow", press: "keycap", sway: "off" },
   stats: { ttlMinutes: 120, persist: true, min: { stars: 5, forks: 5, watchers: 5, openIssues: 1, weekly: 5, monthly: 5 }, monthlyWhenSameAsWeekly: false, refresh: true },
   logo: { lettering: "geist", guides: false, depth: true, blade: "suit", aim: false, intro: true, hover: true, scroll: { pull: true, threshold: 40 }, speed: 1, spins: 2 },
