@@ -1,7 +1,7 @@
 import type { HeroLightConfig } from '../../config/types'
 
 /**
- * The hero light: lanes of light run along a floor toward the viewer and up a narrow wall far behind the words.
+ * The light: lanes of light run along a floor toward the viewer and up a narrow wall far behind the words.
  * One full-screen fragment shader on raw WebGL2, so it costs a few kilobytes and no library.
  */
 
@@ -99,12 +99,12 @@ function compile(gl: WebGL2RenderingContext, type: number, source: string): WebG
   gl.shaderSource(shader, source)
   gl.compileShader(shader)
   if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return shader
-  console.error('Hero light shader failed to compile:', gl.getShaderInfoLog(shader))
+  console.error('Light shader failed to compile:', gl.getShaderInfoLog(shader))
   gl.deleteShader(shader)
   return null
 }
 
-/** Returns null when WebGL2 isn't available, and the hero keeps its static backdrop. */
+/** Returns null when WebGL2 isn't available, and the backdrop keeps its static CSS glow. */
 export function createCoveLight(canvas: HTMLCanvasElement, config: HeroLightConfig): CoveLight | null {
   const gl = canvas.getContext('webgl2', { alpha: false, antialias: false, powerPreference: 'low-power' })
   if (!gl) return null

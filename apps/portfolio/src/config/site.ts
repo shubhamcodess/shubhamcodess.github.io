@@ -19,10 +19,11 @@ export const site = {
       { label: 'Featured builds', to: '#featured' },
       { label: 'All builds', to: 'builds' },
     ],
+    actionsHideAfter: 120,
     light: {
       intensity: 0.5,
       lanes: { wide: 64, narrow: 26 },
-      speed: 0.4,
+      speed: 0.24,
       horizon: 0.34,
       wallWidth: { wide: 0.26, narrow: 0.46 },
       floorPerspective: 0.11,
@@ -44,8 +45,18 @@ export const site = {
   },
   buildsPage: {
     title: 'All builds',
-    lead: 'Every public project I have shipped. Each one links to its code.',
+    lead: 'Every public project I have shipped. Open one for the full story.',
+    allLabel: 'All',
   },
+  projectPage: {
+    lightIntensity: 0.3,
+    sections: { features: 'What it does', engineering: 'How it is built', limits: 'Honest limits' },
+    labels: { year: 'Year', kind: 'Kind', stack: 'Stack', links: 'Links' },
+    back: 'All builds',
+    next: 'Next build',
+    previous: 'Previous build',
+  },
+  kinds: ['AI tooling', 'Developer tool', 'In-browser AI', 'App'],
   socials: [
     { label: 'GitHub', href: 'https://github.com/shubhamcodess' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/shubham-prakash-dev/' },
@@ -56,6 +67,9 @@ export const site = {
     heroParallax: true,
     featured: true,
     buildsPage: true,
+    buildsFilter: true,
+    projectPages: true,
+    scrollLight: true,
     footer: true,
   },
 } as const satisfies SiteConfig

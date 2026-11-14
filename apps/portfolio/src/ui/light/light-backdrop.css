@@ -1,0 +1,20 @@
+/* The far layer. It scrolls slower than the page, which is what puts it behind the words. */
+.light-backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 45% at 50% 34%, rgb(20 60 140 / 22%), transparent 70%);
+  transform: translate3d(0, calc(var(--light-scroll, 0px) * var(--light-scroll-rate, 0)), 0);
+  pointer-events: none;
+}
+
+.light-backdrop canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--duration-slow) linear;
+}
+
+.light-backdrop[data-light='on'] canvas {
+  opacity: 1;
+}

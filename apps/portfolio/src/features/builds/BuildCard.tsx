@@ -1,9 +1,11 @@
+import { site } from '../../config/site'
 import type { Build, BuildLinkKind } from '../../content/types'
+import { hrefToBuild } from '../../lib/routes'
 import { ActionLink } from '../../ui/ActionLink'
 import { FolderCard } from '../../ui/FolderCard'
 import './builds.css'
 
-const linkLabels = {
+export const linkLabels = {
   code: 'Code',
   live: 'Live',
   package: 'npm',
@@ -34,6 +36,7 @@ export function BuildCard({ build, position, variant, headingLevel }: BuildCardP
       title={build.title}
       headingLevel={headingLevel}
       summary={build.summary}
+      {...(site.features.projectPages ? { href: hrefToBuild(build.slug) } : {})}
       {...(variant === 'feature' && stat ? { plate: stat } : {})}
       meta={
         <>

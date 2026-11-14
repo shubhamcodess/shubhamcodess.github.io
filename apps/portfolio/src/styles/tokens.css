@@ -81,6 +81,20 @@
   --hero-plate-blur: 14px;
   --hero-chip-blur: 12px;
 
+  /* Component: project page */
+  --project-name-size: clamp(2.75rem, 1.5rem + 6vw, 7rem);
+  --project-fact-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.75rem);
+  --project-rail-width: 200px;
+  --project-measure: 46rem;
+
+  /* Component: scroll light */
+  --scroll-light-width: 2px;
+  --scroll-light-inset: 28px;
+  --scroll-light-drop: 28px;
+  --scroll-light-track: rgb(255 255 255 / 8%);
+  --scroll-light-color: #2f7bff;
+  --scroll-light-head: #cfe4ff;
+
   /* Component: folder card */
   --card-radius: var(--radius-lg);
   --card-padding: clamp(18px, 2vw, 24px);

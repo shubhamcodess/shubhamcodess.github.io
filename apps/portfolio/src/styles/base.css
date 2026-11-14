@@ -15,7 +15,6 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: var(--frame-inset);
   scrollbar-color: var(--night-ink-muted) var(--backplate);
-  scrollbar-width: thin;
 }
 
 body {

@@ -3,7 +3,7 @@ import type { HeroLightConfig } from '../../config/types'
 import { useReducedMotion } from '../../lib/useReducedMotion'
 import { createCoveLight } from './coveLight'
 
-interface HeroSceneOptions {
+export interface LightSceneOptions {
   readonly light: boolean
   readonly parallax: boolean
   readonly config: HeroLightConfig
@@ -15,24 +15,25 @@ const stillFrame = 3
 const pointerEase = 0.06
 
 /**
- * Runs the hero's one animation loop: the light, and the depth between light and words.
- * The loop stops while the hero is off screen or the tab is hidden, and never starts under reduced motion.
- * Depth is written as CSS variables on the hero (--hero-pointer-x/y, --hero-scroll), so the styles decide what moves.
+ * Runs a light backdrop's one animation loop: the light, and the depth between light and words.
+ * The host is the backdrop's parent. The loop stops while the host is off screen or the tab is hidden, and never starts under reduced motion.
+ * Depth is written as CSS variables on the host (--light-pointer-x/y, --light-scroll), so the styles decide what moves.
  */
-export function useHeroScene(
-  heroRef: RefObject<HTMLElement | null>,
+export function useLightScene(
+  backdropRef: RefObject<HTMLElement | null>,
   canvasRef: RefObject<HTMLCanvasElement | null>,
-  { light, parallax, config }: HeroSceneOptions,
+  { light, parallax, config }: LightSceneOptions,
 ): void {
   const reducedMotion = useReducedMotion()
 
   useEffect(() => {
-    const hero = heroRef.current
+    const backdrop = backdropRef.current
+    const hero = backdrop?.parentElement
     const canvas = canvasRef.current
-    if (!hero || !canvas) return
+    if (!backdrop || !hero || !canvas) return
 
     const scene = light ? createCoveLight(canvas, config) : null
-    hero.dataset.light = scene ? 'on' : 'off'
+    backdrop.dataset.light = scene ? 'on' : 'off'
     const depth = parallax && !reducedMotion
 
     let frame = 0
@@ -51,9 +52,9 @@ export function useHeroScene(
       if (depth) {
         eased.x += (target.x - eased.x) * pointerEase
         eased.y += (target.y - eased.y) * pointerEase
-        hero.style.setProperty('--hero-pointer-x', eased.x.toFixed(4))
-        hero.style.setProperty('--hero-pointer-y', eased.y.toFixed(4))
-        hero.style.setProperty('--hero-scroll', `${Math.max(0, window.scrollY).toFixed(1)}px`)
+        hero.style.setProperty('--light-pointer-x', eased.x.toFixed(4))
+        hero.style.setProperty('--light-pointer-y', eased.y.toFixed(4))
+        hero.style.setProperty('--light-scroll', `${Math.max(0, window.scrollY).toFixed(1)}px`)
       }
       draw()
       frame = requestAnimationFrame(tick)
@@ -111,5 +112,5 @@ export function useHeroScene(
       document.removeEventListener('visibilitychange', sync)
       scene?.dispose()
     }
-  }, [heroRef, canvasRef, light, parallax, config, reducedMotion])
+  }, [backdropRef, canvasRef, light, parallax, config, reducedMotion])
 }

@@ -1,4 +1,5 @@
 import type { BuildSlug } from '../content/builds'
+import type { BuildKind } from '../content/types'
 import type { ExternalUrl } from '../content/types'
 
 export type ThemeName = 'light' | 'dark'
@@ -22,6 +23,12 @@ export interface FeatureFlags {
   readonly heroParallax: boolean
   readonly featured: boolean
   readonly buildsPage: boolean
+  /** Filter chips by kind on the All builds page. */
+  readonly buildsFilter: boolean
+  /** A page per build. Off makes cards plain, with only their outside links. */
+  readonly projectPages: boolean
+  /** The light bar that replaces the browser's scrollbar. Off brings the native one back. */
+  readonly scrollLight: boolean
   readonly footer: boolean
 }
 
@@ -33,6 +40,7 @@ export interface HeroLightConfig {
   readonly intensity: number
   /** Fewer lanes on narrow screens, so each one stays a clear line. */
   readonly lanes: { readonly wide: number; readonly narrow: number }
+  /** How fast pulses travel. 0.4 is brisk, 0.2 is slow. */
   readonly speed: number
   /** Where the floor meets the wall, measured from the top. */
   readonly horizon: number
@@ -64,8 +72,19 @@ export interface HeroConfig {
   readonly employer: string
   readonly statement: string
   readonly actions: readonly { readonly label: string; readonly to: RouteId | `#${string}` }[]
+  /** Pixels of scroll after which the hero's action chips fade out. */
+  readonly actionsHideAfter: number
   readonly light: HeroLightConfig
 }
+
+type S = BuildSlug
+/** One to five builds. The featured grid has a designed layout for each count, and none beyond five. */
+export type FeaturedSlugs =
+  | readonly [S]
+  | readonly [S, S]
+  | readonly [S, S, S]
+  | readonly [S, S, S, S]
+  | readonly [S, S, S, S, S]
 
 export interface SocialLink {
   readonly label: string
@@ -83,10 +102,21 @@ export interface SiteConfig {
     readonly id: string
     readonly title: string
     readonly lead: string
-    readonly slugs: readonly BuildSlug[]
+    readonly slugs: FeaturedSlugs
     readonly seeAll: string
   }
-  readonly buildsPage: { readonly title: string; readonly lead: string }
+  readonly buildsPage: { readonly title: string; readonly lead: string; readonly allLabel: string }
+  readonly projectPage: {
+    /** Brightness of the light behind a project's title. Lower than the hero: this page is for reading. */
+    readonly lightIntensity: number
+    readonly sections: { readonly features: string; readonly engineering: string; readonly limits: string }
+    readonly labels: { readonly year: string; readonly kind: string; readonly stack: string; readonly links: string }
+    readonly back: string
+    readonly next: string
+    readonly previous: string
+  }
+  /** Order of the groups on the All builds page. */
+  readonly kinds: readonly BuildKind[]
   readonly socials: readonly SocialLink[]
   readonly features: FeatureFlags
 }

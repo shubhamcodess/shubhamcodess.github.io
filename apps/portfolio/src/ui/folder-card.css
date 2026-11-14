@@ -100,3 +100,28 @@
     transform: translateY(var(--card-lift));
   }
 }
+
+/* The title link stretches over the whole card. The outside links sit above it. */
+.folder__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--card-radius);
+}
+
+.folder__link:focus-visible {
+  outline: none;
+}
+
+.folder:has(.folder__link:focus-visible) {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.folder__actions {
+  position: relative;
+  z-index: 2;
+  width: fit-content;
+  min-width: 100%;
+}

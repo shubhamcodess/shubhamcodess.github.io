@@ -48,3 +48,13 @@
 .action-link:active .icon {
   transform: translate(3px, -3px);
 }
+
+.action-link--back {
+  flex-direction: row-reverse;
+}
+
+@media (hover: hover) {
+  .action-link--back:hover .icon {
+    transform: translateX(-3px);
+  }
+}

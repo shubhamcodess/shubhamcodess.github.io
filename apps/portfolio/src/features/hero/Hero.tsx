@@ -1,23 +1,30 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { site } from '../../config/site'
 import { hrefTo } from '../../lib/routes'
 import { ActionLink } from '../../ui/ActionLink'
-import { useHeroScene } from './useHeroScene'
+import { LightBackdrop } from '../../ui/light/LightBackdrop'
 import './hero.css'
 
 export function Hero() {
   const heroRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const { hero, features } = site
   const [firstName, lastName] = hero.name
 
-  useHeroScene(heroRef, canvasRef, { light: features.heroLight, parallax: features.heroParallax, config: hero.light })
+  // The actions lead into the page, so they bow out once the visitor is on their way.
+  useEffect(() => {
+    const element = heroRef.current
+    if (!element) return
+    const onScroll = () => {
+      element.dataset.scrolled = String(window.scrollY > hero.actionsHideAfter)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [hero.actionsHideAfter])
 
   return (
-    <div className="hero" ref={heroRef} data-light="off">
-      <div className="hero__backdrop" aria-hidden="true">
-        <canvas className="hero__light" ref={canvasRef} />
-      </div>
+    <div className="hero" ref={heroRef}>
+      <LightBackdrop config={hero.light} light={features.heroLight} parallax={features.heroParallax} />
 
       <div className="hero__content container">
         <div className="hero__intro">

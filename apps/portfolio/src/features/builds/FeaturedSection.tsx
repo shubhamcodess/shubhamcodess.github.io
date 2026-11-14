@@ -24,7 +24,7 @@ export function FeaturedSection() {
             </ActionLink>
           ) : null}
         </header>
-        <ul className="build-grid">
+        <ul className="build-grid build-grid--feature" data-count={featured.slugs.length}>
           {featured.slugs.map((slug, index) => (
             <li key={slug}>
               <BuildCard build={getBuild(slug)} position={index + 1} variant="feature" headingLevel={3} />

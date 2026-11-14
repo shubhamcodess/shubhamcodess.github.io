@@ -1,0 +1,31 @@
+/* The browser's bar goes only while the light bar is running. */
+:root[data-scroll-light='on'] {
+  scrollbar-width: none;
+}
+
+:root[data-scroll-light='on']::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-light {
+  --scroll-progress: 0;
+  position: fixed;
+  top: var(--scroll-light-inset);
+  right: calc((var(--frame-inset) - var(--scroll-light-width)) / 2);
+  bottom: var(--scroll-light-inset);
+  z-index: 5;
+  width: var(--scroll-light-width);
+  background: var(--scroll-light-track);
+  border-radius: var(--radius-pill);
+  pointer-events: none;
+}
+
+/* The run grows from the top. Its lower end is the bright drop, with a glow that leads it down. */
+.scroll-light__run {
+  position: absolute;
+  inset: 0 0 auto;
+  height: max(var(--scroll-light-drop), calc(var(--scroll-progress) * 100%));
+  background: linear-gradient(to bottom, transparent, var(--scroll-light-color) calc(100% - var(--scroll-light-drop)), var(--scroll-light-head));
+  border-radius: var(--radius-pill);
+  box-shadow: 0 var(--space-1) var(--space-3) var(--scroll-light-color);
+}
