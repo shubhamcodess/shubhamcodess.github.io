@@ -13,3 +13,4 @@ CLAUDE.local.md
 docs/
 *.local.*
 apps/web/AGENTS.md
+dist/
