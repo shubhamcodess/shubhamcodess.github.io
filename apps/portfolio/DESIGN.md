@@ -68,16 +68,17 @@ Rules for both:
 
 Two styles, chosen by `theme.buttons` in the config. One value changes every chip and button on the site: the filter chips, the credentials index, the project section chips, and the frosted action chips in the hero and on project pages. Plain text links (Code, Live, See all builds) are not buttons and don't change.
 
-| | Pill | Beam (default) |
+| | Pill | Lean (default) |
 |---|---|---|
-| Shape | Fully round, 44px tall | 7px corners, 34px tall (frosted actions 40px) |
+| Shape | Fully round, 44px tall | Fully round, 34px tall (frosted actions 40px) |
 | Label | Sans, 14px | Mono, 11px, uppercase, 0.06em tracking |
-| Hover | Ink darkens, border firms | A thin line of the light grows from the middle of the bottom edge |
-| Selected | Inverted: ink fill, paper text | A faint tint of the light, a blue-leaning border, the light line fully lit, the count in blue |
+| Hover | Ink darkens, border firms | Same |
+| Selected | Inverted: ink fill, paper text | Raised surface, firm ink border, full-strength count |
 
-- **Beam** is lean and square-shouldered, like controls on an instrument panel. Its states borrow the hero light, so selection reads as "lit" rather than "filled". It suits phones, where pills grew into large blobs.
+- **Lean** keeps the round shape that suits the site, slimmer, so filters don't swell into big blobs on phones.
+- **No glow, no colour in button states.** A blue glow and a line of light on selected chips were tried and removed: they read as generated, not designed.
 - **Pill** is the first design, kept whole.
-- Sizes come from the `--button-*` tokens in `tokens.css`; `styles/buttons.css` holds the beam overrides and its light line. A new style is one more value in `ButtonStyle` and one more block there.
+- Sizes come from the `--button-*` tokens in `tokens.css`; `styles/buttons.css` holds the lean overrides. A new style is one more value in `ButtonStyle` and one more block there.
 
 ## Space and shape
 
@@ -234,11 +235,11 @@ On hover, cards lean the slightest amount toward the pointer: felt, barely seen.
 
 - Any element with `data-tilt` takes part. Today: build cards, the home role cards, credential cards, recognition, project feature tiles, and the previous and next build panels.
 - At most `tilt.maxDeg` (1.2°) at the edge, in 1000px of perspective, with the usual 4px lift.
-- A very faint light (4% white, 160px across) sits under the pointer. It lives on the card's own surface: on a folder that is its sheet, so the light never fills the empty corner beside the tab.
+- A very faint light (2% white, 90px across) sits under the pointer. It lives on the card's own surface: on a folder that is its sheet, so the light never fills the empty corner beside the tab.
 - The lean follows in 220ms and settles back over 900ms, so it feels weighted.
 - Not on large reading blocks (role cards on the Experience page, prose), and not on the badge, which has its own swing.
 - Pointer only. Off with reduced motion. `features.tilt` turns it off everywhere.
-- Tried and pulled back as too much: 3.5° lean, a large soft-light glow over the whole card box.
+- Tried and pulled back as too much: 3.5° lean, a large soft-light glow over the whole card box, then a 4% light 160px across.
 
 ## Motion, in full
 

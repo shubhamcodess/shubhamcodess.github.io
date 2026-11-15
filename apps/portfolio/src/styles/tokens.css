@@ -39,7 +39,7 @@
   --target-min: 44px;
   /*
    * Buttons: filter chips, index chips, and the frosted action chips. These are the pill values;
-   * the beam style below re-points them. Choose with `theme.buttons` in the config.
+   * the lean style in styles/buttons.css re-points them. Choose with `theme.buttons` in the config.
    */
   --button-radius: var(--radius-pill);
   --button-height: var(--target-min);
@@ -151,8 +151,8 @@
   /* How quickly the lean follows the pointer. Settling back uses --duration-slow. */
   --tilt-follow: 220ms;
   /* The light under the pointer: small and barely there. */
-  --tilt-glare: rgb(255 255 255 / 4%);
-  --tilt-glare-size: 160px;
+  --tilt-glare: rgb(255 255 255 / 2%);
+  --tilt-glare-size: 90px;
 
   /* Component: link preview */
   --preview-width: 280px;

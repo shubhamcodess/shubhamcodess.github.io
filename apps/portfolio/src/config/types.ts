@@ -6,8 +6,8 @@ export type ThemeName = 'light' | 'dark'
 
 export type PaletteName = 'plain' | 'signature'
 
-/** "pill": round, roomy. "beam": lean, square-shouldered, mono labels, with a line of light for hover and selected. */
-export type ButtonStyle = 'pill' | 'beam'
+/** "pill": round and roomy. "lean": the same round shape, slimmer, with small mono labels and plain states. */
+export type ButtonStyle = 'pill' | 'lean'
 
 /** Routes are a closed set. Add one here, add its HTML entry, and the compiler points at the rest. */
 export type RouteId = 'home' | 'builds' | 'experience' | 'credentials'
