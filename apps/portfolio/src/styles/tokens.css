@@ -37,6 +37,8 @@
   --radius-pill: 999px;
   --hairline: 1px;
   --target-min: 44px;
+  /* How a link or button looks while a finger is on it. */
+  --press-opacity: 0.55;
 
   /* Primitives: motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);

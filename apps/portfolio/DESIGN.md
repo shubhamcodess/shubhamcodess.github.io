@@ -112,6 +112,12 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - Reduced motion: the light holds one still frame, depth is off, transitions are instant, scrolling is immediate.
 - The light stops when the hero is off screen or the tab is hidden.
 
+## Touch
+
+- A tap is a press, never a selection. The phone's grey tap box is off, and the text of links and buttons can't be selected by a tap. Paragraphs stay selectable.
+- While a finger is on a link or button it dims to `--press-opacity` (55%), then returns. That is the only tap feedback; there is no lingering focus ring after a tap.
+- Double-tap zoom is off on controls (`touch-action: manipulation`), so taps register at once.
+
 ## Accessibility
 
 - One `h1` per page, headings in order, landmarks for header, main, nav and footer, and a skip link.
