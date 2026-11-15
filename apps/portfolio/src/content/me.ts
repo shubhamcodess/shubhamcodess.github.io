@@ -24,11 +24,15 @@ export interface Pursuit {
 }
 
 export interface Home {
+  /** The small label above the city, such as "Work". */
+  readonly label: string
   readonly city: string
   readonly region: string
   readonly line?: string
-  /** A map drawing, as a path under /public. */
+  /** A drawing, as a path under /public. Leave out when `map` draws the place instead. */
   readonly art?: string
+  /** A fine-line map drawn behind the city, with a marker on it. */
+  readonly map?: 'karnataka'
 }
 
 export const pursuits: readonly Pursuit[] = [
@@ -37,4 +41,4 @@ export const pursuits: readonly Pursuit[] = [
   { id: 'filmmaking', title: 'Filmmaking', frame: 'film', size: 'tall' },
 ]
 
-export const home: Home = { city: 'Bengaluru', region: 'Karnataka, India' }
+export const home: Home = { label: 'Work', city: 'Bengaluru', region: 'Karnataka, India', map: 'karnataka' }

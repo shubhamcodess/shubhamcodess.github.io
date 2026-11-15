@@ -123,7 +123,6 @@ export const site = {
     title: 'Away from the keyboard.',
     lead: 'Biking, photography, filmmaking, and the place I call home.',
     link: 'More about me',
-    homeLabel: 'Home',
     onward: 'Say hello',
     back: 'Professional experience',
     turns: [-1.2, 1.4, -0.8, 1.1],

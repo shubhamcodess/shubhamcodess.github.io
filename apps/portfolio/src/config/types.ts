@@ -217,7 +217,6 @@ export interface SiteConfig {
     readonly lead: string
     /** The quiet link under the hero's role line, and in the footer. */
     readonly link: string
-    readonly homeLabel: string
     readonly onward: string
     /** The link back to the professional side, at the foot of the page. */
     readonly back: string

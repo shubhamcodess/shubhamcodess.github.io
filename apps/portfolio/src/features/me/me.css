@@ -198,3 +198,104 @@
     transform: none;
   }
 }
+
+/*
+ * The map behind the Work tile: fine ink lines, far back, sitting to the right so the words keep
+ * clear paper. On hover the map comes forward a touch, the outline draws itself round the state,
+ * and the marker on Bengaluru pulses once.
+ */
+.me-map {
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  width: auto;
+  height: 94%;
+  color: var(--ink);
+  pointer-events: none;
+  transform: translateY(-50%) scale(1);
+  transform-origin: 70% 50%;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.me-map__grid line {
+  stroke: currentColor;
+  stroke-opacity: var(--me-map-grid);
+  stroke-width: 1;
+  stroke-dasharray: 2 10;
+  vector-effect: non-scaling-stroke;
+}
+
+.me-map__outline,
+.me-map__echo {
+  fill: none;
+  stroke: currentColor;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.me-map__outline {
+  stroke-opacity: var(--me-map-line);
+  stroke-width: 1;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.me-map__echo {
+  stroke-opacity: calc(var(--me-map-line) * 0.45);
+  stroke-width: 0.6;
+}
+
+.me-map__dot {
+  fill: currentColor;
+  fill-opacity: calc(var(--me-map-line) * 2.4);
+}
+
+.me-map__ring {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: calc(var(--me-map-line) * 1.6);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.me-home .me-frame__text {
+  position: relative;
+}
+
+@media (hover: hover) {
+  .me-tile:hover .me-map {
+    transform: translateY(-50%) scale(var(--me-map-grow));
+  }
+
+  .me-tile:hover .me-map__outline {
+    animation: me-map-trace 1.6s var(--ease-out) both;
+  }
+
+  .me-tile:hover .me-map__ring {
+    animation: me-map-pulse 1.6s var(--ease-out) both;
+  }
+}
+
+@keyframes me-map-trace {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes me-map-pulse {
+  0% {
+    transform: scale(0.4);
+    stroke-opacity: 0;
+  }
+
+  40% {
+    stroke-opacity: calc(var(--me-map-line) * 2.4);
+  }
+
+  100% {
+    transform: scale(1.6);
+    stroke-opacity: 0;
+  }
+}

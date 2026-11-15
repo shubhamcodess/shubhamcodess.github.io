@@ -170,6 +170,10 @@
   --me-sprocket-size: 8px;
   --me-sprocket-gap: 18px;
   --me-sprocket: rgb(255 255 255 / 85%);
+  /* The Karnataka map: line and graticule strength, and how much it grows on hover. */
+  --me-map-line: 0.22;
+  --me-map-grid: 0.08;
+  --me-map-grow: 1.05;
 
   /* Component: link preview */
   --preview-width: 280px;

@@ -5,6 +5,7 @@ import { hrefTo } from '../../lib/routes'
 import { ActionLink } from '../../ui/ActionLink'
 import { Reveal } from '../../ui/Reveal'
 import { Art } from './Art'
+import { KarnatakaMap } from './KarnatakaMap'
 import './me.css'
 
 /**
@@ -62,9 +63,10 @@ export function MePage() {
             <Reveal index={pursuits.length} className="reveal-fill">
               <article className="me-frame me-frame--sheet me-home" data-tilt="">
                 <div className="me-frame__inner">
+                  {home.map === 'karnataka' ? <KarnatakaMap /> : null}
                   {home.art ? <Art src={home.art} label={`${home.city}, ${home.region}`} /> : null}
                   <div className="me-frame__text">
-                    <span className="eyebrow">{me.homeLabel}</span>
+                    <span className="eyebrow">{home.label}</span>
                     <h2 className="me-home__city">{home.city}</h2>
                     <p className="me-home__region">{home.region}</p>
                     {home.line ? <p className="me-frame__line">{home.line}</p> : null}
