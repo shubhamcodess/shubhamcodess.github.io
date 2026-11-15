@@ -136,9 +136,12 @@
   --honour-tone: grayscale(0.75) contrast(1.05);
 
   /* Component: tools of the trade */
-  --tools-fade: 48px;
+  --tools-fade: 64px;
+  --tools-height: 52px;
   /* Seconds each tool takes to pass. Higher is slower. */
-  --tools-pace: 5s;
+  --tools-pace: 3.2s;
+  --teaser-row: 64px;
+  --teaser-years: 130px;
 
   /* Component: scroll light */
   --scroll-light-width: 2px;

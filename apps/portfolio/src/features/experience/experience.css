@@ -269,9 +269,14 @@ a.honour:focus-visible {
 }
 
 /* ---- The home teaser ---- */
+.teaser-section {
+  padding-bottom: 0;
+}
+
 .teaser {
   display: grid;
   gap: var(--space-7);
+  padding-bottom: var(--space-8);
 }
 
 .teaser > * {
@@ -285,19 +290,98 @@ a.honour:focus-visible {
   margin-top: var(--space-5);
 }
 
-/* Tools of the trade: rows that drift slowly in alternating directions and fade at both edges. */
-.tools {
+.teaser__employer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+}
+
+/* The roles sit on one unbroken lane: a node per role, a line through all of them. */
+.teaser__roles {
+  position: relative;
+  border-top: var(--hairline) solid var(--line);
+}
+
+.teaser__roles::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--teaser-row) / 2);
+  bottom: calc(var(--teaser-row) / 2);
+  left: calc(var(--xp-node-size) / 2 - var(--xp-rail-width) / 2);
+  width: var(--xp-rail-width);
+  background: var(--xp-light);
+  border-radius: var(--radius-pill);
+}
+
+.teaser__role {
+  position: relative;
   display: grid;
-  gap: var(--space-3);
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'years arrow'
+    'title arrow';
+  align-items: center;
+  gap: var(--space-1) var(--space-4);
+  min-height: var(--teaser-row);
+  padding-block: var(--space-3);
+  padding-left: calc(var(--xp-node-size) + var(--space-5));
+  border-bottom: var(--hairline) solid var(--line);
+  transition: padding var(--duration-base) var(--ease-out);
 }
 
-.tools > .eyebrow {
-  margin-bottom: var(--space-2);
+.teaser__role::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: var(--xp-node-size);
+  height: var(--xp-node-size);
+  background: var(--xp-light);
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  transform: translateY(-50%);
 }
 
-.tools__row {
+.teaser__years {
+  grid-area: years;
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.teaser__title {
+  grid-area: title;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-snug);
+}
+
+.teaser__role .icon {
+  grid-area: arrow;
+  color: var(--ink-muted);
+  transition:
+    color var(--duration-fast) linear,
+    transform var(--duration-base) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .teaser__role:hover {
+    padding-left: calc(var(--xp-node-size) + var(--space-5) + var(--space-2));
+  }
+
+  .teaser__role:hover .icon {
+    color: var(--ink);
+    transform: translateX(3px);
+  }
+}
+
+/* Tools of the trade: one lean strip along the bottom of the panel. Plain names, drifting slowly. */
+.tools {
   display: flex;
   overflow: hidden;
+  border-top: var(--hairline) solid var(--line);
   -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--tools-fade), #000 calc(100% - var(--tools-fade)), transparent);
   mask-image: linear-gradient(to right, transparent, #000 var(--tools-fade), #000 calc(100% - var(--tools-fade)), transparent);
 }
@@ -305,21 +389,28 @@ a.honour:focus-visible {
 .tools__track {
   display: flex;
   flex: none;
-  gap: var(--space-2);
-  padding-right: var(--space-2);
-  animation: tools-drift calc(var(--tools-count) * var(--tools-pace)) linear infinite var(--tools-direction, normal);
+  animation: tools-drift calc(var(--tools-count) * var(--tools-pace)) linear infinite;
 }
 
 .tools__track li {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
-  padding-inline: var(--space-4);
-  background: var(--surface-raised);
-  border: var(--hairline) solid var(--line);
-  border-radius: var(--radius-pill);
-  font: var(--weight-body) var(--text-sm) / 1 var(--font-mono);
+  gap: var(--space-5);
+  height: var(--tools-height);
+  padding-left: var(--space-5);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   white-space: nowrap;
+}
+
+.tools__track li::after {
+  content: '';
+  width: 3px;
+  height: 3px;
+  background: var(--xp-light);
+  border-radius: 50%;
 }
 
 @keyframes tools-drift {
@@ -329,21 +420,20 @@ a.honour:focus-visible {
 }
 
 @media (hover: hover) {
-  .tools__row:hover .tools__track {
+  .tools:hover .tools__track {
     animation-play-state: paused;
   }
 }
 
-/* Without motion the rows simply wrap, and the hidden copies go. */
+/* Without motion the strip stands still and can be scrolled sideways. */
 @media (prefers-reduced-motion: reduce) {
-  .tools__row {
+  .tools {
+    overflow-x: auto;
     -webkit-mask-image: none;
     mask-image: none;
   }
 
   .tools__track {
-    flex: 1;
-    flex-wrap: wrap;
     animation: none;
   }
 
@@ -425,6 +515,11 @@ a.honour:focus-visible {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     align-items: center;
     gap: var(--space-8);
+  }
+
+  .teaser__role {
+    grid-template-columns: var(--teaser-years) minmax(0, 1fr) auto;
+    grid-template-areas: 'years title arrow';
   }
 
   .career__name {

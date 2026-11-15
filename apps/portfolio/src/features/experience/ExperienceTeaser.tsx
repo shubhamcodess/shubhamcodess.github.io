@@ -1,21 +1,24 @@
 import { site } from '../../config/site'
-import { credentials } from '../../content/experience'
+import { credentials, employers } from '../../content/experience'
 import { toolGroups } from '../../content/tools'
 import { hrefTo } from '../../lib/routes'
 import { ActionLink } from '../../ui/ActionLink'
+import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
 import './experience.css'
 
 /**
- * The home page's short version: the headline, the ways to the full pages, and the tools of the trade
- * drifting past in rows, so a quick scan shows what the work was done with.
+ * The home page's short version. Left: the headline and the ways to the full pages.
+ * Right: every role on one lane with its years, so the whole span reads at a glance with no gaps.
+ * Underneath: one lean strip of the tools the work was done with.
  */
 export function ExperienceTeaser() {
   const { experience: copy, credentialsPage, features } = site
   const headingId = `${copy.id}-title`
+  const tools = toolGroups.flatMap((group) => group.tools)
 
   return (
-    <section className="panel section" id={copy.id} aria-labelledby={headingId}>
+    <section className="panel section teaser-section" id={copy.id} aria-labelledby={headingId}>
       <div className="container teaser">
         <Reveal>
           <p className="eyebrow">{copy.kicker}</p>
@@ -35,28 +38,47 @@ export function ExperienceTeaser() {
           </div>
         </Reveal>
 
-        <Reveal index={1} className="tools">
-          <h3 className="eyebrow">{copy.toolsLabel}</h3>
-          {toolGroups.map((group, row) => (
-            <div key={group.label} className="tools__row" role="group" aria-label={group.label}>
-              {/* The list runs twice so the drift can loop without a seam. The copy is hidden from screen readers. */}
-              {[false, true].map((copyOf) => (
-                <ul
-                  key={String(copyOf)}
-                  className="tools__track"
-                  aria-hidden={copyOf}
-                  style={
-                    { '--tools-direction': row % 2 ? 'reverse' : 'normal', '--tools-count': group.tools.length } as React.CSSProperties
-                  }
-                >
-                  {group.tools.map((tool) => (
-                    <li key={tool}>{tool}</li>
-                  ))}
-                </ul>
-              ))}
-            </div>
+        <div className="teaser__spans">
+          {employers.map((employer) => (
+            <Reveal key={employer.name} index={1}>
+              <p className="eyebrow teaser__employer">
+                <span>{employer.name}</span>
+                <span>
+                  {employer.from} to {employer.to ?? copy.labels.now.toLowerCase()}
+                </span>
+              </p>
+              <ol className="teaser__roles">
+                {employer.roles.map((role) => (
+                  <li key={role.title}>
+                    <a className="teaser__role" href={hrefTo('experience')}>
+                      <span className="teaser__years">
+                        {role.from} to {role.to ?? copy.labels.now.toLowerCase()}
+                      </span>
+                      <span className="teaser__title">{role.title}</span>
+                      <Icon name="arrowRight" size={14} />
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </Reveal>
           ))}
-        </Reveal>
+        </div>
+      </div>
+
+      <div className="tools" role="group" aria-label={copy.toolsLabel}>
+        {/* The list runs twice so the drift can loop without a seam. The copy is hidden from screen readers. */}
+        {[false, true].map((copyOf) => (
+          <ul
+            key={String(copyOf)}
+            className="tools__track"
+            aria-hidden={copyOf}
+            style={{ '--tools-count': tools.length } as React.CSSProperties}
+          >
+            {tools.map((tool) => (
+              <li key={tool}>{tool}</li>
+            ))}
+          </ul>
+        ))}
       </div>
     </section>
   )
