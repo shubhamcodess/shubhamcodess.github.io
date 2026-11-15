@@ -396,6 +396,8 @@ a.me-frame:focus-visible {
 @media (min-width: 900px) {
   .me-open {
     grid-template-columns: var(--me-rail-width) minmax(0, 1fr);
+    /* The rail and the back link keep their own height; the tall panel's extra height goes below them. */
+    grid-template-rows: auto 1fr;
     grid-template-areas:
       'rail detail'
       'back detail';
