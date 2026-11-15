@@ -15,14 +15,12 @@ export const linkLabels = {
 
 interface BuildCardProps {
   readonly build: Build
-  /** Position in its list, starting at 1. */
-  readonly position: number
   /** "feature" carries the plate with the build's headline fact. "compact" is the index card. */
   readonly variant: 'feature' | 'compact'
   readonly headingLevel: 2 | 3
 }
 
-export function BuildCard({ build, position, variant, headingLevel }: BuildCardProps) {
+export function BuildCard({ build, variant, headingLevel }: BuildCardProps) {
   const { highlight } = build
   const stat = highlight ? (
     <p className={`build-stat build-stat--${variant}`}>
@@ -32,7 +30,6 @@ export function BuildCard({ build, position, variant, headingLevel }: BuildCardP
 
   return (
     <FolderCard
-      index={String(position).padStart(2, '0')}
       label={build.kind}
       title={build.title}
       headingLevel={headingLevel}

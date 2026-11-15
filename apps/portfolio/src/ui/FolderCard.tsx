@@ -2,9 +2,9 @@ import type { ReactNode } from 'react'
 import './folder-card.css'
 
 interface FolderCardProps {
-  /** Shown in the tab, for example "01". */
-  readonly index: string
-  /** Shown beside the index in the tab. */
+  /** Shown first in the tab, in full ink, when given. */
+  readonly index?: string
+  /** Shown in the tab. */
   readonly label: string
   readonly title: string
   readonly headingLevel: 2 | 3
@@ -30,7 +30,7 @@ export function FolderCard({ index, label, title, headingLevel, summary, href, t
       {plate ? <div className="folder__plate">{plate}</div> : null}
       <div className="folder__sheet" data-tilt-surface="">
         <p className="folder__tab">
-          <span className="folder__index">{index}</span>
+          {index ? <span className="folder__index">{index}</span> : null}
           <span>{label}</span>
         </p>
         <Heading className="folder__title">

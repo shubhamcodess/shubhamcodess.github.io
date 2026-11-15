@@ -31,7 +31,7 @@ export function FeaturedSection() {
           {featured.slugs.map((slug, index) => (
             <li key={slug}>
               <Reveal className="reveal-fill" index={index}>
-                <BuildCard build={getBuild(slug)} position={index + 1} variant="feature" headingLevel={3} />
+                <BuildCard build={getBuild(slug)} variant="feature" headingLevel={3} />
               </Reveal>
             </li>
           ))}

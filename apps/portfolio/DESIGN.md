@@ -151,7 +151,7 @@ What was dropped from the prototype, and why:
 
 The site's one card. A tab rises out of a sheet, over an optional plate.
 
-- **Tab:** mono, uppercase, index number then the kind of build. Its concave corner is built from fixed sizes, so it never stretches with the card.
+- **Tab:** mono, uppercase, the kind of build only. No running numbers (they read as generated); `index` stays optional in the component for other uses. Its concave corner is built from fixed sizes, so it never stretches with the card.
 - **Sheet:** title, summary, stack in mono, then links under a hairline.
 - **Plate (feature variant):** the area above the sheet. It holds one headline fact now, and takes the project's drawing or screenshot later.
 - **Compact variant:** no plate. The fact, if any, sits inline above the stack. Used for the full index.
