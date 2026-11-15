@@ -86,6 +86,10 @@ A barely-there film grain on the page panels, so the background reads as a surfa
 - Tried and removed: a blueprint drafting grid, and grain at 20%. Both changed the site's look instead of adding depth to it.
 - Tuning is in `styles/texture.css`.
 
+## Text links
+
+A link that isn't a button (See all builds, Full experience, Credentials, Professional experience, Say hello, Code, Live, npm, More about me) carries a link's underline: dotted, 1px, very faded (`--link-underline`, muted ink at 45%), firming to 80% on hover. Only the words are underlined, never the arrow.
+
 ## Buttons
 
 Two styles, chosen by `theme.buttons` in the config. One value changes every chip and button on the site: the filter chips, the credentials index, the project section chips, and the frosted action chips in the hero and on project pages. Plain text links (Code, Live, See all builds) are not buttons and don't change.

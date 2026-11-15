@@ -52,6 +52,10 @@
   --button-text-case: none;
   --button-text-tracking: 0;
 
+  /* The underline of a text link: dotted, very faded, a little firmer on hover. */
+  --link-underline: color-mix(in srgb, var(--ink-muted) 45%, transparent);
+  --link-underline-hover: color-mix(in srgb, var(--ink-muted) 80%, transparent);
+
   /* How a link or button looks while a finger is on it. */
   --press-opacity: 0.55;
 
