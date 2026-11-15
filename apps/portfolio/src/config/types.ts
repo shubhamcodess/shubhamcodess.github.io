@@ -223,6 +223,8 @@ export interface SiteConfig {
     readonly onward: string
     /** The link from an opened tile back to all of them. */
     readonly backToAll: string
+    /** Names the path of places for screen readers. */
+    readonly placesLabel: string
     /** The link back to the professional side, at the foot of the page. */
     readonly back: string
     /** The slight angle of each tile, in degrees, in order. The home tile takes the last. */

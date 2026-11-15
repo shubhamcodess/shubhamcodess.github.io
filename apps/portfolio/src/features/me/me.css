@@ -365,10 +365,12 @@ a.me-frame:focus-visible {
 }
 
 .me-detail {
+  height: auto;
   min-height: var(--me-detail-min);
 }
 
 .me-detail .me-frame__inner {
+  height: auto;
   min-height: var(--me-detail-min);
 }
 
@@ -426,4 +428,114 @@ a.me-frame:focus-visible {
 ::view-transition-group(*) {
   animation-duration: var(--duration-enter);
   animation-timing-function: var(--ease-out);
+}
+
+/*
+ * The path of places, inside the opened home tile: oldest first, joined by a thin ink line through a dot
+ * on each card, the current place's dot filled. Plain cards, not links: each grows with its own words
+ * and photos. Three across on wide screens, stacked on phones with the line running down.
+ */
+.me-places {
+  --place-dot: 9px;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-6) clamp(var(--space-5), 3vw, var(--space-7)) clamp(var(--space-5), 3vw, var(--space-7));
+  border-top: var(--hairline) solid var(--line);
+}
+
+.me-places::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--space-6) + var(--space-5));
+  bottom: calc(var(--space-7) + var(--space-5));
+  left: calc(clamp(var(--space-5), 3vw, var(--space-7)) + var(--space-5) + var(--place-dot) / 2);
+  border-left: var(--hairline) solid var(--marker-lane);
+}
+
+.me-place {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-5) var(--space-5) calc(var(--space-5) * 2 + var(--place-dot));
+  background: var(--surface);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.me-place__node {
+  position: absolute;
+  top: calc(var(--space-5) + 2px);
+  left: var(--space-5);
+  width: var(--place-dot);
+  height: var(--place-dot);
+  background: var(--surface);
+  border: var(--hairline) solid var(--marker);
+  border-radius: 50%;
+}
+
+.me-place[aria-current] .me-place__node {
+  background: var(--marker-strong);
+  border-color: var(--marker-strong);
+}
+
+.me-place__city {
+  margin-top: var(--space-1);
+  font-size: var(--me-place-city);
+  overflow-wrap: anywhere;
+  letter-spacing: -0.02em;
+}
+
+.me-place__region {
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.me-place__line {
+  margin-top: var(--space-3);
+  color: var(--ink-muted);
+}
+
+.me-place__photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.me-place__photos img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+/* Wide: three across, the line running through the dots along the top of the cards. */
+@media (min-width: 900px) {
+  .me-places {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .me-places::before {
+    top: calc(var(--space-6) + var(--space-5) + 2px + var(--place-dot) / 2);
+    right: clamp(var(--space-5), 3vw, var(--space-7));
+    bottom: auto;
+    left: clamp(var(--space-5), 3vw, var(--space-7));
+    border-top: var(--hairline) solid var(--marker-lane);
+    border-left: 0;
+  }
+
+  .me-place {
+    padding: calc(var(--space-5) * 2 + var(--place-dot)) var(--space-5) var(--space-5);
+  }
+
+  .me-place__node {
+    left: var(--space-5);
+  }
 }

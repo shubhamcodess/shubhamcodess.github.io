@@ -127,6 +127,7 @@ export const site = {
     link: 'More about me',
     onward: 'Say hello',
     backToAll: 'Back to all',
+    placesLabel: 'Places I have lived',
     back: 'Professional experience',
     turns: [-1.2, 1.4, -0.8, 1.1],
   },

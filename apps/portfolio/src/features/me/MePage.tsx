@@ -150,6 +150,30 @@ export function MePage() {
 
             <article className={`me-detail me-frame me-frame--${frameOf(open)}`} style={{ viewTransitionName: `me-${open.item.id}` }}>
               <TileFace entry={open} index={openIndex} open />
+              {open.kind === 'home' && open.item.places?.length ? (
+                <ol className="me-places" aria-label={me.placesLabel}>
+                  {open.item.places.map((place, index, all) => (
+                    <li key={place.city} className="me-place" {...(index === all.length - 1 ? { 'aria-current': 'step' as const } : {})}>
+                      <span className="me-place__node" aria-hidden="true" />
+                      <p className="eyebrow">
+                        {String(index + 1).padStart(2, '0')} · {place.role}
+                      </p>
+                      <h2 className="me-place__city">{place.city}</h2>
+                      <p className="me-place__region">{place.region}</p>
+                      {place.line ? <p className="me-place__line">{place.line}</p> : null}
+                      {place.photos?.length ? (
+                        <ul className="me-place__photos">
+                          {place.photos.map((photo) => (
+                            <li key={photo.src}>
+                              <img src={`${import.meta.env.BASE_URL}${photo.src}`} alt={photo.alt} loading="lazy" decoding="async" />
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                    </li>
+                  ))}
+                </ol>
+              ) : null}
               {open.item.story?.length ? (
                 <div className="me-detail__story">
                   {open.item.story.map((paragraph) => (
