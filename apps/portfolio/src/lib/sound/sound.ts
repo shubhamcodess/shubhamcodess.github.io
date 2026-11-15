@@ -2,13 +2,14 @@ import { site } from '../../config/site'
 import type { Voice } from './engine'
 
 /**
- * Whether sound is on, shared by the toggle and every listener. The engine itself is loaded
- * only the first time sound is turned on, so visitors who never do pay nothing for it.
+ * Whether sound is on, shared by the toggle and every listener. The engine loads only for visitors
+ * who have sound on (or turn it on), so everyone else pays nothing for it.
  */
 type Engine = typeof import('./engine')
 
 let engine: Engine | undefined
 let on = read()
+let galaxyPlayed = false
 const listeners = new Set<() => void>()
 
 function read(): boolean {
@@ -25,12 +26,24 @@ async function load(): Promise<Engine> {
   return engine
 }
 
+// A visitor who left sound on gets the engine straight away, so the first gesture on this page can start
+// it in the same tick. Browsers refuse audio that starts later than the gesture.
+if (on) void load()
+
 export const soundState = {
   subscribe(listener: () => void): () => void {
     listeners.add(listener)
     return () => listeners.delete(listener)
   },
   get: () => on,
+}
+
+/** The galaxy belongs to the home page's first screen, where the light is, and plays once per page. */
+function galaxy(loaded: Engine): void {
+  const home = document.getElementById('root')?.dataset.route === 'home'
+  if (galaxyPlayed || !site.sound.galaxy.onHome || !home || window.scrollY > window.innerHeight / 2) return
+  galaxyPlayed = true
+  loaded.play('galaxy')
 }
 
 /** Turns sound on or off. Call from a user's click so the browser allows the audio to start. */
@@ -42,27 +55,26 @@ export async function setSound(next: boolean): Promise<void> {
     // Storage can be blocked. The choice still holds for this page.
   }
   for (const listener of listeners) listener()
-  if (next) {
-    const loaded = await load()
-    await loaded.start(site.sound)
-    if (atLanding()) loaded.play('galaxy')
-  } else engine?.stop()
+  if (!next) return engine?.stop()
+  const loaded = await load()
+  await loaded.start(site.sound)
+  galaxy(loaded)
 }
 
 /**
- * Wakes the sound on the first interaction of a page load, for a visitor who left it on.
- * Browsers only allow audio to start from a gesture, so it can't simply start on load.
+ * Starts the sound on any gesture, for a visitor who left it on. Safe to call on every gesture:
+ * it only resumes audio that isn't running yet.
  */
-export async function wake(): Promise<void> {
+export function wake(): void {
   if (!on) return
-  const loaded = await load()
-  await loaded.start(site.sound)
-  if (atLanding() && performance.now() < site.sound.galaxy.withinMs) loaded.play('galaxy')
-}
-
-/** The galaxy belongs to the home page's first screen, where the light is. */
-function atLanding(): boolean {
-  return site.sound.galaxy.onHome && document.getElementById('root')?.dataset.route === 'home' && window.scrollY < window.innerHeight / 2
+  if (!engine) {
+    void load()
+    return
+  }
+  const loaded = engine
+  void loaded.start(site.sound).then(() => {
+    if (performance.now() < site.sound.galaxy.withinMs) galaxy(loaded)
+  })
 }
 
 export function play(voice: Voice, strength?: number, direction?: number): void {

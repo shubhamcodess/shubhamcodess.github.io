@@ -175,22 +175,22 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 
 ## Sound
 
-Quiet, warm, felt more than heard, and **only on actions**: nothing plays while the visitor is idle. Off until the visitor turns it on with the speaker button beside the theme toggle; the choice is remembered.
+Quiet, warm, felt more than heard, and **only on actions**: nothing plays on hover or while the visitor is idle. Off until the visitor turns it on with the speaker button beside the theme toggle; the choice is remembered across pages.
 
-- **Made, not sampled.** Every sound is synthesised in the browser (Web Audio) and shares one small, warm room (a soft reverb). No audio files; the engine loads only when sound is first turned on.
-- **The galaxy:** on the home page's first screen, a short swell in tone with the light: a low rise, a high shimmer, a thin air drifting down, gone in about seven seconds. It plays when sound is turned on there, or on a returning visitor's first click within twelve seconds of landing. Nowhere else.
+- **Made, not sampled.** Every sound is synthesised in the browser (Web Audio) and shares one small, warm room (a soft reverb). No audio files.
+- **Two voices only:**
 
 | Moment | Voice |
 |---|---|
-| Hover over anything interactive (pointer only) | A felt tick, barely there |
-| Press any link or button | A small wooden tap |
+| Press any link or button, the badge included | A small wooden tap |
 | Scroll a good stretch | A soft page-turn of air, rising when going down, louder when faster |
 | Turning sound off | A softer, lower tap |
 
-- Every link and button taps. An element can opt out with `data-sound="none"` or take the softer `data-sound="close"`.
-- No room tone, chimes or clinks: tried, and too much.
+- **The galaxy:** on the home page's first screen only, a slow whirl very far back: heard only through the room, behind a low filter, turning from side to side, at a whisper, gone in about twelve seconds. Once per page load.
+- **Across pages:** browsers start audio only from a click, tap or key press, so on each new page the sound wakes on the first one, and that click is heard. Scrolling with a wheel or trackpad before any click stays silent; no site can change that.
+- An element can opt out with `data-sound="none"` or take the softer `data-sound="close"`.
+- Tried and removed as too much: hover ticks (scrolling passes over too many things), room tone, chimes, clinks, an opening chord.
 - Level, scroll spacing and the galaxy's window are `sound` in the config. The voices are in `lib/sound/engine.ts`.
-- While sound is on, the speaker's waves breathe slowly.
 
 ## Scrollbar
 

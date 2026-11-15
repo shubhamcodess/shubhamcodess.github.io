@@ -5,7 +5,7 @@
  * Loaded only once the visitor turns sound on.
  */
 
-export type Voice = 'hover' | 'tap' | 'swish' | 'close' | 'galaxy'
+export type Voice = 'tap' | 'swish' | 'close' | 'galaxy'
 
 export interface EngineOptions {
   /** Master level, 0 to 1. Each voice is already quiet; this scales them all. */
@@ -120,10 +120,6 @@ export function play(voice: Voice, strength = 1, direction = 1): void {
   if (!context || context.state !== 'running') return
   const now = context.currentTime + 0.005
   switch (voice) {
-    case 'hover':
-      // A felt tick: barely there, high and short.
-      tone(2350, 'sine', now, 0.018, 0.004, 0.05, 0.08, 1900)
-      break
     case 'tap':
       // A small wooden tap: a pitched knock with a breath of air on the front.
       tone(540, 'triangle', now, 0.07, 0.003, 0.09, 0.16, 250)
@@ -145,32 +141,39 @@ export function play(voice: Voice, strength = 1, direction = 1): void {
 }
 
 /**
- * The galaxy: a short swell for landing on the home page, in tone with the light. A low sub rises,
- * high detuned partials shimmer above it, and a thin air drifts through. About seven seconds, then gone.
+ * The galaxy: far away and very faint, a slow whirl for landing on the home page. Only the room hears it
+ * (no direct sound), it sits behind a low filter, and it turns slowly from side to side. About twelve seconds.
  */
 function galaxy(at: number): void {
   if (!context) return
   const audio = context
+  const end = at + 12.2
+
+  // Distance: everything goes through a low filter and only into the room.
+  const far = audio.createBiquadFilter()
+  far.type = 'lowpass'
+  far.frequency.value = 900
   const swell = audio.createGain()
   swell.gain.setValueAtTime(0.0001, at)
-  swell.gain.exponentialRampToValueAtTime(1, at + 1.8)
-  swell.gain.setValueAtTime(1, at + 3.6)
-  swell.gain.exponentialRampToValueAtTime(0.0001, at + 7)
-  route(swell, 0.7)
-  const end = at + 7.1
+  swell.gain.exponentialRampToValueAtTime(1, at + 4)
+  swell.gain.setValueAtTime(1, at + 6)
+  swell.gain.exponentialRampToValueAtTime(0.0001, end - 0.1)
+  // The whirl: the sound turns slowly between left and right.
+  const turn = audio.createStereoPanner()
+  const turnRate = audio.createOscillator()
+  const turnDepth = audio.createGain()
+  turnRate.frequency.value = 0.11
+  turnDepth.gain.value = 0.8
+  turnRate.connect(turnDepth).connect(turn.pan)
+  swell.connect(far).connect(turn).connect(room)
 
-  const voices: (readonly [frequency: number, level: number, type: OscillatorType])[] = [
-    [55, 0.03, 'sine'],
-    [110.4, 0.012, 'sine'],
-    [1318.5, 0.006, 'sine'],
-    [1321.8, 0.006, 'sine'],
-    [1760, 0.004, 'sine'],
-    [1975.5, 0.003, 'triangle'],
-  ]
-  for (const [frequency, level, type] of voices) {
+  for (const [frequency, level] of [
+    [55, 0.012],
+    [82.6, 0.006],
+    [164.8, 0.0025],
+  ] as const) {
     const oscillator = audio.createOscillator()
     const gain = audio.createGain()
-    oscillator.type = type
     oscillator.frequency.value = frequency
     gain.gain.value = level
     oscillator.connect(gain).connect(swell)
@@ -178,28 +181,37 @@ function galaxy(at: number): void {
     oscillator.stop(end)
   }
 
-  // Air: noise through a high band that slowly drifts down, like light moving away.
+  // A wind that circles: noise through a band that wanders up and down.
   const air = audio.createBufferSource()
-  const filter = audio.createBiquadFilter()
+  const band = audio.createBiquadFilter()
   const airGain = audio.createGain()
+  const wander = audio.createOscillator()
+  const wanderDepth = audio.createGain()
   air.buffer = noise
   air.loop = true
-  filter.type = 'bandpass'
-  filter.Q.value = 1.4
-  filter.frequency.setValueAtTime(5200, at)
-  filter.frequency.exponentialRampToValueAtTime(1400, end)
-  airGain.gain.value = 0.004
-  air.connect(filter).connect(airGain).connect(swell)
-  air.start(at)
-  air.stop(end)
+  band.type = 'bandpass'
+  band.Q.value = 2.2
+  band.frequency.value = 420
+  wander.frequency.value = 0.17
+  wanderDepth.gain.value = 220
+  wander.connect(wanderDepth).connect(band.frequency)
+  airGain.gain.value = 0.01
+  air.connect(band).connect(airGain).connect(swell)
+
+  for (const source of [air, wander, turnRate]) {
+    source.start(at)
+    source.stop(end)
+  }
 }
 
 /** Starts or resumes sound. Must run from a click, tap or key press, or the browser keeps it silent. */
-export async function start(next: EngineOptions): Promise<void> {
+export function start(next: EngineOptions): Promise<void> {
   options = next
   const audio = setUp()
+  master.gain.cancelScheduledValues(audio.currentTime)
   master.gain.setTargetAtTime(options.volume, audio.currentTime, 0.05)
-  if (audio.state !== 'running') await audio.resume()
+  // Resumed in the same tick as the gesture, which strict browsers (Safari) require.
+  return audio.state === 'running' ? Promise.resolve() : audio.resume()
 }
 
 /** Fades everything out, then suspends the audio so it costs nothing. */
@@ -207,7 +219,9 @@ export function stop(): void {
   if (!context) return
   const audio = context
   master.gain.setTargetAtTime(0.0001, audio.currentTime, 0.25)
-  window.setTimeout(() => void audio.suspend(), 1400)
+  window.setTimeout(() => {
+    if (master.gain.value < 0.01) void audio.suspend()
+  }, 1400)
 }
 
 /** Pauses with the tab, so nothing hums in the background. */

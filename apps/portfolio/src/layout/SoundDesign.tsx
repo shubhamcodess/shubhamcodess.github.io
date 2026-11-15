@@ -1,55 +1,30 @@
 import { useEffect } from 'react'
 import { site } from '../config/site'
 import { pause, play, wake } from '../lib/sound/sound'
-import type { Voice } from '../lib/sound/engine'
 
 /** What counts as something to sound on hover and press. */
 const interactive = 'a[href], button, summary, [data-sound]'
-const pressVoices = new Set<string>(['tap', 'close'])
 
 /**
- * The site's sound, wired once for every page, and only on actions. Every link and button taps when pressed;
- * an element can opt out with data-sound="none" or use the softer data-sound="close".
- * Hover ticks only with a real pointer. Scroll gives a soft page-turn after a good stretch of movement.
+ * The site's sound, wired once for every page, and only on actions: every link and button taps when
+ * pressed, and a long scroll gives a soft page-turn. An element can opt out with data-sound="none"
+ * or take the softer data-sound="close". No hover sounds: scrolling passes over too many things.
  */
 export function SoundDesign() {
   useEffect(() => {
     const { scroll } = site.sound
-    let lastHovered: Element | null = null
-    let lastHoverAt = 0
     let travelled = 0
     let lastY = window.scrollY
     let lastSwish = 0
-    let woken = false
 
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)')
-
-    const onFirstGesture = () => {
-      if (woken) return
-      woken = true
-      void wake()
-    }
-
-    const onOver = (event: PointerEvent) => {
-      if (!fine.matches || !(event.target instanceof Element)) return
-      const target = event.target.closest(interactive)
-      if (!target || target === lastHovered) return
-      lastHovered = target
-      const now = performance.now()
-      if (now - lastHoverAt < 70) return
-      lastHoverAt = now
-      play('hover')
-    }
-    const onOut = (event: PointerEvent) => {
-      if (event.target instanceof Element && event.target.closest(interactive) === lastHovered) lastHovered = null
-    }
+    // Any of these lets the browser start audio. Pointerdown comes before click, so the first click is heard too.
+    const onGesture = () => wake()
 
     const onClick = (event: MouseEvent) => {
       if (!(event.target instanceof Element)) return
       const target = event.target.closest<HTMLElement>(interactive)
       if (!target || target.dataset.sound === 'none') return
-      const voice = target.dataset.sound
-      play(voice && pressVoices.has(voice) ? (voice as Voice) : 'tap')
+      play(target.dataset.sound === 'close' ? 'close' : 'tap')
     }
 
     const onScroll = () => {
@@ -67,18 +42,13 @@ export function SoundDesign() {
 
     const onVisibility = () => pause(document.hidden)
 
-    document.addEventListener('pointerdown', onFirstGesture, { capture: true })
-    document.addEventListener('keydown', onFirstGesture, { capture: true })
-    document.addEventListener('pointerover', onOver)
-    document.addEventListener('pointerout', onOut)
+    const gestures = ['pointerdown', 'keydown', 'touchend'] as const
+    for (const name of gestures) document.addEventListener(name, onGesture, { capture: true })
     document.addEventListener('click', onClick, { capture: true })
     window.addEventListener('scroll', onScroll, { passive: true })
     document.addEventListener('visibilitychange', onVisibility)
     return () => {
-      document.removeEventListener('pointerdown', onFirstGesture, { capture: true })
-      document.removeEventListener('keydown', onFirstGesture, { capture: true })
-      document.removeEventListener('pointerover', onOver)
-      document.removeEventListener('pointerout', onOut)
+      for (const name of gestures) document.removeEventListener(name, onGesture, { capture: true })
       document.removeEventListener('click', onClick, { capture: true })
       window.removeEventListener('scroll', onScroll)
       document.removeEventListener('visibilitychange', onVisibility)
