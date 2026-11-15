@@ -172,6 +172,9 @@
 
   /* Component: /me */
   --me-tile-min: 240px;
+  --me-rail-width: 220px;
+  --me-rail-tile: 150px;
+  --me-detail-min: 420px;
   --me-title-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
   --me-print-border: 12px;
   --me-sprocket-band: 22px;

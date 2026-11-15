@@ -221,6 +221,8 @@ export interface SiteConfig {
     /** The quiet link under the hero's role line, and in the footer. */
     readonly link: string
     readonly onward: string
+    /** The link from an opened tile back to all of them. */
+    readonly backToAll: string
     /** The link back to the professional side, at the foot of the page. */
     readonly back: string
     /** The slight angle of each tile, in degrees, in order. The home tile takes the last. */

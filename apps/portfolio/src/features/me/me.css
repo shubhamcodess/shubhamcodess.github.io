@@ -299,3 +299,131 @@
     stroke-opacity: 0;
   }
 }
+
+/* A tile is a link to its own view. */
+a.me-frame {
+  display: block;
+  color: inherit;
+}
+
+a.me-frame:focus-visible {
+  border-radius: var(--radius-lg);
+}
+
+/*
+ * An opened tile. Wide screens: the other tiles fold into a rail on the left, the chosen one fills the rest.
+ * Phones: the rail is a strip across the top that scrolls sideways, the chosen tile below.
+ */
+.me-open {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+.me-rail {
+  display: flex;
+  gap: var(--space-2);
+  margin-inline: calc(var(--page-gutter) * -1);
+  padding: var(--space-1) var(--page-gutter) var(--space-3);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.me-rail__tile {
+  display: grid;
+  flex: none;
+  gap: var(--space-2);
+  min-width: var(--me-rail-tile);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-raised);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-md);
+  transition:
+    border-color var(--duration-fast) linear,
+    background-color var(--duration-fast) linear;
+}
+
+.me-rail__tile[aria-current] {
+  background: var(--surface-sunken);
+  border-color: color-mix(in srgb, var(--ink) 45%, var(--line));
+}
+
+.me-rail__tile:focus-visible {
+  border-radius: var(--radius-md);
+}
+
+.me-rail__title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-snug);
+}
+
+@media (hover: hover) {
+  .me-rail__tile:not([aria-current]):hover {
+    border-color: var(--ink-muted);
+  }
+}
+
+.me-detail {
+  min-height: var(--me-detail-min);
+}
+
+.me-detail .me-frame__inner {
+  min-height: var(--me-detail-min);
+}
+
+.me-detail__story {
+  display: grid;
+  gap: var(--space-4);
+  max-width: var(--project-measure);
+  padding: var(--space-6) clamp(var(--space-5), 3vw, var(--space-7)) var(--space-7);
+  font-size: var(--text-lg);
+}
+
+.me-open__back {
+  margin: 0;
+}
+
+@media (max-width: 899px) {
+  .me-detail,
+  .me-detail .me-frame__inner {
+    min-height: var(--me-tile-min);
+  }
+}
+
+@media (min-width: 900px) {
+  .me-open {
+    grid-template-columns: var(--me-rail-width) minmax(0, 1fr);
+    grid-template-areas:
+      'rail detail'
+      'back detail';
+    align-items: start;
+    gap: var(--space-5) var(--space-6);
+  }
+
+  .me-rail {
+    grid-area: rail;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .me-rail__tile {
+    min-width: 0;
+  }
+
+  .me-detail {
+    grid-area: detail;
+  }
+
+  .me-open__back {
+    grid-area: back;
+  }
+}
+
+/* Tiles become the panel and the panel becomes a tile: the move eases on the site's curve. */
+::view-transition-group(*) {
+  animation-duration: var(--duration-enter);
+  animation-timing-function: var(--ease-out);
+}

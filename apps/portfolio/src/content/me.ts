@@ -21,9 +21,13 @@ export interface Pursuit {
   readonly art?: string
   /** Short facts shown as a list of mono label and value, such as the bike's make. */
   readonly details?: readonly { readonly label: string; readonly value: string }[]
+  /** The tile's own page, shown when it is opened: paragraphs in the owner's words. */
+  readonly story?: readonly string[]
 }
 
 export interface Home {
+  /** Its address on the page, /me/#<id>. */
+  readonly id: string
   /** The small label above the city, such as "Work". */
   readonly label: string
   readonly city: string
@@ -33,6 +37,8 @@ export interface Home {
   readonly art?: string
   /** A fine-line map drawn behind the city, with a marker on it. */
   readonly map?: 'karnataka'
+  /** The tile's own page, shown when it is opened. */
+  readonly story?: readonly string[]
 }
 
 export const pursuits: readonly Pursuit[] = [
@@ -41,4 +47,4 @@ export const pursuits: readonly Pursuit[] = [
   { id: 'filmmaking', title: 'Filmmaking', frame: 'film', size: 'tall' },
 ]
 
-export const home: Home = { label: 'Work', city: 'Bengaluru', region: 'Karnataka, India', map: 'karnataka' }
+export const home: Home = { id: 'work', label: 'Work', city: 'Bengaluru', region: 'Karnataka, India', map: 'karnataka' }

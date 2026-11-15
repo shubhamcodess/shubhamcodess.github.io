@@ -126,6 +126,7 @@ export const site = {
     lead: 'Biking, photography, filmmaking, and the place I call home.',
     link: 'More about me',
     onward: 'Say hello',
+    backToAll: 'Back to all',
     back: 'Professional experience',
     turns: [-1.2, 1.4, -0.8, 1.1],
   },
