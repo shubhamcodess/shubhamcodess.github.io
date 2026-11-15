@@ -28,19 +28,33 @@ A developer's portfolio that reads like a well-kept workspace: black frame, roun
 
 ## Color
 
-| Role | Light | Dark |
-|---|---|---|
-| `--surface` (panel) | `#f5f6f2` | `#161716` |
-| `--surface-raised` (folder sheet) | `#fcfdfa` | `#222422` |
-| `--surface-sunken` (folder plate) | `#e8ebe4` | `#0d0e0d` |
-| `--ink` | `#1c1f1d` | `#eef0ec` |
-| `--ink-muted` | `#5c635e` | `#a2a8a2` |
-| `--line` | `#dde1da` | `#2e312e` |
-| `--accent` (focus ring only) | `#1d4ed8` | `#8fb4ff` |
+Two palettes, chosen by `theme.palette` in the config. Each has a light and a dark theme. Switching the one value changes every page; nothing else needs touching.
 
-- Neutral, slightly green-grey surfaces. The only strong color on the site is the hero light: blue with about one warm lane in five.
+**Signature (default).** The hero light has two colours, a deep blue and a warm amber, and each becomes a theme: midnight for dark, warm paper for light. The frame is ink blue in both, so the site never sits on pure black or pure white.
+
+| Role | Light: warm paper | Dark: midnight |
+|---|---|---|
+| `--backplate` (frame) | `#070b16` | `#070b16` |
+| `--surface` (panel) | `#f3ede1` | `#0c1220` |
+| `--surface-raised` (sheets, cards) | `#fbf8f1` | `#141c30` |
+| `--surface-sunken` (plates, wells) | `#e8dfce` | `#070b15` |
+| `--ink` | `#1c1915` | `#e9eefb` |
+| `--ink-muted` | `#645b4e` | `#98a4bf` |
+| `--line` | `#dccfb9` | `#222c45` |
+| `--accent` (focus ring only) | `#1e40af` | `#8fb4ff` |
+
+- Night surfaces (hero, project title, contact) are `#04060d`: almost black, with the frame's blue in it. The light shader paints on that same colour.
+- Every themed panel has a soft wash of light from its top edge (`--panel-wash`): cream on paper, blue on midnight.
+- Card shadows carry the theme's tint, warm on paper and blue-black on midnight.
+
+**Plain.** The first palette: pure black frame, neutral grey-green panels (`#f5f6f2` light, `#161716` dark), no wash. Kept whole, as the fallback.
+
+Rules for both:
+
+- The only strong colour on the site is the light: blue with about one warm lane in five. It also colours the scrollbar, the experience lane and small markers.
 - The accent is for focus rings. Don't use it for text, fills or decoration.
 - Light is the default theme. The choice is saved, and restored before first paint.
+- A new palette is one more `:root[data-palette='…']` block in `tokens.css` and one more name in `PaletteName`. It may only re-point semantic tokens.
 
 ## Type
 
@@ -138,7 +152,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - **An employer layer:** the name very large, its span and place, then its roles, newest first.
 - **A role is one card,** always open: title, one sentence of scope, then two columns, Built and Delivered, three or four lines each. Only the strongest lines go in. No drawers, tabs or number tiles.
 - At most two or three roles per employer. Fold small steps into the role they led to.
-- **Recognition** is awards for the work, and sits under the layers. Certifications are not recognition. When an award has a certificate image, the certificate follows the pointer over it.
+- **Recognition** is awards for the work, and sits under the layers. Certifications are not recognition. An award with a certificate shows it matted in a small frame, toned down to sit with the page. Hovering brings back its colours and shows it large beside the pointer, big enough to read; a tap or Enter opens it.
 - **The home teaser** is the short version: the headline, the roles as two cards, and links to the full page and to credentials.
 
 ## Credentials
@@ -153,7 +167,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - **The badge** hangs from the panel's top edge on a woven strap with a buckle, swivel and ring. It is two-tone: a graphite frame around a near-black face, with a blue accent.
   - It swings on a spring: it drops in when first seen, leans after the pointer, and kicks when pressed.
   - The developer card is in front. The Labs card hangs behind, far enough to the side that "Labs" can be read. Pressing the badge swaps them.
-  - **The portrait** arrives the way a generated image loads: a field of soft, round-cornered, muted grey cells that says nothing about the picture, clearing from the top down. The photo is monochrome from its first frame, so cells and photo share one tone. A trace of the hero's light lanes stays over it.
+  - **The portrait** arrives the way a generated image loads: a field of soft, round-cornered, muted grey cells that says nothing about the picture, clearing slowly from the top down while the field breathes in rolling waves. The photo is monochrome from its first frame, so cells and photo share one tone. A trace of the hero's light lanes stays over it.
 - On phones the badge hangs first and centred, and the copy follows at phone sizes of its own.
 
 ## Scrollbar

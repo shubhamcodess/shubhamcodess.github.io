@@ -16,6 +16,8 @@ const offset = 18
 interface Shown extends Preview {
   readonly key: string
   readonly note: string
+  /** An image meant to be read, such as a certificate, gets the wide card. */
+  readonly large: boolean
 }
 
 /** What the element under the pointer wants shown, if anything. */
@@ -24,11 +26,18 @@ function shownFor(target: EventTarget | null): Shown | null {
   // Anything can show an image of its own: data-hover-image (a path under /public) and data-hover-title.
   const own = target.closest<HTMLElement>('[data-hover-image]')
   if (own?.dataset.hoverImage) {
-    return { key: own.dataset.hoverImage, title: own.dataset.hoverTitle ?? '', description: '', image: own.dataset.hoverImage, note: '' }
+    return {
+      key: own.dataset.hoverImage,
+      title: own.dataset.hoverTitle ?? '',
+      description: '',
+      image: own.dataset.hoverImage,
+      note: '',
+      large: true,
+    }
   }
   const link = target.closest<HTMLAnchorElement>('a[href^="https://"]')
   const preview = link ? previews[link.href] : undefined
-  return link && preview ? { ...preview, key: link.href, note: new URL(link.href).host } : null
+  return link && preview ? { ...preview, key: link.href, note: new URL(link.href).host, large: false } : null
 }
 
 /**
@@ -78,7 +87,7 @@ export function LinkPreview() {
   }, [])
 
   return (
-    <div className="link-preview" ref={cardRef} aria-hidden="true">
+    <div className="link-preview" ref={cardRef} data-size={shown?.large ? 'large' : 'small'} aria-hidden="true">
       {shown ? (
         <div className="link-preview__card" key={shown.key}>
           {shown.image ? <img src={`${import.meta.env.BASE_URL}${shown.image}`} alt="" /> : null}

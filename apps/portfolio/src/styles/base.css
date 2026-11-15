@@ -110,7 +110,7 @@ button {
 .panel {
   position: relative;
   color: var(--ink);
-  background: var(--surface);
+  background: var(--panel-wash), var(--surface);
   border-radius: var(--frame-radius);
   overflow: clip;
 }

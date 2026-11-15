@@ -53,7 +53,7 @@ export function Badge() {
               </span>
               <span className="badge__id" aria-hidden="true">
                 <span className="badge__name">{owner}</span>
-                <span className="badge__role">{hero.role}</span>
+                <span className="badge__role">{badge.role}</span>
                 <span className="badge__handle">
                   {hero.employer} · {badge.handle}
                 </span>

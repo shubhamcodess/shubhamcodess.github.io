@@ -52,3 +52,11 @@
     transform: translate3d(0, 8px, 0) scale(0.96);
   }
 }
+
+.link-preview[data-size='large'] {
+  width: min(var(--preview-width-large), 72vw);
+}
+
+.link-preview[data-size='large'] img {
+  max-height: 72vh;
+}

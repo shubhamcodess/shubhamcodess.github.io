@@ -166,19 +166,67 @@
 
 .honours__list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
   gap: var(--space-3);
   margin-top: var(--space-6);
 }
 
 .honour {
   display: grid;
-  gap: var(--space-2);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-5);
   height: 100%;
-  padding: var(--space-5);
-  border: var(--hairline) solid var(--line);
+  padding: var(--space-4);
+  background: var(--surface-raised);
   border-radius: var(--radius-lg);
-  transition: border-color var(--duration-fast) linear;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+a.honour {
+  cursor: zoom-in;
+}
+
+a.honour:focus-visible {
+  border-radius: var(--radius-lg);
+}
+
+/* The certificate, matted in a small frame and toned down to sit with the page. Its true colours show on hover. */
+.honour__frame {
+  position: relative;
+  display: block;
+  padding: var(--space-2);
+  background: var(--surface-sunken);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.honour__frame img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 10 / 7;
+  object-fit: cover;
+  border-radius: calc(var(--radius-md) - var(--space-2));
+  filter: var(--honour-tone);
+  transition: filter var(--duration-enter) var(--ease-out);
+}
+
+.honour__frame::after {
+  content: '';
+  position: absolute;
+  inset: var(--space-2);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--xp-light) 28%, transparent), transparent 60%);
+  border-radius: calc(var(--radius-md) - var(--space-2));
+  mix-blend-mode: multiply;
+  transition: opacity var(--duration-enter) var(--ease-out);
+}
+
+.honour__text {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0 var(--space-2) var(--space-2);
 }
 
 .honour__when {
@@ -192,13 +240,23 @@
   line-height: var(--leading-snug);
 }
 
-.honour[data-hover-image] {
-  cursor: zoom-in;
+@media (hover: hover) {
+  a.honour:hover {
+    transform: translateY(var(--card-lift));
+  }
+
+  a.honour:hover .honour__frame img {
+    filter: none;
+  }
+
+  a.honour:hover .honour__frame::after {
+    opacity: 0;
+  }
 }
 
-@media (hover: hover) {
-  .honour[data-hover-image]:hover {
-    border-color: var(--ink-muted);
+@media (min-width: 640px) {
+  a.honour {
+    grid-template-columns: var(--honour-frame-width) minmax(0, 1fr);
   }
 }
 

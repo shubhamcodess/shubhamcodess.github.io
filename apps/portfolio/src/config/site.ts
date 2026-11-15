@@ -4,7 +4,8 @@ import type { SiteConfig } from './types'
 export const site = {
   owner: 'Shubham Prakash',
   monogram: 'SP',
-  theme: { default: 'light', storageKey: 'portfolio-theme' },
+  // Switch `palette` to 'plain' to go back to the black frame and neutral panels. Nothing else needs to change.
+  theme: { default: 'light', storageKey: 'portfolio-theme', palette: 'signature' },
   routes: {
     home: { path: '', label: 'Home', title: 'Shubham Prakash | Cloud Full Stack Developer' },
     builds: { path: 'builds/', label: 'Builds', title: 'All builds | Shubham Prakash' },
@@ -104,10 +105,11 @@ export const site = {
       handle: '@shubhamcodess',
       serial: 'SP-2020',
       swapLabel: 'Swap the two badge cards',
+      role: 'AI Engineer',
       strap: 'Shubham / Dev',
       portraitAlt: 'Portrait of Shubham Prakash',
       labs: { name: 'Labs', by: 'by Shubham', status: 'In the works' },
-      reveal: { cell: 14, holdMs: 900, dissolveMs: 1700 },
+      reveal: { cell: 14, holdMs: 2200, dissolveMs: 3600, pulseMs: 1500 },
       swing: { stiffness: 42, damping: 3.2, dropAngle: -18, pointerPull: 7, tapKick: 90 },
     },
   },

@@ -80,7 +80,14 @@ export interface Recognition {
   readonly certificate?: string
 }
 
-export const recognition: readonly Recognition[] = [{ title: 'Delivery Exemplar', when: '2026' }]
+export const recognition: readonly Recognition[] = [
+  {
+    title: 'IBM Delivery Exemplar, Award of Excellence',
+    when: '2026',
+    by: 'IBM Consulting',
+    certificate: 'certificates/ibm-delivery-exemplar-2026.jpg',
+  },
+]
 
 export interface Credential {
   readonly title: string

@@ -4,6 +4,8 @@ import type { ExternalUrl } from '../content/types'
 
 export type ThemeName = 'light' | 'dark'
 
+export type PaletteName = 'plain' | 'signature'
+
 /** Routes are a closed set. Add one here, add its HTML entry, and the compiler points at the rest. */
 export type RouteId = 'home' | 'builds' | 'experience' | 'credentials'
 
@@ -115,7 +117,16 @@ export interface SocialLink {
 export interface SiteConfig {
   readonly owner: string
   readonly monogram: string
-  readonly theme: { readonly default: ThemeName; readonly storageKey: string }
+  readonly theme: {
+    readonly default: ThemeName
+    readonly storageKey: string
+    /**
+     * The colour character of the whole site, in both themes.
+     * "plain": pure black frame, neutral grey-green panels.
+     * "signature": the hero light's two colours become the two themes. Midnight blue for dark, warm paper for light.
+     */
+    readonly palette: PaletteName
+  }
   readonly routes: Readonly<Record<RouteId, RouteConfig>>
   readonly nav: readonly { readonly label: string; readonly to: RouteId | `#${string}` }[]
   readonly hero: HeroConfig
@@ -171,11 +182,13 @@ export interface SiteConfig {
       readonly handle: string
       readonly serial: string
       readonly swapLabel: string
+      /** The title printed on the badge. It can differ from the role in the hero. */
+      readonly role: string
       readonly strap: string
       readonly portraitAlt: string
       readonly labs: { readonly name: string; readonly by: string; readonly status: string }
       /** The portrait's arrival: soft grey cells shimmer, then dissolve from the top down. Cell size in pixels, times in ms. */
-      readonly reveal: { readonly cell: number; readonly holdMs: number; readonly dissolveMs: number }
+      readonly reveal: { readonly cell: number; readonly holdMs: number; readonly dissolveMs: number; readonly pulseMs: number }
       readonly swing: SwingConfig
     }
   }

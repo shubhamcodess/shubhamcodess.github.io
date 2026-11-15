@@ -15,6 +15,8 @@ const escapeAttribute = (text: string) => text.replaceAll('&', '&amp;').replaceA
 function projectPages(): Plugin {
   return {
     name: 'portfolio-project-pages',
+    // The palette is set on <html> in the file itself, so the first paint already has the right colours.
+    transformIndexHtml: (html) => html.replace('<html lang="en"', `<html lang="en" data-palette="${site.theme.palette}"`),
     configureServer(server) {
       server.middlewares.use((request, _response, next) => {
         const [path = '', query] = (request.url ?? '').split('?')

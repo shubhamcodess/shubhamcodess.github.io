@@ -1,12 +1,22 @@
 import { useEffect, useRef } from 'react'
 import { site } from '../../config/site'
-import { employers, recognition } from '../../content/experience'
+import { employers, recognition, type Recognition } from '../../content/experience'
 import { Header } from '../../layout/Header'
 import { hrefTo } from '../../lib/routes'
 import { useReducedMotion } from '../../lib/useReducedMotion'
 import { ActionLink } from '../../ui/ActionLink'
 import { Reveal } from '../../ui/Reveal'
 import './experience.css'
+
+function HonourText({ title, when, by }: Recognition) {
+  return (
+    <span className="honour__text">
+      <span className="honour__when">{when}</span>
+      <span className="honour__title">{title}</span>
+      {by ? <span className="eyebrow">{by}</span> : null}
+    </span>
+  )
+}
 
 /** How far down the viewport the light's head sits, 0 (top) to 1 (bottom). */
 const headLine = 0.65
@@ -137,16 +147,31 @@ export function ExperiencePage() {
               {recognition.map((item, index) => (
                 <li key={item.title}>
                   <Reveal index={index} className="reveal-fill">
-                    <div
-                      className="honour"
-                      {...(item.certificate
-                        ? { 'data-hover-image': item.certificate, 'data-hover-title': `${item.title} ${item.when}`, tabIndex: 0 }
-                        : {})}
-                    >
-                      <span className="honour__when">{item.when}</span>
-                      <span className="honour__title">{item.title}</span>
-                      {item.by ? <span className="eyebrow">{item.by}</span> : null}
-                    </div>
+                    {item.certificate ? (
+                      // The framed certificate. Hovering shows it large beside the pointer; a tap or Enter opens it.
+                      <a
+                        className="honour"
+                        href={`${import.meta.env.BASE_URL}${item.certificate}`}
+                        target="_blank"
+                        rel="noopener"
+                        data-hover-image={item.certificate}
+                        data-hover-title={item.title}
+                      >
+                        <span className="honour__frame">
+                          <img
+                            src={`${import.meta.env.BASE_URL}${item.certificate}`}
+                            alt={`Certificate: ${item.title}`}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </span>
+                        <HonourText {...item} />
+                      </a>
+                    ) : (
+                      <div className="honour">
+                        <HonourText {...item} />
+                      </div>
+                    )}
                   </Reveal>
                 </li>
               ))}

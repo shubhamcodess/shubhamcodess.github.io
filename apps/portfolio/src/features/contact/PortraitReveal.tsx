@@ -7,7 +7,7 @@ import { useReducedMotion } from '../../lib/useReducedMotion'
 const cellGap = 0.07
 const cellRadius = 0.3
 /** How much of the dissolve each cell takes to fade, 0 to 1. Lower is a harder edge. */
-const fadeBand = 0.2
+const fadeBand = 0.32
 /** How far the dissolve leans top-down (1) rather than at random (0). */
 const topDown = 0.7
 
@@ -74,7 +74,10 @@ export function PortraitReveal() {
       const size = reveal.cell * ratio
       const columns = Math.ceil(width / size)
       const rows = Math.ceil(height / size)
-      const progress = Math.max(0, (elapsed - reveal.holdMs) / reveal.dissolveMs) * (1 + fadeBand)
+      // The dissolve eases in and out, so it gathers pace and settles instead of sweeping at one speed.
+      const linear = Math.min(1, Math.max(0, (elapsed - reveal.holdMs) / reveal.dissolveMs))
+      const progress = linear * linear * (3 - 2 * linear) * (1 + fadeBand)
+      const beat = (elapsed / reveal.pulseMs) * Math.PI * 2
       for (let row = 0; row < rows; row++) {
         for (let column = 0; column < columns; column++) {
           const seed = seedOf(row * 1000 + column)
@@ -82,7 +85,9 @@ export function PortraitReveal() {
           const alpha = 1 - Math.min(1, Math.max(0, (progress - threshold) / fadeBand))
           if (alpha <= 0) continue
           // Each cell breathes between dark greys while it waits.
-          const shade = Math.round(34 + seed * 26 + Math.sin(elapsed * 0.004 + seed * 40) * 9)
+          // The field breathes in slow waves that roll down and across it, one per pulse.
+          const wave = Math.sin(beat - row * 0.45 - column * 0.14) * 0.5 + 0.5
+          const shade = Math.round(28 + seed * 16 + wave * 26)
           const x = column * size
           const y = row * size
           context.globalAlpha = alpha

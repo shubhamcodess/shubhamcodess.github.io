@@ -112,10 +112,8 @@ State on 2026-11-15: every page in `DESIGN.md` is built, typed, formatted and co
 
 | Item | Where it goes |
 |---|---|
-| Certificate image for Delivery Exemplar 2026 | `public/certificates/`, then `certificate` on that entry in `content/experience.ts` |
-| Who awarded Delivery Exemplar | `by` on the same entry |
 | Years each role began | `Role` has no dates today. Add a field and show it in the role card when known |
-| Confirm the title "Sr. Cloud Full Stack Developer" | The hero and badge still say "Cloud Full Stack Developer" (`hero.role` in `config/site.ts`) |
+| One title everywhere? | Today: hero "Cloud Full Stack Developer" (`hero.role`), experience "Sr. Cloud Full Stack Developer", badge "AI Engineer" (`contact.badge.role`). The badge title is the owner's choice |
 | Substack address | `contact.links` in `config/site.ts`, icon `substack` |
 | Recordings or motion graphics per build | `media` on the build in `content/builds.ts` |
 | Use-case write-ups | `story.useCase` on the build |
@@ -133,5 +131,7 @@ State on 2026-11-15: every page in `DESIGN.md` is built, typed, formatted and co
 
 - The preview pane in the desktop app stalls CSS transitions. A blank area in a screenshot is usually an entrance that has not played, not a bug. Check with a real browser.
 - `pnpm previews` needs the network, and npm, LinkedIn and Product Hunt refuse automated reads, so those links have no hover card.
+- **Colours:** `theme.palette` in `config/site.ts` is `'signature'` or `'plain'`. The build writes it onto `<html data-palette>`; `tokens.css` does the rest. The shader reads `--night-surface`, which must stay a six-digit hex.
+- The certificate in `public/certificates/` shows three signatories' names. It is public once the repository is.
 - The portrait is `src/assets/portrait.webp`, with a transparent background. Replace the file to change it.
 - `site.routes` lists real pages only. Project pages are made from `project/index.html` by the plugin in `vite.config.ts`.

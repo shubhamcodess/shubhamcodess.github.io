@@ -24,6 +24,7 @@ uniform float uFloorPerspective;
 uniform float uCorner;
 uniform float uSpeed;
 uniform float uIntensity;
+uniform vec3 uBase;
 uniform float uWarmShare;
 uniform float uNearFade;
 uniform vec3 uCool;
@@ -72,7 +73,8 @@ void main() {
 
   // A little grain hides banding in the dark gradients.
   color += (hash(dot(gl_FragCoord.xy, vec2(0.17, 0.31))) - 0.5) * 0.006;
-  outColor = vec4(max(color * uIntensity, vec3(0.0)), 1.0);
+  // The light sits on the night surface's own colour, so the scene is never a black box inside a tinted panel.
+  outColor = vec4(max(color * uIntensity, vec3(0.0)) + uBase, 1.0);
 }`
 
 const uniformNames = [
@@ -86,6 +88,7 @@ const uniformNames = [
   'uCorner',
   'uSpeed',
   'uIntensity',
+  'uBase',
   'uWarmShare',
   'uNearFade',
   'uCool',
@@ -114,6 +117,13 @@ function compile(gl: WebGL2RenderingContext, type: number, source: string): WebG
   console.error('Light shader failed to compile:', gl.getShaderInfoLog(shader))
   gl.deleteShader(shader)
   return null
+}
+
+/** The night surface token as shader colour. It is a hex value in tokens.css; anything else reads as black. */
+function nightSurface(): [number, number, number] {
+  const hex = getComputedStyle(document.documentElement).getPropertyValue('--night-surface').trim().replace('#', '')
+  if (!/^[0-9a-f]{6}$/i.test(hex)) return [0, 0, 0]
+  return [0, 2, 4].map((at) => Number.parseInt(hex.slice(at, at + 2), 16) / 255) as [number, number, number]
 }
 
 /** Returns null when WebGL2 isn't available, and the backdrop keeps its static CSS glow. */
@@ -149,6 +159,7 @@ export function createCoveLight(canvas: HTMLCanvasElement, config: HeroLightConf
   gl.uniform1f(uniforms.uCorner, config.cornerRadius)
   gl.uniform1f(uniforms.uSpeed, config.speed)
   gl.uniform1f(uniforms.uIntensity, config.intensity)
+  gl.uniform3f(uniforms.uBase, ...nightSurface())
   gl.uniform1f(uniforms.uWarmShare, config.warmShare)
   gl.uniform1f(uniforms.uNearFade, config.nearFade)
   gl.uniform3f(uniforms.uCool, ...config.cool)

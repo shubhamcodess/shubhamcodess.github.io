@@ -74,6 +74,8 @@
   --accent: #1d4ed8;
   --focus-ring: var(--accent);
   --shadow-card: 0 1px 2px rgb(20 24 20 / 4%), 0 12px 32px rgb(20 24 20 / 6%);
+  /* A soft light from the top of every themed panel. None in the plain palette. */
+  --panel-wash: none;
 
   /* Component: header */
   --header-height: 76px;
@@ -127,6 +129,11 @@
 
   /* Component: link preview */
   --preview-width: 280px;
+  --preview-width-large: 640px;
+
+  /* Component: recognition */
+  --honour-frame-width: 180px;
+  --honour-tone: grayscale(0.75) contrast(1.05);
 
   /* Component: scroll light */
   --scroll-light-width: 2px;
@@ -156,6 +163,42 @@
   --line: #2e312e;
   --accent: #8fb4ff;
   --shadow-card: 0 1px 2px rgb(0 0 0 / 30%), 0 12px 32px rgb(0 0 0 / 30%);
+}
+
+/*
+ * The signature palette. The hero light has two colours, a deep blue and a warm amber,
+ * and each becomes a theme: midnight for dark, warm paper for light. The frame is ink blue in both.
+ * It only re-points the semantic tokens above, so `theme.palette: 'plain'` in the config restores everything.
+ */
+:root[data-palette='signature'] {
+  --backplate: #070b16;
+  --night-surface: #04060d;
+  --night-ink: #edf1fb;
+  --night-ink-muted: #98a4bf;
+  --night-glass: rgb(10 16 32 / 42%);
+
+  --surface: #f3ede1;
+  --surface-raised: #fbf8f1;
+  --surface-sunken: #e8dfce;
+  --ink: #1c1915;
+  --ink-muted: #645b4e;
+  --line: #dccfb9;
+  --accent: #1e40af;
+  --shadow-card: 0 1px 2px rgb(70 50 20 / 5%), 0 14px 34px rgb(70 50 20 / 9%);
+  --panel-wash: radial-gradient(120% 55% at 50% 0%, #fffaf0, transparent 62%);
+  --scroll-light-track: rgb(160 185 255 / 12%);
+}
+
+:root[data-palette='signature'][data-theme='dark'] {
+  --surface: #0c1220;
+  --surface-raised: #141c30;
+  --surface-sunken: #070b15;
+  --ink: #e9eefb;
+  --ink-muted: #98a4bf;
+  --line: #222c45;
+  --accent: #8fb4ff;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 35%), 0 14px 34px rgb(0 4 20 / 45%);
+  --panel-wash: radial-gradient(120% 55% at 50% 0%, rgb(70 110 220 / 13%), transparent 62%);
 }
 
 @media (max-width: 640px) {
