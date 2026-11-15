@@ -8,10 +8,12 @@ export const site = {
   routes: {
     home: { path: '', label: 'Home', title: 'Shubham Prakash | Cloud Full Stack Developer' },
     builds: { path: 'builds/', label: 'Builds', title: 'All builds | Shubham Prakash' },
+    experience: { path: 'experience/', label: 'Experience', title: 'Experience | Shubham Prakash' },
+    credentials: { path: 'credentials/', label: 'Credentials', title: 'Credentials | Shubham Prakash' },
   },
   nav: [
     { label: 'Builds', to: 'builds' },
-    { label: 'Experience', to: '#experience' },
+    { label: 'Experience', to: 'experience' },
     { label: 'Contact', to: '#contact' },
   ],
   hero: {
@@ -21,7 +23,7 @@ export const site = {
     statement: '6 years of shipping enterprise applications, scaling them in production, and building AI tools.',
     actions: [
       { label: 'Featured builds', to: '#featured' },
-      { label: 'Experience', to: '#experience' },
+      { label: 'Experience', to: 'experience' },
     ],
     actionsHideAfter: 120,
     light: {
@@ -69,15 +71,21 @@ export const site = {
     kicker: 'Experience',
     title: 'Six years at IBM.',
     lead: 'From keeping production running to owning products end to end.',
-    variant: 'record',
-    employer: { name: 'IBM', span: '2020 to now', place: 'Bengaluru' },
-    labels: { roles: 'Roles', highlights: 'Highlights', recognition: 'Recognition' },
-    credentials: {
-      id: 'credentials',
-      title: 'Credentials',
-      lead: 'Proctored certifications, each one current.',
-      verify: 'Verify',
+    more: 'Full experience',
+    page: { title: 'Experience', lead: 'Where I have worked, what I built there and what came of it.' },
+    labels: {
+      now: 'Now',
+      built: 'Built',
+      delivered: 'Delivered',
+      recognition: 'Recognition',
+      recognitionLead: 'Awards for the work, as distinct from certifications.',
     },
+  },
+  credentialsPage: {
+    title: 'Credentials',
+    lead: 'Certifications and badges I hold, grouped by who issued them.',
+    verify: 'Verify',
+    more: 'Credentials',
   },
   contact: {
     id: 'contact',
@@ -99,7 +107,7 @@ export const site = {
       strap: 'Shubham / Dev',
       portraitAlt: 'Portrait of Shubham Prakash',
       labs: { name: 'Labs', by: 'by Shubham', status: 'In the works' },
-      reveal: { blocks: [44, 30, 20, 12, 7, 4, 2, 1], stepMs: 190 },
+      reveal: { cell: 14, holdMs: 900, dissolveMs: 1700 },
       swing: { stiffness: 42, damping: 3.2, dropAngle: -18, pointerPull: 7, tapKick: 90 },
     },
   },

@@ -5,7 +5,7 @@ import type { ExternalUrl } from '../content/types'
 export type ThemeName = 'light' | 'dark'
 
 /** Routes are a closed set. Add one here, add its HTML entry, and the compiler points at the rest. */
-export type RouteId = 'home' | 'builds'
+export type RouteId = 'home' | 'builds' | 'experience' | 'credentials'
 
 export interface RouteConfig {
   /** Path under the site base, with a trailing slash for directories. "" is the root. */
@@ -22,7 +22,9 @@ export interface FeatureFlags {
   /** Pointer and scroll depth in the hero. */
   readonly heroParallax: boolean
   readonly featured: boolean
+  /** The experience page and its teaser on the home page. */
   readonly experience: boolean
+  /** The credentials page and the links to it. */
   readonly credentials: boolean
   /** The framed stage for a build's recording on its page, shown even before the recording exists. */
   readonly projectMedia: boolean
@@ -86,12 +88,7 @@ export interface HeroConfig {
 
 type S = BuildSlug
 /** One to five builds. The featured grid has a designed layout for each count, and none beyond five. */
-export type FeaturedSlugs =
-  | readonly [S]
-  | readonly [S, S]
-  | readonly [S, S, S]
-  | readonly [S, S, S, S]
-  | readonly [S, S, S, S, S]
+export type FeaturedSlugs = readonly [S] | readonly [S, S] | readonly [S, S, S] | readonly [S, S, S, S] | readonly [S, S, S, S, S]
 
 /** How the contact badge hangs and swings. */
 export interface SwingConfig {
@@ -144,16 +141,23 @@ export interface SiteConfig {
     readonly previous: string
   }
   readonly experience: {
+    /** The teaser on the home page. */
     readonly id: string
     readonly kicker: string
     readonly title: string
     readonly lead: string
-    /** "record" is the scannable employer record. "story" is the light timeline, chapter by chapter. */
-    readonly variant: 'record' | 'story'
-    readonly employer: { readonly name: string; readonly span: string; readonly place: string }
-    readonly labels: { readonly roles: string; readonly highlights: string; readonly recognition: string }
-    readonly credentials: { readonly id: string; readonly title: string; readonly lead: string; readonly verify: string }
+    readonly more: string
+    /** The page itself. */
+    readonly page: { readonly title: string; readonly lead: string }
+    readonly labels: {
+      readonly now: string
+      readonly built: string
+      readonly delivered: string
+      readonly recognition: string
+      readonly recognitionLead: string
+    }
   }
+  readonly credentialsPage: { readonly title: string; readonly lead: string; readonly verify: string; readonly more: string }
   readonly contact: {
     readonly id: string
     readonly kicker: string
@@ -170,8 +174,8 @@ export interface SiteConfig {
       readonly strap: string
       readonly portraitAlt: string
       readonly labs: { readonly name: string; readonly by: string; readonly status: string }
-      /** The portrait's arrival: block sizes in pixels, largest first, and how long each holds. */
-      readonly reveal: { readonly blocks: readonly number[]; readonly stepMs: number }
+      /** The portrait's arrival: soft grey cells shimmer, then dissolve from the top down. Cell size in pixels, times in ms. */
+      readonly reveal: { readonly cell: number; readonly holdMs: number; readonly dissolveMs: number }
       readonly swing: SwingConfig
     }
   }

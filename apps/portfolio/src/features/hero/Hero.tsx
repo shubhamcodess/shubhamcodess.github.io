@@ -39,7 +39,9 @@ export function Hero() {
           <p className="hero__role enter" style={{ '--enter-index': 3 } as React.CSSProperties}>
             {hero.role} <span className="hero__at">at</span> {hero.employer}
           </p>
-          <p className="hero__statement enter" style={{ '--enter-index': 4 } as React.CSSProperties}>{hero.statement}</p>
+          <p className="hero__statement enter" style={{ '--enter-index': 4 } as React.CSSProperties}>
+            {hero.statement}
+          </p>
         </div>
 
         <nav className="hero__actions enter" aria-label="Start here" style={{ '--enter-index': 7 } as React.CSSProperties}>

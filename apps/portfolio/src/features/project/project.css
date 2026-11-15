@@ -157,7 +157,9 @@
   border-radius: var(--radius-pill);
   font-size: var(--text-sm);
   white-space: nowrap;
-  transition: color var(--duration-fast) linear, border-color var(--duration-fast) linear;
+  transition:
+    color var(--duration-fast) linear,
+    border-color var(--duration-fast) linear;
 }
 
 .project-rail dl {

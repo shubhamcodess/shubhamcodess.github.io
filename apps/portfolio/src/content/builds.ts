@@ -255,7 +255,7 @@ export const builds = [
       engineering: [
         'Measured on held-out lines: categories 93% of 29, ticket decisions 87% of 45.',
         'Mixing weights were tuned on separate lines before the test set was run.',
-        'Models live in the browser\'s private file system and projects in IndexedDB.',
+        "Models live in the browser's private file system and projects in IndexedDB.",
       ],
       limits: ['The test sets are tiny and hand-labelled.', 'The larger model is 847 MB and needs WebGPU.'],
     },

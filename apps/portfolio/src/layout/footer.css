@@ -16,3 +16,21 @@
   display: flex;
   gap: var(--space-5);
 }
+
+.site-footer__links {
+  flex-wrap: wrap;
+  gap: 0 var(--space-5);
+}
+
+.site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  transition: color var(--duration-fast) linear;
+}
+
+@media (hover: hover) {
+  .site-footer__links a:hover {
+    color: var(--night-ink);
+  }
+}

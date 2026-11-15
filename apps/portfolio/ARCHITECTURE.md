@@ -1,5 +1,7 @@
 # Architecture directives
 
+> **Picking this up?** Read "Start here" at the end first. It lists what is waiting on the owner and what to do next.
+
 How this app is built, and the rules that keep it lean and easy to change. For how it looks, see `DESIGN.md`.
 
 ## Commands
@@ -16,6 +18,10 @@ pnpm --filter @portfolio/app build
 
 ```bash
 pnpm --filter @portfolio/app typecheck
+```
+
+```bash
+pnpm --filter @portfolio/app format
 ```
 
 The dev server is on port 5180. `build` type-checks first and writes static files to `apps/portfolio/dist`.
@@ -37,7 +43,7 @@ The dev server is on port 5180. `build` type-checks first and writes static file
 | `src/lib` | Small hooks and helpers with no markup | `config` |
 | `src/ui` | Reusable parts that know nothing about this site's content: `FolderCard`, `ActionLink`, `Icon`, `Reveal`, `LinkPreview`, and `light/` (the shader and its backdrop) | `lib`, `config` types |
 | `src/layout` | Header and footer | `config`, `lib`, `ui` |
-| `src/features/*` | One folder per part of the site: `hero`, `builds`, `project`, `experience`, `contact` | everything above |
+| `src/features/*` | One folder per part of the site: `hero`, `builds`, `project`, `experience`, `credentials`, `contact` | everything above |
 | `scripts` | Build-time helpers. `fetch-previews.mjs` saves the social preview of every outside link | nothing in `src` |
 | `src/app` | Puts pages together and picks the page for a route | everything above |
 
@@ -66,7 +72,9 @@ pnpm --filter @portfolio/app previews
 
 **A use case or recording for a build:** fill `story.useCase` or `media` on that build. The page shows the section only when it exists.
 
-**A role, credential or recognition:** edit `content/experience.ts`.
+**A role, employer, credential or recognition:** edit `content/experience.ts`. A new employer goes at the top of `employers`.
+
+**A certificate for a recognition:** put the image in `public/certificates/` and set `certificate: 'certificates/<file>'` on that recognition. It then follows the pointer over the card. Any element can do the same with `data-hover-image` and `data-hover-title`.
 
 **A page:**
 1. Add its id to `RouteId` in `config/types.ts`, and its entry to `routes` in `config/site.ts`.
@@ -86,9 +94,44 @@ pnpm --filter @portfolio/app previews
 
 ## Known gaps
 
-- **Content is rendered in the browser.** Before launch, pre-render each page to static HTML at build time, so search engines and AI readers get the content without running JavaScript.
-- **JavaScript is at the 90 kB budget.** The saved link previews ride in the main bundle. Load them on first hover if more is added.
+- **Content is rendered in the browser.** Before launch, pre-render each page to static HTML at build time, so search engines and AI readers get the content without running JavaScript. This is the one launch blocker.
+- **JavaScript is close to the 90 kB budget** (88.6 kB gzipped). Link previews already load on demand. Split by page before adding anything heavy.
 - **Page transitions** use cross-document view transitions, which Firefox doesn't have yet. It simply navigates.
-- **No automated tests or gates yet.** The repository's responsive and performance gates still point at `apps/web`. They should be pointed here once this app becomes the deployed site.
+- **No automated tests or gates yet,** by the owner's choice for now. The repository's responsive and performance gates still point at `apps/web`.
 - **No content security policy, sitemap or social image yet.** Add them with the deploy setup.
 - **Font subsets.** Fontsource ships every script. Only the Latin files are ever downloaded, but the others still sit in `dist`.
+- **Motion was tuned by reading values, not by long viewing.** The preview pane used during the build stalls animations. Swing, reveal and transition timings are all tokens or config, so they are quick to adjust by eye.
+
+## Start here
+
+State on 2026-11-15: every page in `DESIGN.md` is built, typed, formatted and committed locally. Nothing is deployed, and nothing has been pushed.
+
+**How the owner works:** one piece at a time, short bulleted replies, real content only, no AI attribution in commits. They decide by looking at the running site, on desktop and phone.
+
+**Waiting on the owner:**
+
+| Item | Where it goes |
+|---|---|
+| Certificate image for Delivery Exemplar 2026 | `public/certificates/`, then `certificate` on that entry in `content/experience.ts` |
+| Who awarded Delivery Exemplar | `by` on the same entry |
+| Years each role began | `Role` has no dates today. Add a field and show it in the role card when known |
+| Confirm the title "Sr. Cloud Full Stack Developer" | The hero and badge still say "Cloud Full Stack Developer" (`hero.role` in `config/site.ts`) |
+| Substack address | `contact.links` in `config/site.ts`, icon `substack` |
+| Recordings or motion graphics per build | `media` on the build in `content/builds.ts` |
+| Use-case write-ups | `story.useCase` on the build |
+| Whether to list career-os, lets-dsa and 90-days-challenge | Left out so far, because they point at job hunting |
+| Whether this app replaces `apps/web` | Decisions 001 and 003 in `docs/decisions` still describe the old site |
+
+**Suggested order of work:**
+
+1. Static pre-render (see Known gaps).
+2. Point the responsive and performance gates at this app, and add the content security policy.
+3. Recordings into the project stage, and onto the featured cards' plates.
+4. An About section, once its content is agreed.
+
+**Small things worth knowing:**
+
+- The preview pane in the desktop app stalls CSS transitions. A blank area in a screenshot is usually an entrance that has not played, not a bug. Check with a real browser.
+- `pnpm previews` needs the network, and npm, LinkedIn and Product Hunt refuse automated reads, so those links have no hover card.
+- The portrait is `src/assets/portrait.webp`, with a transparent background. Replace the file to change it.
+- `site.routes` lists real pages only. Project pages are made from `project/index.html` by the plugin in `vite.config.ts`.

@@ -15,7 +15,15 @@ interface ActionLinkProps {
   readonly label?: string
 }
 
-export function ActionLink({ href, children, icon = 'arrowUpRight', variant = 'text', iconFirst = false, external = false, label }: ActionLinkProps) {
+export function ActionLink({
+  href,
+  children,
+  icon = 'arrowUpRight',
+  variant = 'text',
+  iconFirst = false,
+  external = false,
+  label,
+}: ActionLinkProps) {
   return (
     <a
       className={`action-link action-link--${variant}${iconFirst ? ' action-link--back' : ''}`}

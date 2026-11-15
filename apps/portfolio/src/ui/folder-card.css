@@ -65,7 +65,11 @@
   left: 100%;
   width: var(--card-tab-radius);
   height: var(--card-tab-radius);
-  background: radial-gradient(circle at 100% 0, transparent calc(var(--card-tab-radius) - 0.5px), var(--surface-raised) var(--card-tab-radius));
+  background: radial-gradient(
+    circle at 100% 0,
+    transparent calc(var(--card-tab-radius) - 0.5px),
+    var(--surface-raised) var(--card-tab-radius)
+  );
 }
 
 .folder__index {

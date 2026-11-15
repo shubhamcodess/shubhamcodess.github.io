@@ -1,203 +1,100 @@
-.xp {
-  --xp-progress: 0;
+/* ---- The page: layers on a lane of light ---- */
+.career {
+  --career-progress: 0;
   position: relative;
-}
-
-.xp__list {
   display: grid;
   gap: var(--space-8);
 }
 
-/* The lane. It sits in the node column and runs the full height of the list. */
-.xp__rail {
+.career__lane {
   position: absolute;
   top: var(--space-2);
-  bottom: 0;
+  bottom: var(--space-2);
   left: calc(var(--xp-node-column) / 2 - var(--xp-rail-width) / 2);
   width: var(--xp-rail-width);
   background: var(--line);
   border-radius: var(--radius-pill);
 }
 
-.xp__run {
+.career__run {
   position: absolute;
   inset: 0 0 auto;
-  height: calc(var(--xp-progress) * 100%);
-  background: linear-gradient(to bottom, transparent, var(--xp-light) var(--space-8));
+  height: calc(var(--career-progress) * 100%);
+  background: linear-gradient(to bottom, var(--xp-light), color-mix(in srgb, var(--xp-light) 55%, transparent));
   border-radius: var(--radius-pill);
-  box-shadow: 0 0 var(--space-3) color-mix(in srgb, var(--xp-light) 60%, transparent);
+  box-shadow: 0 0 var(--space-3) color-mix(in srgb, var(--xp-light) 55%, transparent);
 }
 
-/* The drop at the head of the light. */
-.xp__run::after {
-  content: '';
-  position: absolute;
-  bottom: calc(var(--xp-node-size) / -2);
-  left: 50%;
-  width: var(--xp-node-size);
-  height: var(--xp-node-size);
-  background: var(--xp-light);
-  border-radius: 50%;
-  box-shadow: 0 0 var(--space-4) var(--xp-light);
-  transform: translateX(-50%);
+/* A layer is one employer: its end mark, its body, its start mark. */
+.career__layer {
+  display: grid;
+  gap: var(--space-5);
 }
 
-.xp__chapter {
+.career__mark {
   position: relative;
-  display: grid;
-  grid-template-columns: var(--xp-node-column) minmax(0, 1fr);
-  grid-template-areas:
-    'node stop'
-    '. body';
-  gap: var(--space-3) var(--space-4);
-}
-
-.xp__stop {
-  grid-area: stop;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-3);
-  font-size: var(--text-xl);
-  font-weight: var(--weight-heading);
-  line-height: 1;
-}
-
-.xp__count {
-  color: var(--ink-muted);
-  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
-}
-
-.xp__node {
-  grid-area: node;
-  place-self: center;
-  width: var(--xp-node-size);
-  height: var(--xp-node-size);
-  background: var(--surface);
-  border: var(--hairline) solid var(--ink-muted);
-  border-radius: 50%;
-  transition:
-    background-color var(--duration-base) var(--ease-out),
-    border-color var(--duration-base) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out),
-    transform var(--duration-base) var(--ease-out);
-}
-
-.xp__body {
-  grid-area: body;
-  display: grid;
-  gap: var(--space-3);
-  max-width: var(--project-measure);
-}
-
-/* A chapter waits dimmed and a little low until the light arrives. */
-.xp__stop,
-.xp__body {
-  opacity: var(--xp-dim);
-  transform: translate3d(0, var(--space-3), 0);
-  transition:
-    opacity var(--duration-enter) var(--ease-out),
-    transform var(--duration-enter) var(--ease-out);
-}
-
-.xp__chapter[data-lit='true'] :is(.xp__stop, .xp__body) {
-  opacity: 1;
-  transform: none;
-}
-
-.xp__chapter[data-lit='true'] .xp__node {
-  background: var(--xp-light);
-  border-color: var(--xp-light);
-  box-shadow: 0 0 0 var(--space-1) color-mix(in srgb, var(--xp-light) 22%, transparent);
-  transform: scale(1.15);
-}
-
-.xp__title {
-  font-size: var(--text-2xl);
-  letter-spacing: -0.02em;
-}
-
-.xp__role {
-  color: var(--ink-muted);
-  font: var(--weight-body) var(--text-xs) / var(--leading-snug) var(--font-mono);
+  min-height: var(--xp-node-column);
+  padding-left: calc(var(--xp-node-column) + var(--space-3));
+  font: var(--weight-body) var(--text-sm) / 1 var(--font-mono);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.xp__line {
-  font-size: var(--text-lg);
-  line-height: var(--leading-snug);
+.career__node {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--xp-node-column) / 2);
+  width: var(--xp-node-size);
+  height: var(--xp-node-size);
+  background: var(--xp-light);
+  border-radius: 50%;
+  box-shadow: 0 0 0 var(--space-1) color-mix(in srgb, var(--xp-light) 22%, transparent);
+  transform: translate(-50%, -50%);
 }
 
-/* The log reads like commit history: the verb set apart, then what was done. */
-.xp__log {
-  margin-block: var(--space-2);
-  border-top: var(--hairline) solid var(--line);
+/* The start of a layer is a ring: the lane was opened here. */
+.career__mark--from .career__node {
+  background: var(--surface);
+  border: var(--hairline) solid var(--ink-muted);
+  box-shadow: none;
 }
 
-.xp__log li {
+/* The present pulses softly: the lane is still running. */
+.career__layer:first-of-type > .career__mark:first-child .career__node {
+  animation: career-pulse 2.6s var(--ease-out) infinite;
+}
+
+@keyframes career-pulse {
+  50% {
+    box-shadow: 0 0 0 var(--space-2) color-mix(in srgb, var(--xp-light) 8%, transparent);
+  }
+}
+
+.career__body {
   display: grid;
-  grid-template-columns: var(--xp-verb-column) minmax(0, 1fr);
-  gap: var(--space-3);
-  padding-block: var(--space-3);
-  border-bottom: var(--hairline) solid var(--line);
-  font-size: var(--text-sm);
+  gap: var(--space-4);
+  padding-left: calc(var(--xp-node-column) + var(--space-3));
 }
 
-.xp__verb {
-  color: var(--ink-muted);
-  font: var(--weight-body) var(--text-xs) / var(--leading-body) var(--font-mono);
-}
-
-/* Wide screens: the stop moves out to the left of the lane and stays in view while its chapter scrolls. */
-@media (min-width: 900px) {
-  .xp__rail {
-    left: calc(var(--xp-stop-column) + var(--space-5) + var(--xp-node-column) / 2 - var(--xp-rail-width) / 2);
-  }
-
-  .xp__chapter {
-    grid-template-columns: var(--xp-stop-column) var(--xp-node-column) minmax(0, 1fr);
-    grid-template-areas: 'stop node body';
-    align-items: start;
-    gap: var(--space-5);
-  }
-
-  .xp__stop {
-    position: sticky;
-    top: var(--space-7);
-    flex-direction: column;
-    align-items: flex-end;
-    font-size: var(--text-2xl);
-  }
-
-  .xp__node {
-    margin-top: var(--space-3);
-  }
-}
-
-/* ---- Record view ---- */
-.record {
-  display: grid;
-  gap: var(--space-7);
-}
-
-.record__employer {
+.career__employer {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-3) var(--space-6);
-  padding-bottom: var(--space-5);
-  border-bottom: var(--hairline) solid var(--line);
+  margin-bottom: var(--space-3);
 }
 
-.record__name {
+.career__name {
   font-size: var(--record-name-size);
-  font-weight: var(--weight-heading);
   letter-spacing: -0.04em;
   line-height: 0.9;
 }
 
-.record__span {
+.career__meta {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-5);
@@ -207,201 +104,169 @@
   text-transform: uppercase;
 }
 
-.record__highlights {
+.role {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
   gap: var(--space-3);
-}
-
-.record__highlight {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-5);
+  padding: clamp(var(--space-5), 3vw, var(--space-7));
   background: var(--surface-raised);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 }
 
-.record__value {
-  font-size: var(--card-stat-size);
-  font-weight: var(--weight-heading);
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-
-.record__label {
-  color: var(--ink-muted);
-  font: var(--weight-body) var(--text-xs) / var(--leading-snug) var(--font-mono);
-}
-
-.record__roles {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.record__roles > .eyebrow,
-.record__recognition > .eyebrow {
-  margin-bottom: var(--space-3);
-}
-
-/* Each role is a drawer. One is open at a time, the current role first. */
-.record__role {
-  background: var(--surface-raised);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
-}
-
-.record__role summary {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    'stop toggle'
-    'title toggle'
-    'line toggle';
-  align-items: center;
-  gap: var(--space-1) var(--space-4);
-  padding: var(--space-4) var(--space-5);
-  cursor: pointer;
-  list-style: none;
-}
-
-.record__role summary::-webkit-details-marker {
-  display: none;
-}
-
-.record__role summary:focus-visible {
-  border-radius: var(--radius-md);
-}
-
-.record__role-stop {
-  grid-area: stop;
-  color: var(--ink-muted);
-  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.record__role-title {
-  grid-area: title;
-  font-size: var(--text-lg);
-  font-weight: var(--weight-heading);
-}
-
-.record__role-line {
-  grid-area: line;
-  color: var(--ink-muted);
-  font-size: var(--text-sm);
-}
-
-/* A plus that turns into a minus. */
-.record__toggle {
-  grid-area: toggle;
-  position: relative;
-  width: 14px;
-  height: 14px;
-}
-
-.record__toggle::before,
-.record__toggle::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  border-top: 1.5px solid var(--ink-muted);
-  transition: transform var(--duration-base) var(--ease-out);
-}
-
-.record__toggle::after {
-  transform: rotate(90deg);
-}
-
-.record__role[open] .record__toggle::after {
-  transform: rotate(0deg);
-}
-
-.record__role-body {
-  display: grid;
-  gap: var(--space-3);
-  padding: 0 var(--space-5) var(--space-5);
-  animation: enter var(--duration-base) var(--ease-out) backwards;
-}
-
-.record__recognition ul {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-  gap: var(--space-3);
-}
-
-.record__recognition li {
-  display: grid;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--space-5);
-  border: var(--hairline) solid var(--line);
-  border-radius: var(--radius-md);
-}
-
-/* ---- Credentials ---- */
-.credentials {
-  margin-top: var(--space-8);
-  padding-top: var(--space-7);
-  border-top: var(--hairline) solid var(--line);
-  scroll-margin-top: var(--space-5);
-}
-
-.credentials__title {
+.role__title {
   font-size: var(--text-2xl);
   letter-spacing: -0.02em;
 }
 
-.credentials__groups {
+.role__scope {
+  max-width: var(--project-measure);
+  color: var(--ink-muted);
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+}
+
+.role__columns {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-  gap: var(--space-6) var(--space-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-5) var(--space-7);
+  margin-block: var(--space-4) var(--space-3);
+  padding-top: var(--space-5);
+  border-top: var(--hairline) solid var(--line);
+}
+
+.role__list {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.role__list li {
+  position: relative;
+  padding-left: var(--space-5);
+}
+
+.role__list li::before {
+  content: '';
+  position: absolute;
+  top: 0.62em;
+  left: 0;
+  width: var(--space-3);
+  border-top: var(--xp-rail-width) solid var(--xp-light);
+}
+
+/* ---- Recognition ---- */
+.honours {
+  margin-top: var(--space-9);
+}
+
+.honours__title {
+  font-size: var(--text-2xl);
+  letter-spacing: -0.02em;
+}
+
+.honours__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-3);
   margin-top: var(--space-6);
 }
 
-.credentials__group ul {
+.honour {
   display: grid;
   gap: var(--space-2);
-  margin-top: var(--space-3);
+  height: 100%;
+  padding: var(--space-5);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--duration-fast) linear;
 }
 
-.credentials__group li {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  font-size: var(--text-sm);
-}
-
-.credentials__group li > .icon {
-  flex: none;
-  margin-top: 3px;
+.honour__when {
   color: var(--xp-light);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
 }
 
-.credentials__group a {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-2);
+.honour__title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-snug);
 }
 
-.credentials__group a .icon {
-  flex: none;
-  color: var(--ink-muted);
-  transition: transform var(--duration-base) var(--ease-out);
+.honour[data-hover-image] {
+  cursor: zoom-in;
 }
 
 @media (hover: hover) {
-  .credentials__group a:hover .icon {
-    transform: translate(2px, -2px);
+  .honour[data-hover-image]:hover {
+    border-color: var(--ink-muted);
+  }
+}
+
+.page-onward {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-8);
+  padding-top: var(--space-4);
+  border-top: var(--hairline) solid var(--line);
+}
+
+/* ---- The home teaser ---- */
+.teaser {
+  display: grid;
+  gap: var(--space-7);
+}
+
+.teaser__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-6);
+  margin-top: var(--space-5);
+}
+
+.teaser__roles {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.teaser__role {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--surface-raised);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.teaser__role:focus-visible {
+  border-radius: var(--radius-lg);
+}
+
+.teaser__title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-snug);
+}
+
+.teaser__scope {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+@media (hover: hover) {
+  .teaser__role:hover {
+    transform: translateY(var(--card-lift));
   }
 }
 
 @media (min-width: 900px) {
-  .record__role summary {
-    grid-template-columns: var(--xp-stop-column) minmax(0, 1fr) minmax(0, 1fr) auto;
-    grid-template-areas: 'stop title line toggle';
+  .teaser {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: start;
+    gap: var(--space-8);
+  }
+
+  .career__name {
+    line-height: 0.8;
   }
 }

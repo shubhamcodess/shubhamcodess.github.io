@@ -33,3 +33,11 @@
 .reveal-fill {
   height: 100%;
 }
+
+/* Paper has no scroll to reveal on. */
+@media print {
+  [data-reveal='out'] {
+    opacity: 1;
+    transform: none;
+  }
+}

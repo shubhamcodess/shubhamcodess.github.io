@@ -13,19 +13,19 @@ export function FeaturedSection() {
     <section className="panel section" id={featured.id} aria-labelledby={headingId}>
       <div className="container">
         <Reveal>
-        <header className="section__header">
-          <div>
-            <h2 className="section__title" id={headingId}>
-              {featured.title}
-            </h2>
-            <p className="section__lead">{featured.lead}</p>
-          </div>
-          {features.buildsPage ? (
-            <ActionLink href={hrefTo('builds')} icon="arrowRight">
-              {featured.seeAll}
-            </ActionLink>
-          ) : null}
-        </header>
+          <header className="section__header">
+            <div>
+              <h2 className="section__title" id={headingId}>
+                {featured.title}
+              </h2>
+              <p className="section__lead">{featured.lead}</p>
+            </div>
+            {features.buildsPage ? (
+              <ActionLink href={hrefTo('builds')} icon="arrowRight">
+                {featured.seeAll}
+              </ActionLink>
+            ) : null}
+          </header>
         </Reveal>
         <ul className="build-grid build-grid--feature" data-count={featured.slugs.length}>
           {featured.slugs.map((slug, index) => (

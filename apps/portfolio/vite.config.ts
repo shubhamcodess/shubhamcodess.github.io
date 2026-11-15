@@ -53,6 +53,14 @@ export default defineConfig({
   plugins: [react(), projectPages()],
   build: {
     target: 'es2022',
-    rolldownOptions: { input: { home: 'index.html', builds: 'builds/index.html', project: template } },
+    rolldownOptions: {
+      input: {
+        home: 'index.html',
+        builds: 'builds/index.html',
+        experience: 'experience/index.html',
+        credentials: 'credentials/index.html',
+        project: template,
+      },
+    },
   },
 })

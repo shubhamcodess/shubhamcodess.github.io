@@ -30,7 +30,11 @@
   gap: var(--space-4);
   margin-block: auto;
   text-align: center;
-  transform: translate3d(calc(var(--light-pointer-x, 0) * var(--light-content-shift, 0px) * -1), calc(var(--light-pointer-y, 0) * var(--light-content-shift, 0px) * -1), 0);
+  transform: translate3d(
+    calc(var(--light-pointer-x, 0) * var(--light-content-shift, 0px) * -1),
+    calc(var(--light-pointer-y, 0) * var(--light-content-shift, 0px) * -1),
+    0
+  );
 }
 
 /* A soft frosted plate behind the words: the light blurs out where text sits, with no visible edge. */

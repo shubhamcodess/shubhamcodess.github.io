@@ -3,7 +3,9 @@ import type { Build } from '../content/types'
 import { BuildsPage } from '../features/builds/BuildsPage'
 import { FeaturedSection } from '../features/builds/FeaturedSection'
 import { ContactSection } from '../features/contact/ContactSection'
-import { ExperienceSection } from '../features/experience/ExperienceSection'
+import { CredentialsPage } from '../features/credentials/CredentialsPage'
+import { ExperiencePage } from '../features/experience/ExperiencePage'
+import { ExperienceTeaser } from '../features/experience/ExperienceTeaser'
 import { Hero } from '../features/hero/Hero'
 import { ProjectPage } from '../features/project/ProjectPage'
 import { Footer } from '../layout/Footer'
@@ -19,14 +21,14 @@ function HomePage() {
         <Hero />
       </div>
       {site.features.featured ? <FeaturedSection /> : null}
-      {site.features.experience ? <ExperienceSection /> : null}
+      {site.features.experience ? <ExperienceTeaser /> : null}
       {site.features.contact ? <ContactSection /> : null}
     </main>
   )
 }
 
 /** What a page load resolves to. A project page carries the build it is for. */
-export type Page = { readonly id: 'home' } | { readonly id: 'builds' } | { readonly id: 'project'; readonly build: Build }
+export type Page = { readonly id: 'home' | 'builds' | 'experience' | 'credentials' } | { readonly id: 'project'; readonly build: Build }
 
 function render(page: Page) {
   switch (page.id) {
@@ -34,6 +36,10 @@ function render(page: Page) {
       return <HomePage />
     case 'builds':
       return <BuildsPage />
+    case 'experience':
+      return <ExperiencePage />
+    case 'credentials':
+      return <CredentialsPage />
     case 'project':
       return <ProjectPage build={page.build} />
   }

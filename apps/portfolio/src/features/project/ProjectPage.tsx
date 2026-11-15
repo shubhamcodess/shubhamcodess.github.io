@@ -61,9 +61,15 @@ export function ProjectPage({ build }: ProjectPageProps) {
           <h1 className="project-title__name" style={{ viewTransitionName: `build-${build.slug}` }}>
             {build.title}
           </h1>
-          <p className="project-title__summary enter" style={{ '--enter-index': 1 } as React.CSSProperties}>{build.summary}</p>
+          <p className="project-title__summary enter" style={{ '--enter-index': 1 } as React.CSSProperties}>
+            {build.summary}
+          </p>
           {build.links.length > 0 ? (
-            <ul className="project-title__links enter" style={{ '--enter-index': 2 } as React.CSSProperties} aria-label={projectPage.labels.links}>
+            <ul
+              className="project-title__links enter"
+              style={{ '--enter-index': 2 } as React.CSSProperties}
+              aria-label={projectPage.labels.links}
+            >
               {build.links.map((link) => (
                 <li key={link.href}>
                   <ActionLink href={link.href} variant="glass" external>

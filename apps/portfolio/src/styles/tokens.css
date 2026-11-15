@@ -122,7 +122,7 @@
   --badge-fan: 5deg;
   /* How much of the back card shows, as a share of the card's width. */
   --badge-peek: 0.3;
-  --badge-photo-filter: grayscale(0.85) contrast(1.08) brightness(0.92);
+  --badge-photo-filter: grayscale(1) contrast(1.08) brightness(0.92);
   --badge-photo-lanes: 0.16;
 
   /* Component: link preview */

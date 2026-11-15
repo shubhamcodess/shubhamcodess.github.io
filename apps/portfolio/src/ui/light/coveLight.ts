@@ -76,8 +76,20 @@ void main() {
 }`
 
 const uniformNames = [
-  'uResolution', 'uPointer', 'uTime', 'uLanes', 'uHorizon', 'uWallWidth', 'uFloorPerspective',
-  'uCorner', 'uSpeed', 'uIntensity', 'uWarmShare', 'uNearFade', 'uCool', 'uWarm',
+  'uResolution',
+  'uPointer',
+  'uTime',
+  'uLanes',
+  'uHorizon',
+  'uWallWidth',
+  'uFloorPerspective',
+  'uCorner',
+  'uSpeed',
+  'uIntensity',
+  'uWarmShare',
+  'uNearFade',
+  'uCool',
+  'uWarm',
 ] as const
 
 type UniformName = (typeof uniformNames)[number]
@@ -127,9 +139,10 @@ export function createCoveLight(canvas: HTMLCanvasElement, config: HeroLightConf
   gl.enableVertexAttribArray(position)
   gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0)
 
-  const uniforms = Object.fromEntries(
-    uniformNames.map((name) => [name, gl.getUniformLocation(program, name)]),
-  ) as Record<UniformName, WebGLUniformLocation | null>
+  const uniforms = Object.fromEntries(uniformNames.map((name) => [name, gl.getUniformLocation(program, name)])) as Record<
+    UniformName,
+    WebGLUniformLocation | null
+  >
 
   gl.uniform1f(uniforms.uHorizon, 1 - config.horizon)
   gl.uniform1f(uniforms.uFloorPerspective, config.floorPerspective)

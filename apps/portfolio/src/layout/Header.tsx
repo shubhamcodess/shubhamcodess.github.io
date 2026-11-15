@@ -15,7 +15,8 @@ export function Header({ current }: HeaderProps) {
   const { features } = site
   const enabled: Readonly<Record<string, boolean>> = {
     builds: features.buildsPage,
-    '#experience': features.experience,
+    experience: features.experience,
+    credentials: features.credentials,
     '#contact': features.contact,
     '#featured': features.featured,
   }

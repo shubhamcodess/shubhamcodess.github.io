@@ -27,7 +27,10 @@ await mkdir(new URL('public/previews/', root), { recursive: true })
 
 for (const href of links) {
   try {
-    const page = await fetch(href, { headers: { 'user-agent': 'link-preview-fetcher', accept: 'text/html' }, signal: AbortSignal.timeout(12_000) })
+    const page = await fetch(href, {
+      headers: { 'user-agent': 'link-preview-fetcher', accept: 'text/html' },
+      signal: AbortSignal.timeout(12_000),
+    })
     if (!page.ok) throw new Error(`HTTP ${page.status}`)
     const html = await page.text()
     const title = meta(html, 'og:title') ?? html.match(/<title[^>]*>([^<]*)/i)?.[1]?.trim()

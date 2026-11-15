@@ -25,7 +25,12 @@
   position: absolute;
   inset: 0 0 auto;
   height: max(var(--scroll-light-drop), calc(var(--scroll-progress) * 100%));
-  background: linear-gradient(to bottom, transparent, var(--scroll-light-color) calc(100% - var(--scroll-light-drop)), var(--scroll-light-head));
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--scroll-light-color) calc(100% - var(--scroll-light-drop)),
+    var(--scroll-light-head)
+  );
   border-radius: var(--radius-pill);
   box-shadow: 0 var(--space-1) var(--space-3) var(--scroll-light-color);
 }

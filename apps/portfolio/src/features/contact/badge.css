@@ -41,7 +41,9 @@
     linear-gradient(to right, rgb(255 255 255 / 10%) 0 1px, transparent 1px calc(100% - 1px), rgb(255 255 255 / 10%) calc(100% - 1px)),
     repeating-linear-gradient(135deg, rgb(255 255 255 / 5%) 0 1px, transparent 1px 4px),
     linear-gradient(to right, #0d0f12, #1c2026 50%, #0d0f12);
-  box-shadow: inset 4px 0 0 -3px rgb(255 255 255 / 14%), inset -4px 0 0 -3px rgb(255 255 255 / 14%);
+  box-shadow:
+    inset 4px 0 0 -3px rgb(255 255 255 / 14%),
+    inset -4px 0 0 -3px rgb(255 255 255 / 14%);
 }
 
 .badge__strap-mark {
@@ -61,7 +63,9 @@
   height: 12px;
   background: linear-gradient(to bottom, #6d757d, #3a4046 60%, #22262a);
   border-radius: 3px;
-  box-shadow: 0 1px 0 rgb(255 255 255 / 25%) inset, 0 2px 4px rgb(0 0 0 / 60%);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 25%) inset,
+    0 2px 4px rgb(0 0 0 / 60%);
 }
 
 .badge__swivel {
@@ -73,7 +77,9 @@
   color: var(--badge-ink-muted);
   background: linear-gradient(to bottom, #4b5259, #2a2e33);
   border-radius: 5px;
-  box-shadow: 0 1px 0 rgb(255 255 255 / 20%) inset, 0 2px 4px rgb(0 0 0 / 60%);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 20%) inset,
+    0 2px 4px rgb(0 0 0 / 60%);
   font: var(--weight-heading) 0.5625rem / 1 var(--font-mono);
   letter-spacing: 0.08em;
 }
@@ -208,35 +214,34 @@
   inset: 0;
   background:
     linear-gradient(to top, #0b0c0e 2%, transparent 40%),
-    repeating-linear-gradient(to right, transparent 0 9px, rgb(47 123 255 / 70%) 9px 10px, transparent 10px 23px, rgb(255 138 40 / 55%) 23px 24px, transparent 24px 31px);
+    repeating-linear-gradient(
+      to right,
+      transparent 0 9px,
+      rgb(47 123 255 / 70%) 9px 10px,
+      transparent 10px 23px,
+      rgb(255 138 40 / 55%) 23px 24px,
+      transparent 24px 31px
+    );
   transition: opacity var(--duration-slow) linear;
 }
 
-.badge__window:has([data-state='forming'])::after {
-  opacity: 0.45;
-}
-
-.badge__window:has([data-state='done'])::after {
+.badge__window:has(:is([data-state='forming'], [data-state='done']))::after {
   opacity: var(--badge-photo-lanes);
   mix-blend-mode: screen;
 }
 
+/* Monochrome from the first frame, so the grey cells and the photo they clear to are the same tone. */
 .badge__photo {
   display: block;
   width: 100%;
   height: 100%;
   opacity: 0;
-  transition:
-    opacity var(--duration-base) linear,
-    filter var(--duration-slow) linear;
+  filter: var(--badge-photo-filter);
+  transition: opacity var(--duration-base) linear;
 }
 
 .badge__photo:not([data-state='waiting']) {
   opacity: 1;
-}
-
-.badge__photo[data-state='done'] {
-  filter: var(--badge-photo-filter);
 }
 
 .badge__id {

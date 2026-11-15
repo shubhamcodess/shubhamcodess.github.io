@@ -108,9 +108,18 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 
 ## Pages and navigation
 
-- **Home** is one scroll: hero, featured builds, experience, contact. The header links to Builds, Experience and Contact.
-- **All builds** is the index. Filter chips group it by kind; a kind needs at least two builds.
-- **A page per build** at `/builds/<slug>/`. Every card opens its build. The last panel leads to the previous and next build.
+| Page | Address | Reached from |
+|---|---|---|
+| Home | `/` | The logo, the footer |
+| All builds | `/builds/` | Header, hero, featured section, footer |
+| A build | `/builds/<slug>/` | Any build card, the previous and next links on a build |
+| Experience | `/experience/` | Header, hero, the home teaser, the credentials page, footer |
+| Credentials | `/credentials/` | The home teaser, the experience page, footer |
+
+- **Home** is one scroll: hero, featured builds, an experience teaser, contact.
+- The header carries Builds, Experience and Contact. Credentials is one step further in, so the header still fits a phone.
+- **The footer is the site index:** every page, from every page.
+- **All builds:** filter chips group it by kind; a kind needs at least two builds.
 - Featured holds one to five builds, with a designed grid for each count: 1 full width, 2 halves, 3 thirds, 4 as two rows of two, 5 as two halves over three thirds.
 - The hero's action chips fade out once the visitor has scrolled past them.
 
@@ -124,12 +133,19 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 
 ## Experience
 
-Two views of the same content, chosen by `experience.variant` in the config.
+- **A page of its own,** built as layers on one lane of light. The present is at the top with a softly pulsing node; each employer is a layer beneath it, closed by a ring at the year it began. The lane fills as the page scrolls.
+- A new employer is a new layer on top. Nothing else changes.
+- **An employer layer:** the name very large, its span and place, then its roles, newest first.
+- **A role is one card,** always open: title, one sentence of scope, then two columns, Built and Delivered, three or four lines each. Only the strongest lines go in. No drawers, tabs or number tiles.
+- At most two or three roles per employer. Fold small steps into the role they led to.
+- **Recognition** is awards for the work, and sits under the layers. Certifications are not recognition. When an award has a certificate image, the certificate follows the pointer over it.
+- **The home teaser** is the short version: the headline, the roles as two cards, and links to the full page and to credentials.
 
-- **Record** (default): the employer's name very large with span and place, four highlight numbers, then roles as drawers, newest first, one open at a time. Recognition sits under the roles. A new employer becomes a new block on top.
-- **Story:** one lane of light down the page. It fills as you scroll, and each chapter comes up to full strength when the light reaches it.
-- Log lines read like commit history: a mono verb, then what was done.
-- **Credentials** are a block at the end of Experience (`#credentials`), grouped by issuer. A credential with a public record links to it. They stay a section, not a page, until there are too many to scan.
+## Credentials
+
+- **A page of its own,** indexed by issuer. The index shows each issuer with its count: a list that stays in view on wide screens, chips on phones.
+- Each credential is a small card. One with a public record gets a Verify link.
+- Hackathon and challenge badges live here, with their issuer, not under recognition.
 
 ## Contact
 
@@ -137,7 +153,7 @@ Two views of the same content, chosen by `experience.variant` in the config.
 - **The badge** hangs from the panel's top edge on a woven strap with a buckle, swivel and ring. It is two-tone: a graphite frame around a near-black face, with a blue accent.
   - It swings on a spring: it drops in when first seen, leans after the pointer, and kicks when pressed.
   - The developer card is in front. The Labs card hangs behind, far enough to the side that "Labs" can be read. Pressing the badge swaps them.
-  - **The portrait** arrives the way a generated image does: big over-coloured blocks that get finer until they are the photo. It then settles to near-monochrome, with a trace of the hero's light lanes over it, so it reads as part of the badge.
+  - **The portrait** arrives the way a generated image loads: a field of soft, round-cornered, muted grey cells that says nothing about the picture, clearing from the top down. The photo is monochrome from its first frame, so cells and photo share one tone. A trace of the hero's light lanes stays over it.
 - On phones the badge hangs first and centred, and the copy follows at phone sizes of its own.
 
 ## Scrollbar
@@ -157,8 +173,8 @@ Hovering an outside link shows a small frosted card that follows the pointer: th
 | Between pages | A short cross-fade, and a build's title travels from its card to its page |
 | Cards | Lift 4px, the fact shifts up, arrows nudge. A press settles back |
 | Theme toggle | The icon turns in |
-| Experience | Drawers open with a rise; the story lane fills with scroll |
-| Badge | Spring swing, card swap, portrait forming |
+| Experience | The lane fills with scroll; the present node pulses |
+| Badge | Spring swing, card swap, portrait clearing from grey cells |
 
 Everything uses `--ease-out`, the duration tokens and `--stagger`. Entrances play once and never replay on scroll back.
 

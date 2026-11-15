@@ -24,8 +24,8 @@
 .link-preview__card img {
   display: block;
   width: 100%;
-  aspect-ratio: 1200 / 630;
-  object-fit: cover;
+  max-height: 60vh;
+  object-fit: contain;
   background: var(--night-surface);
   border-radius: calc(var(--radius-md) - var(--space-2));
 }
