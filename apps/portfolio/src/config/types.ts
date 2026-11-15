@@ -140,6 +140,8 @@ export interface SocialLink {
 
 export interface SiteConfig {
   readonly owner: string
+  /** Where the site lives, with no trailing slash. Used for the sitemap. */
+  readonly url: `https://${string}`
   readonly monogram: string
   readonly theme: {
     readonly default: ThemeName

@@ -6,6 +6,10 @@ How this app is built, and the rules that keep it lean and easy to change. For h
 
 ## Commands
 
+This is the live site. From the repository root, `pnpm dev`, `pnpm build`, `pnpm preview` and `pnpm check` all run it, and a push to `main` builds and publishes it to https://shubhamcodess.github.io (`.github/workflows/deploy.yml`: `pnpm check`, then `apps/portfolio/dist` to Pages). The earlier Gotham site in `apps/web` keeps its own commands, prefixed `web:` (`pnpm web:dev`, `pnpm web:build`, `pnpm web:check`), and is not deployed.
+
+The build also writes `sitemap.xml`, `robots.txt` (pointing at the sitemap) and `404.html` (the home page). `site.url` in the config is the address they use.
+
 Run from the repository root.
 
 ```bash

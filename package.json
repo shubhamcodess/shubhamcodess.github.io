@@ -7,16 +7,21 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "pnpm --filter @portfolio/web dev",
-    "build": "pnpm --filter @portfolio/web build",
-    "typecheck": "pnpm -r --if-present typecheck && tsc --noEmit -p tests",
-    "test": "vitest run",
-    "icons": "node --experimental-strip-types --no-warnings scripts/build-icons.mjs",
-    "budget": "node scripts/check-budget.mjs",
-    "phone": "node scripts/check-phone.mjs",
-    "responsive": "node scripts/check-responsive.mjs",
-    "perf": "node scripts/check-perf.mjs",
-    "check": "pnpm typecheck && pnpm test && pnpm build && pnpm budget && pnpm responsive && pnpm perf"
+    "dev": "pnpm --filter @portfolio/app dev",
+    "build": "pnpm --filter @portfolio/app build",
+    "preview": "pnpm --filter @portfolio/app preview",
+    "check": "pnpm --filter @portfolio/app typecheck && pnpm --filter @portfolio/app build",
+    "data": "pnpm --filter @portfolio/app data",
+    "web:dev": "pnpm --filter @portfolio/web dev",
+    "web:build": "pnpm --filter @portfolio/web build",
+    "web:typecheck": "pnpm -r --filter '!@portfolio/app' --if-present typecheck && tsc --noEmit -p tests",
+    "web:test": "vitest run",
+    "web:icons": "node --experimental-strip-types --no-warnings scripts/build-icons.mjs",
+    "web:budget": "node scripts/check-budget.mjs",
+    "web:phone": "node scripts/check-phone.mjs",
+    "web:responsive": "node scripts/check-responsive.mjs",
+    "web:perf": "node scripts/check-perf.mjs",
+    "web:check": "pnpm web:typecheck && pnpm web:test && pnpm web:build && pnpm web:budget && pnpm web:responsive && pnpm web:perf"
   },
   "devDependencies": {
     "@portfolio/content": "workspace:*",

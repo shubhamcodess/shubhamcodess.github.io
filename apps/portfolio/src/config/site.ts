@@ -3,6 +3,7 @@ import type { SiteConfig } from './types'
 /** The one place to change what the site says and which parts are on. */
 export const site = {
   owner: 'Shubham Prakash',
+  url: 'https://shubhamcodess.github.io',
   monogram: 'SP',
   // Switch `palette` to 'plain' to go back to the black frame and neutral panels. Nothing else needs to change.
   theme: {

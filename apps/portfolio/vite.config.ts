@@ -66,12 +66,39 @@ function renderBlocking(): Plugin {
   }
 }
 
+/**
+ * What static hosting needs beyond the pages: a sitemap of every page, robots.txt pointing at it,
+ * and a 404 page (GitHub Pages serves 404.html for any unknown address; it is the home page).
+ */
+function staticHosting(): Plugin {
+  return {
+    name: 'portfolio-static-hosting',
+    apply: 'build',
+    generateBundle: {
+      order: 'post',
+      handler(_options, bundle) {
+        const base = `${site.url}${process.env.PORTFOLIO_BASE ?? '/'}`
+        const paths = [...Object.values(site.routes).map((route) => route.path), ...builds.map((build) => `builds/${build.slug}/`)]
+        const urls = paths.map((path) => `  <url><loc>${base}${path}</loc></url>`).join('\n')
+        this.emitFile({
+          type: 'asset',
+          fileName: 'sitemap.xml',
+          source: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
+        })
+        this.emitFile({ type: 'asset', fileName: 'robots.txt', source: `User-agent: *\nAllow: /\n\nSitemap: ${base}sitemap.xml\n` })
+        const home = bundle['index.html']
+        if (home?.type === 'asset') this.emitFile({ type: 'asset', fileName: '404.html', source: home.source })
+      },
+    },
+  }
+}
+
 // One HTML file per route, so every page loads directly on static hosting with no SPA fallback.
 // PORTFOLIO_BASE is the path the site is served from, for example "/shubham-portfolio/".
 export default defineConfig({
   base: process.env.PORTFOLIO_BASE ?? '/',
   appType: 'mpa',
-  plugins: [react(), projectPages(), renderBlocking()],
+  plugins: [react(), projectPages(), renderBlocking(), staticHosting()],
   build: {
     target: 'es2022',
     rolldownOptions: {

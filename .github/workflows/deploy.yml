@@ -25,14 +25,13 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
-      # Types, tests, the static build, the JS budget and the responsive gate.
+      # Types and the static build of the site (apps/portfolio). The earlier site, apps/web, builds with `pnpm web:check`.
       - run: pnpm check
       - name: Upload the built site
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v5
         with:
-          path: apps/web/out
+          path: apps/portfolio/dist
           retention-days: 1 # A backstop, in case a failed run never reaches the delete step.
 
   deploy:
