@@ -599,7 +599,7 @@ a.me-frame:focus-visible {
 }
 
 /* The faint polaroid frame: a dotted rule just inside the paper, the same dotted hand as the empty frames. */
-.clothesline__print:not(.clothesline__print--empty)::before {
+.clothesline__print::before {
   content: '';
   position: absolute;
   inset: 2px;
@@ -641,11 +641,6 @@ a.me-frame:focus-visible {
   pointer-events: none;
 }
 
-.clothesline__print--empty {
-  background: none;
-  border: var(--hairline) dashed var(--marker-lane);
-  box-shadow: none;
-}
 
 /* The peg: a small upright clip where the print meets the line. */
 .clothesline__peg {
@@ -660,7 +655,7 @@ a.me-frame:focus-visible {
 }
 
 @media (hover: hover) {
-  .clothesline__print:has(.clothesline__open):hover {
+  .clothesline__print:hover {
     transform: translateY(calc(var(--print-drop) * var(--clothesline-sag) * 0.55)) rotate(0deg);
   }
 }

@@ -133,7 +133,6 @@ export const site = {
     placesLabel: 'Places I have lived',
     placesKicker: 'Places',
     placesTitle: 'Places I’ve been.',
-    emptyPhotoSlots: 4,
     back: 'Professional experience',
     turns: [-1.2, 1.4, -0.8, 1.1],
   },

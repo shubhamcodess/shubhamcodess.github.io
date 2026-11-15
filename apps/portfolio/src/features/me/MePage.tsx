@@ -19,7 +19,7 @@ type Entry = { readonly kind: 'pursuit'; readonly item: Pursuit } | { readonly k
 const entries: readonly Entry[] = [...pursuits.map((item) => ({ kind: 'pursuit' as const, item })), { kind: 'home', item: home }]
 const ids = new Set(entries.map((entry) => entry.item.id))
 
-/** The open tile, and for the home tile the place open within it: #work, #work/jamshedpur. */
+/** The open tile, and for the home tile the place open within it: #places/bengaluru, #places/jamshedpur. */
 const readHash = () => {
   const [id = ''] = decodeURIComponent(window.location.hash.slice(1)).split('/')
   return ids.has(id) ? id : null
@@ -165,7 +165,7 @@ export function MePage() {
 
             <article className={`me-detail me-frame me-frame--${frameOf(open)}`} style={{ viewTransitionName: `me-${open.item.id}` }}>
               {open.kind === 'home' && open.item.places?.length ? (
-                <Places home={open.item} placeId={placeId} emptySlots={me.emptyPhotoSlots} />
+                <Places home={open.item} placeId={placeId} />
               ) : (
                 <TileFace entry={open} index={openIndex} open />
               )}

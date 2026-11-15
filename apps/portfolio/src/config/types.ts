@@ -237,11 +237,6 @@ export interface SiteConfig {
     /** The heading of the opened home tile. */
     readonly placesKicker: string
     readonly placesTitle: string
-    /**
-     * Empty frames hung on each place's clothesline until it has photos, so the layout can be judged.
-     * Layout only: set 0 before /me goes live.
-     */
-    readonly emptyPhotoSlots: number
     /** The link back to the professional side, at the foot of the page. */
     readonly back: string
     /** The slight angle of each tile, in degrees, in order. The home tile takes the last. */

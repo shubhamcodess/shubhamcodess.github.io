@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { site } from '../../config/site'
 import type { Home } from '../../content/me'
 import { Clothesline } from './Clothesline'
@@ -5,22 +6,26 @@ import { StateMap } from './StateMap'
 
 interface PlacesProps {
   readonly home: Home
-  /** The place open, from the address (#work/<id>); the first place when none is named. */
+  /** The place open, from the address (#places/<id>); the first place when none is named. */
   readonly placeId: string | null
-  readonly emptySlots: number
 }
 
 /**
  * The opened Work tile: "Places I've been.", a tab for each city, and one city at a time as a page of its own,
  * where the owner is now first. A city page: its role, name and state, the state drawn large with the city
- * marked, then its photos on as many clotheslines as they need.
+ * marked, then its photos on as many clotheslines as they need; no line at all until it has photos.
  */
-export function Places({ home, placeId, emptySlots }: PlacesProps) {
+export function Places({ home, placeId }: PlacesProps) {
   const { me } = site
   const places = home.places ?? []
   const place = places.find((candidate) => candidate.id === placeId) ?? places[0]
+
+  // Opened as plain #places: name the city in the address too, so every city reads #places/<city>.
+  useEffect(() => {
+    if (place && placeId !== place.id) history.replaceState(history.state, '', `#${home.id}/${place.id}`)
+  }, [home.id, place, placeId])
+
   if (!place) return null
-  const href = (index: number, id: string) => (index === 0 ? `#${home.id}` : `#${home.id}/${id}`)
 
   return (
     <>
@@ -28,8 +33,8 @@ export function Places({ home, placeId, emptySlots }: PlacesProps) {
         <p className="eyebrow">{me.placesKicker}</p>
         <h1 className="me-places-head__title">{me.placesTitle}</h1>
         <nav className="me-city-tabs" aria-label={me.placesLabel}>
-          {places.map((candidate, index) => (
-            <a key={candidate.id} href={href(index, candidate.id)} {...(candidate === place ? { 'aria-current': 'page' as const } : {})}>
+          {places.map((candidate) => (
+            <a key={candidate.id} href={`#${home.id}/${candidate.id}`} {...(candidate === place ? { 'aria-current': 'page' as const } : {})}>
               <span className="me-city-tabs__role">{candidate.role}</span>
               <span className="me-city-tabs__name">{candidate.city}</span>
             </a>
@@ -49,7 +54,7 @@ export function Places({ home, placeId, emptySlots }: PlacesProps) {
           </div>
           <StateMap state={place.map} at={place.at} className="me-city__map" />
         </div>
-        <Clothesline photos={place.photos ?? []} emptySlots={emptySlots} label={`Photos from ${place.city}`} />
+        <Clothesline photos={place.photos ?? []} label={`Photos from ${place.city}`} />
       </section>
     </>
   )

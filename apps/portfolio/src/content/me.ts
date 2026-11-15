@@ -29,7 +29,7 @@ export interface Pursuit {
 
 /** A place lived in, shown as its own page when the home tile is opened. */
 export interface Place {
-  /** Its address on the page: /me/#work for the first place, /me/#work/<id> for the others. */
+  /** Its address on the page: /me/#places/<id>. */
   readonly id: string
   /** What the place was to the owner, in a natural phrase, such as "What I call home". */
   readonly role: string
@@ -80,7 +80,7 @@ export const pursuits: readonly Pursuit[] = [
 ]
 
 export const home: Home = {
-  id: 'work',
+  id: 'places',
   label: 'Work',
   city: 'Bengaluru',
   region: 'Karnataka, India',
