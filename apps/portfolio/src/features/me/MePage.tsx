@@ -164,9 +164,7 @@ export function MePage() {
                     <li key={place.city} className="me-place" {...(index === all.length - 1 ? { 'aria-current': 'step' as const } : {})}>
                       <span className="me-place__node" aria-hidden="true" />
                       <div className="me-place__text">
-                        <p className="eyebrow">
-                          {String(index + 1).padStart(2, '0')} · {place.role}
-                        </p>
+                        <p className="eyebrow">{place.role}</p>
                         <h2 className="me-place__city">{place.city}</h2>
                         <p className="me-place__region">{place.region}</p>
                         {place.line ? <p className="me-place__line">{place.line}</p> : null}

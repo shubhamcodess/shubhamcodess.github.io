@@ -29,7 +29,7 @@ export interface Pursuit {
 
 /** One stop on the path through places, shown when the home tile is opened. Not a link. */
 export interface Place {
-  /** What the place was to the owner, such as "Home". */
+  /** What the place was to the owner, in a natural phrase, such as "What I call home". */
   readonly role: string
   readonly city: string
   readonly region: string
@@ -75,8 +75,8 @@ export const home: Home = {
   map: 'karnataka',
   at: [12.9716, 77.5946],
   places: [
-    { role: 'Home', city: 'Jamshedpur', region: 'Jharkhand', map: 'jharkhand', at: [22.8046, 86.2029] },
-    { role: 'Education', city: 'Bhubaneswar', region: 'Odisha', map: 'odisha', at: [20.2961, 85.8245] },
-    { role: 'Work', city: 'Bengaluru', region: 'Karnataka', map: 'karnataka', at: [12.9716, 77.5946] },
+    { role: 'What I call home', city: 'Jamshedpur', region: 'Jharkhand', map: 'jharkhand', at: [22.8046, 86.2029] },
+    { role: 'Where I studied', city: 'Bhubaneswar', region: 'Odisha', map: 'odisha', at: [20.2961, 85.8245] },
+    { role: 'Where I work now', city: 'Bengaluru', region: 'Karnataka', map: 'karnataka', at: [12.9716, 77.5946] },
   ],
 }
