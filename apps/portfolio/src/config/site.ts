@@ -18,6 +18,7 @@ export const site = {
     home: { path: '', label: 'Home', title: 'Shubham Prakash | Cloud Full Stack Developer' },
     builds: { path: 'builds/', label: 'Builds', title: 'All builds | Shubham Prakash' },
     experience: { path: 'experience/', label: 'Experience', title: 'Experience | Shubham Prakash' },
+    me: { path: 'me/', label: 'Me', title: 'Off the clock | Shubham Prakash' },
     credentials: { path: 'credentials/', label: 'Credentials', title: 'Credentials | Shubham Prakash' },
   },
   // Home carries all three. Elsewhere only the other main page: Contact is in every footer, and the logo goes home.
@@ -31,6 +32,10 @@ export const site = {
     project: [{ label: 'Experience', to: 'experience' }],
     experience: [{ label: 'Builds', to: 'builds' }],
     credentials: [
+      { label: 'Builds', to: 'builds' },
+      { label: 'Experience', to: 'experience' },
+    ],
+    me: [
       { label: 'Builds', to: 'builds' },
       { label: 'Experience', to: 'experience' },
     ],
@@ -111,6 +116,15 @@ export const site = {
       recognitionLead: 'Awards for the work, as distinct from certifications.',
     },
   },
+  me: {
+    kicker: 'Off the clock',
+    title: 'Away from the keyboard.',
+    lead: 'Biking, photography, filmmaking, and the place I call home.',
+    link: 'More about me',
+    homeLabel: 'Home',
+    onward: 'Say hello',
+    turns: [-1.2, 1.4, -0.8, 1.1],
+  },
   credentialsPage: {
     title: 'Credentials',
     lead: 'Certifications and badges I hold, grouped by who issued them.',
@@ -155,6 +169,7 @@ export const site = {
     featured: true,
     experience: true,
     credentials: true,
+    mePage: true,
     projectMedia: true,
     tilt: true,
     chalkTrail: true,

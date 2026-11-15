@@ -78,6 +78,8 @@ pnpm --filter @portfolio/app data
 
 **A use case or recording for a build:** fill `useCase` in its entry in `content/build-stories.ts`, or `media` on the build in `content/builds.ts`. The page shows the section only when it exists.
 
+**Something about life outside work:** edit `content/me.ts`. Put drawings, pictures or clips in `public/me/` and point `art` at them.
+
 **A role, employer or recognition:** edit `content/experience.ts`. A new employer goes at the top of `employers`.
 
 **Credentials** come from the Credly wallet. Earn a badge, then run `pnpm --filter @portfolio/app data` and commit `public/data`. What is left out, extras not on Credly, issuer names and order are in `content/credentials-source.ts`. Credly doesn't allow cross-site reads, so the fetch can't happen in the visitor's browser.

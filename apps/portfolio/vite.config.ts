@@ -107,6 +107,7 @@ export default defineConfig({
         builds: 'builds/index.html',
         experience: 'experience/index.html',
         credentials: 'credentials/index.html',
+        me: 'me/index.html',
         project: template,
       },
     },

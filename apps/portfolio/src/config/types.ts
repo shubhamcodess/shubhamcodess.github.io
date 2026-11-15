@@ -13,7 +13,7 @@ export type ButtonStyle = 'pill' | 'lean'
 export type TextureName = 'grain' | 'none'
 
 /** Routes are a closed set. Add one here, add its HTML entry, and the compiler points at the rest. */
-export type RouteId = 'home' | 'builds' | 'experience' | 'credentials'
+export type RouteId = 'home' | 'builds' | 'experience' | 'credentials' | 'me'
 
 /** Every kind of page, for choosing its header links. A project page is one per build. */
 export type NavPage = RouteId | 'project'
@@ -46,6 +46,8 @@ export interface FeatureFlags {
   readonly experience: boolean
   /** The credentials page and the links to it. */
   readonly credentials: boolean
+  /** The /me page (life away from work) and the links to it. */
+  readonly mePage: boolean
   /** The framed stage for a build's recording on its page, shown even before the recording exists. */
   readonly projectMedia: boolean
   /** The pointer drawn as a comet: dart head, speed tail, bow wave. Off brings back the system arrow. */
@@ -201,6 +203,17 @@ export interface SiteConfig {
       readonly recognition: string
       readonly recognitionLead: string
     }
+  }
+  readonly me: {
+    readonly kicker: string
+    readonly title: string
+    readonly lead: string
+    /** The quiet link under the hero's role line, and in the footer. */
+    readonly link: string
+    readonly homeLabel: string
+    readonly onward: string
+    /** The slight angle of each tile, in degrees, in order. The home tile takes the last. */
+    readonly turns: readonly number[]
   }
   readonly credentialsPage: {
     readonly title: string

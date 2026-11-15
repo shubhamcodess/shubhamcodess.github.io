@@ -65,6 +65,15 @@ Rules for both:
 - Large type tightens: -0.035em on the hero name, -0.02em on section titles. Mono labels are uppercase with 0.04em tracking.
 - Headings balance their lines, paragraphs avoid orphans.
 
+## Me
+
+`/me/`, "Off the clock": life away from work. A step less formal than the rest of the site, and still made of the same parts.
+
+- **Reached from** a quiet underlined "More about me" under the hero's statement, and from the footer index. Not the header.
+- **The grid:** tiles framed for what they hold, each turned a degree or so (`me.turns` in the config), straightening on hover. Biking takes a wide plain sheet, Photography a print with a white border, Filmmaking a dark film strip with sprocket holes, and Home the city set large with the region small. The grid packs densely, so a narrow tile fills the gap beside a wide one.
+- **Only what's given:** each tile shows its number and name. A line of text, short facts (label and value, such as the bike), and art (an SVG drawing, a picture, or a looping clip, which fills the frame behind the words) appear when they are added to `content/me.ts`. Nothing stands in for them.
+- A new pursuit is one more entry in `pursuits`, with a frame (`sheet`, `print`, `film`) and a size (`wide`, `tall`, `square`).
+
 ## Grain
 
 A barely-there film grain on the page panels, so the background reads as a surface rather than a clean gradient. Chosen by `theme.texture` in the config (`'grain'` or `'none'`).
@@ -172,9 +181,11 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 | All builds, a build | Experience |
 | Experience | Builds |
 | Credentials | Builds, Experience |
+| Me | Builds, Experience |
 
 - **The current link** is in full ink with a small ink dot beneath it. On home it follows the section being read: Builds over Featured, Experience over the experience teaser, Contact over contact.
 - **Hash in the address bar:** on home, the address follows the section being read (`/#featured`, `/#experience`, `/#contact`, nothing at the top), replacing the history entry rather than adding to it. Opening `/#contact` from any page lands on that section.
+- **Narrow phones (under 480px):** the sound and theme switches leave the header and live only in the footer, so the header links never overflow.
 - **The footer is the site index:** every page and Contact, from every page. It also carries the sound and theme switches, so they are in reach from anywhere. On phones they share a row with the copyright.
 - **All builds:** filter chips group it by kind; a kind needs at least two builds.
 - Featured holds one to five builds, with a designed grid for each count: 1 full width, 2 halves, 3 thirds, 4 as two rows of two, 5 as two halves over three thirds.

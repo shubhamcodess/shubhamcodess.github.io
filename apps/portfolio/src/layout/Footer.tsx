@@ -10,10 +10,15 @@ import './footer.css'
  */
 export function Footer() {
   const { features, routes, contact } = site
-  const pages: readonly RouteId[] = ['home', 'builds', 'experience', 'credentials']
-  const shown = pages.filter(
-    (id) => id === 'home' || (id === 'builds' ? features.buildsPage : id === 'experience' ? features.experience : features.credentials),
-  )
+  const pages: readonly RouteId[] = ['home', 'builds', 'experience', 'credentials', 'me']
+  const enabled: Readonly<Record<RouteId, boolean>> = {
+    home: true,
+    builds: features.buildsPage,
+    experience: features.experience,
+    credentials: features.credentials,
+    me: features.mePage,
+  }
+  const shown = pages.filter((id) => enabled[id])
 
   return (
     <footer className="site-footer container">

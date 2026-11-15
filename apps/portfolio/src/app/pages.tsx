@@ -2,7 +2,8 @@ import type { ReactElement } from 'react'
 import type { Build } from '../content/types'
 
 /** What a page load resolves to. A project page carries the build it is for. */
-export type Page = { readonly id: 'home' | 'builds' | 'experience' | 'credentials' } | { readonly id: 'project'; readonly build: Build }
+export type Page =
+  { readonly id: 'home' | 'builds' | 'experience' | 'credentials' | 'me' } | { readonly id: 'project'; readonly build: Build }
 
 /**
  * Each page is its own chunk, so a visitor downloads only the page they open (plus what every page shares).
@@ -18,6 +19,8 @@ export function loadPage(page: Page): Promise<ReactElement> {
       return import('../features/experience/ExperiencePage').then(({ ExperiencePage }) => <ExperiencePage />)
     case 'credentials':
       return import('../features/credentials/CredentialsPage').then(({ CredentialsPage }) => <CredentialsPage />)
+    case 'me':
+      return import('../features/me/MePage').then(({ MePage }) => <MePage />)
     case 'project':
       return import('../features/project/ProjectPage').then(({ ProjectPage }) => <ProjectPage build={page.build} />)
   }

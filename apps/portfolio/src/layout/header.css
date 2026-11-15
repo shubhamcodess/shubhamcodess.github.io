@@ -76,3 +76,10 @@
     color: var(--ink);
   }
 }
+
+/* Narrow phones: the switches leave the header (they are in every footer), so the links never overflow. */
+@media (max-width: 479px) {
+  .site-header__nav .icon-toggle {
+    display: none;
+  }
+}

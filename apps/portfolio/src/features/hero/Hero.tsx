@@ -42,6 +42,11 @@ export function Hero() {
           <p className="hero__statement enter" style={{ '--enter-index': 4 } as React.CSSProperties}>
             {hero.statement}
           </p>
+          {features.mePage ? (
+            <a className="hero__me enter" href={hrefTo('me')} style={{ '--enter-index': 5 } as React.CSSProperties}>
+              {site.me.link}
+            </a>
+          ) : null}
         </div>
 
         <nav className="hero__actions enter" aria-label="Start here" style={{ '--enter-index': 7 } as React.CSSProperties}>

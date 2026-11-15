@@ -17,6 +17,7 @@ export function Header({ page }: HeaderProps) {
     builds: features.buildsPage,
     experience: features.experience,
     credentials: features.credentials,
+    me: features.mePage,
     '#contact': features.contact,
     '#featured': features.featured,
   }

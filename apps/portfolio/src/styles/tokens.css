@@ -162,6 +162,15 @@
   --tilt-glare: rgb(255 255 255 / 2%);
   --tilt-glare-size: 90px;
 
+  /* Component: /me */
+  --me-tile-min: 240px;
+  --me-title-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
+  --me-print-border: 12px;
+  --me-sprocket-band: 22px;
+  --me-sprocket-size: 8px;
+  --me-sprocket-gap: 18px;
+  --me-sprocket: rgb(255 255 255 / 85%);
+
   /* Component: link preview */
   --preview-width: 280px;
   --preview-width-large: 640px;
