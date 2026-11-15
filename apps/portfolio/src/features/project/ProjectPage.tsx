@@ -52,13 +52,7 @@ export function ProjectPage({ build }: ProjectPageProps) {
     { id: 'how', title: projectPage.sections.engineering, shown: Boolean(story.engineering?.length) },
     { id: 'limits', title: projectPage.sections.limits, shown: Boolean(story.limits?.length) },
   ].filter((section) => section.shown)
-  const number = (id: string) => String(sections.findIndex((section) => section.id === id) + 1).padStart(2, '0')
-  const heading = (id: string) => (
-    <h2>
-      <span className="eyebrow">{number(id)}</span>
-      {sections.find((section) => section.id === id)?.title}
-    </h2>
-  )
+  const heading = (id: string) => <h2>{sections.find((section) => section.id === id)?.title}</h2>
 
   return (
     <main id="main" className="frame__main">
@@ -71,7 +65,7 @@ export function ProjectPage({ build }: ProjectPageProps) {
             {projectPage.back}
           </ActionLink>
           <p className="eyebrow enter">
-            {String(position + 1).padStart(2, '0')} / {String(builds.length).padStart(2, '0')} · {build.kind}
+            {build.kind}
           </p>
           <h1 className="project-title__name" style={{ viewTransitionName: `build-${build.slug}` }}>
             {build.title}
@@ -181,9 +175,8 @@ export function ProjectPage({ build }: ProjectPageProps) {
                 <section className="project-section" id="what">
                   {heading('what')}
                   <ol className="project-tiles">
-                    {story.features.map((item, index) => (
+                    {story.features.map((item) => (
                       <li key={item} data-tilt="">
-                        <span className="eyebrow">{String(index + 1).padStart(2, '0')}</span>
                         <p>{item}</p>
                       </li>
                     ))}
