@@ -18,10 +18,11 @@
 }
 
 .action-link--glass {
-  padding-inline: var(--space-5);
+  min-height: var(--button-glass-height);
+  padding-inline: var(--button-glass-pad);
   background: var(--night-glass);
   border: var(--hairline) solid var(--night-glass-line);
-  border-radius: var(--radius-pill);
+  border-radius: var(--button-radius);
   -webkit-backdrop-filter: blur(var(--hero-chip-blur)) saturate(140%);
   backdrop-filter: blur(var(--hero-chip-blur)) saturate(140%);
   transition:
@@ -30,7 +31,7 @@
 }
 
 .action-link:focus-visible {
-  border-radius: var(--radius-pill);
+  border-radius: var(--button-radius);
 }
 
 @media (hover: hover) {

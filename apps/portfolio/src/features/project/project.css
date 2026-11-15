@@ -150,12 +150,14 @@
   display: inline-flex;
   flex: none;
   align-items: center;
-  min-height: 36px;
-  padding-inline: var(--space-4);
+  min-height: var(--button-height-small);
+  padding-inline: var(--button-pad);
   color: var(--ink-muted);
   border: var(--hairline) solid var(--line);
-  border-radius: var(--radius-pill);
-  font-size: var(--text-sm);
+  border-radius: var(--button-radius);
+  font: var(--weight-body) var(--button-text-size) / 1 var(--button-text-family);
+  letter-spacing: var(--button-text-tracking);
+  text-transform: var(--button-text-case);
   white-space: nowrap;
   transition:
     color var(--duration-fast) linear,
@@ -367,6 +369,9 @@
     min-height: 32px;
     padding: 0;
     border: 0;
+    font: var(--weight-body) var(--text-sm) / 1 var(--font-sans);
+    letter-spacing: 0;
+    text-transform: none;
   }
 
   .project-rail dl {

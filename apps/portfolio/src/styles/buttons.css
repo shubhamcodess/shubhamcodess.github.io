@@ -1,0 +1,71 @@
+/*
+ * Beam buttons, chosen with `theme.buttons: 'beam'` in the config (it sets <html data-buttons>).
+ * Lean and square-shouldered, with small mono labels, like controls on an instrument panel.
+ * Their states borrow the hero light: a thin line of it along the bottom edge appears on hover
+ * and glows when the button is selected. Pill buttons ignore this file.
+ */
+
+:root[data-buttons='beam'] {
+  --button-radius: 7px;
+  --button-height: 34px;
+  --button-height-small: 32px;
+  --button-pad: var(--space-3);
+  --button-glass-height: 40px;
+  --button-glass-pad: var(--space-4);
+  --button-text-size: 0.6875rem;
+  --button-text-family: var(--font-mono);
+  --button-text-case: uppercase;
+  --button-text-tracking: 0.06em;
+}
+
+:root[data-buttons='beam'] :is(.build-filter__chip, .creds__index a, .project-rail__nav a, .action-link--glass) {
+  position: relative;
+}
+
+/* The beam: a thin line of light that grows from the middle of the bottom edge. */
+:root[data-buttons='beam'] :is(.build-filter__chip, .creds__index a, .project-rail__nav a, .action-link--glass)::after {
+  content: '';
+  position: absolute;
+  right: 14%;
+  bottom: -1px;
+  left: 14%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--xp-light), transparent);
+  opacity: 0;
+  pointer-events: none;
+  transform: scaleX(0.3);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+@media (hover: hover) {
+  :root[data-buttons='beam'] :is(.build-filter__chip, .creds__index a, .project-rail__nav a, .action-link--glass):hover::after {
+    opacity: 0.7;
+    transform: none;
+  }
+}
+
+/* Selected: a faint tint of the light, a border that leans blue, and the beam fully lit. */
+:root[data-buttons='beam'] .build-filter__chip[aria-pressed='true'] {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--xp-light) 7%, var(--surface-raised));
+  border-color: color-mix(in srgb, var(--xp-light) 40%, var(--line));
+  box-shadow: 0 10px 20px -14px var(--xp-light);
+}
+
+:root[data-buttons='beam'] .build-filter__chip[aria-pressed='true']::after {
+  right: 6%;
+  left: 6%;
+  opacity: 1;
+  transform: none;
+}
+
+:root[data-buttons='beam'] .build-filter__chip span {
+  opacity: 0.6;
+}
+
+:root[data-buttons='beam'] .build-filter__chip[aria-pressed='true'] span {
+  color: var(--xp-light);
+  opacity: 1;
+}

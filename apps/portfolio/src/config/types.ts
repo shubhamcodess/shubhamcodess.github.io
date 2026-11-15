@@ -6,6 +6,9 @@ export type ThemeName = 'light' | 'dark'
 
 export type PaletteName = 'plain' | 'signature'
 
+/** "pill": round, roomy. "beam": lean, square-shouldered, mono labels, with a line of light for hover and selected. */
+export type ButtonStyle = 'pill' | 'beam'
+
 /** Routes are a closed set. Add one here, add its HTML entry, and the compiler points at the rest. */
 export type RouteId = 'home' | 'builds' | 'experience' | 'credentials'
 
@@ -140,6 +143,8 @@ export interface SiteConfig {
      * "signature": the hero light's two colours become the two themes. Midnight blue for dark, warm paper for light.
      */
     readonly palette: PaletteName
+    /** The look of every chip and button. See ButtonStyle. */
+    readonly buttons: ButtonStyle
     /** Names the theme switch for screen readers. */
     readonly label: string
   }

@@ -64,6 +64,21 @@ Rules for both:
 - Large type tightens: -0.035em on the hero name, -0.02em on section titles. Mono labels are uppercase with 0.04em tracking.
 - Headings balance their lines, paragraphs avoid orphans.
 
+## Buttons
+
+Two styles, chosen by `theme.buttons` in the config. One value changes every chip and button on the site: the filter chips, the credentials index, the project section chips, and the frosted action chips in the hero and on project pages. Plain text links (Code, Live, See all builds) are not buttons and don't change.
+
+| | Pill | Beam (default) |
+|---|---|---|
+| Shape | Fully round, 44px tall | 7px corners, 34px tall (frosted actions 40px) |
+| Label | Sans, 14px | Mono, 11px, uppercase, 0.06em tracking |
+| Hover | Ink darkens, border firms | A thin line of the light grows from the middle of the bottom edge |
+| Selected | Inverted: ink fill, paper text | A faint tint of the light, a blue-leaning border, the light line fully lit, the count in blue |
+
+- **Beam** is lean and square-shouldered, like controls on an instrument panel. Its states borrow the hero light, so selection reads as "lit" rather than "filled". It suits phones, where pills grew into large blobs.
+- **Pill** is the first design, kept whole.
+- Sizes come from the `--button-*` tokens in `tokens.css`; `styles/buttons.css` holds the beam overrides and its light line. A new style is one more value in `ButtonStyle` and one more block there.
+
 ## Space and shape
 
 - Spacing is a 4px grid, `--space-1` to `--space-9`. Pick from the scale.

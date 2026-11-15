@@ -37,6 +37,21 @@
   --radius-pill: 999px;
   --hairline: 1px;
   --target-min: 44px;
+  /*
+   * Buttons: filter chips, index chips, and the frosted action chips. These are the pill values;
+   * the beam style below re-points them. Choose with `theme.buttons` in the config.
+   */
+  --button-radius: var(--radius-pill);
+  --button-height: var(--target-min);
+  --button-height-small: 36px;
+  --button-pad: var(--space-4);
+  --button-glass-height: var(--target-min);
+  --button-glass-pad: var(--space-5);
+  --button-text-size: var(--text-sm);
+  --button-text-family: var(--font-sans);
+  --button-text-case: none;
+  --button-text-tracking: 0;
+
   /* How a link or button looks while a finger is on it. */
   --press-opacity: 0.55;
 

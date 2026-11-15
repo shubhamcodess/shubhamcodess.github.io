@@ -9,6 +9,7 @@ import { site } from './config/site'
 import { buildFromPath, hrefTo, isRouteId } from './lib/routes'
 import './styles/tokens.css'
 import './styles/base.css'
+import './styles/buttons.css'
 
 const root = document.getElementById('root')
 if (!root) throw new Error('Missing #root')
