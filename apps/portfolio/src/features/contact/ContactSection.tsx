@@ -39,16 +39,16 @@ export function ContactSection() {
         </Reveal>
         <div className="contact__badge">
           <Badge replay={replay} />
-          <button
-            className="contact__replay"
-            type="button"
-            onClick={() => setReplay((count) => count + 1)}
-            aria-label={contact.badge.replayLabel}
-          >
-            <Icon name="replay" size={16} />
-          </button>
         </div>
       </div>
+      <button
+        className="contact__replay"
+        type="button"
+        onClick={() => setReplay((count) => count + 1)}
+        aria-label={contact.badge.replayLabel}
+      >
+        <Icon name="replay" size={13} />
+      </button>
     </section>
   )
 }

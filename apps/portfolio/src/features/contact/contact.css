@@ -132,28 +132,25 @@
   }
 }
 
-/* Replay: a small quiet control in the bottom corner of the badge's space, clear of the badge itself. */
-.contact__badge {
-  position: relative;
-}
-
+/* Replay: a small, quiet icon in the panel's bottom corner, well clear of the badge and its swing. */
 .contact__replay {
   position: absolute;
-  right: var(--space-2);
-  bottom: calc(var(--space-6) * -1);
+  right: var(--space-4);
+  bottom: var(--space-3);
   display: grid;
   place-items: center;
-  width: var(--target-min);
-  height: var(--target-min);
+  width: 32px;
+  height: 32px;
   padding: 0;
   color: var(--ink-muted);
   background: none;
-  border: var(--hairline) solid var(--line);
+  border: 0;
   border-radius: 50%;
+  opacity: 0.6;
   cursor: pointer;
   transition:
     color var(--duration-fast) linear,
-    border-color var(--duration-fast) linear;
+    opacity var(--duration-fast) linear;
 }
 
 .contact__replay .icon {
@@ -162,6 +159,7 @@
 
 .contact__replay:focus-visible {
   border-radius: 50%;
+  opacity: 1;
 }
 
 .contact__replay:active .icon {
@@ -171,7 +169,7 @@
 @media (hover: hover) {
   .contact__replay:hover {
     color: var(--ink);
-    border-color: var(--ink-muted);
+    opacity: 1;
   }
 
   .contact__replay:hover .icon {
