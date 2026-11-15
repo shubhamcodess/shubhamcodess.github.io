@@ -207,6 +207,8 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - **Rail:** section links, kind, year and stack. It stays in view on wide screens. On phones the section links become a row of chips stuck under the top edge.
 - **Sections, in order:** What it does (numbered tiles), Use case (prose, only when written), How it is built (notes on a thin ink lane), Honest limits (a quiet note). Each kind of content has its own shape; nothing is a plain divider list.
 - A use-case write-up goes in `useCase` for that build in `content/build-stories.ts`. The recording goes in `media` in `content/builds.ts`.
+- **Stack tags:** each tool in the rail is a small outlined pill in mono, with its mark in muted ink before the name. Marks are from Simple Icons (CC0), kept in `content/tech-icons.ts`; a tool with no mark shows its name alone.
+- **Previous and next:** quiet text links at the page foot, the same as every other page-onward row (back on the left, on at the right). `projectPage.onward: 'panels'` in the config brings back the two larger panels instead.
 
 ## Experience
 
@@ -264,7 +266,7 @@ Hovering an outside link shows a small frosted card that follows the pointer: th
 
 On hover, cards lean the slightest amount toward the pointer: felt, barely seen. Everything else about the card is unchanged.
 
-- Any element with `data-tilt` takes part. Today: build cards, the home role cards, credential cards, recognition, project feature tiles, and the previous and next build panels.
+- Any element with `data-tilt` takes part. Today: build cards, the home role cards, credential cards, recognition, project feature tiles, and the previous and next build panels when `onward` is `'panels'`.
 - At most `tilt.maxDeg` (1.2°) at the edge, in 1000px of perspective, with the usual 4px lift.
 - A very faint light (2% white, 90px across) sits under the pointer. It lives on the card's own surface: on a folder that is its sheet, so the light never fills the empty corner beside the tab.
 - The lean follows in 220ms and settles back over 900ms, so it feels weighted.

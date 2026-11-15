@@ -1,5 +1,5 @@
 import { site } from '../../config/site'
-import type { HeroLightConfig } from '../../config/types'
+import type { HeroLightConfig, SiteConfig } from '../../config/types'
 import { builds, type BuildSlug } from '../../content/builds'
 import { buildStories } from '../../content/build-stories'
 import type { Build, BuildLinkKind } from '../../content/types'
@@ -7,6 +7,7 @@ import { Header } from '../../layout/Header'
 import { hrefTo, hrefToBuild } from '../../lib/routes'
 import { ActionLink } from '../../ui/ActionLink'
 import { Reveal } from '../../ui/Reveal'
+import { TechTag } from '../../ui/TechTag'
 import { LightBackdrop } from '../../ui/light/LightBackdrop'
 import './project.css'
 
@@ -28,6 +29,8 @@ export function ProjectPage({ build }: ProjectPageProps) {
   const { projectPage, features } = site
   const story = buildStories[build.slug as BuildSlug]
   const position = builds.findIndex((candidate) => candidate.slug === build.slug)
+  // Read as the full choice, so either setting in the config type-checks.
+  const onward = projectPage.onward as SiteConfig['projectPage']['onward']
   const previous = builds[(position - 1 + builds.length) % builds.length]
   const next = builds[(position + 1) % builds.length]
 
@@ -140,9 +143,11 @@ export function ProjectPage({ build }: ProjectPageProps) {
                 <div>
                   <dt>{projectPage.labels.stack}</dt>
                   <dd>
-                    <ul className="build-stack">
+                    <ul className="tech-tags">
                       {build.stack.map((item) => (
-                        <li key={item}>{item}</li>
+                        <li key={item}>
+                          <TechTag name={item} />
+                        </li>
                       ))}
                     </ul>
                   </dd>
@@ -209,11 +214,23 @@ export function ProjectPage({ build }: ProjectPageProps) {
               ) : null}
             </article>
           </div>
+
+          {/* Onward, as quiet text links at the foot of the story, like every other page's foot. */}
+          {previous && next && onward === 'links' ? (
+            <nav className="page-onward" aria-label="More builds">
+              <ActionLink href={hrefToBuild(previous.slug)} icon="arrowLeft" iconFirst label={`${projectPage.previous}: ${previous.title}`}>
+                {previous.title}
+              </ActionLink>
+              <ActionLink href={hrefToBuild(next.slug)} icon="arrowRight" label={`${projectPage.next}: ${next.title}`}>
+                {next.title}
+              </ActionLink>
+            </nav>
+          ) : null}
         </div>
       </div>
 
-      {/* Onward: the index reads like a reel, so a project always leads to another. */}
-      {previous && next ? (
+      {/* Onward as two panels: the index reads like a reel, so a project always leads to another. */}
+      {previous && next && onward === 'panels' ? (
         <nav className="project-onward" aria-label="More builds">
           <a className="panel project-onward__link" data-tilt="" href={hrefToBuild(previous.slug)}>
             <span className="eyebrow">{projectPage.previous}</span>

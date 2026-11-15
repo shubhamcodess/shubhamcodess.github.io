@@ -89,6 +89,7 @@ export const site = {
     useCase: 'Use case',
     mediaPending: 'Recording on its way',
     next: 'Next build',
+    onward: 'links',
     previous: 'Previous build',
   },
   sound: {

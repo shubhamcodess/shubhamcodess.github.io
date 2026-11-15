@@ -191,6 +191,11 @@ export interface SiteConfig {
     /** Shown in the media stage until a build has its recording. */
     readonly mediaPending: string
     readonly next: string
+    /**
+     * How a project page leads to the previous and next build. "links": quiet text links at the foot of
+     * the story, like every other page. "panels": two large panels below it.
+     */
+    readonly onward: 'links' | 'panels'
     readonly previous: string
   }
   readonly experience: {
