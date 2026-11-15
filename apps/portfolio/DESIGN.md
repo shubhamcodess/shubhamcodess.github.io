@@ -308,4 +308,4 @@ Everything uses `--ease-out`, the duration tokens and `--stagger`. Entrances pla
 
 ## Not decided yet
 
-Don't build these until they are: an About section, the Labs site, the recordings for each build, scroll transitions between panels, and Substack (add its link to `contact.links` when the address exists).
+Don't build these until they are: an About section, the Labs site, the recordings for each build, scroll transitions between panels, and nothing else pending here.

@@ -150,6 +150,7 @@ export const site = {
       { label: 'GitHub', href: 'https://github.com/shubhamcodess', icon: 'github', detail: '@shubhamcodess' },
       { label: 'LinkedIn', href: 'https://www.linkedin.com/in/shubham-prakash-dev/', icon: 'linkedin', detail: 'shubham-prakash-dev' },
       { label: 'Product Hunt', href: 'https://www.producthunt.com/@shubhamcodess', icon: 'producthunt', detail: '@shubhamcodess' },
+      { label: 'Substack', href: 'https://theshubhamprakash.substack.com/', icon: 'substack', detail: 'theshubhamprakash' },
     ],
     badge: {
       kind: 'Dev ID',

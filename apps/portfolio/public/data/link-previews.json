@@ -73,27 +73,38 @@
   },
   "https://github.com/shubhamcodess/focusify-yt": {
     "title": "GitHub - shubhamcodess/focusify-yt: Want to study, and Youtube feed keeps distracting you. Not any more with FocusifyYT",
-    "description": "Want to study, and Youtube feed keeps distracting you. Not any more with FocusifyYT - shubhamcodess/focusify-yt"
+    "description": "Want to study, and Youtube feed keeps distracting you. Not any more with FocusifyYT - shubhamcodess/focusify-yt",
+    "image": "previews/010909cc8356.png"
   },
   "https://github.com/shubhamcodess": {
     "title": "shubhamcodess - Overview",
     "description": "Here for the bigger picture. shubhamcodess has 31 repositories available. Follow their code on GitHub.",
     "image": "previews/2c865b7ede2e.jpg"
   },
+  "https://theshubhamprakash.substack.com/": {
+    "title": "Beyond-Stack Development | Shubham Prakash | Substack",
+    "description": "Software engineer by trade, curious builder by habit. Sharing thoughts, experiments, and conversations on technology, AI, and the craft of building tech that matters. Click to read Beyond-Stack Development, by Shubham Prakash, a Substack publication. Launched 19 days ago.",
+    "image": "previews/2c3b0c514ade.png"
+  },
   "https://www.credly.com/badges/cc59c5f1-1ddb-4a12-bd7f-8398b7407834/public_url": {
     "title": "Claude Certified Architect - Professional was issued by Anthropic to Shubham Prakash.",
     "description": "The Claude Certified Architect – Professional credential is designed for experienced solution architects. Earners can design and lead enterprise-scale Claude deployments, architect integrations, optimize systems at scale, and apply governance and responsible deployment practices.",
     "image": "previews/c9064fd239a1.png"
   },
-  "https://www.credly.com/badges/fb521f6f-05ca-4948-82a4-3737c854b6fd/public_url": {
-    "title": "Claude Certified Associate - Foundations was issued by Anthropic to Shubham Prakash.",
-    "description": "The Claude Certified Associate – Foundations credential is designed for client-facing and delivery practitioners. Earners can apply Claude to everyday business tasks, evaluate and refine its output, select the right products and models, and use Claude responsibly.",
-    "image": "previews/acbddc828cbd.png"
-  },
   "https://www.credly.com/badges/a2e244ea-f008-415b-a4b1-5473415de90e/public_url": {
     "title": "Claude Certified Architect - Foundations was issued by Anthropic to Shubham Prakash.",
     "description": "The Claude Certified Architect – Foundations credential is designed for solution architects. Earners can design and build production-grade applications with Claude using Claude Code, the Claude Agent SDK, the Claude API, and MCP.",
     "image": "previews/309a2041670f.png"
+  },
+  "https://www.credly.com/badges/e5c52470-9f7f-41b7-9ed5-1d300f5e7b5c/public_url": {
+    "title": "Associate Cloud Engineer Certification was issued by Google Cloud to Shubham Prakash.",
+    "description": "Associate Cloud Engineers deploy applications, monitor operations, and manage enterprise solutions. They use Google Cloud Console and the command-line interface to perform common platform-based tasks to maintain one or more deployed solutions that leverage Google-managed or self-managed services on Google Cloud.",
+    "image": "previews/58d959c8668b.png"
+  },
+  "https://www.credly.com/badges/fb521f6f-05ca-4948-82a4-3737c854b6fd/public_url": {
+    "title": "Claude Certified Associate - Foundations was issued by Anthropic to Shubham Prakash.",
+    "description": "The Claude Certified Associate – Foundations credential is designed for client-facing and delivery practitioners. Earners can apply Claude to everyday business tasks, evaluate and refine its output, select the right products and models, and use Claude responsibly.",
+    "image": "previews/acbddc828cbd.png"
   },
   "https://www.credly.com/badges/2e6272cf-76d7-45d7-9ddc-fc288f40a431/public_url": {
     "title": "Claude Partner Badge - Claude Code was issued by Anthropic to Shubham Prakash.",
@@ -109,11 +120,6 @@
     "title": "Generative AI Leader Certification was issued by Google Cloud to Shubham Prakash.",
     "description": "A Generative AI Leader is a visionary professional with comprehensive knowledge of how gen AI can transform businesses. They have business-level knowledge of Google Cloud's gen AI offerings and understand how Google's AI-first approach can lead organizations toward innovative and responsible AI adoption. They influence gen AI-powered initiatives and identify opportunities across business functions and industries, using Google Cloud's enterprise-ready offerings to accelerate innovation.",
     "image": "previews/995c38b01034.png"
-  },
-  "https://www.credly.com/badges/e5c52470-9f7f-41b7-9ed5-1d300f5e7b5c/public_url": {
-    "title": "Associate Cloud Engineer Certification was issued by Google Cloud to Shubham Prakash.",
-    "description": "Associate Cloud Engineers deploy applications, monitor operations, and manage enterprise solutions. They use Google Cloud Console and the command-line interface to perform common platform-based tasks to maintain one or more deployed solutions that leverage Google-managed or self-managed services on Google Cloud.",
-    "image": "previews/58d959c8668b.png"
   },
   "https://www.credly.com/badges/0c61b0e2-e3b1-4009-8948-52661ba8f284/public_url": {
     "title": "Cloud Digital Leader Certification was issued by Google Cloud to Shubham Prakash.",
