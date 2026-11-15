@@ -276,7 +276,9 @@ button {
 
 .page-onward {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
+  gap: 0 var(--space-6);
   margin-top: var(--space-8);
   padding-top: var(--space-4);
   border-top: var(--hairline) solid var(--line);
@@ -297,4 +299,9 @@ button {
 
 .reveal-fill {
   height: 100%;
+}
+
+/* With two links, one goes back on the left and one goes on at the right. */
+.page-onward:has(> :nth-child(2)) {
+  justify-content: space-between;
 }

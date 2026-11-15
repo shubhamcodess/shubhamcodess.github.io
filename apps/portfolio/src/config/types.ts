@@ -212,6 +212,8 @@ export interface SiteConfig {
     readonly link: string
     readonly homeLabel: string
     readonly onward: string
+    /** The link back to the professional side, at the foot of the page. */
+    readonly back: string
     /** The slight angle of each tile, in degrees, in order. The home tile takes the last. */
     readonly turns: readonly number[]
   }

@@ -75,13 +75,21 @@ export function MePage() {
           </li>
         </ul>
 
-        {features.contact ? (
-          <p className="page-onward">
+        {/* Back to the professional side on the left, onward to contact on the right. */}
+        <nav className="page-onward" aria-label="Continue">
+          {features.experience ? (
+            <ActionLink href={hrefTo('experience')} icon="arrowLeft" iconFirst>
+              {me.back}
+            </ActionLink>
+          ) : (
+            <span />
+          )}
+          {features.contact ? (
             <ActionLink href={hrefTo(`#${site.contact.id}`)} icon="arrowRight">
               {me.onward}
             </ActionLink>
-          </p>
-        ) : null}
+          ) : null}
+        </nav>
       </main>
     </div>
   )

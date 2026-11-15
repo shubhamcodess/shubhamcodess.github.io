@@ -123,6 +123,7 @@ export const site = {
     link: 'More about me',
     homeLabel: 'Home',
     onward: 'Say hello',
+    back: 'Professional experience',
     turns: [-1.2, 1.4, -0.8, 1.1],
   },
   credentialsPage: {
