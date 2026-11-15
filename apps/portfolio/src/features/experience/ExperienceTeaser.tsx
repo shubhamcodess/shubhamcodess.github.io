@@ -55,7 +55,7 @@ export function ExperienceTeaser() {
               <ol className="teaser__roles">
                 {employer.roles.map((role) => (
                   <li key={role.title}>
-                    <a className="teaser__role" href={hrefTo('experience')}>
+                    <a className="teaser__role" href={hrefTo('experience')} data-tilt="">
                       <span className="teaser__years">
                         {role.from} to {role.to ?? copy.labels.now.toLowerCase()}
                       </span>

@@ -241,10 +241,6 @@ a.honour:focus-visible {
 }
 
 @media (hover: hover) {
-  a.honour:hover {
-    transform: translateY(var(--card-lift));
-  }
-
   a.honour:hover .honour__frame img {
     filter: none;
   }
@@ -388,10 +384,6 @@ a.honour:focus-visible {
 }
 
 @media (hover: hover) {
-  .teaser__role:hover {
-    transform: translateY(var(--card-lift));
-  }
-
   .teaser__role:hover .icon {
     color: var(--ink);
     transform: translateX(3px);

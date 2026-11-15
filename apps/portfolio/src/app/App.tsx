@@ -13,6 +13,7 @@ import { Header } from '../layout/Header'
 import { ScrollLight } from '../layout/ScrollLight'
 import { SoundDesign } from '../layout/SoundDesign'
 import { LinkPreview } from '../ui/LinkPreview'
+import { TiltLayer } from '../ui/Tilt'
 import { useSectionTracking } from '../lib/sections'
 
 function HomePage() {
@@ -61,6 +62,7 @@ export function App({ page }: AppProps) {
       {render(page)}
       {site.features.footer ? <Footer /> : null}
       {site.features.scrollLight ? <ScrollLight /> : null}
+      {site.features.tilt ? <TiltLayer /> : null}
       {site.features.linkPreviews ? <LinkPreview /> : null}
       {site.features.sound ? <SoundDesign /> : null}
     </div>

@@ -99,12 +99,6 @@
   border-top: var(--hairline) solid var(--line);
 }
 
-@media (hover: hover) {
-  .folder:hover {
-    transform: translateY(var(--card-lift));
-  }
-}
-
 /* The title link stretches over the whole card. The outside links sit above it. */
 .folder__link::after {
   content: '';
@@ -148,8 +142,4 @@
   .folder--plate:hover .folder__plate > * {
     transform: translate3d(0, -3px, 0);
   }
-}
-
-.folder:active {
-  transform: translateY(0) scale(0.995);
 }

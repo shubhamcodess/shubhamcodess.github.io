@@ -1,6 +1,7 @@
 import '@fontsource-variable/geist'
 import '@fontsource-variable/geist-mono'
 import { StrictMode } from 'react'
+import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { App, type Page } from './app/App'
 import { site } from './config/site'
@@ -29,10 +30,24 @@ const { light } = site.hero
 document.documentElement.style.setProperty('--light-scroll-rate', String(light.parallax.scrollLight))
 document.documentElement.style.setProperty('--light-content-shift', `${light.parallax.pointerContent}px`)
 
+/*
+ * No jitter between pages. The script tag is render-blocking, so the browser shows nothing until this module
+ * finishes. Wait briefly for the text fonts (cached after the first visit), then draw the whole page in one
+ * synchronous pass. The first frame the visitor sees, and the one the page transition fades to, is complete.
+ */
+const fontWaitMs = 250
+await Promise.race([
+  Promise.all([document.fonts.load('1em "Geist Variable"'), document.fonts.load('1em "Geist Mono Variable"')]),
+  new Promise((resolve) => setTimeout(resolve, fontWaitMs)),
+]).catch(() => undefined)
+
 if (page) {
-  createRoot(root).render(
-    <StrictMode>
-      <App page={page} />
-    </StrictMode>,
+  const app = createRoot(root)
+  flushSync(() =>
+    app.render(
+      <StrictMode>
+        <App page={page} />
+      </StrictMode>,
+    ),
   )
 }

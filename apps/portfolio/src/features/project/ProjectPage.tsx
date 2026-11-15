@@ -159,7 +159,7 @@ export function ProjectPage({ build }: ProjectPageProps) {
                   {heading('what')}
                   <ol className="project-tiles">
                     {story.features.map((item, index) => (
-                      <li key={item}>
+                      <li key={item} data-tilt="">
                         <span className="eyebrow">{String(index + 1).padStart(2, '0')}</span>
                         <p>{item}</p>
                       </li>
@@ -214,11 +214,11 @@ export function ProjectPage({ build }: ProjectPageProps) {
       {/* Onward: the index reads like a reel, so a project always leads to another. */}
       {previous && next ? (
         <nav className="project-onward" aria-label="More builds">
-          <a className="panel project-onward__link" href={hrefToBuild(previous.slug)}>
+          <a className="panel project-onward__link" data-tilt="" href={hrefToBuild(previous.slug)}>
             <span className="eyebrow">{projectPage.previous}</span>
             <span className="project-onward__name">{previous.title}</span>
           </a>
-          <a className="panel project-onward__link project-onward__link--next" href={hrefToBuild(next.slug)}>
+          <a className="panel project-onward__link project-onward__link--next" data-tilt="" href={hrefToBuild(next.slug)}>
             <span className="eyebrow">{projectPage.next}</span>
             <span className="project-onward__name">{next.title}</span>
           </a>

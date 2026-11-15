@@ -207,14 +207,24 @@ The browser's scrollbar is replaced by a thread of light in the frame's right ed
 
 Hovering an outside link shows a small frosted card that follows the pointer: the destination's social image, title and host. The previews are saved at build time, so nothing is fetched from other sites until the visitor clicks. Pointer only.
 
+## Tilt
+
+Cards lean toward the pointer like a card turned under a lamp: a lean, never a flip.
+
+- Any element with `data-tilt` takes part. Today: build cards, the home role cards, credential cards, recognition, project feature tiles, and the previous and next build panels.
+- Up to `tilt.maxDeg` (3.5°) at the edge, in 1000px of perspective, with the 4px lift. A soft light (`--tilt-glare`) sits under the pointer.
+- The lean follows in 220ms and settles back over 900ms, so it feels weighted.
+- Not on large reading blocks (role cards on the Experience page, prose), and not on the badge, which has its own swing.
+- Pointer only. Off with reduced motion. `features.tilt` turns it off everywhere.
+
 ## Motion, in full
 
 | Where | What moves |
 |---|---|
 | Page open | Name, role, statement and chips rise in, one after another |
 | Scroll | Sections and cards rise in once, the first time they are seen |
-| Between pages | A short cross-fade, and a build's title travels from its card to its page |
-| Cards | Lift 4px, the fact shifts up, arrows nudge. A press settles back |
+| Between pages | The old page dims and sinks back a touch (260ms) while the new one rises gently into place (560ms). A build's title travels from its card to its page. The new page is shown only once fully drawn, so nothing jumps |
+| Cards | Lean up to 3.5° toward the pointer in 2.5D, lift 4px, and carry a soft light where the pointer is. The lean follows quickly and settles back slowly. Pointer only; touch gets the lift |
 | Theme toggle | The icon turns in |
 | Experience | The lane fills with scroll; the present node pulses |
 | Badge | Spring swing, card swap, portrait clearing from grey cells |

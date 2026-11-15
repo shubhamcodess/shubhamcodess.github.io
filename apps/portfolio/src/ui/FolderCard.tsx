@@ -26,7 +26,7 @@ interface FolderCardProps {
 export function FolderCard({ index, label, title, headingLevel, summary, href, transitionName, plate, meta, actions }: FolderCardProps) {
   const Heading = `h${headingLevel}` as const
   return (
-    <article className={plate ? 'folder folder--plate' : 'folder'}>
+    <article className={plate ? 'folder folder--plate' : 'folder'} data-tilt="">
       {plate ? <div className="folder__plate">{plate}</div> : null}
       <div className="folder__sheet">
         <p className="folder__tab">

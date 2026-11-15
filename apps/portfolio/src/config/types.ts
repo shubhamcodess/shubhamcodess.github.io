@@ -42,6 +42,8 @@ export interface FeatureFlags {
   readonly credentials: boolean
   /** The framed stage for a build's recording on its page, shown even before the recording exists. */
   readonly projectMedia: boolean
+  /** Cards lean toward the pointer in 2.5D, with a soft light where it is. */
+  readonly tilt: boolean
   /** A preview card that follows the pointer over outside links. */
   readonly linkPreviews: boolean
   readonly contact: boolean
@@ -230,6 +232,8 @@ export interface SiteConfig {
     readonly scroll: { readonly every: number; readonly gapMs: number }
     readonly label: string
   }
+  /** How far a card leans toward the pointer, in degrees at its edge. Keep it small: a lean, not a flip. */
+  readonly tilt: { readonly maxDeg: number }
   /** Order of the groups on the All builds page. */
   readonly kinds: readonly BuildKind[]
   readonly features: FeatureFlags

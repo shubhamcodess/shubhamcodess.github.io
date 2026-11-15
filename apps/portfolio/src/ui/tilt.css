@@ -1,0 +1,45 @@
+/*
+ * Tilt: cards lean toward the pointer in 2.5D. The lean follows quickly while the pointer moves,
+ * and settles back slowly when it leaves. A soft light sits where the pointer is.
+ */
+[data-tilt] {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --tilt-lift: 0px;
+  position: relative;
+  transform: perspective(var(--tilt-depth)) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translate3d(0, var(--tilt-lift), 0);
+  transition:
+    transform var(--duration-slow) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+[data-tilt][data-tilting] {
+  transition-duration: var(--tilt-follow);
+}
+
+[data-tilt]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), var(--tilt-glare), transparent 60%);
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-base) linear;
+}
+
+[data-tilt][data-tilting]::after {
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  [data-tilt]:hover {
+    --tilt-lift: var(--card-lift);
+  }
+}
+
+[data-tilt]:active {
+  --tilt-lift: 0px;
+}

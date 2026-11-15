@@ -98,7 +98,7 @@ pnpm --filter @portfolio/app data
 ## Known gaps
 
 - **Content is rendered in the browser.** Before launch, pre-render each page to static HTML at build time, so search engines and AI readers get the content without running JavaScript. This is the one launch blocker.
-- **JavaScript is just over the 90 kB budget** (90.3 kB gzipped). The sound engine is its own 1.5 kB chunk; the wiring and toggle are in the main bundle. Credentials and link previews are runtime JSON, not bundled. Split by page before adding anything heavy.
+- **JavaScript is over the 90 kB budget** (91.2 kB gzipped), and CSS over 10 kB (10.8 kB). The sound engine is its own 1.5 kB chunk; the wiring and toggle are in the main bundle. Credentials and link previews are runtime JSON, not bundled. Split by page before adding anything heavy.
 - **CSS is slightly over its 10 kB budget** (10.4 kB). Splitting it by page is the fix.
 - **Credentials load after the page,** so they aren't in the HTML for search engines. Pre-rendering (below) should inline `public/data/credentials.json`.
 - **Page transitions** use cross-document view transitions, which Firefox doesn't have yet. It simply navigates.
@@ -135,6 +135,8 @@ State on 2026-11-15: every page in `DESIGN.md` is built, typed, formatted and co
 **Small things worth knowing:**
 
 - The preview pane in the desktop app stalls CSS transitions and `requestAnimationFrame`. To test scroll-driven code there, stand in a timer: `window.requestAnimationFrame = cb => setTimeout(() => cb(performance.now()), 16)`.
+- **First paint:** the app script is render-blocking (`blocking="render"`, kept in the build by a step in `vite.config.ts`), and `main.tsx` waits up to 250ms for the fonts, then renders synchronously with `flushSync`. The browser shows each page only once it is fully drawn, which is what lets the page transition fade between two complete pages. Don't make the first render async.
+- In the preview pane, page transitions log "Transition was aborted … Page already revealed" because the pane doesn't paint frames. Real Chrome doesn't.
 - **Shared state** (theme, sound, current section) lives in small stores read with `useSyncExternalStore`, so the header and footer switches always agree. Theme and sound re-read storage on `pageshow`, because Back and Forward restore pages as they were left.
 - The preview pane in the desktop app stalls CSS transitions. A blank area in a screenshot is usually an entrance that has not played, not a bug. Check with a real browser.
 - `pnpm data` needs the network, and npm, LinkedIn and Product Hunt refuse automated reads, so those links have no hover card.

@@ -44,7 +44,9 @@
   --duration-base: 420ms;
   --duration-slow: 900ms;
   --duration-enter: 800ms;
-  --duration-page: 360ms;
+  --duration-page-out: 260ms;
+  --duration-page-in: 560ms;
+  --page-rise: 14px;
   --stagger: 80ms;
   --reveal-distance: 20px;
 
@@ -126,6 +128,12 @@
   --badge-peek: 0.3;
   --badge-photo-filter: grayscale(1) contrast(1.08) brightness(0.92);
   --badge-photo-lanes: 0.16;
+
+  /* Component: tilt */
+  --tilt-depth: 1000px;
+  /* How quickly the lean follows the pointer. Settling back uses --duration-slow. */
+  --tilt-follow: 220ms;
+  --tilt-glare: rgb(255 255 255 / 55%);
 
   /* Component: link preview */
   --preview-width: 280px;

@@ -47,12 +47,27 @@ function projectPages(): Plugin {
   }
 }
 
+/**
+ * Keeps the app script render-blocking in the built pages (Vite rewrites the tag and drops the attribute),
+ * so the browser paints each page only once it is fully drawn. See the note in src/main.tsx.
+ */
+function renderBlocking(): Plugin {
+  return {
+    name: 'portfolio-render-blocking',
+    transformIndexHtml: {
+      order: 'post',
+      handler: (html) =>
+        html.replace(/<script type="module" crossorigin src=/g, '<script type="module" crossorigin blocking="render" src='),
+    },
+  }
+}
+
 // One HTML file per route, so every page loads directly on static hosting with no SPA fallback.
 // PORTFOLIO_BASE is the path the site is served from, for example "/shubham-portfolio/".
 export default defineConfig({
   base: process.env.PORTFOLIO_BASE ?? '/',
   appType: 'mpa',
-  plugins: [react(), projectPages()],
+  plugins: [react(), projectPages(), renderBlocking()],
   build: {
     target: 'es2022',
     rolldownOptions: {

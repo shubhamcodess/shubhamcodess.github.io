@@ -151,6 +151,7 @@ export function ExperiencePage() {
                       // The framed certificate. Hovering shows it large beside the pointer; a tap or Enter opens it.
                       <a
                         className="honour"
+                        data-tilt=""
                         href={`${import.meta.env.BASE_URL}${item.certificate}`}
                         target="_blank"
                         rel="noopener"
@@ -168,7 +169,7 @@ export function ExperiencePage() {
                         <HonourText {...item} />
                       </a>
                     ) : (
-                      <div className="honour">
+                      <div className="honour" data-tilt="">
                         <HonourText {...item} />
                       </div>
                     )}

@@ -164,20 +164,40 @@ button {
   gap: var(--frame-inset);
 }
 
-/* Pages cross-fade into each other, and a build's title travels from its card to its page. */
+/*
+ * Between pages: the old page dims and sinks back a touch while the new one rises gently into place,
+ * over the same black frame, so the move reads as one continuous shot. A build's title travels from
+ * its card to its page.
+ */
 @media (prefers-reduced-motion: no-preference) {
   @view-transition {
     navigation: auto;
   }
 
-  ::view-transition-old(root),
+  ::view-transition-old(root) {
+    animation: page-leave var(--duration-page-out) var(--ease-out) both;
+  }
+
   ::view-transition-new(root) {
-    animation-duration: var(--duration-page);
-    animation-timing-function: var(--ease-out);
+    animation: page-arrive var(--duration-page-in) var(--ease-out) both;
   }
 
   ::view-transition-group(*) {
-    animation-duration: calc(var(--duration-page) * 1.4);
+    animation-duration: var(--duration-page-in);
     animation-timing-function: var(--ease-out);
+  }
+}
+
+@keyframes page-leave {
+  to {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+@keyframes page-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--page-rise), 0);
   }
 }

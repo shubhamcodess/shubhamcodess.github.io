@@ -76,7 +76,7 @@ export function CredentialsPage() {
                     {issuer.items.map((credential, index) => (
                       <li key={credential.title}>
                         <Reveal index={index} className="reveal-fill">
-                          <div className="cred">
+                          <div className="cred" data-tilt="">
                             <Icon name="credential" size={20} />
                             <span className="cred__title">{credential.title}</span>
                             {credential.href ? (
