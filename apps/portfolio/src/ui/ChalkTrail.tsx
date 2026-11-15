@@ -37,12 +37,16 @@ export function ChalkTrail() {
     const canvas = canvasRef.current
     const context = canvas?.getContext('2d')
     if (!canvas || !context || reducedMotion || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
-    const { lifeMs, width, opacity, dust } = site.chalkTrail
+    const { lifeMs, width, opacity, dust, follow, maxLength } = site.chalkTrail
     const points: Point[] = []
     const specks: Speck[] = []
     const dustLife = lifeMs * 4
     let frame = 0
     let ratio = 1
+    // The chalk tip trails the pointer, easing toward it each frame, so the line lags a little behind the hand.
+    const target = { x: 0, y: 0 }
+    const tip = { x: 0, y: 0 }
+    let started = false
 
     const resize = () => {
       ratio = Math.min(window.devicePixelRatio || 1, 2)
@@ -52,7 +56,25 @@ export function ChalkTrail() {
 
     const draw = (now: number) => {
       frame = 0
+      const chasing = Math.hypot(target.x - tip.x, target.y - tip.y) > 0.3
+      if (chasing) {
+        tip.x += (target.x - tip.x) * follow
+        tip.y += (target.y - tip.y) * follow
+        points.push({ x: tip.x, y: tip.y, at: now })
+      }
       while (points.length && now - (points[0]?.at ?? now) > lifeMs) points.shift()
+      // However fast the hand moves, the line is never longer than maxLength: trim from the tail.
+      let length = 0
+      for (let i = points.length - 1; i > 0; i--) {
+        const a = points[i - 1]
+        const b = points[i]
+        if (!a || !b) continue
+        length += Math.hypot(b.x - a.x, b.y - a.y)
+        if (length > maxLength) {
+          points.splice(0, i - 1)
+          break
+        }
+      }
       for (let i = specks.length - 1; i >= 0; i--) {
         if (now - (specks[i]?.born ?? now) > dustLife) specks.splice(i, 1)
       }
@@ -94,7 +116,7 @@ export function ChalkTrail() {
       }
       context.globalAlpha = 1
 
-      if (points.length || specks.length) frame = requestAnimationFrame(draw)
+      if (chasing || points.length || specks.length) frame = requestAnimationFrame(draw)
     }
 
     const wake = () => {
@@ -103,9 +125,16 @@ export function ChalkTrail() {
 
     const onMove = (event: PointerEvent) => {
       const now = performance.now()
-      const last = points.at(-1)
-      points.push({ x: event.clientX, y: event.clientY, at: now })
-      if (last && Math.random() < dust) {
+      const last = { x: target.x, y: target.y }
+      target.x = event.clientX
+      target.y = event.clientY
+      if (!started) {
+        started = true
+        tip.x = target.x
+        tip.y = target.y
+        return
+      }
+      if (Math.random() < dust) {
         const speed = Math.hypot(event.clientX - last.x, event.clientY - last.y)
         specks.push({
           x: event.clientX + wobble(now) * 4,

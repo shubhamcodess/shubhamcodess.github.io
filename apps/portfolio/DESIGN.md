@@ -256,7 +256,7 @@ On hover, cards lean the slightest amount toward the pointer: felt, barely seen.
 
 A short hand-drawn line follows the pointer, like chalk dragged across the page, shedding a little dust. Switched by `features.chalkTrail`; tuned by `chalkTrail` in the config.
 
-- **The line:** about a quarter of a second long (`lifeMs` 240), 1.6px at the pointer and tapering to nothing, at 38% strength. Each segment is drawn in three slightly offset passes, so its edge is grainy like chalk rather than a clean vector stroke.
+- **The line:** its tip eases after the pointer rather than sticking to it (`follow` 0.16), so it lags a little behind the hand. It is never longer than 60px (`maxLength`), however fast the pointer moves, and fades within about a fifth of a second. 1.5px at the tip, tapering to nothing, at 38% strength. Each segment is drawn in three slightly offset passes, so its edge is grainy like chalk rather than a clean vector stroke.
 - **The dust:** about one move in three sheds a speck that drifts, slows and fades over a second.
 - **Colour:** drawn white and blended by difference, so it is pale chalk on the dark hero and faint graphite on the paper, in both themes, with no colour of its own.
 - Pointer only. Off with reduced motion. Nothing runs while the pointer is still.

@@ -245,10 +245,19 @@ export interface SiteConfig {
     readonly label: string
   }
   /**
-   * The chalk trail. `lifeMs` is how long the line lasts, `width` its thickness in px at the pointer,
-   * `opacity` its strength (0 to 1), `dust` the chance (0 to 1) of shedding a speck on each pointer move.
+   * The chalk trail. `lifeMs` is how long the line lasts, `width` its thickness in px at the tip,
+   * `opacity` its strength (0 to 1), `dust` the chance (0 to 1) of shedding a speck on each pointer move,
+   * `follow` how quickly the tip catches the pointer each frame (0 to 1, lower lags more),
+   * `maxLength` the longest the line may be in px, however fast the pointer moves.
    */
-  readonly chalkTrail: { readonly lifeMs: number; readonly width: number; readonly opacity: number; readonly dust: number }
+  readonly chalkTrail: {
+    readonly lifeMs: number
+    readonly width: number
+    readonly opacity: number
+    readonly dust: number
+    readonly follow: number
+    readonly maxLength: number
+  }
   /** How far a card leans toward the pointer, in degrees at its edge. Keep it small: a lean, not a flip. */
   readonly tilt: { readonly maxDeg: number }
   /** Order of the groups on the All builds page. */
