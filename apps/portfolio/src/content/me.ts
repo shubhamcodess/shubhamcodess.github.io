@@ -1,3 +1,5 @@
+import type { StateKey } from './state-maps'
+
 /**
  * The /me page: life away from work. Only what the owner has said goes here; every optional field
  * stays out until they supply it, and the page shows nothing in its place.
@@ -31,9 +33,12 @@ export interface Place {
   readonly role: string
   readonly city: string
   readonly region: string
+  /** The state drawn on the card, and where the city sits on it (latitude, longitude). */
+  readonly map: StateKey
+  readonly at: readonly [lat: number, lon: number]
   /** A sentence or two in the owner's words. */
   readonly line?: string
-  /** Pictures under /public, such as "me/places/jamshedpur-1.jpg", each with what it shows. */
+  /** Pictures under /public, such as "me/places/jamshedpur-1.jpg", each with what it shows. Hung on a clothesline. */
   readonly photos?: readonly { readonly src: string; readonly alt: string }[]
 }
 
@@ -47,8 +52,9 @@ export interface Home {
   readonly line?: string
   /** A drawing, as a path under /public. Leave out when `map` draws the place instead. */
   readonly art?: string
-  /** A fine-line map drawn behind the city, with a marker on it. */
-  readonly map?: 'karnataka'
+  /** A fine-line map drawn behind the city, with a marker on the city (latitude, longitude). */
+  readonly map?: StateKey
+  readonly at?: readonly [lat: number, lon: number]
   /** The tile's own page, shown when it is opened. */
   readonly story?: readonly string[]
   /** The places lived in, oldest first, shown as a path when the tile is opened. The last is now. */
@@ -67,9 +73,10 @@ export const home: Home = {
   city: 'Bengaluru',
   region: 'Karnataka, India',
   map: 'karnataka',
+  at: [12.9716, 77.5946],
   places: [
-    { role: 'Home', city: 'Jamshedpur', region: 'Jharkhand' },
-    { role: 'Education', city: 'Bhubaneswar', region: 'Odisha' },
-    { role: 'Work', city: 'Bengaluru', region: 'Karnataka' },
+    { role: 'Home', city: 'Jamshedpur', region: 'Jharkhand', map: 'jharkhand', at: [22.8046, 86.2029] },
+    { role: 'Education', city: 'Bhubaneswar', region: 'Odisha', map: 'odisha', at: [20.2961, 85.8245] },
+    { role: 'Work', city: 'Bengaluru', region: 'Karnataka', map: 'karnataka', at: [12.9716, 77.5946] },
   ],
 }

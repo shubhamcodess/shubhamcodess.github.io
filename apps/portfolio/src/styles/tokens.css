@@ -176,6 +176,9 @@
   --me-rail-tile: 150px;
   --me-detail-min: 420px;
   --me-place-city: clamp(1.375rem, 1rem + 1.2vw, 1.875rem);
+  --me-place-map: 150px;
+  --clothesline-print: 112px;
+  --clothesline-sag: 26px;
   --me-title-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
   --me-print-border: 12px;
   --me-sprocket-band: 22px;

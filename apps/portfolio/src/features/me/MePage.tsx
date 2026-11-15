@@ -9,7 +9,8 @@ import { ActionLink } from '../../ui/ActionLink'
 import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
 import { Art } from './Art'
-import { KarnatakaMap } from './KarnatakaMap'
+import { Clothesline } from './Clothesline'
+import { StateMap } from './StateMap'
 import './me.css'
 
 /** Every tile on the page, in order. The home tile is last. */
@@ -30,7 +31,7 @@ function TileFace({ entry, index, open }: { readonly entry: Entry; readonly inde
     const { item } = entry
     return (
       <div className="me-frame__inner">
-        {item.map === 'karnataka' ? <KarnatakaMap /> : null}
+        {item.map && item.at ? <StateMap state={item.map} at={item.at} /> : null}
         {item.art ? <Art src={item.art} label={`${item.city}, ${item.region}`} /> : null}
         <div className="me-frame__text">
           <span className="eyebrow">{item.label}</span>
@@ -149,27 +150,29 @@ export function MePage() {
             </nav>
 
             <article className={`me-detail me-frame me-frame--${frameOf(open)}`} style={{ viewTransitionName: `me-${open.item.id}` }}>
-              <TileFace entry={open} index={openIndex} open />
+              {open.kind === 'home' && open.item.places?.length ? (
+                <header className="me-places-head">
+                  <p className="eyebrow">{me.placesKicker}</p>
+                  <h1 className="me-places-head__title">{me.placesTitle}</h1>
+                </header>
+              ) : (
+                <TileFace entry={open} index={openIndex} open />
+              )}
               {open.kind === 'home' && open.item.places?.length ? (
                 <ol className="me-places" aria-label={me.placesLabel}>
                   {open.item.places.map((place, index, all) => (
                     <li key={place.city} className="me-place" {...(index === all.length - 1 ? { 'aria-current': 'step' as const } : {})}>
                       <span className="me-place__node" aria-hidden="true" />
-                      <p className="eyebrow">
-                        {String(index + 1).padStart(2, '0')} · {place.role}
-                      </p>
-                      <h2 className="me-place__city">{place.city}</h2>
-                      <p className="me-place__region">{place.region}</p>
-                      {place.line ? <p className="me-place__line">{place.line}</p> : null}
-                      {place.photos?.length ? (
-                        <ul className="me-place__photos">
-                          {place.photos.map((photo) => (
-                            <li key={photo.src}>
-                              <img src={`${import.meta.env.BASE_URL}${photo.src}`} alt={photo.alt} loading="lazy" decoding="async" />
-                            </li>
-                          ))}
-                        </ul>
-                      ) : null}
+                      <div className="me-place__text">
+                        <p className="eyebrow">
+                          {String(index + 1).padStart(2, '0')} · {place.role}
+                        </p>
+                        <h2 className="me-place__city">{place.city}</h2>
+                        <p className="me-place__region">{place.region}</p>
+                        {place.line ? <p className="me-place__line">{place.line}</p> : null}
+                      </div>
+                      <StateMap state={place.map} at={place.at} className="me-place__map" />
+                      <Clothesline photos={place.photos ?? []} emptySlots={me.emptyPhotoSlots} />
                     </li>
                   ))}
                 </ol>

@@ -430,36 +430,52 @@ a.me-frame:focus-visible {
   animation-timing-function: var(--ease-out);
 }
 
+/* The opened home tile's heading: the places, not the city on the tile. */
+.me-places-head {
+  display: grid;
+  gap: var(--space-3);
+  padding: clamp(var(--space-5), 3vw, var(--space-7)) clamp(var(--space-5), 3vw, var(--space-7)) var(--space-2);
+}
+
+.me-places-head__title {
+  font-size: var(--me-title-size);
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+
 /*
- * The path of places, inside the opened home tile: oldest first, joined by a thin ink line through a dot
- * on each card, the current place's dot filled. Plain cards, not links: each grows with its own words
- * and photos. Three across on wide screens, stacked on phones with the line running down.
+ * The places, oldest first, one row each, joined by a thin ink line running down through a dot on each
+ * row, the current place's dot filled. A row: role, city and state, the state in fine line with the city
+ * marked, and a clothesline for photos beneath. Plain cards, not links.
  */
 .me-places {
   --place-dot: 9px;
+  --place-pad: clamp(var(--space-5), 3vw, var(--space-7));
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   margin: 0;
-  padding: var(--space-6) clamp(var(--space-5), 3vw, var(--space-7)) clamp(var(--space-5), 3vw, var(--space-7));
-  border-top: var(--hairline) solid var(--line);
+  padding: var(--space-5) var(--place-pad) var(--place-pad);
 }
 
 .me-places::before {
   content: '';
   position: absolute;
-  top: calc(var(--space-6) + var(--space-5));
-  bottom: calc(var(--space-7) + var(--space-5));
-  left: calc(clamp(var(--space-5), 3vw, var(--space-7)) + var(--space-5) + var(--place-dot) / 2);
+  top: calc(var(--space-5) + var(--space-5) + var(--space-1));
+  bottom: var(--place-pad);
+  left: calc(var(--place-pad) + var(--space-5) + var(--place-dot) / 2);
   border-left: var(--hairline) solid var(--marker-lane);
 }
 
 .me-place {
   position: relative;
   display: grid;
-  align-content: start;
-  gap: var(--space-2);
+  grid-template-columns: minmax(0, 1fr) var(--me-place-map);
+  grid-template-areas:
+    'text map'
+    'strip strip';
+  align-items: center;
+  gap: var(--space-4) var(--space-5);
   padding: var(--space-5) var(--space-5) var(--space-5) calc(var(--space-5) * 2 + var(--place-dot));
   background: var(--surface);
   border: var(--hairline) solid var(--line);
@@ -468,7 +484,7 @@ a.me-frame:focus-visible {
 
 .me-place__node {
   position: absolute;
-  top: calc(var(--space-5) + 2px);
+  top: calc(var(--space-5) + var(--space-1));
   left: var(--space-5);
   width: var(--place-dot);
   height: var(--place-dot);
@@ -482,11 +498,19 @@ a.me-frame:focus-visible {
   border-color: var(--marker-strong);
 }
 
+.me-place__text {
+  grid-area: text;
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  align-self: start;
+}
+
 .me-place__city {
   margin-top: var(--space-1);
   font-size: var(--me-place-city);
-  overflow-wrap: anywhere;
   letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
 }
 
 .me-place__region {
@@ -498,44 +522,127 @@ a.me-frame:focus-visible {
 
 .me-place__line {
   margin-top: var(--space-3);
+  max-width: 36rem;
   color: var(--ink-muted);
 }
 
-.me-place__photos {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
-  gap: var(--space-2);
-  margin-top: var(--space-3);
+/* The state, small and in place: not the floating backdrop the tile uses. */
+.me-map.me-place__map {
+  position: static;
+  grid-area: map;
+  justify-self: end;
+  width: 100%;
+  height: var(--me-place-map);
+  transform: none;
 }
 
-.me-place__photos img {
+.me-place .clothesline {
+  grid-area: strip;
+}
+
+/*
+ * Clothesline: a gently sagging line across the row with prints pegged to it, each turned a little and
+ * hanging lower toward the middle. Empty frames are dashed outlines, for judging the layout only.
+ */
+.clothesline {
+  position: relative;
+  padding-top: var(--space-2);
+}
+
+.clothesline__line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--clothesline-sag);
+  overflow: visible;
+}
+
+.clothesline__line path {
+  fill: none;
+  stroke: var(--marker);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.clothesline__prints {
+  display: flex;
+  justify-content: space-around;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+}
+
+.clothesline__print {
+  position: relative;
+  flex: 0 1 var(--clothesline-print);
+  aspect-ratio: 4 / 5;
+  padding: 5px 5px 14px;
+  background: var(--surface-raised);
+  border-radius: 2px;
+  box-shadow: var(--shadow-card);
+  transform: translateY(calc(var(--print-drop) * var(--clothesline-sag) * 0.55)) rotate(var(--print-turn));
+  transform-origin: 50% 0;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.clothesline__print img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-sm);
+  border-radius: 1px;
 }
 
-/* Wide: three across, the line running through the dots along the top of the cards. */
-@media (min-width: 900px) {
+.clothesline__print--empty {
+  background: none;
+  border: var(--hairline) dashed var(--marker-lane);
+  box-shadow: none;
+}
+
+/* The peg: a small upright clip where the print meets the line. */
+.clothesline__peg {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 4px;
+  height: 12px;
+  background: var(--marker);
+  border-radius: 1px;
+  transform: translateX(-50%);
+}
+
+@media (hover: hover) {
+  .clothesline__print:hover {
+    transform: translateY(calc(var(--print-drop) * var(--clothesline-sag) * 0.55)) rotate(0deg);
+  }
+}
+
+@media (max-width: 599px) {
   .me-places {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    --place-pad: var(--space-3);
   }
 
-  .me-places::before {
-    top: calc(var(--space-6) + var(--space-5) + 2px + var(--place-dot) / 2);
-    right: clamp(var(--space-5), 3vw, var(--space-7));
-    bottom: auto;
-    left: clamp(var(--space-5), 3vw, var(--space-7));
-    border-top: var(--hairline) solid var(--marker-lane);
-    border-left: 0;
+  .me-places-head {
+    padding-inline: var(--space-4);
   }
 
   .me-place {
-    padding: calc(var(--space-5) * 2 + var(--place-dot)) var(--space-5) var(--space-5);
+    --me-place-map: 72px;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) * 2 + var(--place-dot));
   }
 
   .me-place__node {
-    left: var(--space-5);
+    top: calc(var(--space-4) + var(--space-1));
+    left: var(--space-4);
+  }
+
+  .me-places::before {
+    left: calc(var(--place-pad) + var(--space-4) + var(--place-dot) / 2);
+  }
+
+  .me-place__city {
+    font-size: var(--text-xl);
+    overflow-wrap: normal;
   }
 }
