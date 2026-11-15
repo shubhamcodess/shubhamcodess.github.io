@@ -28,6 +28,11 @@ const entries = {
       'Replay of fuzzy on expressjs/express: the repository is indexed in 10.5 seconds, a keyword search for res.redirect finds 40 results in 1.7 ms, then a search by meaning, "stop users who are not logged in", finds the same restrict function in 27 ms.',
     load: () => import('./fuzzy').then((m) => m.motion),
   },
+  'everything-tech': {
+    label:
+      'Recording of a reader on EverythingTech, the edition of Friday 30 October 2026: the front page with its cover story on the Binance withdrawals, the must-reads, the Wire filtered to AI stories, a quick hit opened, the foot of the page, the archive of past editions, and the switch to night and back to day.',
+    load: () => import('./everything-tech').then((m) => m.motion),
+  },
   classify: {
     label:
       'Replay of classify on a support-ticket spreadsheet: the file is dropped in, each of seven rows gets a category, a decision and who decided it, one unsure row at 47% confidence asks a person, and the same file comes back with the new columns.',

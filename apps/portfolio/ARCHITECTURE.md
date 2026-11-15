@@ -49,6 +49,7 @@ The dev server is on port 5180. `build` type-checks first and writes static file
 | `src/layout` | Header and footer | `config`, `lib`, `ui` |
 | `src/features/*` | One folder per part of the site: `hero`, `builds`, `project`, `experience`, `credentials`, `contact` | everything above |
 | `scripts` | Build-time helpers that need the network. `fetch-credentials.mjs` reads the Credly wallet; `fetch-previews.mjs` saves the social preview of every outside link | `src/content/credentials-source.ts` |
+| `public/motion` | Recorded motion graphics, one folder per build (today `everything-tech/`: a desktop and a phone take as H.264, each with a JPEG poster). Fetched only by that build's motion module | nothing |
 | `public/data` | Data loaded at runtime, kept out of the bundle: `credentials.json`, `link-previews.json`. Written by the scripts, committed | nothing |
 | `src/motion` | Motion graphics, one folder per build: the replay brought over from that build's own site, with its own CSS. `index.ts` lists them; each loads as its own chunk, only on its project page | `content` types |
 | `src/app` | `App.tsx` is the frame every page shares. `pages.tsx` loads each page as its own chunk | everything above |

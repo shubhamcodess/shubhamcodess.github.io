@@ -1,0 +1,131 @@
+/*
+ * A macOS-style browser window around the recording: traffic lights and an address bar, in the site's own
+ * light or dark. The window fills the stage's fixed height; the recording fills the window from its top.
+ */
+:host {
+  --mac-bar: #ecebe7;
+  --mac-line: rgb(0 0 0 / 10%);
+  --mac-field: rgb(0 0 0 / 5%);
+  --mac-text: #57554f;
+  --mac-shadow: 0 30px 60px -36px rgb(0 0 0 / 40%), 0 0 0 1px rgb(0 0 0 / 8%);
+  font: 13px/1.4 var(--sans);
+}
+
+:host([data-theme='dark']) {
+  --mac-bar: #24262b;
+  --mac-line: rgb(255 255 255 / 8%);
+  --mac-field: rgb(255 255 255 / 6%);
+  --mac-text: #a3a7af;
+  --mac-shadow: 0 30px 60px -30px rgb(0 0 0 / 80%), 0 0 0 1px rgb(255 255 255 / 8%);
+}
+
+.mac {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: #f1ede4;
+  border-radius: 12px;
+  box-shadow: var(--mac-shadow);
+}
+
+.mac__bar {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  height: 40px;
+  padding: 0 14px;
+  background: var(--mac-bar);
+  border-bottom: 1px solid var(--mac-line);
+}
+
+.mac__lights {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.mac__lights i {
+  width: 12px;
+  height: 12px;
+  background: #ff5f57;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 20%);
+}
+
+.mac__lights i:nth-child(2) {
+  background: #febc2e;
+}
+
+.mac__lights i:nth-child(3) {
+  background: #28c840;
+}
+
+.mac__address {
+  position: absolute;
+  left: 50%;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100% - 180px);
+  height: 26px;
+  padding: 0 12px;
+  overflow: hidden;
+  color: var(--mac-text);
+  font: 12px var(--mono);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: var(--mac-field);
+  border-radius: 7px;
+  transform: translateX(-50%);
+}
+
+.mac__address svg {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.mac__screen {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.mac__screen video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* On a phone the window is a narrow browser: the lights stay, the address takes the rest of the bar. */
+@container (width < 560px) {
+  .mac__bar {
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  .mac__lights {
+    gap: 6px;
+  }
+
+  .mac__lights i {
+    width: 10px;
+    height: 10px;
+  }
+
+  .mac__address {
+    position: static;
+    flex: 1;
+    max-width: none;
+    font-size: 11px;
+    transform: none;
+  }
+}
