@@ -284,8 +284,9 @@
 .badge__labs-name {
   position: absolute;
   top: var(--space-5);
-  right: calc(var(--badge-width) * var(--badge-peek) * 0.12);
-  font-size: calc(var(--badge-width) * var(--badge-peek) * 0.62);
+  right: calc(var(--badge-width) * var(--badge-peek) * 0.1);
+  /* Sized to the strip that peeks out from behind the front card, so the whole word stays readable. */
+  font-size: calc(var(--badge-width) * var(--badge-peek) * 0.7);
   font-weight: var(--weight-heading);
   letter-spacing: -0.02em;
   line-height: 1;

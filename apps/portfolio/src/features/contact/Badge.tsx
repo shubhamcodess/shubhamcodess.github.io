@@ -24,7 +24,10 @@ export function Badge({ replay }: BadgeProps) {
   useSwing(swingRef, badge.swing)
 
   useEffect(() => {
-    if (replay > 0) swingRef.current?.dispatchEvent(new Event('swing:kick'))
+    if (replay === 0) return
+    // A replay starts the badge over: the developer card comes back to the front, then it swings.
+    setFront('dev')
+    swingRef.current?.dispatchEvent(new Event('swing:kick'))
   }, [replay])
 
   const swap = () => {
