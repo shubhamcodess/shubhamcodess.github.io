@@ -26,8 +26,8 @@ const readHash = () => {
 }
 const readPlace = () => decodeURIComponent(window.location.hash.slice(1)).split('/')[1] ?? null
 
-/** The face of a tile: its number or label, its name, and whatever content/me.ts gives it. */
-function TileFace({ entry, index, open }: { readonly entry: Entry; readonly index: number; readonly open: boolean }) {
+/** The face of a tile: its name, a label for the home tile, and whatever content/me.ts gives it. */
+function TileFace({ entry, open }: { readonly entry: Entry; readonly open: boolean }) {
   const Title = open ? 'h1' : 'h2'
   if (entry.kind === 'home') {
     const { item } = entry
@@ -49,7 +49,6 @@ function TileFace({ entry, index, open }: { readonly entry: Entry; readonly inde
     <div className="me-frame__inner">
       {item.art ? <Art src={item.art} label={item.title} /> : null}
       <div className="me-frame__text">
-        <span className="eyebrow">{String(index + 1).padStart(2, '0')}</span>
         <Title className="me-frame__title">{item.title}</Title>
         {item.line ? <p className="me-frame__line">{item.line}</p> : null}
         {item.details?.length ? (
@@ -132,7 +131,6 @@ export function MePage() {
   }, [openId])
 
   const open = entries.find((entry) => entry.item.id === openId)
-  const openIndex = open ? entries.indexOf(open) : -1
 
   return (
     <div className="panel panel--grow">
@@ -149,7 +147,7 @@ export function MePage() {
         {open ? (
           <div className="me-open">
             <nav className="me-rail" aria-label={me.kicker}>
-              {entries.map((entry, index) => (
+              {entries.map((entry) => (
                 <a
                   key={entry.item.id}
                   className="me-rail__tile"
@@ -157,7 +155,7 @@ export function MePage() {
                   {...(entry === open ? { 'aria-current': 'page' as const } : {})}
                   style={{ viewTransitionName: entry === open ? 'none' : `me-${entry.item.id}` }}
                 >
-                  <span className="eyebrow">{entry.kind === 'home' ? entry.item.label : String(index + 1).padStart(2, '0')}</span>
+                  {entry.kind === 'home' ? <span className="eyebrow">{entry.item.label}</span> : null}
                   <span className="me-rail__title">{titleOf(entry)}</span>
                 </a>
               ))}
@@ -167,7 +165,7 @@ export function MePage() {
               {open.kind === 'home' && open.item.places?.length ? (
                 <Places home={open.item} placeId={placeId} />
               ) : (
-                <TileFace entry={open} index={openIndex} open />
+                <TileFace entry={open} open />
               )}
               {open.item.story?.length ? (
                 <div className="me-detail__story">
@@ -207,7 +205,7 @@ export function MePage() {
                     data-tilt=""
                     style={{ viewTransitionName: `me-${entry.item.id}` }}
                   >
-                    <TileFace entry={entry} index={index} open={false} />
+                    <TileFace entry={entry} open={false} />
                   </a>
                 </Reveal>
               </li>

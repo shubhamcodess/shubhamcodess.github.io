@@ -40,7 +40,7 @@ export function BuildsPage() {
                   aria-pressed={filter === option.id}
                   onClick={() => setFilter(option.id)}
                 >
-                  {option.label} <span>{String(option.count).padStart(2, '0')}</span>
+                  {option.label} <span>{option.count}</span>
                 </button>
               ))}
           </div>

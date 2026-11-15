@@ -31,7 +31,7 @@ export function CredentialsPage() {
             <h1 className="section__title">{copy.title}</h1>
             <p className="section__lead">{copy.lead}</p>
           </div>
-          {result.state === 'ready' ? <p className="eyebrow">{String(credentials.length).padStart(2, '0')} held</p> : null}
+          {result.state === 'ready' ? <p className="eyebrow">{credentials.length} held</p> : null}
         </header>
 
         {result.state === 'loading' ? (
@@ -54,7 +54,7 @@ export function CredentialsPage() {
               {issuers.map((issuer) => (
                 <a key={issuer.name} href={`#${anchor(issuer.name)}`}>
                   <span>{issuer.name}</span>
-                  <span>{String(issuer.items.length).padStart(2, '0')}</span>
+                  <span>{issuer.items.length}</span>
                 </a>
               ))}
             </nav>
