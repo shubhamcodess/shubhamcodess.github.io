@@ -9,6 +9,16 @@ export type PaletteName = 'plain' | 'signature'
 /** Routes are a closed set. Add one here, add its HTML entry, and the compiler points at the rest. */
 export type RouteId = 'home' | 'builds' | 'experience' | 'credentials'
 
+/** Every kind of page, for choosing its header links. A project page is one per build. */
+export type NavPage = RouteId | 'project'
+
+export interface NavItem {
+  readonly label: string
+  readonly to: RouteId | `#${string}`
+  /** Home page sections (by id) during which this link shows as current. */
+  readonly activeOn?: readonly string[]
+}
+
 export interface RouteConfig {
   /** Path under the site base, with a trailing slash for directories. "" is the root. */
   readonly path: string
@@ -128,9 +138,12 @@ export interface SiteConfig {
      * "signature": the hero light's two colours become the two themes. Midnight blue for dark, warm paper for light.
      */
     readonly palette: PaletteName
+    /** Names the theme switch for screen readers. */
+    readonly label: string
   }
   readonly routes: Readonly<Record<RouteId, RouteConfig>>
-  readonly nav: readonly { readonly label: string; readonly to: RouteId | `#${string}` }[]
+  /** The header's links on each page. Keep each short: on a phone the header holds the logo, these and two icons. */
+  readonly nav: Readonly<Record<NavPage, readonly NavItem[]>>
   readonly hero: HeroConfig
   readonly featured: {
     readonly id: string

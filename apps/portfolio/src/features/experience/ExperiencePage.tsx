@@ -59,7 +59,7 @@ export function ExperiencePage() {
 
   return (
     <div className="panel panel--grow">
-      <Header current="experience" />
+      <Header page="experience" />
       <main id="main" className="section container">
         <header className="section__header enter">
           <div>

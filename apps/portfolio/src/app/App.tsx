@@ -13,12 +13,14 @@ import { Header } from '../layout/Header'
 import { ScrollLight } from '../layout/ScrollLight'
 import { SoundDesign } from '../layout/SoundDesign'
 import { LinkPreview } from '../ui/LinkPreview'
+import { useSectionTracking } from '../lib/sections'
 
 function HomePage() {
+  useSectionTracking()
   return (
     <main id="main" className="frame__main">
       <div className="panel panel--night">
-        <Header current="home" />
+        <Header page="home" />
         <Hero />
       </div>
       {site.features.featured ? <FeaturedSection /> : null}

@@ -1,9 +1,13 @@
 import { site } from '../config/site'
 import type { RouteId } from '../config/types'
 import { hrefTo } from '../lib/routes'
+import { Toggles } from './Toggles'
 import './footer.css'
 
-/** Sits straight on the backplate, outside the panels. It is the site's index: every page, from every page. */
+/**
+ * Sits straight on the backplate, outside the panels. It is the site's index (every page, from every page)
+ * and carries the sound and theme switches, so they are in reach from anywhere.
+ */
 export function Footer() {
   const { features, routes, contact } = site
   const pages: readonly RouteId[] = ['home', 'builds', 'experience', 'credentials']
@@ -24,6 +28,9 @@ export function Footer() {
         ))}
         {features.contact ? <a href={hrefTo(`#${contact.id}`)}>{contact.kicker}</a> : null}
       </nav>
+      <div className="site-footer__toggles">
+        <Toggles />
+      </div>
     </footer>
   )
 }

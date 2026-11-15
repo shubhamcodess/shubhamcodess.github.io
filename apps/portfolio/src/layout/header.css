@@ -41,57 +41,38 @@
   transition: color var(--duration-fast) linear;
 }
 
-.site-header__link[aria-current='page'] {
+.site-header__link {
+  position: relative;
+}
+
+/* The current page or section: full ink, with a small point of the light beneath. */
+.site-header__link[aria-current] {
   color: var(--ink);
 }
 
-.site-header__theme {
-  display: grid;
-  place-items: center;
-  width: var(--target-min);
-  height: var(--target-min);
-  padding: 0;
-  color: var(--ink-muted);
-  background: none;
-  border: 0;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
+.site-header__link::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: var(--xp-light);
+  border-radius: 50%;
+  opacity: 0;
+  transform: translateX(-50%) scale(0.4);
   transition:
-    color var(--duration-fast) linear,
-    background-color var(--duration-fast) linear;
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.site-header__link[aria-current]::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
 }
 
 @media (hover: hover) {
-  .site-header__link:hover,
-  .site-header__theme:hover {
+  .site-header__link:hover {
     color: var(--ink);
-  }
-
-  .site-header__theme:hover {
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
-  }
-}
-
-/* The icon turns in when the theme changes. */
-.site-header__turn {
-  display: grid;
-  animation: turn var(--duration-base) var(--ease-out) backwards;
-}
-
-@keyframes turn {
-  from {
-    opacity: 0;
-    transform: rotate(-70deg) scale(0.6);
-  }
-}
-
-/* While sound is on, the waves in the icon breathe slowly. */
-.site-header__sound[aria-pressed='true'] .icon path:not(:first-child) {
-  animation: sound-breathe 2.4s ease-in-out infinite;
-}
-
-@keyframes sound-breathe {
-  50% {
-    opacity: 0.35;
   }
 }

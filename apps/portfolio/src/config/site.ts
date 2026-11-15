@@ -5,18 +5,28 @@ export const site = {
   owner: 'Shubham Prakash',
   monogram: 'SP',
   // Switch `palette` to 'plain' to go back to the black frame and neutral panels. Nothing else needs to change.
-  theme: { default: 'light', storageKey: 'portfolio-theme', palette: 'signature' },
+  theme: { default: 'light', storageKey: 'portfolio-theme', palette: 'signature', label: 'Dark theme' },
   routes: {
     home: { path: '', label: 'Home', title: 'Shubham Prakash | Cloud Full Stack Developer' },
     builds: { path: 'builds/', label: 'Builds', title: 'All builds | Shubham Prakash' },
     experience: { path: 'experience/', label: 'Experience', title: 'Experience | Shubham Prakash' },
     credentials: { path: 'credentials/', label: 'Credentials', title: 'Credentials | Shubham Prakash' },
   },
-  nav: [
-    { label: 'Builds', to: 'builds' },
-    { label: 'Experience', to: 'experience' },
-    { label: 'Contact', to: '#contact' },
-  ],
+  // Home carries all three. Elsewhere only the other main page: Contact is in every footer, and the logo goes home.
+  nav: {
+    home: [
+      { label: 'Builds', to: 'builds', activeOn: ['featured'] },
+      { label: 'Experience', to: 'experience', activeOn: ['experience'] },
+      { label: 'Contact', to: '#contact', activeOn: ['contact'] },
+    ],
+    builds: [{ label: 'Experience', to: 'experience' }],
+    project: [{ label: 'Experience', to: 'experience' }],
+    experience: [{ label: 'Builds', to: 'builds' }],
+    credentials: [
+      { label: 'Builds', to: 'builds' },
+      { label: 'Experience', to: 'experience' },
+    ],
+  },
   hero: {
     name: ['Shubham', 'Prakash'],
     role: 'Cloud Full Stack Developer',

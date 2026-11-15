@@ -134,6 +134,8 @@ State on 2026-11-15: every page in `DESIGN.md` is built, typed, formatted and co
 
 **Small things worth knowing:**
 
+- The preview pane in the desktop app stalls CSS transitions and `requestAnimationFrame`. To test scroll-driven code there, stand in a timer: `window.requestAnimationFrame = cb => setTimeout(() => cb(performance.now()), 16)`.
+- **Shared state** (theme, sound, current section) lives in small stores read with `useSyncExternalStore`, so the header and footer switches always agree. Theme and sound re-read storage on `pageshow`, because Back and Forward restore pages as they were left.
 - The preview pane in the desktop app stalls CSS transitions. A blank area in a screenshot is usually an entrance that has not played, not a bug. Check with a real browser.
 - `pnpm data` needs the network, and npm, LinkedIn and Product Hunt refuse automated reads, so those links have no hover card.
 - **Colours:** `theme.palette` in `config/site.ts` is `'signature'` or `'plain'`. The build writes it onto `<html data-palette>`; `tokens.css` does the rest. The shader reads `--night-surface`, which must stay a six-digit hex.

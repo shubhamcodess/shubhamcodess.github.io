@@ -50,7 +50,7 @@ export function ProjectPage({ build }: ProjectPageProps) {
       {/* Title plate: who this is, in one screen-width breath. */}
       <div className="panel panel--night project-title">
         <LightBackdrop config={titleLight} light={features.heroLight} parallax={features.heroParallax} />
-        <Header current="builds" />
+        <Header page="project" />
         <div className="project-title__body container">
           <ActionLink href={hrefTo('builds')} icon="arrowLeft" iconFirst>
             {projectPage.back}

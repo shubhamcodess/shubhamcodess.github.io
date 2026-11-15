@@ -24,7 +24,7 @@ export function CredentialsPage() {
 
   return (
     <div className="panel panel--grow">
-      <Header current="credentials" />
+      <Header page="credentials" />
       <main id="main" className="section container">
         <header className="section__header enter">
           <div>

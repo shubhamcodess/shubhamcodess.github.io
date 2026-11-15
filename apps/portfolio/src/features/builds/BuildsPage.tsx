@@ -18,7 +18,7 @@ export function BuildsPage() {
 
   return (
     <div className="panel panel--grow">
-      <Header current="builds" />
+      <Header page="builds" />
       <main id="main" className="section container">
         <header className="section__header">
           <div>

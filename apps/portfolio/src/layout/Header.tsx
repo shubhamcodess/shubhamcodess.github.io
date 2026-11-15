@@ -1,21 +1,18 @@
 import { site } from '../config/site'
-import type { RouteId } from '../config/types'
+import type { NavItem, NavPage } from '../config/types'
 import { hrefTo } from '../lib/routes'
-import { setSound, soundState } from '../lib/sound/sound'
-import { useTheme } from '../lib/useTheme'
-import { useSyncExternalStore } from 'react'
-import { Icon } from '../ui/Icon'
+import { useCurrentSection } from '../lib/sections'
+import { Toggles } from './Toggles'
 import './header.css'
 
 interface HeaderProps {
-  /** The page this header is on, so its link can be marked. */
-  readonly current: RouteId
+  /** The kind of page this header is on. It picks the links, from `nav` in the config. */
+  readonly page: NavPage
 }
 
-export function Header({ current }: HeaderProps) {
-  const [theme, toggleTheme] = useTheme()
-  const sound = useSyncExternalStore(soundState.subscribe, soundState.get, () => false)
+export function Header({ page }: HeaderProps) {
   const { features } = site
+  const section = useCurrentSection()
   const enabled: Readonly<Record<string, boolean>> = {
     builds: features.buildsPage,
     experience: features.experience,
@@ -23,7 +20,15 @@ export function Header({ current }: HeaderProps) {
     '#contact': features.contact,
     '#featured': features.featured,
   }
-  const links = site.nav.filter((item) => enabled[item.to] ?? true)
+  const links = site.nav[page].filter((item) => enabled[item.to] ?? true)
+
+  // A link is current when it is this page, or, on home, when its section is the one being read.
+  const current = (item: NavItem) =>
+    item.to === page
+      ? { 'aria-current': 'page' as const }
+      : section && item.activeOn?.includes(section)
+        ? { 'aria-current': 'location' as const }
+        : {}
 
   return (
     <header className="site-header container">
@@ -32,42 +37,11 @@ export function Header({ current }: HeaderProps) {
       </a>
       <nav className="site-header__nav" aria-label="Main">
         {links.map((item) => (
-          <a
-            key={item.to}
-            className="site-header__link"
-            href={hrefTo(item.to)}
-            {...(item.to === current ? { 'aria-current': 'page' } : {})}
-          >
+          <a key={item.to} className="site-header__link" href={hrefTo(item.to)} {...current(item)}>
             {item.label}
           </a>
         ))}
-        {features.sound ? (
-          <button
-            className="site-header__theme site-header__sound"
-            type="button"
-            onClick={() => void setSound(!sound)}
-            aria-pressed={sound}
-            aria-label={site.sound.label}
-            data-sound={sound ? undefined : 'none'}
-          >
-            <span key={String(sound)} className="site-header__turn">
-              <Icon name={sound ? 'soundOn' : 'soundOff'} size={18} />
-            </span>
-          </button>
-        ) : null}
-        {site.features.themeToggle ? (
-          <button
-            className="site-header__theme"
-            type="button"
-            onClick={toggleTheme}
-            aria-pressed={theme === 'dark'}
-            aria-label="Dark theme"
-          >
-            <span key={theme} className="site-header__turn">
-              <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
-            </span>
-          </button>
-        ) : null}
+        <Toggles />
       </nav>
     </header>
   )
