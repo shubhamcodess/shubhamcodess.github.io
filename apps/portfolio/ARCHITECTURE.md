@@ -50,6 +50,7 @@ The dev server is on port 5180. `build` type-checks first and writes static file
 | `src/features/*` | One folder per part of the site: `hero`, `builds`, `project`, `experience`, `credentials`, `contact` | everything above |
 | `scripts` | Build-time helpers that need the network. `fetch-credentials.mjs` reads the Credly wallet; `fetch-previews.mjs` saves the social preview of every outside link | `src/content/credentials-source.ts` |
 | `public/data` | Data loaded at runtime, kept out of the bundle: `credentials.json`, `link-previews.json`. Written by the scripts, committed | nothing |
+| `src/motion` | Motion graphics, one folder per build: the replay brought over from that build's own site, with its own CSS. `index.ts` lists them; each loads as its own chunk, only on its project page | `content` types |
 | `src/app` | `App.tsx` is the frame every page shares. `pages.tsx` loads each page as its own chunk | everything above |
 
 Imports only go down this table. A feature never imports another feature. If two need the same thing, it moves to `ui` or `lib`.
@@ -79,6 +80,8 @@ pnpm --filter @portfolio/app data
 **A use case or recording for a build:** fill `useCase` in its entry in `content/build-stories.ts`, or `media` on the build in `content/builds.ts`. The page shows the section only when it exists.
 
 **Something about life outside work:** edit `content/me.ts`. State outlines are in `content/state-maps.ts` (Karnataka, Jharkhand, Odisha), made from OpenStreetMap's boundaries (ODbL; credit kept in that file); a place is marked by latitude and longitude with `placeOn`. Add a state the same way. Put drawings, pictures or clips in `public/me/` and point `art` at them.
+
+**A motion graphic for a build:** add a folder under `src/motion/<slug>/` with `index.ts` exporting `motion` (its CSS and a `mount(root)` that starts the replay and returns the way to stop it) and the replay's CSS, then list it with its label in `src/motion/index.ts`. The stage loads it once it nears the screen, inside a shadow root with the data-theme of the page. The CSS is the build site's own stylesheet cut to the rules the replay uses: `:root` becomes `:host`, its `[data-theme]` blocks become `:host([data-theme])`, width media queries become container queries and `vw` becomes `cqi`, so it lays out by the stage's width, not the window's.
 
 **A role, employer or recognition:** edit `content/experience.ts`. A new employer goes at the top of `employers`.
 

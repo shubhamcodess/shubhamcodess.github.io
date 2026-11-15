@@ -1,0 +1,650 @@
+:host {
+  --bg: #fafaf8;
+  --panel: #fff;
+  --bar: #f3f3f0;
+  --fg: #0c0c0b;
+  --mute: #55544e;
+  --faint: #6b6a63;
+  --line: #0c0c0b17;
+  --thumb: #0c0c0b29;
+  --hover: #efefeb;
+  --accent: #c2410c;
+  --mark: #c2410c24;
+  --code: #0c0c0b;
+  --ln: #0c0c0b47;
+  --ok: #15803d;
+  --err: #dc2626;
+  --glass: #fafaf8d1;
+  --shadow: 0 40px 90px -36px #0c0c0b73, 0 0 0 1px #0c0c0b14;
+  --pop: 0 12px 32px #0c0c0b24;
+  --mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+  --sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --hh: 60px; /* header */
+  --th: 66px; /* sticky search bar */
+  --pw: 288px; /* library panel */
+  --max: 1480px;
+  --col: 960px; /* landing column */
+  --pad: clamp(20px, 4cqi, 40px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --text: var(--fg);
+  --text-2: var(--mute);
+  --text-3: var(--faint);
+  --raise: var(--hover);
+  --line-2: var(--thumb);
+  --bg-2: var(--bar);
+  --cut: var(--accent);
+  --btn-bg: var(--fg);
+  --btn-fg: var(--bg);
+  --m-bg: #0e0e0d;
+  --m-bar: #141413;
+  --m-panel: #161615;
+  --m-raise: #1f1f1d;
+  --m-line: #edece814;
+  --m-line-2: #edece824;
+  --m-text: #edece8;
+  --m-text-2: #a8a7a1;
+  --m-text-3: #85847e;
+  --m-cut: #f7703f;
+  color-scheme: light;
+}
+:host([data-theme='dark']) {
+  --bg: #0c0c0b;
+  --panel: #141413;
+  --bar: #121211;
+  --fg: #edece8;
+  --mute: #a8a7a1;
+  --faint: #85847e;
+  --line: #edece814;
+  --thumb: #edece826;
+  --hover: #1b1b19;
+  --accent: #f7703f;
+  --mark: #f7703f33;
+  --code: #edece8;
+  --ln: #edece84d;
+  --ok: #7fd4a0;
+  --err: #f87171;
+  --glass: #0c0c0bd1;
+  --shadow: 0 40px 100px -30px #000c, 0 0 0 1px #edece80f;
+  --pop: 0 12px 32px #0009;
+  color-scheme: dark;
+}
+/* the page scrolls, without a visible scrollbar */
+button {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+svg {
+  flex: none;
+  fill: currentColor;
+}
+svg.s {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------------------------------------------------------- header */
+.mark {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--fg);
+  color: var(--bg);
+  font: 700 12.5px/1 var(--mono);
+  letter-spacing: -0.04em;
+}
+
+/* ---------------------------------------------------------- shared controls */
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--fg);
+  color: var(--bg);
+  font-weight: 550;
+  transition: opacity 0.12s;
+}
+.primary:hover {
+  opacity: 0.86;
+}
+.primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.link {
+  font-size: 12.5px;
+  color: var(--mute);
+  padding: 3px 6px;
+  border-radius: 6px;
+}
+.link:hover {
+  color: var(--fg);
+  background: var(--hover);
+}
+.modes {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--bar);
+  border-radius: 8px;
+  flex: none;
+}
+.modes button {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mute);
+}
+.modes button:hover:not(:disabled):not(.on) {
+  color: var(--fg);
+}
+.modes button.on {
+  background: var(--panel);
+  color: var(--fg);
+  box-shadow: 0 0 0 1px var(--line);
+}
+.modes button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 6px 0 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  color: var(--mute);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.search:focus-within {
+  border-color: var(--thumb);
+  box-shadow: 0 0 0 3px var(--hover);
+}
+
+/* ---------------------------------------------------------- landing */
+.repo {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  height: 56px;
+  padding: 0 9px 0 16px;
+  background: var(--panel);
+  border: 1px solid var(--thumb);
+  border-radius: 12px;
+  color: var(--mute);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.repo:focus-within {
+  border-color: var(--thumb);
+  box-shadow: 0 0 0 3px var(--hover);
+}
+.prefix {
+  font: 13px var(--mono);
+}
+.repo .primary {
+  height: 38px;
+  padding: 0 16px;
+  font-size: 13.5px;
+  white-space: nowrap;
+}
+
+/* branch picker */
+.branch {
+  position: relative;
+}
+
+/* landing sections */
+.demo {
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.win {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 42px;
+  padding: 0 16px;
+  background: var(--bar);
+  border-bottom: 1px solid var(--line);
+  font: 12px var(--mono);
+  color: var(--mute);
+}
+.win > span:nth-child(1) {
+  display: flex;
+  gap: 7px;
+}
+.win > span:nth-child(1) i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--thumb);
+}
+.win > b {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-weight: 400;
+  pointer-events: none;
+}
+.win > em {
+  font-style: normal;
+  color: var(--faint);
+}
+.win > em u {
+  text-decoration: none;
+  color: var(--fg);
+}
+.d-stage {
+  position: relative;
+  height: 344px;
+  padding: 14px;
+  overflow: hidden;
+}
+.d-scene {
+  height: 100%;
+  animation: d-fade 0.3s ease;
+}
+.d-index {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.d-repo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 48px;
+  padding: 0 7px 0 14px;
+  border: 1px solid var(--thumb);
+  border-radius: 11px;
+  font: 13px var(--mono);
+  color: var(--mute);
+}
+.d-typed {
+  color: var(--fg);
+}
+.d-repo .primary {
+  margin-left: auto;
+  height: 34px;
+  padding: 0 13px;
+  font: 550 13px var(--sans);
+  transition: transform 0.1s;
+}
+.d-repo .primary.down {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+.d-caret {
+  display: inline-block;
+  width: 7px;
+  height: 15px;
+  margin-left: 2px;
+  background: var(--accent);
+  opacity: 0.75;
+  animation: d-blink 1s steps(2) infinite;
+}
+.d-index .progress {
+  margin-top: 36px;
+  width: 100%;
+  animation: d-fade 0.25s ease;
+}
+.d-q {
+  flex: 1;
+  min-width: 0;
+  font: 13px var(--mono);
+  color: var(--fg);
+  overflow: hidden;
+  white-space: nowrap;
+}
+.demo .modes b {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mute);
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.demo .modes b.on {
+  background: var(--panel);
+  color: var(--fg);
+  box-shadow: 0 0 0 1px var(--line);
+}
+.d-search .meta {
+  margin: 8px 0 2px;
+}
+.d-in {
+  animation: d-rise 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.d-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--faint);
+}
+.d-ctl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.demo.paused .d-caret {
+  animation-play-state: paused;
+}
+@keyframes d-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes d-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes d-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------- workspace */
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 26px;
+  margin-bottom: 8px;
+  font-size: 12.5px;
+  color: var(--mute);
+}
+
+/* result cards: the page scrolls, cards never do */
+.file {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: clip;
+}
+.results .file + .file {
+  margin-top: 10px;
+}
+.file-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bar);
+  font: 12.5px var(--mono);
+  text-align: left;
+  position: sticky;
+  top: calc(var(--hh) + var(--th));
+  z-index: 2;
+}
+.file-head.static {
+  position: static;
+}
+.file-head .path {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-head small {
+  font: inherit;
+  color: var(--faint);
+}
+.file {
+  scroll-margin-top: calc(var(--hh) + var(--th) + 8px);
+}
+.chunk + .chunk {
+  border-top: 1px solid var(--line);
+}
+.chunk-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 14px 2px;
+  font: 11.5px var(--mono);
+  color: var(--faint);
+}
+.chunk-head .sym {
+  color: var(--accent);
+}
+.chunk-head .rng {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+pre {
+  font: 12.5px/1.7 var(--mono);
+  color: var(--code);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 0 10px;
+}
+pre div {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  white-space: pre;
+}
+pre .n {
+  position: sticky;
+  left: 0;
+  flex: none;
+  width: 50px;
+  padding-right: 14px;
+  text-align: right;
+  color: var(--ln);
+  background: var(--panel);
+  user-select: none;
+}
+mark {
+  background: var(--mark);
+  color: inherit;
+  border-radius: 3px;
+}
+
+/* empty, busy and error states */
+.progress {
+  max-width: 440px;
+  margin: clamp(28px, 8vh, 72px) auto 0;
+  padding: 0 8px;
+}
+.progress ol {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  font-size: 13.5px;
+}
+.progress li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--faint);
+}
+.progress li small {
+  margin-left: auto;
+  font: 12px var(--mono);
+  color: var(--mute);
+}
+.progress li > i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line);
+  flex: none;
+}
+.progress li.done {
+  color: var(--mute);
+}
+.progress li.done > i {
+  background: var(--ok);
+}
+.progress li.now {
+  color: var(--fg);
+  font-weight: 500;
+}
+.progress li.now > i {
+  background: var(--accent);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.progress .track {
+  margin-top: 18px;
+  height: 3px;
+  background: var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress .track i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ---------------------------------------------------------- library panel */
+.add {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  margin-top: 8px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--faint);
+}
+.add:focus-within {
+  border-color: var(--thumb);
+}
+
+/* docked next to the workspace on wide screens */
+
+/* ---------------------------------------------------------- footer */
+/* the workspace is a tool: a single quiet line is enough */
+
+/* ---------------------------------------------------------- token dialog */
+
+/* ---------------------------------------------------------- responsive */
+@container (max-width:640px) {
+  :host {
+    --th: 102px;
+  }
+  .prefix {
+    display: none;
+  }
+  .repo {
+    height: 46px;
+    gap: 5px;
+    padding-left: 12px;
+  }
+  .repo .primary {
+    padding: 0 11px;
+  }
+  .d-stage {
+    height: 340px;
+    padding: 10px;
+  }
+  .demo .modes b:not(.on) {
+    display: none;
+  }
+  .d-q {
+    font-size: 12px;
+  }
+  .d-index .progress {
+    margin-top: 24px;
+  }
+  .d-repo .prefix {
+    display: none;
+  }
+  .win > em {
+    display: none;
+  }
+  /* search on one row, modes on the next */
+  .search {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    gap: 6px;
+    box-shadow: none !important;
+  }
+  .file-head {
+    position: static;
+  }
+  pre .n {
+    width: 38px;
+    padding-right: 10px;
+  }
+}
+
+/* ---------------------------------------------------------- reference frame, tile art and footer */
+/* the workspace is a tool: only the single line */
+/* every part of search reads in JetBrains Mono */
+pre {
+  font-family: var(--mono);
+  letter-spacing: 0;
+}
+
+/* landing section bodies */
+.mark {
+  transition: transform 0.18s var(--ease);
+}
+
+/* Section heading, reveal, marquee, button and footer styles, taken from mcp-token-optimizer/site. */
+
+/* fuzzy's body text. */
+:host {
+  font: 14px/1.5 var(--sans);
+  letter-spacing: -0.006em;
+}

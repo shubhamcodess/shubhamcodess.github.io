@@ -1,0 +1,56 @@
+/*
+ * What every replay's own site gave it through the page: a reset, its body text, and the frame it sits in.
+ * The replay's own styles come after this; the site's two typefaces come last, so every replay speaks in
+ * Geist and Geist Mono like the rest of the page.
+ */
+:host {
+  display: block;
+  container-type: inline-size;
+  color: var(--text, var(--fg));
+  -webkit-font-smoothing: antialiased;
+  text-align: left;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ol,
+ul,
+dl,
+dd,
+figure,
+pre {
+  margin: 0;
+}
+
+ol,
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

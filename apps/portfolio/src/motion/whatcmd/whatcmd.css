@@ -1,0 +1,354 @@
+/* Design tokens and base components follow the mcp-token-optimizer site. */
+:host {
+  --sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+  --max: 1180px;
+  --pad: clamp(20px, 4cqi, 40px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --r: 12px;
+  /* terminal ("m" = mock) palette */
+  --m-bg: #0e0e0d;
+  --m-bar: #141413;
+  --m-panel: #161615;
+  --m-raise: #1f1f1d;
+  --m-line: #edece814;
+  --m-line-2: #edece824;
+  --m-text: #edece8;
+  --m-text-2: #a8a7a1;
+  --m-text-3: #85847e;
+  --m-cut: #f7703f;
+  --m-ok: #7fd4a0;
+  --m-key: #d7c9a7;
+  --m-warn: #e8c46a;
+}
+:host([data-theme='light']) {
+  --m-bg: #f4f4f0;
+  --m-bar: #ecece7;
+  --m-panel: #fbfbf9;
+  --m-raise: #e6e6e0;
+  --m-line: #0c0c0b14;
+  --m-line-2: #0c0c0b24;
+  --m-text: #0c0c0b;
+  --m-text-2: #4f4e48;
+  --m-text-3: #6b6a63;
+  --m-cut: #a83a0b;
+  --m-ok: #126b35;
+  --m-key: #8a5a00;
+  --m-warn: #8a5a00;
+}
+:host([data-theme='dark']) {
+  color-scheme: dark;
+  --bg: #0c0c0b;
+  --bg-2: #121211;
+  --panel: #141413;
+  --raise: #1b1b19;
+  --line: #edece814;
+  --line-2: #edece826;
+  --text: #edece8;
+  --text-2: #a8a7a1;
+  --text-3: #85847e;
+  --cut: #f7703f;
+  --ok: #7fd4a0;
+  --dot: 237, 236, 232;
+  --dot-cut: 247, 112, 63;
+  --glow: #f7703f12;
+  --btn-bg: #edece8;
+  --btn-fg: #0c0c0b;
+  --shadow: 0 40px 100px -30px #000c, 0 0 0 1px #edece80f;
+}
+:host([data-theme='light']) {
+  color-scheme: light;
+  --bg: #fafaf8;
+  --bg-2: #f3f3f0;
+  --panel: #fff;
+  --raise: #efefeb;
+  --line: #0c0c0b17;
+  --line-2: #0c0c0b29;
+  --text: #0c0c0b;
+  --text-2: #55544e;
+  --text-3: #6b6a63;
+  --cut: #c2410c;
+  --ok: #15803d;
+  --dot: 12, 12, 11;
+  --dot-cut: 194, 65, 12;
+  --glow: #c2410c0f;
+  --btn-bg: #0c0c0b;
+  --btn-fg: #fafaf8;
+  --shadow: 0 40px 90px -36px #0c0c0b73, 0 0 0 1px #0c0c0b14;
+}
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: 0 0;
+  border: 0;
+  padding: 0;
+}
+.p {
+  color: var(--text-3);
+  user-select: none;
+}
+
+/* ---------- nav ---------- */
+
+/* ---------- buttons ---------- */
+
+/* animated "Star on GitHub" */
+
+/* ---------- hero ---------- */
+/* Wide screens: the link sits at the bottom of the left column, centred on the button row at right. */
+/* a claim's target briefly lights up after the jump */
+.step:target {
+  animation: claim-hit 1.6s var(--ease);
+}
+@keyframes claim-hit {
+  0%,
+  30% {
+    background: color-mix(in srgb, var(--cut) 10%, var(--panel));
+  }
+}
+
+/* install box */
+.cmd {
+  border: 1px solid var(--line-2);
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+  border-radius: 14px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  padding: 6px;
+  display: grid;
+}
+.copy {
+  height: 32px;
+  color: var(--text-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  padding: 0 11px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+  display: inline-flex;
+}
+.copy:hover {
+  color: var(--text);
+  border-color: var(--line-2);
+}
+.copy svg {
+  width: 14px;
+  height: 14px;
+}
+.copy[data-done='true'] {
+  color: var(--ok);
+}
+
+/* ---------- macOS terminal ---------- */
+.term {
+  background: var(--m-bg);
+  color: var(--m-text);
+  border: 1px solid var(--m-line-2);
+  box-shadow: var(--shadow);
+  border-radius: 14px;
+  min-width: 0;
+  overflow: hidden;
+}
+.term__bar {
+  background: var(--m-bar);
+  border-bottom: 1px solid var(--m-line);
+  height: 40px;
+  font-family: var(--mono);
+  color: var(--m-text-2);
+  white-space: nowrap;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  font-size: 0.72rem;
+  display: flex;
+}
+.mac__dots {
+  display: inline-flex;
+  gap: 8px;
+}
+.mac__dots i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff5f57;
+  box-shadow: inset 0 0 0 0.5px #0003;
+}
+.mac__dots i:nth-child(2) {
+  background: #febc2e;
+}
+.mac__dots i:nth-child(3) {
+  background: #28c840;
+}
+.mac__title {
+  flex: 1;
+  text-align: center;
+  color: var(--m-text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mac__hint {
+  color: var(--m-text-3);
+  opacity: 0.7;
+}
+@container (width <= 560px) {
+  .mac__hint {
+    display: none;
+  }
+}
+.term__body {
+  font-family: var(--mono);
+  height: clamp(340px, 46cqi, 420px);
+  padding: 16px 18px 18px;
+  font-size: clamp(0.7rem, 1.3cqi, 0.8125rem);
+  line-height: 1.8;
+  position: relative;
+  overflow: hidden;
+}
+.term__body:after {
+  content: '';
+  background: linear-gradient(var(--m-bg), transparent);
+  pointer-events: none;
+  height: 36px;
+  position: absolute;
+  inset: 0 0 auto;
+}
+.term__scroll {
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100%;
+  display: flex;
+}
+.term__foot {
+  border-top: 1px solid var(--m-line);
+  background: var(--m-bar);
+  font-family: var(--mono);
+  color: var(--m-text-3);
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px 9px 16px;
+  font-size: 0.7rem;
+  display: flex;
+}
+.term__foot .copy {
+  color: var(--m-text-2);
+  border-color: var(--m-line-2);
+}
+.term__foot .copy:hover {
+  color: var(--m-text);
+}
+.t-cmd {
+  color: var(--m-text);
+}
+.t-cmd .p,
+.t-ps {
+  color: var(--m-ok);
+  user-select: none;
+}
+.t-com {
+  color: var(--m-text-3);
+}
+.t-out {
+  color: var(--m-text-2);
+}
+.t-ok {
+  color: var(--m-ok);
+}
+.t-warn {
+  color: var(--m-warn);
+}
+.t-new {
+  animation: prefill 0.9s var(--ease);
+  border-radius: 4px;
+}
+@keyframes prefill {
+  0% {
+    background: color-mix(in srgb, var(--m-cut) 28%, transparent);
+  }
+  100% {
+    background: transparent;
+  }
+}
+.enter {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 0 6px;
+  border: 1px solid var(--m-line-2);
+  border-radius: 5px;
+  font-size: 0.85em;
+  line-height: 1.5;
+  color: var(--m-text-2);
+  animation: fade-up 0.3s var(--ease) both;
+}
+.caret {
+  vertical-align: text-bottom;
+  background: var(--m-text-2);
+  width: 7px;
+  height: 1.05em;
+  margin-left: 1px;
+  animation: 1s step-end infinite blink;
+  display: inline-block;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+.appear {
+  animation: fade-up 0.45s var(--ease) both;
+}
+
+/* ---------- features ---------- */
+
+/* ---------- powered-by link ---------- */
+
+/* ---------- link preview card ---------- */
+
+/* ---------- what's new ---------- */
+
+/* ---------- how it works ---------- */
+.step {
+  background: color-mix(in srgb, var(--panel) 88%, var(--bg));
+  padding: 22px 24px 24px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+/* ---------- evals ---------- */
+.key {
+  align-items: center;
+  gap: 8px;
+  display: inline-flex;
+}
+.key i {
+  background: var(--text);
+  border-radius: 2px;
+  width: 18px;
+  height: 8px;
+}
+
+/* ---------- footer ---------- */
+
+/* The site's body text. */
+:host {
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  letter-spacing: -0.006em;
+  font-feature-settings: 'ss01', 'cv11';
+}

@@ -10,6 +10,8 @@ import { NpmDownloads } from '../../ui/NpmDownloads'
 import { Reveal } from '../../ui/Reveal'
 import { TechTag } from '../../ui/TechTag'
 import { LightBackdrop } from '../../ui/light/LightBackdrop'
+import { motions } from '../../motion'
+import { MotionStage } from './MotionStage'
 import './project.css'
 
 const linkLabels = {
@@ -36,6 +38,7 @@ export function ProjectPage({ build }: ProjectPageProps) {
   const next = builds[(position + 1) % builds.length]
 
   const live = build.links.find((link) => link.kind === 'live') ?? build.links[0]
+  const motion = motions[build.slug]
   const sections = [
     { id: 'what', title: projectPage.sections.features, shown: true },
     { id: 'use-case', title: story.useCase?.title ?? projectPage.useCase, shown: Boolean(story.useCase) },
@@ -112,8 +115,10 @@ export function ProjectPage({ build }: ProjectPageProps) {
                   <span />
                   {live ? <p>{new URL(live.href).host + new URL(live.href).pathname.replace(/\/$/, '')}</p> : null}
                 </div>
-                <div className="project-stage__screen">
-                  {build.media?.kind === 'video' ? (
+                <div className={`project-stage__screen${motion ? ' project-stage__screen--motion' : ''}`}>
+                  {motion ? (
+                    <MotionStage motion={motion} />
+                  ) : build.media?.kind === 'video' ? (
                     <video src={build.media.src} aria-label={build.media.alt} autoPlay muted loop playsInline />
                   ) : build.media ? (
                     <img src={build.media.src} alt={build.media.alt} loading="lazy" decoding="async" />

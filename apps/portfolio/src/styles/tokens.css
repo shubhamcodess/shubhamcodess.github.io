@@ -120,6 +120,9 @@
   --project-fact-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.75rem);
   --project-rail-width: 200px;
   --project-stage-ratio: 16 / 9;
+  /* A motion graphic's ground: room around the replay, and the height it holds while it loads. */
+  --project-motion-pad: clamp(10px, 3vw, 40px);
+  --project-motion-min: 320px;
   --project-measure: 46rem;
 
   /* Component: experience timeline */

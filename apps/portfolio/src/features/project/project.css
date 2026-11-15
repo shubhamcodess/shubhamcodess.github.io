@@ -111,6 +111,26 @@
     repeating-linear-gradient(to right, transparent 0 39px, var(--marker-lane) 39px 40px), var(--surface-sunken);
 }
 
+/* A motion graphic sets its own height: the replay as its own site showed it, on a plain sunken ground. */
+.project-stage__screen--motion {
+  display: block;
+  place-items: normal;
+  aspect-ratio: auto;
+  min-height: var(--project-motion-min);
+  padding: var(--project-motion-pad);
+  background: var(--surface-sunken);
+}
+
+.project-stage__motion {
+  width: 100%;
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.project-stage__motion[data-ready] {
+  opacity: 1;
+}
+
 .project-stage__screen :is(video, img) {
   display: block;
   width: 100%;
