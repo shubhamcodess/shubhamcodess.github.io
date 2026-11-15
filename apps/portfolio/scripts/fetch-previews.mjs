@@ -15,6 +15,9 @@ for (const file of sources) {
   const text = await readFile(new URL(file, root), 'utf8')
   for (const match of text.matchAll(/href: '(https:\/\/[^']+)'/g)) links.add(match[1])
 }
+for (const credential of JSON.parse(await readFile(new URL('public/data/credentials.json', root), 'utf8'))) {
+  if (credential.href) links.add(credential.href)
+}
 
 const meta = (html, key) => {
   const tag = html.match(new RegExp(`<meta[^>]+(?:property|name)=["']${key}["'][^>]*>`, 'i'))?.[0]
@@ -55,5 +58,5 @@ for (const href of links) {
   }
 }
 
-await writeFile(new URL('src/content/link-previews.json', root), `${JSON.stringify(previews, null, 2)}\n`)
+await writeFile(new URL('public/data/link-previews.json', root), `${JSON.stringify(previews, null, 2)}\n`)
 console.log(`${Object.keys(previews).length} of ${links.size} links have a preview`)

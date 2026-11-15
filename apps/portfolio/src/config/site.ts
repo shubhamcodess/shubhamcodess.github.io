@@ -88,6 +88,10 @@ export const site = {
     lead: 'Certifications and badges I hold, grouped by who issued them.',
     verify: 'Verify',
     more: 'Credentials',
+    loading: 'Loading credentials…',
+    failed: 'The list could not load.',
+    wallet: 'https://www.credly.com/users/shubham-prakash.b983dbb5/badges',
+    walletLabel: 'See them on Credly',
   },
   contact: {
     id: 'contact',

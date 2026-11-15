@@ -160,6 +160,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 
 - **A page of its own,** indexed by issuer. The index shows each issuer with its count: a list that stays in view on wide screens, chips on phones.
 - Each credential is a small card. One with a public record gets a Verify link.
+- The list is loaded after the page, from the Credly wallet as of the last data run. While it loads, a quiet mono line says so; if it fails, the line links to the wallet on Credly.
 - Hackathon and challenge badges live here, with their issuer, not under recognition.
 
 ## Contact

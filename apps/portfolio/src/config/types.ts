@@ -169,7 +169,17 @@ export interface SiteConfig {
       readonly recognitionLead: string
     }
   }
-  readonly credentialsPage: { readonly title: string; readonly lead: string; readonly verify: string; readonly more: string }
+  readonly credentialsPage: {
+    readonly title: string
+    readonly lead: string
+    readonly verify: string
+    readonly more: string
+    readonly loading: string
+    readonly failed: string
+    /** Where the full record lives, offered when the list can't load. */
+    readonly wallet: `https://${string}`
+    readonly walletLabel: string
+  }
   readonly contact: {
     readonly id: string
     readonly kicker: string

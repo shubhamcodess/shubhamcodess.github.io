@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { loadStaticData } from '../lib/useStaticData'
 import './link-preview.css'
 
 interface Preview {
@@ -51,9 +52,12 @@ export function LinkPreview() {
 
   useEffect(() => {
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
-    void import('../content/link-previews.json').then((module) => {
-      previews = module.default
-    })
+    void loadStaticData<Record<string, Preview>>('data/link-previews.json').then(
+      (data) => {
+        previews = data
+      },
+      () => undefined,
+    )
 
     const place = (event: PointerEvent) => {
       const card = cardRef.current

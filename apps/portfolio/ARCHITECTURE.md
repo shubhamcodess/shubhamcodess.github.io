@@ -44,7 +44,8 @@ The dev server is on port 5180. `build` type-checks first and writes static file
 | `src/ui` | Reusable parts that know nothing about this site's content: `FolderCard`, `ActionLink`, `Icon`, `Reveal`, `LinkPreview`, and `light/` (the shader and its backdrop) | `lib`, `config` types |
 | `src/layout` | Header and footer | `config`, `lib`, `ui` |
 | `src/features/*` | One folder per part of the site: `hero`, `builds`, `project`, `experience`, `credentials`, `contact` | everything above |
-| `scripts` | Build-time helpers. `fetch-previews.mjs` saves the social preview of every outside link | nothing in `src` |
+| `scripts` | Build-time helpers that need the network. `fetch-credentials.mjs` reads the Credly wallet; `fetch-previews.mjs` saves the social preview of every outside link | `src/content/credentials-source.ts` |
+| `public/data` | Data loaded at runtime, kept out of the bundle: `credentials.json`, `link-previews.json`. Written by the scripts, committed | nothing |
 | `src/app` | Puts pages together and picks the page for a route | everything above |
 
 Imports only go down this table. A feature never imports another feature. If two need the same thing, it moves to `ui` or `lib`.
@@ -64,15 +65,17 @@ Imports only go down this table. A feature never imports another feature. If two
 
 ## Adding things
 
-**A build:** add one object to `content/builds.ts`, with its `story`. Its page, card and filter group follow. To feature it, add its slug to `featured.slugs` in `config/site.ts` (five at most; the type enforces it). Then refresh the link previews:
+**A build:** add one object to `content/builds.ts`, with its `story`. Its page, card and filter group follow. To feature it, add its slug to `featured.slugs` in `config/site.ts` (five at most; the type enforces it). Then refresh the runtime data (credentials and link previews):
 
 ```bash
-pnpm --filter @portfolio/app previews
+pnpm --filter @portfolio/app data
 ```
 
 **A use case or recording for a build:** fill `story.useCase` or `media` on that build. The page shows the section only when it exists.
 
-**A role, employer, credential or recognition:** edit `content/experience.ts`. A new employer goes at the top of `employers`.
+**A role, employer or recognition:** edit `content/experience.ts`. A new employer goes at the top of `employers`.
+
+**Credentials** come from the Credly wallet. Earn a badge, then run `pnpm --filter @portfolio/app data` and commit `public/data`. What is left out, extras not on Credly, issuer names and order are in `content/credentials-source.ts`. Credly doesn't allow cross-site reads, so the fetch can't happen in the visitor's browser.
 
 **A certificate for a recognition:** put the image in `public/certificates/` and set `certificate: 'certificates/<file>'` on that recognition. It then follows the pointer over the card. Any element can do the same with `data-hover-image` and `data-hover-title`.
 
@@ -95,7 +98,9 @@ pnpm --filter @portfolio/app previews
 ## Known gaps
 
 - **Content is rendered in the browser.** Before launch, pre-render each page to static HTML at build time, so search engines and AI readers get the content without running JavaScript. This is the one launch blocker.
-- **JavaScript is close to the 90 kB budget** (88.6 kB gzipped). Link previews already load on demand. Split by page before adding anything heavy.
+- **JavaScript is close to the 90 kB budget** (88.6 kB gzipped). Credentials and link previews are runtime JSON, not bundled. Split by page before adding anything heavy.
+- **CSS is slightly over its 10 kB budget** (10.4 kB). Splitting it by page is the fix.
+- **Credentials load after the page,** so they aren't in the HTML for search engines. Pre-rendering (below) should inline `public/data/credentials.json`.
 - **Page transitions** use cross-document view transitions, which Firefox doesn't have yet. It simply navigates.
 - **No automated tests or gates yet,** by the owner's choice for now. The repository's responsive and performance gates still point at `apps/web`.
 - **No content security policy, sitemap or social image yet.** Add them with the deploy setup.
@@ -130,7 +135,7 @@ State on 2026-11-15: every page in `DESIGN.md` is built, typed, formatted and co
 **Small things worth knowing:**
 
 - The preview pane in the desktop app stalls CSS transitions. A blank area in a screenshot is usually an entrance that has not played, not a bug. Check with a real browser.
-- `pnpm previews` needs the network, and npm, LinkedIn and Product Hunt refuse automated reads, so those links have no hover card.
+- `pnpm data` needs the network, and npm, LinkedIn and Product Hunt refuse automated reads, so those links have no hover card.
 - **Colours:** `theme.palette` in `config/site.ts` is `'signature'` or `'plain'`. The build writes it onto `<html data-palette>`; `tokens.css` does the rest. The shader reads `--night-surface`, which must stay a six-digit hex.
 - The certificate in `public/certificates/` shows three signatories' names. It is public once the repository is.
 - The portrait is `src/assets/portrait.webp`, with a transparent background. Replace the file to change it.
