@@ -172,7 +172,14 @@ export interface SiteConfig {
     readonly slugs: FeaturedSlugs
     readonly seeAll: string
   }
-  readonly buildsPage: { readonly title: string; readonly lead: string; readonly allLabel: string }
+  readonly buildsPage: {
+    readonly title: string
+    readonly lead: string
+    readonly allLabel: string
+    /** The two links at the foot of the page. */
+    readonly experience: string
+    readonly contact: string
+  }
   readonly projectPage: {
     /** Brightness of the light behind a project's title. Lower than the hero: this page is for reading. */
     readonly lightIntensity: number

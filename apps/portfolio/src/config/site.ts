@@ -77,6 +77,8 @@ export const site = {
     title: 'All builds',
     lead: 'Every public project I have shipped. Open one for the full story.',
     allLabel: 'All',
+    experience: 'Professional experience',
+    contact: 'Say hello',
   },
   projectPage: {
     lightIntensity: 0.3,

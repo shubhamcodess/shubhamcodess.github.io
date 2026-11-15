@@ -3,12 +3,14 @@ import { site } from '../../config/site'
 import { builds } from '../../content/builds'
 import type { BuildKind } from '../../content/types'
 import { Header } from '../../layout/Header'
+import { hrefTo } from '../../lib/routes'
+import { ActionLink } from '../../ui/ActionLink'
 import { BuildCard } from './BuildCard'
 
 type Filter = BuildKind | 'all'
 
 export function BuildsPage() {
-  const { buildsPage, kinds, features } = site
+  const { buildsPage, kinds, features, contact } = site
   const [filter, setFilter] = useState<Filter>('all')
   const shown = filter === 'all' ? builds : builds.filter((build) => build.kind === filter)
   const options: readonly { readonly id: Filter; readonly label: string; readonly count: number }[] = [
@@ -50,6 +52,20 @@ export function BuildsPage() {
             </li>
           ))}
         </ul>
+
+        {/* Where to go after the work: the career behind it, or a hello. */}
+        <nav className="page-onward" aria-label="Continue">
+          {features.experience ? (
+            <ActionLink href={hrefTo('experience')} icon="arrowRight">
+              {buildsPage.experience}
+            </ActionLink>
+          ) : null}
+          {features.contact ? (
+            <ActionLink href={hrefTo(`#${contact.id}`)} icon="arrowRight">
+              {buildsPage.contact}
+            </ActionLink>
+          ) : null}
+        </nav>
       </main>
     </div>
   )

@@ -188,7 +188,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - **Hash in the address bar:** on home, the address follows the section being read (`/#featured`, `/#experience`, `/#contact`, nothing at the top), replacing the history entry rather than adding to it. Opening `/#contact` from any page lands on that section.
 - **Narrow phones (under 480px):** the sound and theme switches leave the header and live only in the footer, so the header links never overflow.
 - **The footer is the site index:** every page and Contact, from every page. It also carries the sound and theme switches, so they are in reach from anywhere. On phones they share a row with the copyright.
-- **All builds:** filter chips group it by kind; a kind needs at least two builds.
+- **All builds:** filter chips group it by kind; a kind needs at least two builds. At its foot: "Professional experience" on the left and "Say hello" on the right.
 - Featured holds one to five builds, with a designed grid for each count: 1 full width, 2 halves, 3 thirds, 4 as two rows of two, 5 as two halves over three thirds.
 - The hero's action chips fade out once the visitor has scrolled past them.
 
