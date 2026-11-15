@@ -579,7 +579,7 @@ a.me-frame:focus-visible {
   position: relative;
   flex: 0 1 var(--clothesline-print);
   aspect-ratio: 4 / 5;
-  padding: 5px 5px 14px;
+  padding: var(--polaroid-edge) var(--polaroid-edge) var(--polaroid-foot);
   background: var(--surface-raised);
   border-radius: 2px;
   box-shadow: var(--shadow-card);
@@ -588,12 +588,47 @@ a.me-frame:focus-visible {
   transition: transform var(--duration-slow) var(--ease-out);
 }
 
-.clothesline__print img {
+/* The faint polaroid frame: a dotted rule just inside the paper, the same dotted hand as the empty frames. */
+.clothesline__print:not(.clothesline__print--empty)::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: var(--hairline) dotted var(--marker-lane);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.clothesline__open {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  background: none;
+  border: 0;
+  border-radius: 1px;
+  cursor: zoom-in;
+}
+
+.clothesline__open img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 1px;
+}
+
+/*
+ * One glassy finish over every photo: a soft sheen from the top left and a bright hairline at the edge.
+ * It sits on top and keeps each photo's own colours, so different photos read as one set.
+ */
+.clothesline__glass {
+  position: absolute;
+  inset: 0;
+  background: var(--photo-glass);
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 var(--hairline) var(--photo-glass-edge);
+  pointer-events: none;
 }
 
 .clothesline__print--empty {
@@ -615,7 +650,7 @@ a.me-frame:focus-visible {
 }
 
 @media (hover: hover) {
-  .clothesline__print:hover {
+  .clothesline__print:has(.clothesline__open):hover {
     transform: translateY(calc(var(--print-drop) * var(--clothesline-sag) * 0.55)) rotate(0deg);
   }
 }
@@ -647,5 +682,141 @@ a.me-frame:focus-visible {
   .me-place__city {
     font-size: var(--text-xl);
     overflow-wrap: normal;
+  }
+}
+
+/*
+ * The photo viewer: one photo large over a dimmed page, in the same polaroid frame, caption beneath.
+ */
+.photo-viewer {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: var(--space-6);
+  color: var(--ink);
+  background: none;
+  border: 0;
+  overflow: hidden;
+}
+
+.photo-viewer[open] {
+  display: grid;
+  place-items: center;
+}
+
+.photo-viewer::backdrop {
+  background: var(--photo-viewer-dim);
+  backdrop-filter: blur(6px);
+}
+
+.photo-viewer__print {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  width: fit-content;
+  max-width: min(var(--photo-viewer-max), 100%);
+  margin: 0;
+  padding: var(--space-3) var(--space-3) var(--space-4);
+  background: var(--surface-raised);
+  border-radius: 3px;
+  box-shadow: 0 30px 80px -20px rgb(0 0 0 / 50%);
+  animation: photo-in var(--duration-base) var(--ease-out);
+}
+
+.photo-viewer__print::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: var(--hairline) dotted var(--marker-lane);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.photo-viewer__photo {
+  position: relative;
+  display: block;
+  justify-self: center;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.photo-viewer__photo img {
+  display: block;
+  width: auto;
+  max-width: calc(min(var(--photo-viewer-max), 100vw - var(--space-6) * 2) - var(--space-3) * 2);
+  height: auto;
+  max-height: var(--photo-viewer-img-h);
+}
+
+.photo-viewer__print figcaption {
+  /* The caption never widens the print beyond its photo. */
+  width: 0;
+  min-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / var(--leading-snug) var(--font-mono);
+}
+
+.photo-viewer__count {
+  flex: none;
+}
+
+.photo-viewer__close,
+.photo-viewer__step {
+  position: fixed;
+  display: grid;
+  place-items: center;
+  width: var(--target-min);
+  height: var(--target-min);
+  color: var(--night-ink);
+  background: var(--night-glass);
+  border: var(--hairline) solid var(--night-glass-line);
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.photo-viewer__close {
+  top: var(--space-5);
+  right: var(--space-5);
+}
+
+.photo-viewer__step {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.photo-viewer__step--back {
+  left: var(--space-5);
+}
+
+.photo-viewer__step--on {
+  right: var(--space-5);
+}
+
+@keyframes photo-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@media (max-width: 599px) {
+  .photo-viewer {
+    padding: var(--space-3);
+  }
+
+  .photo-viewer__photo img {
+    max-width: calc(100vw - var(--space-3) * 4);
+  }
+
+  .photo-viewer__step {
+    top: auto;
+    bottom: var(--space-5);
+    transform: none;
   }
 }

@@ -38,8 +38,18 @@ export interface Place {
   readonly at: readonly [lat: number, lon: number]
   /** A sentence or two in the owner's words. */
   readonly line?: string
-  /** Pictures under /public, such as "me/places/jamshedpur-1.jpg", each with what it shows. Hung on a clothesline. */
-  readonly photos?: readonly { readonly src: string; readonly alt: string }[]
+  /** Photos hung on the place's clothesline, oldest first. */
+  readonly photos?: readonly PlacePhoto[]
+}
+
+/** One photo on a clothesline. Paths are under /public; metadata is stripped before a photo is added. */
+export interface PlacePhoto {
+  /** The large copy, shown when the print is opened (about 1600px on the long side). */
+  readonly src: string
+  /** The small copy hung on the line (about 560px tall). */
+  readonly print: string
+  /** What the photo shows. Also its caption when opened. */
+  readonly alt: string
 }
 
 export interface Home {
@@ -77,6 +87,34 @@ export const home: Home = {
   places: [
     { role: 'What I call home', city: 'Jamshedpur', region: 'Jharkhand', map: 'jharkhand', at: [22.8046, 86.2029] },
     { role: 'Where I studied', city: 'Bhubaneswar', region: 'Odisha', map: 'odisha', at: [20.2961, 85.8245] },
-    { role: 'Where I work now', city: 'Bengaluru', region: 'Karnataka', map: 'karnataka', at: [12.9716, 77.5946] },
+    {
+      role: 'Where I work now',
+      city: 'Bengaluru',
+      region: 'Karnataka',
+      map: 'karnataka',
+      at: [12.9716, 77.5946],
+      photos: [
+        {
+          src: 'me/places/bengaluru-office.webp',
+          print: 'me/places/bengaluru-office-print.webp',
+          alt: 'The Innovation wall at the office, a living wall of plants under a perforated ceiling',
+        },
+        {
+          src: 'me/places/bengaluru-meal.webp',
+          print: 'me/places/bengaluru-meal-print.webp',
+          alt: 'A South Indian meal on a banana leaf: rice, sambar, rasam, curries, curd and papad',
+        },
+        {
+          src: 'me/places/bengaluru-chaat.webp',
+          print: 'me/places/bengaluru-chaat-print.webp',
+          alt: 'Chaat and a glass of tea on a balcony at dusk',
+        },
+        {
+          src: 'me/places/bengaluru-christmas.webp',
+          print: 'me/places/bengaluru-christmas-print.webp',
+          alt: 'A rainbow-lit Christmas tree outside Phoenix Mall of Asia at night',
+        },
+      ],
+    },
   ],
 }

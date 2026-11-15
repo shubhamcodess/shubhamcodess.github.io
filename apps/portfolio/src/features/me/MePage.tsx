@@ -170,7 +170,7 @@ export function MePage() {
                         {place.line ? <p className="me-place__line">{place.line}</p> : null}
                       </div>
                       <StateMap state={place.map} at={place.at} className="me-place__map" />
-                      <Clothesline photos={place.photos ?? []} emptySlots={me.emptyPhotoSlots} />
+                      <Clothesline photos={place.photos ?? []} emptySlots={me.emptyPhotoSlots} label={`Photos from ${place.city}`} />
                     </li>
                   ))}
                 </ol>

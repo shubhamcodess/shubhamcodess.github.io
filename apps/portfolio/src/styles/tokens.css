@@ -184,6 +184,16 @@
   --me-place-city: clamp(1.375rem, 1rem + 1.2vw, 1.875rem);
   --me-place-map: 150px;
   --clothesline-print: 112px;
+  /* A print's polaroid paper: the thin edges and the deeper foot. */
+  --polaroid-edge: 6px;
+  --polaroid-foot: 18px;
+  /* The one glassy finish over every photo: a soft sheen from the top left, a bright edge. Colours untouched. */
+  --photo-glass: linear-gradient(150deg, rgb(255 255 255 / 22%) 0%, rgb(255 255 255 / 6%) 32%, transparent 55%, rgb(255 255 255 / 5%) 100%);
+  --photo-glass-edge: rgb(255 255 255 / 28%);
+  /* The photo viewer: how big a photo opens, and how much the page dims behind it. */
+  --photo-viewer-max: 1100px;
+  --photo-viewer-img-h: min(72svh, 760px);
+  --photo-viewer-dim: rgb(8 8 10 / 72%);
   --clothesline-sag: 26px;
   --me-title-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
   --me-print-border: 12px;
