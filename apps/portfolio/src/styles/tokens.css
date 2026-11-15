@@ -95,6 +95,8 @@
   --shadow-card: 0 1px 2px rgb(20 24 20 / 4%), 0 12px 32px rgb(20 24 20 / 6%);
   /* A soft light from the top of every themed panel. None in the plain palette. */
   --panel-wash: none;
+  /* Paper texture under every themed panel. None unless theme.texture turns it on (styles/texture.css). */
+  --panel-texture: none;
 
   /* Component: header */
   --header-height: 76px;

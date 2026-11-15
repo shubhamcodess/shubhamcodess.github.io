@@ -115,6 +115,35 @@ function breath(at: number, peak: number, attack: number, release: number, from:
   source.stop(at + attack + release + 0.05)
 }
 
+/** Dry paper: grainy noise through a moving band, its level fluttering like fibres catching. */
+function paper(at: number, peak: number, attack: number, release: number, from: number, to: number): void {
+  if (!context) return
+  const source = context.createBufferSource()
+  const band = context.createBiquadFilter()
+  const body = context.createGain()
+  const flutter = context.createOscillator()
+  const flutterDepth = context.createGain()
+  const grain = context.createGain()
+  source.buffer = noise
+  band.type = 'bandpass'
+  band.Q.value = 0.7
+  band.frequency.setValueAtTime(from, at)
+  band.frequency.exponentialRampToValueAtTime(to, at + attack + release)
+  flutter.type = 'triangle'
+  flutter.frequency.value = 19 + Math.random() * 8
+  flutterDepth.gain.value = 0.35
+  grain.gain.value = 0.65
+  flutter.connect(flutterDepth).connect(grain.gain)
+  envelope(body, at, peak, attack, release)
+  source.connect(band).connect(grain).connect(body)
+  route(body, 0.18)
+  const end = at + attack + release + 0.05
+  source.start(at, Math.random() * 1.2)
+  flutter.start(at)
+  source.stop(end)
+  flutter.stop(end)
+}
+
 /** `strength` is 0 to 1, used by scroll to follow how fast the page moved. `direction` is 1 down, -1 up. */
 export function play(voice: Voice, strength = 1, direction = 1): void {
   if (!context || context.state !== 'running') return
@@ -126,9 +155,9 @@ export function play(voice: Voice, strength = 1, direction = 1): void {
       breath(now, 0.025, 0.002, 0.03, 2600, 1800, 0)
       break
     case 'swish': {
-      // A page turning past: air through a slowly opening filter, rising when scrolling down.
-      const [from, to] = direction > 0 ? [500, 2200] : [2200, 500]
-      breath(now, 0.012 + strength * 0.035, 0.12, 0.32, from, to, 0.3)
+      // Paper sliding under the hand: a dry, grainy hiss that flutters, rising when scrolling down.
+      const [from, to] = direction > 0 ? [1300, 3400] : [3400, 1300]
+      paper(now, 0.01 + strength * 0.03, 0.1, 0.34, from, to)
       break
     }
   }

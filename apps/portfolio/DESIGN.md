@@ -64,6 +64,17 @@ Rules for both:
 - Large type tightens: -0.035em on the hero name, -0.02em on section titles. Mono labels are uppercase with 0.04em tracking.
 - Headings balance their lines, paragraphs avoid orphans.
 
+## Paper texture
+
+The page panels are blueprint paper: a fine grain with a faint drafting grid, far behind everything. Chosen by `theme.texture` in the config (`'blueprint'` or `'none'`).
+
+- **Where:** themed panels only (Featured, the experience teaser, All builds, Experience, Credentials, a build's story). Never the night panels (hero, project title, contact), never cards: cards are sheets laid on the paper, so they stay clean and come forward.
+- **The grid:** a hair line every 24px and a firmer one every fifth square. Blue ink on warm paper (4.5% and 7%), pale blue on midnight (3.5% and 6%).
+- **The grain:** fractal noise, 20% strength on paper, 12% on midnight. Stronger looked dirty on paper and noisy on midnight.
+- The panel's top light (`--panel-wash`) falls over the paper, so the texture fades toward the top edge.
+- **It has a sound:** with sound on, scrolling makes a dry, grainy, fluttering paper slide.
+- Tuning is four tokens in `styles/texture.css`.
+
 ## Buttons
 
 Two styles, chosen by `theme.buttons` in the config. One value changes every chip and button on the site: the filter chips, the credentials index, the project section chips, and the frosted action chips in the hero and on project pages. Plain text links (Code, Live, See all builds) are not buttons and don't change.
@@ -212,7 +223,7 @@ A clean, cinematic quiet. **Two voices, only on actions.** Nothing plays on hove
 | Moment | Voice |
 |---|---|
 | Press any link or button, the badge and the sound toggle included | A small wooden tap |
-| Scroll a good stretch | A soft page-turn of air, rising when going down, louder when faster |
+| Scroll a good stretch | Paper sliding under the hand: a dry, grainy hiss that flutters, rising when going down, louder when faster |
 
 - **Made, not sampled.** Both are synthesised in the browser (Web Audio) in one small, warm room. No audio files; the engine loads only for visitors who have sound on.
 - **Across pages:** the saved choice is the only truth. A page re-reads it when it is opened, when it comes back through Back or Forward, when its tab regains focus, and when another tab changes it.

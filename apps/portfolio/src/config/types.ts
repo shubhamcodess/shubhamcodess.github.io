@@ -9,6 +9,9 @@ export type PaletteName = 'plain' | 'signature'
 /** "pill": round and roomy. "lean": the same round shape, slimmer, with small mono labels and plain states. */
 export type ButtonStyle = 'pill' | 'lean'
 
+/** "blueprint": fine grain and a faint drafting grid on the page panels. "none": plain panels. */
+export type TextureName = 'blueprint' | 'none'
+
 /** Routes are a closed set. Add one here, add its HTML entry, and the compiler points at the rest. */
 export type RouteId = 'home' | 'builds' | 'experience' | 'credentials'
 
@@ -145,6 +148,8 @@ export interface SiteConfig {
     readonly palette: PaletteName
     /** The look of every chip and button. See ButtonStyle. */
     readonly buttons: ButtonStyle
+    /** Paper texture on the page panels. See TextureName. */
+    readonly texture: TextureName
     /** Names the theme switch for screen readers. */
     readonly label: string
   }

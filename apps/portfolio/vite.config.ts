@@ -17,7 +17,10 @@ function projectPages(): Plugin {
     name: 'portfolio-project-pages',
     // The palette is set on <html> in the file itself, so the first paint already has the right colours.
     transformIndexHtml: (html) =>
-      html.replace('<html lang="en"', `<html lang="en" data-palette="${site.theme.palette}" data-buttons="${site.theme.buttons}"`),
+      html.replace(
+        '<html lang="en"',
+        `<html lang="en" data-palette="${site.theme.palette}" data-buttons="${site.theme.buttons}" data-texture="${site.theme.texture}"`,
+      ),
     configureServer(server) {
       server.middlewares.use((request, _response, next) => {
         const [path = '', query] = (request.url ?? '').split('?')

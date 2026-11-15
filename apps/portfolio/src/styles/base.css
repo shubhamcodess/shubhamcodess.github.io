@@ -143,7 +143,8 @@ button {
 .panel {
   position: relative;
   color: var(--ink);
-  background: var(--panel-wash), var(--surface);
+  /* Texture first, so it sits under the wash: the light from the top edge reads as falling on the paper. */
+  background: var(--panel-wash), var(--panel-texture), var(--surface);
   border-radius: var(--frame-radius);
   overflow: clip;
 }

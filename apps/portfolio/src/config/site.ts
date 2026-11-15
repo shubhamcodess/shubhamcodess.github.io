@@ -5,7 +5,14 @@ export const site = {
   owner: 'Shubham Prakash',
   monogram: 'SP',
   // Switch `palette` to 'plain' to go back to the black frame and neutral panels. Nothing else needs to change.
-  theme: { default: 'light', storageKey: 'portfolio-theme', palette: 'signature', buttons: 'lean', label: 'Dark theme' },
+  theme: {
+    default: 'light',
+    storageKey: 'portfolio-theme',
+    palette: 'signature',
+    buttons: 'lean',
+    texture: 'blueprint',
+    label: 'Dark theme',
+  },
   routes: {
     home: { path: '', label: 'Home', title: 'Shubham Prakash | Cloud Full Stack Developer' },
     builds: { path: 'builds/', label: 'Builds', title: 'All builds | Shubham Prakash' },

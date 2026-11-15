@@ -10,6 +10,7 @@ import { buildFromPath, hrefTo, isRouteId } from './lib/routes'
 import './styles/tokens.css'
 import './styles/base.css'
 import './styles/buttons.css'
+import './styles/texture.css'
 
 const root = document.getElementById('root')
 if (!root) throw new Error('Missing #root')
