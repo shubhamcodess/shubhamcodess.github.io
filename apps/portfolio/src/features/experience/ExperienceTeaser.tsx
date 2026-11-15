@@ -41,7 +41,8 @@ export function ExperienceTeaser() {
 
           {features.credentials ? (
             <Reveal index={1} className="teaser__creds">
-              <h3 className="teaser__creds-title">{credentialsPage.title}</h3>
+              <p className="eyebrow">{credentialsPage.title}</p>
+              <h3 className="section__title">{copy.credentialsTitle}</h3>
               <p className="section__lead">{copy.credentialsLead}</p>
               <ul className="patches">
                 {featuredCredentials.map((credential) => (

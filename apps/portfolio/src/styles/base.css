@@ -305,3 +305,8 @@ button {
 .page-onward:has(> :nth-child(2)) {
   justify-content: space-between;
 }
+
+/* A small label above a title always has a little room, so the two read as a pair, not one block. */
+.eyebrow + :is(.section__title, h1, h2, h3) {
+  margin-top: var(--space-3);
+}

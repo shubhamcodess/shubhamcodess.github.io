@@ -399,16 +399,6 @@ a.honour:focus-visible {
   border-top: var(--hairline) solid var(--line);
 }
 
-.teaser__creds-title {
-  font-size: var(--text-xl);
-  letter-spacing: -0.01em;
-}
-
-.teaser__creds .section__lead {
-  margin-top: var(--space-2);
-  font-size: var(--text-sm);
-}
-
 /*
  * Patches: a credential as a small sewn-on patch. A raised card with a stitched line just inside its
  * edge, the level in mono above the title, the issuer beneath. Same lean and lift as every card.
@@ -606,7 +596,7 @@ a.honour:focus-visible {
 @media (min-width: 900px) {
   .teaser {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    align-items: start;
+    align-items: center;
     gap: var(--space-8);
   }
 
