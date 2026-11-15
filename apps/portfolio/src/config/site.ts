@@ -5,6 +5,7 @@ export const site = {
   owner: 'Shubham Prakash',
   url: 'https://shubhamcodess.github.io',
   monogram: 'SP',
+  logo: 'mark',
   // Switch `palette` to 'plain' to go back to the black frame and neutral panels. Nothing else needs to change.
   theme: {
     default: 'light',

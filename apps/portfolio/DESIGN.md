@@ -66,6 +66,13 @@ Rules for both:
 - Headings balance their lines, paragraphs avoid orphans.
 - A small mono label above a title always has `--space-3` between them, so they read as a pair.
 
+## Logo
+
+- **The SP mark:** an angular S and P interlocked, on a rounded tile. The tile has no fill of its own, so it is the panel it sits on, wash and grain included. A second tile behind it, offset down and right, is its shadow: the surface's own hue, a step darker on light and a step lighter on dark. The letters are ink.
+- 42px in the header (`--logo-mark-size`), the letters at 82% of the tile. `logo: 'monogram'` in the config sets SP in type instead.
+- **Browser icon:** `public/favicon.svg`, the same mark on a solid tile in the light paper colour, or the dark surface when the browser is dark. The letters are a little larger there, so they hold at 16px.
+- The badge still sets SP in type.
+
 ## Me
 
 `/me/`, "Off the clock": life away from work. **Switched off until finished** (`features.mePage: false`): no page, no links, not in the sitemap, and `/me/` goes home. Set it true to bring it all back. A step less formal than the rest of the site, and still made of the same parts.

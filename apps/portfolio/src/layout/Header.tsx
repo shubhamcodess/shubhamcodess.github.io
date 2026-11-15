@@ -1,5 +1,6 @@
 import { site } from '../config/site'
-import type { NavItem, NavPage } from '../config/types'
+import type { NavItem, NavPage, SiteConfig } from '../config/types'
+import { LogoMark } from '../ui/LogoMark'
 import { hrefTo } from '../lib/routes'
 import { useCurrentSection } from '../lib/sections'
 import { Toggles } from './Toggles'
@@ -34,7 +35,7 @@ export function Header({ page }: HeaderProps) {
   return (
     <header className="site-header container">
       <a className="site-header__logo" href={hrefTo('home')} aria-label={`${site.owner}, home`}>
-        {site.monogram}
+        {(site.logo as SiteConfig['logo']) === 'mark' ? <LogoMark /> : site.monogram}
       </a>
       <nav className="site-header__nav" aria-label="Main">
         {links.map((item) => (

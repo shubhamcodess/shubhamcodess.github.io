@@ -1,0 +1,20 @@
+/*
+ * The tile is the page itself; the shadow layer behind it, offset down and right, gives it its edge.
+ */
+.logo-mark {
+  display: block;
+  width: var(--logo-mark-size);
+  height: var(--logo-mark-size);
+}
+
+.panel--night .logo-mark {
+  --logo-mark-step: oklch(from var(--night-surface) calc(l + 0.13) calc(c * 1.6) h);
+}
+
+.logo-mark__step {
+  fill: var(--logo-mark-step);
+}
+
+.logo-mark__letters {
+  fill: var(--ink);
+}

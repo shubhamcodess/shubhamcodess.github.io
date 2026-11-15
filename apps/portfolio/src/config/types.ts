@@ -145,6 +145,8 @@ export interface SiteConfig {
   /** Where the site lives, with no trailing slash. Used for the sitemap. */
   readonly url: `https://${string}`
   readonly monogram: string
+  /** The header logo: "mark" is the drawn SP tile, "monogram" the letters set in type. */
+  readonly logo: 'mark' | 'monogram'
   readonly theme: {
     readonly default: ThemeName
     readonly storageKey: string

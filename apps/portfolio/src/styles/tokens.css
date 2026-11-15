@@ -105,6 +105,9 @@
   /* Component: header */
   --header-height: 76px;
   --logo-size: 1.5rem;
+  /* The SP mark: its size, and the shadow layer behind its tile: the surface's own hue, a step darker (lighter in dark). */
+  --logo-mark-size: 2.625rem;
+  --logo-mark-step: oklch(from var(--surface) calc(l - 0.09) calc(c * 1.6) h);
 
   /* Component: hero */
   --hero-min-height: 560px;
@@ -234,6 +237,7 @@
   --line: #2e312e;
   --accent: #8fb4ff;
   --shadow-card: 0 1px 2px rgb(0 0 0 / 30%), 0 12px 32px rgb(0 0 0 / 30%);
+  --logo-mark-step: oklch(from var(--surface) calc(l + 0.11) calc(c * 1.6) h);
 }
 
 /*
@@ -270,6 +274,7 @@
   --accent: #8fb4ff;
   --shadow-card: 0 1px 2px rgb(0 0 0 / 40%), 0 14px 34px rgb(0 2 10 / 50%);
   --panel-wash: radial-gradient(120% 55% at 50% 0%, rgb(60 90 170 / 8%), transparent 62%);
+  --logo-mark-step: oklch(from var(--surface) calc(l + 0.11) calc(c * 1.6) h);
 }
 
 @media (max-width: 640px) {
