@@ -33,7 +33,7 @@ export function Badge({ replay }: BadgeProps) {
   }
 
   return (
-    <button className="badge" type="button" onClick={swap} data-sound="clink" aria-label={badge.swapLabel} aria-pressed={front === 'labs'}>
+    <button className="badge" type="button" onClick={swap} aria-label={badge.swapLabel} aria-pressed={front === 'labs'}>
       <span className="badge__swing" ref={swingRef}>
         <span className="badge__strap">
           <span className="badge__strap-mark">{badge.strap}</span>

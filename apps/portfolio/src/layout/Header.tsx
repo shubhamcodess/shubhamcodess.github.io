@@ -60,7 +60,6 @@ export function Header({ current }: HeaderProps) {
             className="site-header__theme"
             type="button"
             onClick={toggleTheme}
-            data-sound="chime"
             aria-pressed={theme === 'dark'}
             aria-label="Dark theme"
           >

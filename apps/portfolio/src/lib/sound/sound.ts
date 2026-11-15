@@ -42,8 +42,11 @@ export async function setSound(next: boolean): Promise<void> {
     // Storage can be blocked. The choice still holds for this page.
   }
   for (const listener of listeners) listener()
-  if (next) await (await load()).start(site.sound, true)
-  else engine?.stop()
+  if (next) {
+    const loaded = await load()
+    await loaded.start(site.sound)
+    if (atLanding()) loaded.play('galaxy')
+  } else engine?.stop()
 }
 
 /**
@@ -51,7 +54,15 @@ export async function setSound(next: boolean): Promise<void> {
  * Browsers only allow audio to start from a gesture, so it can't simply start on load.
  */
 export async function wake(): Promise<void> {
-  if (on) await (await load()).start(site.sound, false)
+  if (!on) return
+  const loaded = await load()
+  await loaded.start(site.sound)
+  if (atLanding() && performance.now() < site.sound.galaxy.withinMs) loaded.play('galaxy')
+}
+
+/** The galaxy belongs to the home page's first screen, where the light is. */
+function atLanding(): boolean {
+  return site.sound.galaxy.onHome && document.getElementById('root')?.dataset.route === 'home' && window.scrollY < window.innerHeight / 2
 }
 
 export function play(voice: Voice, strength?: number, direction?: number): void {

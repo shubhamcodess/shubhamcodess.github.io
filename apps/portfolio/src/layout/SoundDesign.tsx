@@ -5,11 +5,11 @@ import type { Voice } from '../lib/sound/engine'
 
 /** What counts as something to sound on hover and press. */
 const interactive = 'a[href], button, summary, [data-sound]'
-const voices = new Set<string>(['hover', 'tap', 'swish', 'chime', 'clink', 'signature', 'close'])
+const pressVoices = new Set<string>(['tap', 'close'])
 
 /**
- * The site's sound, wired once for every page. Elements choose their press sound with
- * data-sound="chime" (or clink, close…); anything else interactive gets a soft tap.
+ * The site's sound, wired once for every page, and only on actions. Every link and button taps when pressed;
+ * an element can opt out with data-sound="none" or use the softer data-sound="close".
  * Hover ticks only with a real pointer. Scroll gives a soft page-turn after a good stretch of movement.
  */
 export function SoundDesign() {
@@ -49,7 +49,7 @@ export function SoundDesign() {
       const target = event.target.closest<HTMLElement>(interactive)
       if (!target || target.dataset.sound === 'none') return
       const voice = target.dataset.sound
-      play(voice && voices.has(voice) ? (voice as Voice) : 'tap')
+      play(voice && pressVoices.has(voice) ? (voice as Voice) : 'tap')
     }
 
     const onScroll = () => {

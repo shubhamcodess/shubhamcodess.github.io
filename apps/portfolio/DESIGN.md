@@ -175,23 +175,21 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 
 ## Sound
 
-Sound design like a film's: quiet, warm, felt more than heard. Off until the visitor turns it on with the speaker button beside the theme toggle; the choice is remembered.
+Quiet, warm, felt more than heard, and **only on actions**: nothing plays while the visitor is idle. Off until the visitor turns it on with the speaker button beside the theme toggle; the choice is remembered.
 
-- **Made, not sampled.** Every sound is synthesised in the browser (Web Audio), in one key (A major pentatonic) and one small, warm room (a soft reverb). No audio files; the engine loads only when sound is first turned on.
-- **The signature:** turning sound on plays the site's motif, an open A chord rolled upward and left to bloom.
-- **Room tone:** while sound is on, a very low bed of two beating low notes and air under a slowly breathing filter. It pauses with the tab.
+- **Made, not sampled.** Every sound is synthesised in the browser (Web Audio) and shares one small, warm room (a soft reverb). No audio files; the engine loads only when sound is first turned on.
+- **The galaxy:** on the home page's first screen, a short swell in tone with the light: a low rise, a high shimmer, a thin air drifting down, gone in about seven seconds. It plays when sound is turned on there, or on a returning visitor's first click within twelve seconds of landing. Nowhere else.
 
 | Moment | Voice |
 |---|---|
 | Hover over anything interactive (pointer only) | A felt tick, barely there |
-| Press a link or button | A small wooden tap |
+| Press any link or button | A small wooden tap |
 | Scroll a good stretch | A soft page-turn of air, rising when going down, louder when faster |
-| Theme toggle, filter chips | A chime: the next note of the key, ringing in the room |
-| Badge swap and replay | A clink, like the badge's metal clip |
 | Turning sound off | A softer, lower tap |
 
-- An element picks its press sound with `data-sound` (`tap`, `chime`, `clink`, `close`, or `none`). Anything interactive without it gets a tap.
-- Levels, room tone and scroll spacing are `sound` in the config. Voices themselves are in `lib/sound/engine.ts`.
+- Every link and button taps. An element can opt out with `data-sound="none"` or take the softer `data-sound="close"`.
+- No room tone, chimes or clinks: tried, and too much.
+- Level, scroll spacing and the galaxy's window are `sound` in the config. The voices are in `lib/sound/engine.ts`.
 - While sound is on, the speaker's waves breathe slowly.
 
 ## Scrollbar

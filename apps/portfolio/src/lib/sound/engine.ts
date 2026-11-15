@@ -1,29 +1,22 @@
 /**
  * The site's sound, made in the browser with Web Audio. No files: every voice is synthesised,
- * so it costs a few kilobytes and is tuned to one key (A, pentatonic) and one small, warm room.
+ * so it costs a few kilobytes and every voice shares one small, warm room. Sound plays only on actions,
+ * apart from one short swell when landing on the home page.
  * Loaded only once the visitor turns sound on.
  */
 
-export type Voice = 'hover' | 'tap' | 'swish' | 'chime' | 'clink' | 'signature' | 'close'
+export type Voice = 'hover' | 'tap' | 'swish' | 'close' | 'galaxy'
 
 export interface EngineOptions {
   /** Master level, 0 to 1. Each voice is already quiet; this scales them all. */
   readonly volume: number
-  /** A very low room tone under everything while sound is on. */
-  readonly ambient: boolean
 }
-
-/** Notes of the site's key, A major pentatonic, in Hz. */
-const scale = [659.25, 739.99, 880, 987.77, 1108.73, 1318.51]
-const signature = [220, 329.63, 493.88, 739.99]
 
 let context: AudioContext | undefined
 let master: GainNode
 let room: ConvolverNode
 let noise: AudioBuffer
-let ambientStop: (() => void) | undefined
-let chimeStep = 0
-let options: EngineOptions = { volume: 0.6, ambient: true }
+let options: EngineOptions = { volume: 0.6 }
 
 /** A short, soft room: stereo noise that dies away, used as the reverb's impulse. */
 function makeRoom(audio: AudioContext, seconds: number, decay: number): AudioBuffer {
@@ -145,102 +138,74 @@ export function play(voice: Voice, strength = 1, direction = 1): void {
       breath(now, 0.012 + strength * 0.035, 0.12, 0.32, from, to, 0.3)
       break
     }
-    case 'chime': {
-      // Two partials of the next note in the key, left to ring in the room.
-      const note = scale[chimeStep++ % scale.length] ?? 880
-      tone(note, 'sine', now, 0.03, 0.006, 1.1, 0.5)
-      tone(note * 2.005, 'sine', now, 0.008, 0.006, 0.6, 0.5)
-      break
-    }
-    case 'clink':
-      // Metal on metal, like the badge's clip: inharmonic partials, quick to fade.
-      for (const [frequency, level] of [
-        [1840, 0.022],
-        [2913, 0.014],
-        [4157, 0.008],
-      ] as const) {
-        tone(frequency, 'sine', now, level, 0.002, 0.35, 0.35)
-      }
-      break
-    case 'signature':
-      // The site's motif: four notes of an open chord, rolled upward and left to bloom.
-      signature.forEach((frequency, index) => {
-        const at = now + index * 0.13
-        tone(frequency, 'sine', at, 0.026, 0.2, 2.6, 0.6)
-        tone(frequency * 2, 'triangle', at, 0.005, 0.2, 1.6, 0.6)
-      })
+    case 'galaxy':
+      galaxy(now)
       break
   }
 }
 
-/** A room tone: two low, slowly beating sines on A, and air under a breathing filter. Very quiet. */
-function startAmbient(): void {
-  if (!context || ambientStop) return
+/**
+ * The galaxy: a short swell for landing on the home page, in tone with the light. A low sub rises,
+ * high detuned partials shimmer above it, and a thin air drifts through. About seven seconds, then gone.
+ */
+function galaxy(at: number): void {
+  if (!context) return
   const audio = context
-  const bed = audio.createGain()
-  bed.gain.setValueAtTime(0.0001, audio.currentTime)
-  bed.gain.exponentialRampToValueAtTime(1, audio.currentTime + 4)
-  route(bed, 0.4)
+  const swell = audio.createGain()
+  swell.gain.setValueAtTime(0.0001, at)
+  swell.gain.exponentialRampToValueAtTime(1, at + 1.8)
+  swell.gain.setValueAtTime(1, at + 3.6)
+  swell.gain.exponentialRampToValueAtTime(0.0001, at + 7)
+  route(swell, 0.7)
+  const end = at + 7.1
 
-  const sources: AudioScheduledSourceNode[] = []
-  for (const [frequency, level] of [
-    [55, 0.012],
-    [82.6, 0.007],
-    [110.3, 0.003],
-  ] as const) {
+  const voices: (readonly [frequency: number, level: number, type: OscillatorType])[] = [
+    [55, 0.03, 'sine'],
+    [110.4, 0.012, 'sine'],
+    [1318.5, 0.006, 'sine'],
+    [1321.8, 0.006, 'sine'],
+    [1760, 0.004, 'sine'],
+    [1975.5, 0.003, 'triangle'],
+  ]
+  for (const [frequency, level, type] of voices) {
     const oscillator = audio.createOscillator()
     const gain = audio.createGain()
+    oscillator.type = type
     oscillator.frequency.value = frequency
     gain.gain.value = level
-    oscillator.connect(gain).connect(bed)
-    sources.push(oscillator)
+    oscillator.connect(gain).connect(swell)
+    oscillator.start(at)
+    oscillator.stop(end)
   }
 
+  // Air: noise through a high band that slowly drifts down, like light moving away.
   const air = audio.createBufferSource()
   const filter = audio.createBiquadFilter()
   const airGain = audio.createGain()
   air.buffer = noise
   air.loop = true
-  filter.type = 'lowpass'
-  filter.frequency.value = 380
-  airGain.gain.value = 0.005
-  air.connect(filter).connect(airGain).connect(bed)
-  sources.push(air)
-
-  // The filter opens and closes over about twelve seconds, like slow breathing.
-  const drift = audio.createOscillator()
-  const depth = audio.createGain()
-  drift.frequency.value = 0.08
-  depth.gain.value = 160
-  drift.connect(depth).connect(filter.frequency)
-  sources.push(drift)
-
-  for (const source of sources) source.start()
-  ambientStop = () => {
-    const end = audio.currentTime + 1.2
-    bed.gain.cancelScheduledValues(audio.currentTime)
-    bed.gain.setValueAtTime(bed.gain.value, audio.currentTime)
-    bed.gain.exponentialRampToValueAtTime(0.0001, end)
-    for (const source of sources) source.stop(end + 0.05)
-    ambientStop = undefined
-  }
+  filter.type = 'bandpass'
+  filter.Q.value = 1.4
+  filter.frequency.setValueAtTime(5200, at)
+  filter.frequency.exponentialRampToValueAtTime(1400, end)
+  airGain.gain.value = 0.004
+  air.connect(filter).connect(airGain).connect(swell)
+  air.start(at)
+  air.stop(end)
 }
 
 /** Starts or resumes sound. Must run from a click, tap or key press, or the browser keeps it silent. */
-export async function start(next: EngineOptions, greet: boolean): Promise<void> {
+export async function start(next: EngineOptions): Promise<void> {
   options = next
   const audio = setUp()
   master.gain.setTargetAtTime(options.volume, audio.currentTime, 0.05)
   if (audio.state !== 'running') await audio.resume()
-  if (options.ambient) startAmbient()
-  if (greet) play('signature')
 }
 
 /** Fades everything out, then suspends the audio so it costs nothing. */
 export function stop(): void {
   if (!context) return
   const audio = context
-  ambientStop?.()
   master.gain.setTargetAtTime(0.0001, audio.currentTime, 0.25)
   window.setTimeout(() => void audio.suspend(), 1400)
 }

@@ -213,8 +213,8 @@ export interface SiteConfig {
     readonly storageKey: string
     /** Master level, 0 to 1. Every voice is already quiet; this scales them all. */
     readonly volume: number
-    /** A very low room tone under everything while sound is on. */
-    readonly ambient: boolean
+    /** A short swell on landing on the home page, in tone with the light. Plays within `withinMs` of the page opening. */
+    readonly galaxy: { readonly onHome: boolean; readonly withinMs: number }
     /** A soft page-turn after this many pixels of scrolling, and no closer together than gapMs. */
     readonly scroll: { readonly every: number; readonly gapMs: number }
     readonly label: string
