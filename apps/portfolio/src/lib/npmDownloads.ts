@@ -1,24 +1,23 @@
 import { useEffect, useState } from 'react'
 
 /*
- * Live npm download counts, read from npm's public API after the page loads. Each package's numbers are kept
- * in localStorage for a while, so moving between pages doesn't ask again. Nothing here throws: when npm can't
- * be reached the numbers are simply not shown.
+ * Live npm download totals, read from npm's public API after the page loads. npm answers at most 18 months
+ * per request, so the total adds up 18-month spans back from today until one comes back empty. Each total is
+ * kept in localStorage for a while, so moving between pages doesn't ask again. Nothing here throws: when npm
+ * can't be reached the number is simply not shown.
  */
 
-export interface NpmDownloads {
-  /** Downloads in the last 7 days. */
-  readonly weekly: number
-  /** Downloads in the last 30 days. */
-  readonly monthly: number
-}
-
-interface Stored extends NpmDownloads {
+interface Stored {
+  readonly total: number
   readonly at: number
 }
 
-const storagePrefix = 'npm-downloads:'
-const requests = new Map<string, Promise<NpmDownloads | null>>()
+const storagePrefix = 'npm-total:'
+const requests = new Map<string, Promise<number | null>>()
+const day = 86_400_000
+const span = 540 * day
+/** npm's download counts begin here. */
+const firstDay = Date.UTC(2015, 0, 10)
 
 /** The package name from an npmjs.com link, scoped or not. Null for any other link. */
 export function npmPackageOf(href: string): string | null {
@@ -27,32 +26,33 @@ export function npmPackageOf(href: string): string | null {
 }
 
 const isCount = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value >= 0
+const isoDay = (ms: number) => new Date(ms).toISOString().slice(0, 10)
 
-function readStored(pkg: string, ttlMs: number): NpmDownloads | null {
+function readStored(pkg: string, ttlMs: number): number | null {
   try {
     const raw = localStorage.getItem(storagePrefix + pkg)
     if (!raw) return null
     const value: unknown = JSON.parse(raw)
     if (typeof value !== 'object' || value === null) return null
-    const { weekly, monthly, at } = value as Record<string, unknown>
-    if (!isCount(weekly) || !isCount(monthly) || !isCount(at) || Date.now() - at > ttlMs) return null
-    return { weekly, monthly }
+    const { total, at } = value as Record<string, unknown>
+    if (!isCount(total) || !isCount(at) || Date.now() - at > ttlMs) return null
+    return total
   } catch {
     return null
   }
 }
 
-function store(pkg: string, downloads: NpmDownloads) {
+function store(pkg: string, total: number) {
   try {
-    const value: Stored = { ...downloads, at: Date.now() }
+    const value: Stored = { total, at: Date.now() }
     localStorage.setItem(storagePrefix + pkg, JSON.stringify(value))
   } catch {
-    // Storage can be full or blocked; the numbers still show for this page.
+    // Storage can be full or blocked; the number still shows for this page.
   }
 }
 
-async function count(pkg: string, period: 'week' | 'month'): Promise<number> {
-  const response = await fetch(`https://api.npmjs.org/downloads/point/last-${period}/${pkg}`)
+async function countBetween(pkg: string, from: number, to: number): Promise<number> {
+  const response = await fetch(`https://api.npmjs.org/downloads/point/${isoDay(from)}:${isoDay(to)}/${pkg}`)
   if (!response.ok) throw new Error(`npm answered ${response.status}`)
   const body: unknown = await response.json()
   const downloads = typeof body === 'object' && body !== null ? (body as Record<string, unknown>).downloads : undefined
@@ -60,17 +60,26 @@ async function count(pkg: string, period: 'week' | 'month'): Promise<number> {
   return downloads
 }
 
+async function countAll(pkg: string): Promise<number> {
+  let total = 0
+  for (let to = Date.now(); to > firstDay; to -= span + day) {
+    const downloads = await countBetween(pkg, Math.max(firstDay, to - span), to)
+    total += downloads
+    if (downloads === 0) break
+  }
+  return total
+}
+
 /** One request per package per page load, shared by every link that shows it. */
-export function loadNpmDownloads(pkg: string, ttlMs: number): Promise<NpmDownloads | null> {
+export function loadNpmTotal(pkg: string, ttlMs: number): Promise<number | null> {
   const stored = readStored(pkg, ttlMs)
-  if (stored) return Promise.resolve(stored)
+  if (stored !== null) return Promise.resolve(stored)
   let request = requests.get(pkg)
   if (!request) {
-    request = Promise.all([count(pkg, 'week'), count(pkg, 'month')]).then(
-      ([weekly, monthly]) => {
-        const downloads = { weekly, monthly }
-        store(pkg, downloads)
-        return downloads
+    request = countAll(pkg).then(
+      (total) => {
+        store(pkg, total)
+        return total
       },
       () => null,
     )
@@ -79,24 +88,23 @@ export function loadNpmDownloads(pkg: string, ttlMs: number): Promise<NpmDownloa
   return request
 }
 
-/** The package's download counts, or null while loading or when npm can't be reached. */
-export function useNpmDownloads(pkg: string | null, ttlMs: number): NpmDownloads | null {
-  const [downloads, setDownloads] = useState<NpmDownloads | null>(null)
+/** The package's downloads since it was published, or null while loading or when npm can't be reached. */
+export function useNpmTotal(pkg: string | null, ttlMs: number): number | null {
+  const [total, setTotal] = useState<number | null>(null)
 
   useEffect(() => {
     if (!pkg) return
     let live = true
-    void loadNpmDownloads(pkg, ttlMs).then((value) => {
-      if (live) setDownloads(value)
+    void loadNpmTotal(pkg, ttlMs).then((value) => {
+      if (live) setTotal(value)
     })
     return () => {
       live = false
     }
   }, [pkg, ttlMs])
 
-  return downloads
+  return total
 }
-
 /** 455, 1.2k, 12k, 1.2M. Rounds down, so it never claims more than the real number. */
 export function compactCount(n: number): string {
   if (n < 1000) return String(Math.floor(n))

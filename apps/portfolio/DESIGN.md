@@ -215,7 +215,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - **Sections, in order:** What it does (numbered tiles), Use case (prose, only when written), How it is built (notes on a thin ink lane), Honest limits (a quiet note). Each kind of content has its own shape; nothing is a plain divider list.
 - A use-case write-up goes in `useCase` for that build in `content/build-stories.ts`. The recording goes in `media` in `content/builds.ts`.
 - **Stack tags:** each tool in the rail is a small outlined pill in mono, with its mark in muted ink before the name. Marks are from Simple Icons (CC0), kept in `content/tech-icons.ts`; a tool with no mark shows its name alone.
-- **npm downloads:** every npm package link (on cards and on the title plate) carries its live downloads after the label, small and in mono: "↓269 w · ↓504 m". Read from npm's public API in the visitor's browser and kept for two hours. A count under 5 isn't shown, and the month is left out while it equals the week. Nothing shows if npm can't be reached. `npmDownloads` in the config.
+- **npm downloads:** every npm package link (on cards and on the title plate) carries its live all-time download total after the label, small and in mono: "npm ↓595". Read from npm's public API in the visitor's browser (18-month spans added up, since npm answers no more per request) and kept for two hours. Rounded down when shortened (1.2k), never up. A total under 5 isn't shown, and nothing shows if npm can't be reached. `npmDownloads` in the config.
 - **Previous and next:** quiet text links at the page foot, the same as every other page-onward row (back on the left, on at the right). `projectPage.onward: 'panels'` in the config brings back the two larger panels instead.
 
 ## Experience

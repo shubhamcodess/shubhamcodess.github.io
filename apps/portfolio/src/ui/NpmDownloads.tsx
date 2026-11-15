@@ -1,5 +1,5 @@
 import type { SiteConfig } from '../config/types'
-import { compactCount, npmPackageOf, useNpmDownloads } from '../lib/npmDownloads'
+import { compactCount, npmPackageOf, useNpmTotal } from '../lib/npmDownloads'
 import './npm-downloads.css'
 
 interface NpmDownloadsProps {
@@ -16,32 +16,19 @@ const arrow = (
 )
 
 /**
- * A package link's live downloads, set inside its label: "npm ↓455 w · ↓1.8k m".
+ * A package link's live download total, set inside its label: "npm ↓1.3k".
  * Nothing at all until there is a number worth showing.
  */
 export function NpmDownloads({ href, settings }: NpmDownloadsProps) {
-  const { ttlMinutes, min, monthlyWhenSameAsWeekly } = settings
-  const pkg = npmPackageOf(href)
-  const downloads = useNpmDownloads(pkg, ttlMinutes * 60_000)
-  if (!downloads) return null
-
-  const shown = [
-    { key: 'weekly', value: downloads.weekly, unit: 'w', words: 'this week' },
-    { key: 'monthly', value: downloads.monthly, unit: 'm', words: 'this month' },
-  ].filter((count) => count.value >= min && (count.key === 'weekly' || monthlyWhenSameAsWeekly || count.value !== downloads.weekly))
-  if (shown.length === 0) return null
+  const total = useNpmTotal(npmPackageOf(href), settings.ttlMinutes * 60_000)
+  if (total === null || total < settings.min) return null
 
   return (
     <span className="npm-downloads">
-      <span className="visually-hidden">, {shown.map((count) => `${count.value} downloads ${count.words}`).join(', ')}</span>
+      <span className="visually-hidden">, {total} downloads in total</span>
       <span className="npm-downloads__row" aria-hidden="true">
-        {shown.map((count) => (
-          <span key={count.key} className="npm-downloads__count">
-            {arrow}
-            {compactCount(count.value)}
-            <span className="npm-downloads__unit">{count.unit}</span>
-          </span>
-        ))}
+        {arrow}
+        {compactCount(total)}
       </span>
     </span>
   )

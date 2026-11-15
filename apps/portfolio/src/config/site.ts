@@ -101,7 +101,7 @@ export const site = {
     label: 'Sound',
   },
   tilt: { maxDeg: 1.2 },
-  npmDownloads: { ttlMinutes: 120, min: 5, monthlyWhenSameAsWeekly: false },
+  npmDownloads: { ttlMinutes: 120, min: 5 },
   cometCursor: { tailMax: 1.25, bowAt: 0.3 },
   chalkTrail: { lifeMs: 220, width: 1.5, opacity: 0.38, dust: 0.25, follow: 0.16, maxLength: 60 },
   kinds: ['AI tooling', 'Developer tool', 'In-browser AI', 'App'],

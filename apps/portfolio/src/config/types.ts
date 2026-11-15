@@ -58,7 +58,7 @@ export interface FeatureFlags {
   readonly tilt: boolean
   /** A preview card that follows the pointer over outside links. */
   readonly linkPreviews: boolean
-  /** Live npm download counts beside every npm package link. */
+  /** Live npm download totals beside every npm package link. */
   readonly npmDownloads: boolean
   readonly contact: boolean
   readonly buildsPage: boolean
@@ -312,14 +312,12 @@ export interface SiteConfig {
     readonly follow: number
     readonly maxLength: number
   }
-  /** Live npm downloads beside package links, fetched in the visitor's browser. */
+  /** Live npm download totals beside package links, fetched in the visitor's browser. */
   readonly npmDownloads: {
-    /** How long fetched counts are kept before npm is asked again. */
+    /** How long a fetched total is kept before npm is asked again. */
     readonly ttlMinutes: number
-    /** The least a count must be to show. */
+    /** The least a total must be to show. */
     readonly min: number
-    /** Show the month's count even when it equals the week's (a package under a month old). */
-    readonly monthlyWhenSameAsWeekly: boolean
   }
   /** How far a card leans toward the pointer, in degrees at its edge. Keep it small: a lean, not a flip. */
   readonly tilt: { readonly maxDeg: number }
