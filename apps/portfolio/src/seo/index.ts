@@ -301,7 +301,7 @@ export function headTags(page: SeoPage, context: SeoContext): string {
     `<link rel="icon" href="${local}favicon.svg" type="image/svg+xml" />`,
     `<link rel="apple-touch-icon" href="${local}apple-touch-icon.png" />`,
     `<link rel="manifest" href="${local}site.webmanifest" />`,
-    `<link rel="alternate" type="text/markdown" href="${local}llms.txt" title="${escapeHtml(owner)}, for language models" />`,
+    indexable ? `<link rel="alternate" type="text/markdown" href="${local}${markdownPathOf(page)}" title="This page in Markdown" />` : '',
     ...(page.id === 'home' ? profiles().map((href) => `<link rel="me" href="${href}" />`) : []),
     `<script type="application/ld+json">${json}</script>`,
   ]
@@ -379,36 +379,151 @@ export function webManifest(root: string): string {
   )}\n`
 }
 
+/** Where a page's Markdown copy lives: the page's address plus `index.html.md`, as llmstxt.org proposes. */
+export function markdownPathOf(page: SeoPage): string {
+  return `${pathOf(page)}index.html.md`
+}
+
+const buildPath = (build: Build) => `${site.routes.builds.path}${build.slug}/`
+
+/** One build, in full, under a heading of the given depth. */
+function buildSection(build: Build, root: string, depth: number): string[] {
+  const story = buildStories[build.slug as keyof typeof buildStories]
+  const sub = '#'.repeat(depth + 1)
+  const lines = [`${'#'.repeat(depth)} ${build.title}`, '', build.summary, '']
+  lines.push(`- Page: ${root}${buildPath(build)}`, `- Kind: ${build.kind}, ${build.year}`, `- Stack: ${build.stack.join(', ')}`)
+  lines.push(...build.links.map((item) => `- ${item.kind}: ${item.href}`), '')
+  if (!story) return lines
+  lines.push(`${sub} ${site.projectPage.overview}`, '', markdown(story.overview), '')
+  if (story.facts?.length) lines.push('Measured:', '', ...story.facts.map((fact) => `- ${fact.value}: ${fact.label}`), '')
+  lines.push(`${sub} ${site.projectPage.sections.features}`, '', ...story.features.map((line) => `- ${markdown(line)}`), '')
+  if (story.useCase) {
+    lines.push(
+      `${sub} ${site.projectPage.useCase}: ${story.useCase.title}`,
+      '',
+      ...story.useCase.paragraphs.flatMap((text) => [markdown(text), '']),
+    )
+  }
+  if (story.engineering?.length) {
+    lines.push(`${sub} ${site.projectPage.sections.engineering}`, '', ...story.engineering.map((line) => `- ${markdown(line)}`), '')
+  }
+  if (story.limits?.length)
+    lines.push(`${sub} ${site.projectPage.sections.limits}`, '', ...story.limits.map((line) => `- ${markdown(line)}`), '')
+  return lines
+}
+
+function buildList(root: string, only?: readonly string[]): string[] {
+  return builds
+    .filter((build) => !only || only.includes(build.slug))
+    .map((build) => `- [${build.title}](${root}${buildPath(build)}): ${build.summary} (${build.kind}, ${build.year})`)
+}
+
+function experienceSection(depth: number): string[] {
+  const lines: string[] = []
+  for (const employer of employers) {
+    lines.push(`${'#'.repeat(depth)} ${employer.name}, ${employer.place} (${yearsAt(employer.from, employer.to)})`, '')
+    for (const role of employer.roles) {
+      lines.push(`${'#'.repeat(depth + 1)} ${role.title} (${yearsAt(role.from, role.to)})`, '', role.scope, '')
+      lines.push(`${site.experience.labels.built}:`, '', ...role.built.map((line) => `- ${line}`), '')
+      lines.push(`${site.experience.labels.delivered}:`, '', ...role.delivered.map((line) => `- ${line}`), '')
+      lines.push(`Tools: ${role.tools.join(', ')}`, '')
+    }
+  }
+  lines.push(`${'#'.repeat(depth)} ${site.experience.labels.recognition}`, '')
+  lines.push(...recognition.map((item) => `- ${item.title}, ${item.when}${item.by ? `, by ${item.by}` : ''}`), '')
+  return lines
+}
+
+function credentialList(credentials: readonly SeoCredential[]): string[] {
+  return credentials.map((credential) => {
+    const verify = credential.href ? ` ([verify](${credential.href}))` : ''
+    return `- ${credential.title}, ${credential.issuer}${credential.issued ? `, ${credential.issued}` : ''}${verify}`
+  })
+}
+
+function contactList(): string[] {
+  return [
+    `- Email: ${contact.email}`,
+    ...contact.links.map((item) => `- [${item.label}](${item.href}): ${item.detail}`),
+    `- [Credly](${site.credentialsPage.wallet}): verified certifications`,
+  ]
+}
+
+/** A page's own text as Markdown, for a model that fetches one page. Linked from the page's head and from llms.txt. */
+export function pageMarkdown(page: SeoPage, context: SeoContext): string {
+  const { root } = context
+  const lines = [`# ${titleOf(page)}`, '', `> ${descriptionOf(page)}`, '', `Page: ${root}${pathOf(page)}`, '']
+  switch (page.id) {
+    case 'home':
+    case 'notFound':
+      lines.push(
+        `## ${owner}`,
+        '',
+        `${seo.person.jobTitle.join(' and ')} at ${seo.person.employer.name}, ${seo.person.locality}. ${site.hero.statement}`,
+        '',
+      )
+      lines.push(`## ${site.featured.title}`, '', site.featured.lead, '')
+      lines.push(...buildList(root, site.featured.slugs), '')
+      lines.push(
+        `## ${site.experience.title}`,
+        '',
+        site.experience.lead,
+        '',
+        ...toolGroups.map((group) => `- ${group.label}: ${group.tools.join(', ')}`),
+        '',
+      )
+      lines.push(`## ${site.experience.credentialsTitle}`, '', site.experience.credentialsLead, '')
+      lines.push(...featuredCredentials.map((item) => `- [${item.title}, ${item.level}](${item.href}), ${item.issuer}`), '')
+      lines.push(`## ${site.contact.title}`, '', ...contactList(), '')
+      break
+    case 'builds':
+      lines.push(`## ${site.buildsPage.title}`, '', site.buildsPage.lead, '', ...buildList(root), '')
+      break
+    case 'project':
+      lines.push(...buildSection(page.build, root, 2), `By ${owner}: ${root}`, '')
+      break
+    case 'experience':
+      lines.push(...experienceSection(2))
+      break
+    case 'credentials':
+      lines.push(`## ${site.credentialsPage.title}`, '', site.credentialsPage.lead, '', ...credentialList(context.credentials), '')
+      break
+    case 'me':
+      lines.push(`## ${site.me.title}`, '', site.me.lead, '')
+      break
+  }
+  return lines.join('\n')
+}
+
 /** The short version for language models: who this is and where everything lives. See https://llmstxt.org. */
 export function llmsTxt(root: string): string {
-  const pages = (Object.keys(site.routes) as RouteId[]).filter((id) => id !== 'me' || site.features.mePage)
+  const routes = (Object.keys(site.routes) as RouteId[]).filter((id) => id !== 'me' || site.features.mePage)
+  const md = (page: SeoPage) => `${root}${markdownPathOf(page)}`
   return [
     `# ${owner}`,
     '',
     `> ${owner} (${contact.badge.handle}) is a ${seo.person.jobTitle.join(' and ')} at ${seo.person.employer.name} in ${seo.person.locality}. ${site.hero.statement}`,
     '',
-    `He builds open source AI and developer tools: MCP tooling, local-model command line tools, in-browser AI and small apps. Every number on the site comes from the project's own README or benchmark.`,
+    `He builds open source AI and developer tools: MCP tooling, local-model command line tools, in-browser AI and small apps. Every number on the site comes from the project's own README or benchmark. Each link below is the page's Markdown copy; drop \`index.html.md\` from it for the page itself.`,
     '',
     '## Pages',
     '',
-    ...pages.map((id) => `- [${site.routes[id].label}](${root}${site.routes[id].path}): ${site.routes[id].description}`),
+    ...routes.map((id) => `- [${site.routes[id].label}](${md({ id })}): ${site.routes[id].description}`),
     '',
     '## Builds',
     '',
     ...builds.map((build) => {
       const links = build.links.map((item) => `${item.kind}: ${item.href}`).join('; ')
-      return `- [${build.title}](${root}${site.routes.builds.path}${build.slug}/): ${build.summary} (${build.kind}, ${build.year}; ${links})`
+      return `- [${build.title}](${md({ id: 'project', build })}): ${build.summary} (${build.kind}, ${build.year}; ${links})`
     }),
     '',
     '## Profiles',
     '',
-    ...contact.links.map((item) => `- [${item.label}](${item.href}): ${item.detail}`),
-    `- [Credly](${site.credentialsPage.wallet}): verified certifications`,
-    `- Email: ${contact.email}`,
+    ...contactList(),
     '',
     '## Optional',
     '',
-    `- [Everything on the site in one file](${root}llms-full.txt): every build's full write-up, the career record and the credentials, in Markdown`,
+    `- [Everything on the site in one file](${root}llms-full.txt): every build's full write-up, the career record and the credentials`,
     '',
   ].join('\n')
 }
@@ -416,7 +531,7 @@ export function llmsTxt(root: string): string {
 /** The long version: all of the site's text, in Markdown, for a model that wants everything in one fetch. */
 export function llmsFullTxt(context: SeoContext): string {
   const { root, credentials } = context
-  const lines: string[] = [
+  return [
     `# ${owner}`,
     '',
     `> ${seo.person.jobTitle.join(' and ')} at ${seo.person.employer.name}, ${seo.person.locality}. ${site.hero.statement}`,
@@ -432,53 +547,19 @@ export function llmsFullTxt(context: SeoContext): string {
     '',
     '## Builds',
     '',
-  ]
-
-  for (const build of builds) {
-    const story = buildStories[build.slug as keyof typeof buildStories]
-    lines.push(`### ${build.title}`, '', `${build.summary}`, '')
-    lines.push(`- Page: ${root}${site.routes.builds.path}${build.slug}/`)
-    lines.push(`- Kind: ${build.kind}, ${build.year}`)
-    lines.push(`- Stack: ${build.stack.join(', ')}`)
-    for (const item of build.links) lines.push(`- ${item.kind}: ${item.href}`)
-    lines.push('')
-    if (!story) continue
-    lines.push(markdown(story.overview), '')
-    if (story.facts?.length) {
-      lines.push('Measured:', '', ...story.facts.map((fact) => `- ${fact.value}: ${fact.label}`), '')
-    }
-    lines.push(`${site.projectPage.sections.features}:`, '', ...story.features.map((line) => `- ${markdown(line)}`), '')
-    if (story.useCase) lines.push(`${story.useCase.title}:`, '', ...story.useCase.paragraphs.map(markdown).flatMap((p) => [p, '']))
-    if (story.engineering?.length) {
-      lines.push(`${site.projectPage.sections.engineering}:`, '', ...story.engineering.map((line) => `- ${markdown(line)}`), '')
-    }
-    if (story.limits?.length) {
-      lines.push(`${site.projectPage.sections.limits}:`, '', ...story.limits.map((line) => `- ${markdown(line)}`), '')
-    }
-  }
-
-  lines.push('## Experience', '')
-  for (const employer of employers) {
-    lines.push(`### ${employer.name}, ${employer.place} (${yearsAt(employer.from, employer.to)})`, '')
-    for (const role of employer.roles) {
-      lines.push(`#### ${role.title} (${yearsAt(role.from, role.to)})`, '', role.scope, '')
-      lines.push('Built:', '', ...role.built.map((line) => `- ${line}`), '')
-      lines.push('Delivered:', '', ...role.delivered.map((line) => `- ${line}`), '')
-      lines.push(`Tools: ${role.tools.join(', ')}`, '')
-    }
-  }
-
-  lines.push('## Recognition', '', ...recognition.map((item) => `- ${item.title}, ${item.when}${item.by ? `, by ${item.by}` : ''}`), '')
-
-  lines.push('## Credentials', '')
-  for (const credential of credentials) {
-    const verify = credential.href ? ` (verify: ${credential.href})` : ''
-    lines.push(`- ${credential.title}, ${credential.issuer}${credential.issued ? `, ${credential.issued}` : ''}${verify}`)
-  }
-  lines.push('')
-
-  lines.push('## Contact', '', `- Email: ${contact.email}`, ...contact.links.map((item) => `- ${item.label}: ${item.href}`), '')
-  return lines.join('\n')
+    ...builds.flatMap((build) => buildSection(build, root, 3)),
+    '## Experience',
+    '',
+    ...experienceSection(3),
+    '## Credentials',
+    '',
+    ...credentialList(credentials),
+    '',
+    '## Contact',
+    '',
+    ...contactList(),
+    '',
+  ].join('\n')
 }
 
 /** RFC 9116: where to report a security problem. Valid for a year from each build. */

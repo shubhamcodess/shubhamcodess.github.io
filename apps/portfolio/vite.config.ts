@@ -8,8 +8,11 @@ import type { RouteId } from './src/config/types'
 import { builds } from './src/content/builds'
 import {
   headTags,
+  indexablePages,
   llmsFullTxt,
   llmsTxt,
+  markdownPathOf,
+  pageMarkdown,
   robotsTxt,
   securityTxt,
   sitemapXml,
@@ -205,6 +208,8 @@ function seo(): Plugin {
         emit('llms.txt', llmsTxt(root))
         emit('llms-full.txt', llmsFullTxt(context))
         emit('.well-known/security.txt', securityTxt(root))
+        // Each page's own text in Markdown, beside its index.html, for models that fetch one page.
+        for (const page of indexablePages()) emit(markdownPathOf(page), pageMarkdown(page, context))
       },
     },
   }

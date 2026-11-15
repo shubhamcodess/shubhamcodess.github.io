@@ -19,7 +19,7 @@ export const site = {
     home: {
       path: '',
       label: 'Home',
-      title: 'Shubham Prakash | Cloud Full Stack Developer and AI Engineer',
+      title: 'Shubham Prakash | Sr. Engineer - Full Stack & AI',
       description:
         'Shubham Prakash is a Cloud Full Stack Developer at IBM with 6 years of shipping enterprise applications, who builds open source AI and developer tools.',
     },
