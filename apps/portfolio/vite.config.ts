@@ -1,12 +1,25 @@
+import { execFileSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
 import react from '@vitejs/plugin-react'
 import { defineConfig, type Plugin } from 'vite'
 import { site } from './src/config/site'
+import type { RouteId } from './src/config/types'
 import { builds } from './src/content/builds'
+import {
+  headTags,
+  llmsFullTxt,
+  llmsTxt,
+  robotsTxt,
+  securityTxt,
+  sitemapXml,
+  webManifest,
+  type SeoCredential,
+  type SeoPage,
+} from './src/seo'
 
 const template = 'project/index.html'
 const projectPath = /\/builds\/([a-z0-9-]+)\/?$/
-
-const escapeAttribute = (text: string) => text.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;')
 
 /**
  * One real HTML file per build, made from the project template, so every project page loads directly
@@ -40,9 +53,8 @@ function projectPages(): Plugin {
           this.emitFile({
             type: 'asset',
             fileName: `builds/${build.slug}/index.html`,
-            source: String(page.source)
-              .replaceAll('__TITLE__', escapeAttribute(`${build.title} | ${site.owner}`))
-              .replaceAll('__DESCRIPTION__', escapeAttribute(build.summary)),
+            // The head is filled in by seo(), which knows this file by its path.
+            source: String(page.source),
           })
         }
         delete bundle[template]
@@ -66,29 +78,133 @@ function renderBlocking(): Plugin {
   }
 }
 
+const seoMarker = /\s*<!-- seo:[^>]*-->/
+const routeOf = (html: string) => /data-route="([a-z]+)"/.exec(html)?.[1]
+const siteRoot = () => `${site.url}${process.env.PORTFOLIO_BASE ?? '/'}`
+const readCredentials = (): SeoCredential[] => JSON.parse(readFileSync('public/data/credentials.json', 'utf8'))
+
+/** Which page an HTML file is, from its route and, for a project page, its address. */
+function seoPageOf(html: string, path: string): SeoPage | undefined {
+  if (path === '404.html') return { id: 'notFound' }
+  const route = routeOf(html)
+  if (route === 'project') {
+    const slug = /builds\/([a-z0-9-]+)\/?/.exec(path)?.[1]
+    const build = builds.find((item) => item.slug === slug)
+    return build ? { id: 'project', build } : undefined
+  }
+  return route && route in site.routes ? { id: route as RouteId } : undefined
+}
+
+/** The files each page's text comes from, so its sitemap date is the last commit that changed what it says. */
+function sourcesOf(page: SeoPage): string[] {
+  switch (page.id) {
+    case 'project':
+      return ['src/content/builds.ts', 'src/content/build-stories.ts', `src/motion/${page.build.slug}`, `public/motion/${page.build.slug}`]
+    case 'builds':
+      return ['src/content/builds.ts', 'src/features/builds']
+    case 'experience':
+      return ['src/content/experience.ts', 'src/content/tools.ts', 'src/features/experience']
+    case 'credentials':
+      return ['public/data/credentials.json', 'src/features/credentials']
+    case 'me':
+      return ['src/content/me.ts', 'src/features/me', 'public/me']
+    default:
+      return ['src/content', 'src/features/home', 'src/features/hero', 'src/features/contact', 'src/features/experience']
+  }
+}
+
+/** The last commit date of a page's sources, or nothing when git history is not there (a shallow clone). */
+function lastCommit(page: SeoPage): string | undefined {
+  try {
+    const date = execFileSync('git', ['log', '-1', '--format=%cI', '--', ...sourcesOf(page)], { encoding: 'utf8' }).trim()
+    return date || undefined
+  } catch {
+    return undefined
+  }
+}
+
 /**
- * What static hosting needs beyond the pages: a sitemap of every page, robots.txt pointing at it,
- * and a 404 page (GitHub Pages serves 404.html for any unknown address; it is the home page).
+ * A Content Security Policy for the built pages. GitHub Pages cannot send headers, so it goes in a meta tag.
+ * The one inline script (the theme before first paint) is allowed by its hash; JSON-LD is data and never runs.
  */
-function staticHosting(): Plugin {
+function contentSecurityPolicy(html: string): string {
+  const hashes = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(
+    ([, code = '']) => `'sha256-${createHash('sha256').update(code).digest('base64')}'`,
+  )
+  return [
+    "default-src 'self'",
+    `script-src 'self' ${hashes.join(' ')}`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "font-src 'self' data:",
+    "media-src 'self'",
+    "connect-src 'self' https://api.npmjs.org",
+    "worker-src 'self' blob:",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'none'",
+    'upgrade-insecure-requests',
+  ].join('; ')
+}
+
+/**
+ * Everything search engines, link previews and AI assistants read (see src/seo/): each page's head, robots.txt,
+ * the sitemap, the web app manifest, llms.txt, llms-full.txt and the 404 page. In development the head is filled in too.
+ */
+function seo(): Plugin {
+  let building = false
   return {
-    name: 'portfolio-static-hosting',
-    apply: 'build',
+    name: 'portfolio-seo',
+    configResolved(config) {
+      building = config.command === 'build'
+    },
+    transformIndexHtml: {
+      order: 'pre',
+      handler(html, context) {
+        if (building) return html // The build fills the head in generateBundle, once every page and asset exists.
+        const page = seoPageOf(html, (context.originalUrl ?? context.path).split('?')[0] ?? '')
+        if (!page) return html
+        const root = siteRoot()
+        const tags = headTags(page, { root, portrait: `${root}src/assets/portrait.webp`, credentials: readCredentials() })
+        return html.replace(seoMarker, `\n    ${tags}`)
+      },
+    },
     generateBundle: {
       order: 'post',
       handler(_options, bundle) {
-        const base = `${site.url}${process.env.PORTFOLIO_BASE ?? '/'}`
-        const routes = Object.entries(site.routes).filter(([id]) => id !== 'me' || site.features.mePage)
-        const paths = [...routes.map(([, route]) => route.path), ...builds.map((build) => `builds/${build.slug}/`)]
-        const urls = paths.map((path) => `  <url><loc>${base}${path}</loc></url>`).join('\n')
-        this.emitFile({
-          type: 'asset',
-          fileName: 'sitemap.xml',
-          source: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
-        })
-        this.emitFile({ type: 'asset', fileName: 'robots.txt', source: `User-agent: *\nAllow: /\n\nSitemap: ${base}sitemap.xml\n` })
+        const root = siteRoot()
+        const portraitFile = Object.keys(bundle).find((name) => /portrait-[\w-]+\.webp$/.test(name))
+        if (!portraitFile) this.error('The portrait asset is missing from the bundle')
+        const context = { root, portrait: `${root}${portraitFile}`, credentials: readCredentials() }
+
+        const finish = (html: string, page: SeoPage) =>
+          html
+            .replace(seoMarker, `\n    ${headTags(page, context)}`)
+            .replace(
+              '<meta charset="UTF-8" />',
+              `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${contentSecurityPolicy(html)}" />`,
+            )
+
+        // GitHub Pages serves 404.html for any unknown address. It is the home page, marked noindex.
         const home = bundle['index.html']
-        if (home?.type === 'asset') this.emitFile({ type: 'asset', fileName: '404.html', source: home.source })
+        if (home?.type === 'asset')
+          this.emitFile({ type: 'asset', fileName: '404.html', source: finish(String(home.source), { id: 'notFound' }) })
+
+        for (const [fileName, asset] of Object.entries(bundle)) {
+          if (asset.type !== 'asset' || !fileName.endsWith('.html') || fileName === '404.html') continue
+          const html = String(asset.source)
+          const page = seoPageOf(html, fileName)
+          if (!page) this.error(`No page for ${fileName}`)
+          asset.source = finish(html, page)
+        }
+
+        const emit = (fileName: string, source: string) => this.emitFile({ type: 'asset', fileName, source })
+        emit('robots.txt', robotsTxt(root))
+        emit('sitemap.xml', sitemapXml(root, lastCommit))
+        emit('site.webmanifest', webManifest(root))
+        emit('llms.txt', llmsTxt(root))
+        emit('llms-full.txt', llmsFullTxt(context))
+        emit('.well-known/security.txt', securityTxt(root))
       },
     },
   }
@@ -99,7 +215,7 @@ function staticHosting(): Plugin {
 export default defineConfig({
   base: process.env.PORTFOLIO_BASE ?? '/',
   appType: 'mpa',
-  plugins: [react(), projectPages(), renderBlocking(), staticHosting()],
+  plugins: [react(), projectPages(), renderBlocking(), seo()],
   build: {
     target: 'es2022',
     rolldownOptions: {

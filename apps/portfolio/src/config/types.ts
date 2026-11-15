@@ -29,7 +29,32 @@ export interface RouteConfig {
   /** Path under the site base, with a trailing slash for directories. "" is the root. */
   readonly path: string
   readonly label: string
+  /** The page's title in tabs, search results and link previews. Aim for 50 to 60 characters. */
   readonly title: string
+  /** The page's search and preview description. Aim for 120 to 160 characters. */
+  readonly description: string
+}
+
+/** What search engines, link previews and AI assistants read about the site. See src/seo/. */
+export interface SeoConfig {
+  /** Language and region, as Open Graph writes it. */
+  readonly locale: string
+  /** The person behind the site, for structured data. Every value must be true. */
+  readonly person: {
+    readonly jobTitle: readonly string[]
+    readonly description: string
+    readonly employer: { readonly name: string; readonly url: `https://${string}` }
+    readonly locality: string
+    readonly country: string
+    /** Topics the person works in, for structured data and llms.txt. */
+    readonly knowsAbout: readonly string[]
+  }
+  /** The link preview image, under /public. Make it with `pnpm --filter @portfolio/app social-image`. */
+  readonly image: { readonly path: string; readonly width: number; readonly height: number; readonly alt: string }
+  /** A project page's title: `{title}` and `{kind}` are filled in, then the owner's name follows. */
+  readonly projectTitle: string
+  /** Light and dark browser chrome colours: the page surface in each theme. */
+  readonly themeColor: { readonly light: string; readonly dark: string }
 }
 
 /** Turn a part of the site on or off without touching components. */
@@ -166,6 +191,7 @@ export interface SiteConfig {
     readonly label: string
   }
   readonly routes: Readonly<Record<RouteId, RouteConfig>>
+  readonly seo: SeoConfig
   /** The header's links on each page. Keep each short: on a phone the header holds the logo, these and two icons. */
   readonly nav: Readonly<Record<NavPage, readonly NavItem[]>>
   readonly hero: HeroConfig

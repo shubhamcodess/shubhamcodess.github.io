@@ -16,11 +16,73 @@ export const site = {
     label: 'Dark theme',
   },
   routes: {
-    home: { path: '', label: 'Home', title: 'Shubham Prakash | Cloud Full Stack Developer' },
-    builds: { path: 'builds/', label: 'Builds', title: 'All builds | Shubham Prakash' },
-    experience: { path: 'experience/', label: 'Experience', title: 'Experience | Shubham Prakash' },
-    me: { path: 'me/', label: 'Me', title: 'Off the clock | Shubham Prakash' },
-    credentials: { path: 'credentials/', label: 'Credentials', title: 'Credentials | Shubham Prakash' },
+    home: {
+      path: '',
+      label: 'Home',
+      title: 'Shubham Prakash | Cloud Full Stack Developer and AI Engineer',
+      description:
+        'Shubham Prakash is a Cloud Full Stack Developer at IBM with 6 years of shipping enterprise applications, who builds open source AI and developer tools.',
+    },
+    builds: {
+      path: 'builds/',
+      label: 'Builds',
+      title: 'Builds: open source AI and developer tools | Shubham Prakash',
+      description:
+        'Every open source build by Shubham Prakash: MCP tooling, local-model developer tools, in-browser AI and apps. Open one for what it does and how it is built.',
+    },
+    experience: {
+      path: 'experience/',
+      label: 'Experience',
+      title: 'Experience: six years at IBM | Shubham Prakash',
+      description:
+        'Six years at IBM, from application developer to senior cloud full stack developer: what Shubham Prakash built in each role and what came of it.',
+    },
+    me: {
+      path: 'me/',
+      label: 'Me',
+      title: 'Off the clock | Shubham Prakash',
+      description: 'Shubham Prakash away from work: biking, photography, filmmaking, and the places he has called home.',
+    },
+    credentials: {
+      path: 'credentials/',
+      label: 'Credentials',
+      title: 'Credentials: AI and cloud certifications | Shubham Prakash',
+      description:
+        'Certifications and badges held by Shubham Prakash, from Anthropic, Google Cloud, Microsoft and others, grouped by issuer with a link to verify each one.',
+    },
+  },
+  seo: {
+    locale: 'en_US',
+    person: {
+      jobTitle: ['Cloud Full Stack Developer', 'AI Engineer'],
+      description:
+        'Cloud Full Stack Developer at IBM with 6 years of shipping enterprise applications, scaling them in production, and building AI tools.',
+      employer: { name: 'IBM', url: 'https://www.ibm.com' },
+      locality: 'Bengaluru',
+      country: 'IN',
+      knowsAbout: [
+        'Full stack development',
+        'Cloud computing',
+        'Kubernetes',
+        'Model Context Protocol (MCP)',
+        'AI agents',
+        'Large language models',
+        'Java',
+        'TypeScript',
+        'React',
+        'Angular',
+        'Rust',
+        'WebAssembly',
+      ],
+    },
+    image: {
+      path: 'social.png',
+      width: 1200,
+      height: 630,
+      alt: 'Shubham Prakash, AI Engineer, beside his developer ID badge',
+    },
+    projectTitle: '{title} | {kind} by Shubham Prakash',
+    themeColor: { light: '#f3ede1', dark: '#0a0d14' },
   },
   // Home carries all three. Elsewhere only the other main page: Contact is in every footer, and the logo goes home.
   nav: {

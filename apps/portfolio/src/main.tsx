@@ -28,7 +28,6 @@ function resolvePage(route: string | undefined): Page | null {
 const page = resolvePage(root.dataset.route)
 // An address that names no build goes to the index, which is the nearest true answer; a page that is switched off goes home.
 if (!page) window.location.replace(hrefTo(root.dataset.route === 'project' ? 'builds' : 'home'))
-if (page?.id === 'project') document.title = `${page.build.title} | ${site.owner}`
 
 const { light } = site.hero
 document.documentElement.style.setProperty('--light-scroll-rate', String(light.parallax.scrollLight))
@@ -49,6 +48,9 @@ if (page) {
   // The page's own code and the fonts load side by side.
   const [content] = await Promise.all([loadPage(page), fonts])
   const app = createRoot(root)
+  // The built page carries a hidden copy of its own text for crawlers that do not run JavaScript
+  // (see scripts/prerender.mjs). React replaces it here, in the same task, so it is never seen.
+  delete root.dataset.prerendered
   flushSync(() =>
     app.render(
       <StrictMode>

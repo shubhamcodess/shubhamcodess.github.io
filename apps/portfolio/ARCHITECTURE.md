@@ -8,7 +8,11 @@ How this app is built, and the rules that keep it lean and easy to change. For h
 
 This is the live site. From the repository root, `pnpm dev`, `pnpm build`, `pnpm preview` and `pnpm check` all run it, and a push to `main` builds and publishes it to https://shubhamcodess.github.io (`.github/workflows/deploy.yml`: `pnpm check`, then `apps/portfolio/dist` to Pages). The earlier Gotham site in `apps/web` keeps its own commands, prefixed `web:` (`pnpm web:dev`, `pnpm web:build`, `pnpm web:check`), and is not deployed.
 
-The build also writes `sitemap.xml`, `robots.txt` (pointing at the sitemap) and `404.html` (the home page). `site.url` in the config is the address they use.
+The build also writes, from `src/seo/` and the config: each page's head (title, description, canonical, Open Graph and X cards, icons, a content security policy and JSON-LD), `robots.txt` (every search and AI crawler allowed, by name), `sitemap.xml` (each date is the last commit that changed that page's text, so CI checks out full history), `site.webmanifest`, `llms.txt`, `llms-full.txt` (all of the site's text in Markdown), `.well-known/security.txt` and `404.html` (the home page, noindex). `site.url` in the config is the address they use.
+
+After `vite build`, `scripts/prerender.mjs` opens every page in headless Chromium and writes its rendered text into the HTML, so crawlers that do not run JavaScript (GPTBot, ClaudeBot, PerplexityBot, link unfurlers) read the same words as a visitor. That copy sits hidden in `#root` until the app replaces it (`src/main.tsx`); without JavaScript it shows. React does not hydrate it. The build needs Chromium: `pnpm exec playwright install chromium` once, and CI installs it.
+
+SEO images are made from the live site and committed: `social-image` (the 1200 x 630 link preview: the logo, name and role beside the real ID badge, with `pnpm dev` running) and `app-icons` (`favicon.ico`, the Apple touch icon and the manifest icons). Run them with `pnpm --filter @portfolio/app <name>` after the badge, portrait or logo changes, then re-scrape the home page in the Facebook and LinkedIn debuggers.
 
 Run from the repository root.
 
@@ -43,12 +47,13 @@ The dev server is on port 5180. `build` type-checks first and writes static file
 |---|---|---|
 | `src/config` | The site config and its types: copy, routes, featured builds, light tuning, feature flags | `content` |
 | `src/content` | Typed content. `builds.ts` is the one source for every build | nothing |
+| `src/seo` | Build-time only: every page's head and JSON-LD, robots.txt, the sitemap, the manifest, llms.txt and security.txt. Called by `vite.config.ts`, never shipped to the browser | `config`, `content` |
 | `src/styles` | `tokens.css` (all design values) and `base.css` (reset, frame, shared helpers) | nothing |
 | `src/lib` | Small hooks and helpers with no markup. `sound/` is the sound state and the Web Audio engine (loaded on first use) | `config` |
 | `src/ui` | Reusable parts that know nothing about this site's content: `FolderCard`, `ActionLink`, `Icon`, `Reveal`, `LinkPreview`, and `light/` (the shader and its backdrop) | `lib`, `config` types |
 | `src/layout` | Header and footer | `config`, `lib`, `ui` |
 | `src/features/*` | One folder per part of the site: `hero`, `builds`, `project`, `experience`, `credentials`, `contact` | everything above |
-| `scripts` | Build-time helpers that need the network. `fetch-credentials.mjs` reads the Credly wallet; `fetch-previews.mjs` saves the social preview of every outside link | `src/content/credentials-source.ts` |
+| `scripts` | Build-time helpers. `fetch-credentials.mjs` reads the Credly wallet; `fetch-previews.mjs` saves the social preview of every outside link; `prerender.mjs` writes each page's text into its HTML; `social-image.mjs` and `app-icons.mjs` make the preview image and icons | `src/content/credentials-source.ts` |
 | `public/motion` | Recorded motion graphics, one folder per build (today `everything-tech/`: a desktop and a phone take as H.264, each with a JPEG poster). Fetched only by that build's motion module | nothing |
 | `public/data` | Data loaded at runtime, kept out of the bundle: `credentials.json`, `link-previews.json`. Written by the scripts, committed | nothing |
 | `src/motion` | Motion graphics, one folder per build: the replay brought over from that build's own site, with its own CSS. `index.ts` lists them; each loads as its own chunk, only on its project page | `content` types |
@@ -108,14 +113,13 @@ pnpm --filter @portfolio/app data
 
 ## Known gaps
 
-- **Content is rendered in the browser.** Before launch, pre-render each page to static HTML at build time, so search engines and AI readers get the content without running JavaScript. This is the one launch blocker.
 - **JavaScript per page** (gzipped, everything a page downloads): home 89.0 kB, project 88.6, experience 81.7, builds 80.4, credentials 80.2. Budget 90 kB per page. React and the shared frame are 78 kB of that.
 - **Long text stays out of shared code.** Each build's full story is in `content/build-stories.ts`, loaded only by project pages. Keep `content/builds.ts` to card data, because every page imports it. The sound engine is its own 1.5 kB chunk; the wiring and toggle are in the main bundle. Credentials and link previews are runtime JSON, not bundled. npm download totals are fetched live in the browser (`lib/npmDownloads.ts`, cached in localStorage), the one outside request the pages make. Split by page before adding anything heavy.
 - **CSS is slightly over its 10 kB budget** (10.4 kB). Splitting it by page is the fix.
-- **Credentials load after the page,** so they aren't in the HTML for search engines. Pre-rendering (below) should inline `public/data/credentials.json`.
 - **Page transitions** use cross-document view transitions, which Firefox doesn't have yet. It simply navigates.
 - **No automated tests or gates yet,** by the owner's choice for now. The repository's responsive and performance gates still point at `apps/web`.
-- **No content security policy, sitemap or social image yet.** Add them with the deploy setup.
+- **The content security policy is a meta tag,** because GitHub Pages cannot send headers, so `frame-ancestors` (clickjacking) cannot be set. A host with headers (Cloudflare Pages, Netlify) would close that. Any new outside request needs adding to `contentSecurityPolicy` in `vite.config.ts`.
+- **One social image for every page.** Project pages could each get their own, drawn from their motion graphic.
 - **Font subsets.** Fontsource ships every script. Only the Latin files are ever downloaded, but the others still sit in `dist`.
 - **Motion was tuned by reading values, not by long viewing.** The preview pane used during the build stalls animations. Swing, reveal and transition timings are all tokens or config, so they are quick to adjust by eye.
 

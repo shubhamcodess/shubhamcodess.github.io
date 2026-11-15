@@ -19,12 +19,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Full history: each sitemap date is the last commit that changed that page's text.
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # The build opens every page in headless Chromium to put its text in the HTML (apps/portfolio/scripts/prerender.mjs).
+      - run: pnpm exec playwright install --with-deps chromium
       # Types and the static build of the site (apps/portfolio). The earlier site, apps/web, builds with `pnpm web:check`.
       - run: pnpm check
       - name: Upload the built site
