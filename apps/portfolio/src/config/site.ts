@@ -106,6 +106,7 @@ export const site = {
       handle: '@shubhamcodess',
       serial: 'SP-2020',
       swapLabel: 'Swap the two badge cards',
+      replayLabel: 'Replay the badge animation',
       role: 'AI Engineer',
       strap: 'Shubham / Dev',
       portraitAlt: 'Portrait of Shubham Prakash',

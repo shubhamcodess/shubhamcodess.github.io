@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { site } from '../../config/site'
 import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
@@ -7,6 +8,7 @@ import './contact.css'
 export function ContactSection() {
   const { contact } = site
   const headingId = `${contact.id}-title`
+  const [replay, setReplay] = useState(0)
 
   return (
     <section className="panel panel--night contact" id={contact.id} aria-labelledby={headingId}>
@@ -36,7 +38,15 @@ export function ContactSection() {
           </ul>
         </Reveal>
         <div className="contact__badge">
-          <Badge />
+          <Badge replay={replay} />
+          <button
+            className="contact__replay"
+            type="button"
+            onClick={() => setReplay((count) => count + 1)}
+            aria-label={contact.badge.replayLabel}
+          >
+            <Icon name="replay" size={16} />
+          </button>
         </div>
       </div>
     </section>

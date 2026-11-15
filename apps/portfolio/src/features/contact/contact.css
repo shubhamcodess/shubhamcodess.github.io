@@ -131,3 +131,57 @@
     padding-top: var(--space-8);
   }
 }
+
+/* Replay: a small quiet control in the bottom corner of the badge's space, clear of the badge itself. */
+.contact__badge {
+  position: relative;
+}
+
+.contact__replay {
+  position: absolute;
+  right: var(--space-2);
+  bottom: calc(var(--space-6) * -1);
+  display: grid;
+  place-items: center;
+  width: var(--target-min);
+  height: var(--target-min);
+  padding: 0;
+  color: var(--ink-muted);
+  background: none;
+  border: var(--hairline) solid var(--line);
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) linear,
+    border-color var(--duration-fast) linear;
+}
+
+.contact__replay .icon {
+  transition: transform var(--duration-enter) var(--ease-out);
+}
+
+.contact__replay:focus-visible {
+  border-radius: 50%;
+}
+
+.contact__replay:active .icon {
+  transform: rotate(-360deg);
+}
+
+@media (hover: hover) {
+  .contact__replay:hover {
+    color: var(--ink);
+    border-color: var(--ink-muted);
+  }
+
+  .contact__replay:hover .icon {
+    transform: rotate(-45deg);
+  }
+}
+
+/* With reduced motion there is nothing to replay. */
+@media (prefers-reduced-motion: reduce) {
+  .contact__replay {
+    display: none;
+  }
+}

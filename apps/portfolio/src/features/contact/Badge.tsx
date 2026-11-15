@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { site } from '../../config/site'
 import { Icon } from '../../ui/Icon'
 import { PortraitReveal } from './PortraitReveal'
@@ -11,12 +11,21 @@ type Face = 'dev' | 'labs'
  * The ID badge on its strap: the developer card in front, and the Labs card behind it,
  * hanging far enough to the side that its name can be read. Pressing the badge swaps the two.
  */
-export function Badge() {
+interface BadgeProps {
+  /** Raise this number to play the arrival again: the portrait forms afresh and the badge swings. */
+  readonly replay: number
+}
+
+export function Badge({ replay }: BadgeProps) {
   const { contact, owner, monogram, hero } = site
   const { badge } = contact
   const swingRef = useRef<HTMLSpanElement>(null)
   const [front, setFront] = useState<Face>('dev')
   useSwing(swingRef, badge.swing)
+
+  useEffect(() => {
+    if (replay > 0) swingRef.current?.dispatchEvent(new Event('swing:kick'))
+  }, [replay])
 
   const swap = () => {
     setFront((current) => (current === 'dev' ? 'labs' : 'dev'))
@@ -49,7 +58,7 @@ export function Badge() {
                 <span className="badge__kind">{badge.kind}</span>
               </span>
               <span className="badge__window">
-                <PortraitReveal />
+                <PortraitReveal key={replay} />
               </span>
               <span className="badge__id" aria-hidden="true">
                 <span className="badge__name">{owner}</span>

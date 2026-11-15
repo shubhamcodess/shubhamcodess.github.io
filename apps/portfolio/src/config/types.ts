@@ -183,6 +183,8 @@ export interface SiteConfig {
       readonly handle: string
       readonly serial: string
       readonly swapLabel: string
+      /** Names the small button that plays the badge's arrival again. */
+      readonly replayLabel: string
       /** The title printed on the badge. It can differ from the role in the hero. */
       readonly role: string
       readonly strap: string

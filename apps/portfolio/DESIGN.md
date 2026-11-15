@@ -168,6 +168,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - **The badge** hangs from the panel's top edge on a woven strap with a buckle, swivel and ring. It is two-tone: a graphite frame around a near-black face, with a blue accent.
   - It swings on a spring: it drops in when first seen, leans after the pointer, and kicks when pressed.
   - The developer card is in front. The Labs card hangs behind, far enough to the side that "Labs" can be read. Pressing the badge swaps them.
+  - **Replay:** a small round button in the bottom corner of the badge's space, clear of the badge, plays the portrait's arrival and the swing again. It is hidden with reduced motion.
   - **The portrait** arrives the way a generated image loads: a field of soft, round-cornered, muted grey cells that says nothing about the picture, clearing slowly from the top down while the field breathes in rolling waves. The photo is monochrome from its first frame, so cells and photo share one tone. A trace of the hero's light lanes stays over it.
 - On phones the badge hangs first and centred, and the copy follows at phone sizes of its own.
 
