@@ -40,7 +40,8 @@
   },
   "https://github.com/shubhamcodess/fuzzy": {
     "title": "GitHub - shubhamcodess/fuzzy: Index and search any repo lightning fast",
-    "description": "Index and search any repo lightning fast. Contribute to shubhamcodess/fuzzy development by creating an account on GitHub."
+    "description": "Index and search any repo lightning fast. Contribute to shubhamcodess/fuzzy development by creating an account on GitHub.",
+    "image": "previews/c09cc1dfce52.png"
   },
   "https://shubhamcodess.github.io/openvox/": {
     "title": "openvox",
@@ -88,6 +89,21 @@
     "description": "The Claude Certified Architect – Foundations credential is designed for solution architects. Earners can design and build production-grade applications with Claude using Claude Code, the Claude Agent SDK, the Claude API, and MCP.",
     "image": "previews/309a2041670f.png"
   },
+  "https://www.credly.com/badges/e4444fdd-9c6d-40be-b9ad-e8db08c23408/public_url": {
+    "title": "Claude Certified Developer - Foundations was issued by Anthropic to Shubham Prakash.",
+    "description": "The Claude Certified Developer – Foundations credential is designed for developers. Earners can build, integrate, and ship production applications and agents on Claude using the Claude API, Claude Code, custom tools, and MCP servers.",
+    "image": "previews/9f8f26213321.png"
+  },
+  "https://www.credly.com/badges/fb521f6f-05ca-4948-82a4-3737c854b6fd/public_url": {
+    "title": "Claude Certified Associate - Foundations was issued by Anthropic to Shubham Prakash.",
+    "description": "The Claude Certified Associate – Foundations credential is designed for client-facing and delivery practitioners. Earners can apply Claude to everyday business tasks, evaluate and refine its output, select the right products and models, and use Claude responsibly.",
+    "image": "previews/acbddc828cbd.png"
+  },
+  "https://www.credly.com/badges/2e6272cf-76d7-45d7-9ddc-fc288f40a431/public_url": {
+    "title": "Claude Partner Badge - Claude Code was issued by Anthropic to Shubham Prakash.",
+    "description": "The Claude Partner Badge: Claude Code validates that consultants are ready to scope, deploy, configure, and run Claude Code activations end-to-end. The program consists of 8 courses covering each stage of a client engagement, combining practice exercises with real deliverables such as configuration packs, deployment decision docs, security questionnaires, custom commands, Skills, hooks, and telemetry configs. Candidates complete a scenario-based capstone assessment to earn the badge.",
+    "image": "previews/f3c1b8014ecd.png"
+  },
   "https://www.credly.com/badges/e5c52470-9f7f-41b7-9ed5-1d300f5e7b5c/public_url": {
     "title": "Associate Cloud Engineer Certification was issued by Google Cloud to Shubham Prakash.",
     "description": "Associate Cloud Engineers deploy applications, monitor operations, and manage enterprise solutions. They use Google Cloud Console and the command-line interface to perform common platform-based tasks to maintain one or more deployed solutions that leverage Google-managed or self-managed services on Google Cloud.",
@@ -102,5 +118,90 @@
     "title": "Cloud Digital Leader Certification was issued by Google Cloud to Shubham Prakash.",
     "description": "A Cloud Digital Leader can articulate the capabilities of Google Cloud core products and services and how they benefit organizations. They can also describe common business use cases and how cloud solutions support an enterprise.This certification is for anyone who wishes to demonstrate their knowledge of cloud computing basics and how Google Cloud products and services can be used to achieve an organization’s goals.",
     "image": "previews/85954c09a486.png"
+  },
+  "https://www.credly.com/badges/c71041ab-b384-4dd3-a31e-c6325d797f56/public_url": {
+    "title": "Microsoft Certified: Azure Fundamentals was issued by Microsoft to Shubham Prakash.",
+    "description": "Earners of the Azure Fundamentals certification have demonstrated foundational level knowledge of cloud services and how those services are provided with Microsoft Azure.",
+    "image": "previews/c24912deab02.png"
+  },
+  "https://www.credly.com/badges/b3f16bf6-86b6-4cdd-a584-096d99b3134b/public_url": {
+    "title": "Introduction to Red Hat OpenShift Applications (DO101) - Ver. 4.6 was issued by Red Hat to Shubham Prakash.",
+    "description": "This credential verifies the attendance of the Introduction to Red Hat OpenShift Applications (DO101) course. After attending the course, students are recommended to take the Red Hat OpenShift Administration I: Operating a Production Cluster (DO180) course.",
+    "image": "previews/20af8109dcd1.png"
+  },
+  "https://www.credly.com/badges/112650b3-886f-4a75-b086-9e3dcd6b66b0/public_url": {
+    "title": "IBM Certified Advocate - Cloud v1 was issued by IBM Professional Certification to SHUBHAM PRAKASH.",
+    "description": "An individual certified with the IBM Cloud Advocate credential can explain the essential characteristics, history, and trends of cloud computing. They can describe the business case for and identify the services, deployment models, components, and architectures underpinning cloud computing. Further, an individual with this certification can describe the services and offerings available on the IBM Cloud.",
+    "image": "previews/fb0a1ae5d859.png"
+  },
+  "https://www.credly.com/badges/2dbabb86-8108-4e38-b28a-d00a44c6cfb7/public_url": {
+    "title": "IBM Generative & Agentic AI Foundation was issued by IBM to Shubham Prakash.",
+    "description": "The badge earner is able to competently engage in conversations with clients about generative and agentic AI technology, capabilities, value, risks, and ethical concerns. They are able to use the generative and agentic AI capabilities of IBM Consulting Advantage to be more productive and to create higher quality work products and client solutions.",
+    "image": "previews/6446aedaa18b.png"
+  },
+  "https://www.credly.com/badges/1c822489-91fe-4962-a67b-6f5e004418ce/public_url": {
+    "title": "watsonx.data Practitioner Advanced was issued by IBM to Shubham Prakash.",
+    "description": "The badge earner has demonstrated both advanced knowledge and skill with watsonx.data by successfully completing required learning and demonstrating the ability to successfully deploy the product at a client, which includes planning, deployment, and basic administration of watsonx.data. The badge earner has also learned how to prepare and execute pre-sales client engagements which could include workshops, pilots, or proof of experiences (PoX) activities.",
+    "image": "previews/d9f15a89878c.png"
+  },
+  "https://www.credly.com/badges/3b946cde-d89a-4824-91f0-9433bd40531b/public_url": {
+    "title": "IBM watsonx.ai Technical Essentials was issued by IBM to Shubham Prakash.",
+    "description": "The successful badge earner can describe the IBM watsonx platform and distinguish between watsonx.ai, watsonx.data and watsonx.governance. The badge earner also has a basic understanding of foundation models and generative AI and can construct effective prompts in the Prompt Lab.",
+    "image": "previews/b8d33bd478c4.png"
+  },
+  "https://www.credly.com/badges/b929f47c-661c-442a-81f2-8c774f05e844/public_url": {
+    "title": "IBM watsonx Essentials was issued by IBM to Shubham Prakash.",
+    "description": "This badge earner understands and can articulate the AI use cases where the IBM watsonx platform helps clients deploy and embed generative AI across their businesses, manage all data sources, and accelerate responsible AI workflows. In addition, the earner understands the concepts and advantages of AI, along with IBM's AI strategy for addressing ethical and sustainable AI challenges.",
+    "image": "previews/3d365b9690b5.png"
+  },
+  "https://www.credly.com/badges/e8c90d40-e57d-44b6-9ed6-905c448f016d/public_url": {
+    "title": "Trustworthy AI and AI Ethics was issued by IBM to Shubham Prakash.",
+    "description": "The badge earner is able to recognize the Principles for Trust and Transparency and the Pillars of Trust, understand and mitigate bias in AI, and assess AI ethics risks. The badge earner is also able to recognize the four key methods for implementing trustworthy AI solutions while using IBM's AI tools.",
+    "image": "previews/e2597fbb8ded.png"
+  },
+  "https://www.credly.com/badges/ca2f59a8-dbef-4743-8435-3c4c9871e6ac/public_url": {
+    "title": "2026 IBMer watsonx Challenge was issued by IBM to Shubham Prakash.",
+    "description": "The badge earner participated in the 2026 IBMer watsonx Challenge. This badge recognizes foundation-level competence in IBM Bob, an AI Software Development Lifecycle (SDLC) partner. Badge holders may also have applied experience using IBM Consulting Advantage in the challenge. This badge signifies the individual’s knowledge of AI SDLC, their ability to apply that knowledge practically, and their potential to drive AI solution development.",
+    "image": "previews/ccf4cb58ab44.png"
+  },
+  "https://www.credly.com/badges/3e213c21-5384-40b6-aa80-9e9b509bb2d5/public_url": {
+    "title": "Bobathon Innovator was issued by IBM to Shubham Prakash.",
+    "description": "The badge earner has participated in the Bobathon, demonstrating skills and capabilities of an agile project team in alignment with teamwork & collaboration to create a prototype of an innovative, working solution to a given problem statement.",
+    "image": "previews/8df67f9023c9.png"
+  },
+  "https://www.credly.com/badges/c6449496-e563-4a57-81ef-5d1156af4a67/public_url": {
+    "title": "Security and Privacy by Design Foundations was issued by IBM to Shubham Prakash.",
+    "description": "The Security & Privacy by Design (SPbD) Foundations Badge equips professionals with essential security and privacy principles for IBM software, products, and offerings. Featuring advanced hands-on labs, it provides practical training and real-world application, enabling badge earners to build secure, privacy-centric solutions with confidence.",
+    "image": "previews/65901f0a93a4.png"
+  },
+  "https://www.credly.com/badges/127a2766-a813-42e7-9730-94aa146f72e3/public_url": {
+    "title": "DevSecOps Essentials was issued by IBM to Shubham Prakash.",
+    "description": "The badge earner is able to showcase a foundational understanding of DevOps principles and practices that allows them to initiate a DevOps conversation & understanding of DevOps methodology",
+    "image": "previews/918c8eda74de.png"
+  },
+  "https://www.credly.com/badges/baec6e41-ffd1-44ec-86b5-453433930701/public_url": {
+    "title": "Cloud Native Starter Level 1 was issued by IBM to Shubham Prakash.",
+    "description": "The badge earner understands the Java implementation of a Cloud Native RESTFul Java microservice built on open technologies MicroProfile and OpenLiberty. The individual can describe how to effectively build and run a microservice on a local machine in a container, and understands the steps needed to deploy a single microservice to Kubernetes and on the IBM Cloud Kubernetes service.",
+    "image": "previews/5422d6c3de56.png"
+  },
+  "https://www.credly.com/badges/45f2d19a-9002-4a7e-9a23-0be99113d916/public_url": {
+    "title": "IBM Automation Practitioner was issued by IBM to Shubham Prakash.",
+    "description": "Badge earners help our client embrace extreme automation technology to deliver better, faster, more securely, and with higher quality. They enable clients to reimagine the flow of work, create superior customer experience by leveraging the extreme automation.",
+    "image": "previews/89850445e905.png"
+  },
+  "https://www.credly.com/badges/40e0afcb-d224-4aa1-ae98-2fa6c16e1b55/public_url": {
+    "title": "Enterprise Design Thinking Practitioner was issued by IBM to Shubham Prakash.",
+    "description": "The earner has acquired knowledge of applying Enterprise Design Thinking and its value. As a Practitioner, the badge earner finds opportunities to try it out in their every day work.",
+    "image": "previews/78755315dc3e.png"
+  },
+  "https://www.credly.com/badges/9c68c321-8e8d-4c12-b94f-a42709df4628/public_url": {
+    "title": "IBM Garage Method for Cloud Advocate was issued by IBM to Shubham Prakash.",
+    "description": "The IBM Garage Method for Cloud Advocate has demonstrated the ability to implement the IBM Garage Method for Cloud through hands-on experience using the tools that will allow them to implement the methodology with their team. The badge earner understands how to track and manage a project using a ranked backlog and a kanban board, use a toolchain and delivery pipeline to enable continuous integration and delivery, manage their deployed application, and analyze the usage of their application.",
+    "image": "previews/4e89c7a23777.png"
+  },
+  "https://www.credly.com/badges/bac811ab-0d96-4908-9f75-dd2e7c9bb01d/public_url": {
+    "title": "IBM Cloud Garage Test-Driven Development (TDD) was issued by IBM to Shubham Prakash.",
+    "description": "The IBM Cloud Garage Test-Driven Development (TDD) badge earner has demonstrated the ability to complete the \"red-green-refactor\" TDD loop to produce quality code. They develop code using pair programming to write a simple assertion, the test to prove that assertion and then the code to implement the required functionality. Once the test passes from red to green they then continuously refactor to improve the code itself.",
+    "image": "previews/519d6bbc6573.png"
   }
 }
