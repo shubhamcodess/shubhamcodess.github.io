@@ -116,9 +116,15 @@
   --project-measure: 46rem;
 
   /* Component: experience timeline */
-  --xp-light: var(--scroll-light-color);
-  --xp-rail-width: 2px;
-  --xp-node-size: 11px;
+  /*
+   * Timelines, list marks and small markers are drawn in the page's own ink, never in the light's blue:
+   * a printed line, not a glowing one. Blue belongs to the hero light and the scroll light only.
+   */
+  --marker: color-mix(in srgb, var(--ink) 55%, transparent);
+  --marker-strong: var(--ink);
+  --marker-lane: color-mix(in srgb, var(--ink) 18%, transparent);
+  --xp-rail-width: 1px;
+  --xp-node-size: 9px;
   --xp-node-column: 24px;
   --xp-stop-column: 120px;
   --xp-verb-column: 5.5rem;

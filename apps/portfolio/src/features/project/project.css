@@ -108,7 +108,7 @@
   aspect-ratio: var(--project-stage-ratio);
   background:
     linear-gradient(to top, var(--surface-sunken) 5%, transparent 60%),
-    repeating-linear-gradient(to right, transparent 0 39px, color-mix(in srgb, var(--xp-light) 26%, transparent) 39px 40px),
+    repeating-linear-gradient(to right, transparent 0 39px, var(--marker-lane) 39px 40px),
     var(--surface-sunken);
 }
 
@@ -235,7 +235,7 @@
   display: grid;
   gap: var(--space-4);
   padding-left: var(--space-5);
-  border-left: var(--xp-rail-width) solid color-mix(in srgb, var(--xp-light) 45%, var(--line));
+  border-left: var(--hairline) solid var(--marker-lane);
 }
 
 .project-notes li {
@@ -249,7 +249,7 @@
   left: calc(var(--space-5) * -1 - var(--xp-rail-width) / 2 - 3px);
   width: 6px;
   height: 6px;
-  background: var(--xp-light);
+  background: var(--marker);
   border-radius: 50%;
 }
 

@@ -45,7 +45,7 @@
   position: relative;
 }
 
-/* The current page or section: full ink, with a small point of the light beneath. */
+/* The current page or section: full ink, with a small ink dot beneath. */
 .site-header__link[aria-current] {
   color: var(--ink);
 }
@@ -57,7 +57,7 @@
   left: 50%;
   width: 4px;
   height: 4px;
-  background: var(--xp-light);
+  background: var(--marker-strong);
   border-radius: 50%;
   opacity: 0;
   transform: translateX(-50%) scale(0.4);

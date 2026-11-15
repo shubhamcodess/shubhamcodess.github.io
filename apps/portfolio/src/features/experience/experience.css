@@ -1,4 +1,4 @@
-/* ---- The page: layers on a lane of light ---- */
+/* ---- The page: layers on one printed lane ---- */
 .career {
   --career-progress: 0;
   position: relative;
@@ -12,7 +12,7 @@
   bottom: var(--space-2);
   left: calc(var(--xp-node-column) / 2 - var(--xp-rail-width) / 2);
   width: var(--xp-rail-width);
-  background: var(--line);
+  background: var(--marker-lane);
   border-radius: var(--radius-pill);
 }
 
@@ -20,9 +20,8 @@
   position: absolute;
   inset: 0 0 auto;
   height: calc(var(--career-progress) * 100%);
-  background: linear-gradient(to bottom, var(--xp-light), color-mix(in srgb, var(--xp-light) 55%, transparent));
+  background: var(--marker);
   border-radius: var(--radius-pill);
-  box-shadow: 0 0 var(--space-3) color-mix(in srgb, var(--xp-light) 55%, transparent);
 }
 
 /* A layer is one employer: its end mark, its body, its start mark. */
@@ -49,17 +48,16 @@
   left: calc(var(--xp-node-column) / 2);
   width: var(--xp-node-size);
   height: var(--xp-node-size);
-  background: var(--xp-light);
+  background: var(--marker-strong);
   border-radius: 50%;
-  box-shadow: 0 0 0 var(--space-1) color-mix(in srgb, var(--xp-light) 22%, transparent);
+  box-shadow: 0 0 0 var(--space-1) var(--surface);
   transform: translate(-50%, -50%);
 }
 
 /* The start of a layer is a ring: the lane was opened here. */
 .career__mark--from .career__node {
   background: var(--surface);
-  border: var(--hairline) solid var(--ink-muted);
-  box-shadow: none;
+  border: var(--hairline) solid var(--marker);
 }
 
 /* The present pulses softly: the lane is still running. */
@@ -69,7 +67,9 @@
 
 @keyframes career-pulse {
   50% {
-    box-shadow: 0 0 0 var(--space-2) color-mix(in srgb, var(--xp-light) 8%, transparent);
+    box-shadow:
+      0 0 0 var(--space-1) var(--surface),
+      0 0 0 calc(var(--space-1) + 1px) var(--marker-lane);
   }
 }
 
@@ -151,7 +151,7 @@
   top: 0.62em;
   left: 0;
   width: var(--space-3);
-  border-top: var(--xp-rail-width) solid var(--xp-light);
+  border-top: var(--hairline) solid var(--marker);
 }
 
 /* ---- Recognition ---- */
@@ -217,7 +217,7 @@ a.honour:focus-visible {
   content: '';
   position: absolute;
   inset: var(--space-2);
-  background: linear-gradient(160deg, color-mix(in srgb, var(--xp-light) 28%, transparent), transparent 60%);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--ink) 10%, transparent), transparent 60%);
   border-radius: calc(var(--radius-md) - var(--space-2));
   mix-blend-mode: multiply;
   transition: opacity var(--duration-enter) var(--ease-out);
@@ -230,7 +230,7 @@ a.honour:focus-visible {
 }
 
 .honour__when {
-  color: var(--xp-light);
+  color: var(--ink-muted);
   font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
 }
 
@@ -299,7 +299,7 @@ a.honour:focus-visible {
   bottom: var(--space-6);
   left: calc(var(--xp-node-size) / 2 - var(--xp-rail-width) / 2);
   width: var(--xp-rail-width);
-  background: var(--xp-light);
+  background: var(--marker-lane);
   border-radius: var(--radius-pill);
 }
 
@@ -314,10 +314,16 @@ a.honour:focus-visible {
   left: calc((var(--xp-node-size) + var(--space-4)) * -1);
   width: var(--xp-node-size);
   height: var(--xp-node-size);
-  background: var(--xp-light);
-  border: 2px solid var(--surface);
+  background: var(--surface);
+  border: var(--hairline) solid var(--marker);
   border-radius: 50%;
   transform: translateY(-50%);
+}
+
+/* Only the current role is filled. */
+.teaser__roles li:first-child::before {
+  background: var(--marker-strong);
+  border-color: var(--marker-strong);
 }
 
 .teaser__role {
@@ -448,7 +454,7 @@ a.honour:focus-visible {
 }
 
 .role__span {
-  color: var(--xp-light);
+  color: var(--ink-muted);
   font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
   letter-spacing: 0.04em;
   text-transform: uppercase;

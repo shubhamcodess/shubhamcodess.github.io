@@ -51,7 +51,8 @@ Two palettes, chosen by `theme.palette` in the config. Each has a light and a da
 
 Rules for both:
 
-- The only strong colour on the site is the light: blue with about one warm lane in five. It also colours the scrollbar, the experience lane and small markers.
+- The only strong colour on the site is the light: blue with about one warm lane in five, in the hero and the scroll light at the frame's edge. Nothing else is blue.
+- **Markers are ink.** Timelines, list dashes, years, icons and the current-link dot are drawn in the page's own ink (`--marker`, `--marker-strong`, `--marker-lane`), like a printed line. Bright blue timelines and glowing nodes were tried and removed: they read as generated.
 - The accent is for focus rings. Don't use it for text, fills or decoration.
 - Light is the default theme. The choice is saved, and restored before first paint.
 - A new palette is one more `:root[data-palette='…']` block in `tokens.css` and one more name in `PaletteName`. It may only re-point semantic tokens.
@@ -172,7 +173,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 | Experience | Builds |
 | Credentials | Builds, Experience |
 
-- **The current link** is in full ink with a small point of the light beneath it. On home it follows the section being read: Builds over Featured, Experience over the experience teaser, Contact over contact.
+- **The current link** is in full ink with a small ink dot beneath it. On home it follows the section being read: Builds over Featured, Experience over the experience teaser, Contact over contact.
 - **Hash in the address bar:** on home, the address follows the section being read (`/#featured`, `/#experience`, `/#contact`, nothing at the top), replacing the history entry rather than adding to it. Opening `/#contact` from any page lands on that section.
 - **The footer is the site index:** every page and Contact, from every page. It also carries the sound and theme switches, so they are in reach from anywhere. On phones they share a row with the copyright.
 - **All builds:** filter chips group it by kind; a kind needs at least two builds.
@@ -184,19 +185,19 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - **Title plate** (night): back link, position and kind, the name very large, summary, outside links as frosted chips, then up to three facts as a title card. The hero light runs behind it at lower strength.
 - **Stage:** a browser-like frame for the build in motion (recording or motion graphic). It keeps its shape and says so plainly until the recording exists.
 - **Rail:** section links, kind, year and stack. It stays in view on wide screens. On phones the section links become a row of chips stuck under the top edge.
-- **Sections, in order:** What it does (numbered tiles), Use case (prose, only when written), How it is built (notes on a lane of light), Honest limits (a quiet note). Each kind of content has its own shape; nothing is a plain divider list.
+- **Sections, in order:** What it does (numbered tiles), Use case (prose, only when written), How it is built (notes on a thin ink lane), Honest limits (a quiet note). Each kind of content has its own shape; nothing is a plain divider list.
 - A use-case write-up goes in `useCase` for that build in `content/build-stories.ts`. The recording goes in `media` in `content/builds.ts`.
 
 ## Experience
 
-- **A page of its own,** built as layers on one lane of light. The present is at the top with a softly pulsing node; each employer is a layer beneath it, closed by a ring at the year it began. The lane fills as the page scrolls.
+- **A page of its own,** built as layers on one thin ink lane. The present is at the top, a filled dot with a faint ring that breathes; each employer is a layer beneath it, closed by a ring at the year it began. The lane fills as the page scrolls.
 - A new employer is a new layer on top. Nothing else changes.
 - **An employer layer:** the name very large, its span and place, then its roles, newest first.
 - **A role is one card,** always open: its years, title, one sentence of scope, then two columns, Built and Delivered, two or three lines each. Only the strongest lines go in. No drawers, tabs or number tiles.
 - At most three roles per employer. Fold small steps into the role they led to.
 - **On phones** the cards drop their boxes: roles are plain reading on the lane, separated by a hairline, at reading sizes.
 - **Recognition** is awards for the work, and sits under the layers. Certifications are not recognition. An award with a certificate shows it matted in a small frame, toned down to sit with the page. Hovering brings back its colours and shows it large beside the pointer, big enough to read; a tap or Enter opens it.
-- **The home teaser** is the one-glance version. Left: the headline, with links to the full page and to credentials. Right: every role as a card on one unbroken lane, each with a years badge, the title and one line on what it covered, so the whole span reads with no gaps. Under both, inside the page edge: **tools of the trade**, one lean strip of small mono names, quieter than everything above it, drifting slowly, fading at its ends, pausing under the pointer, still with reduced motion. Names only, no chips. The list is `content/tools.ts`.
+- **The home teaser** is the one-glance version. Left: the headline, with links to the full page and to credentials. Right: every role as a card on one thin ink lane (the current role's dot filled, earlier roles as hollow rings), each with a years badge, the title and one line on what it covered, so the whole span reads with no gaps. Under both, inside the page edge: **tools of the trade**, one lean strip of small mono names, quieter than everything above it, drifting slowly, fading at its ends, pausing under the pointer, still with reduced motion. Names only, no chips. The list is `content/tools.ts`.
 
 ## Credentials
 
