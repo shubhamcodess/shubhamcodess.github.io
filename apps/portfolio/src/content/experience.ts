@@ -6,6 +6,9 @@
 
 export interface Role {
   readonly title: string
+  readonly from: number
+  /** Leave out while this is the current role. */
+  readonly to?: number
   /** One sentence on what the role covered. */
   readonly scope: string
   /** What was made. Three or four lines, the strongest only. */
@@ -21,7 +24,7 @@ export interface Employer {
   /** Leave out while this is the current employer. */
   readonly to?: number
   readonly place: string
-  /** Newest role first. */
+  /** Newest role first. Keep it to three at most. */
   readonly roles: readonly Role[]
 }
 
@@ -33,37 +36,50 @@ export const employers: readonly Employer[] = [
     roles: [
       {
         title: 'Sr. Cloud Full Stack Developer',
+        from: 2025,
         scope:
           'Products from requirement to production: backend, frontend, schema and deployment. And AI agents for enterprise applications.',
         built: [
           'A browser-based Kubernetes fleet control plane, with an MCP server and an AI assistant',
           'A workflow platform with a visual DAG builder and live run monitoring',
-          'The shared framework every source-system integration runs on',
         ],
         delivered: [
           'A reusable CI/CD framework, adopted across 10+ repositories',
-          'A B2B order platform live in production, its architecture co-designed with the solution architect',
-          'An inventory valuation app, a month ahead of schedule',
           'Leads the team: PR reviews, code standards and architecture decisions',
         ],
         tools: ['Java', 'Next.js', 'Kubernetes', 'GKE', 'GitHub Actions', 'RabbitMQ', 'MCP'],
       },
       {
-        title: 'Application Developer',
-        scope:
-          'The global tax engines behind every in-store and online sale of a multinational retailer: kept them running, then moved them to a modern stack.',
+        title: 'Full Stack Developer',
+        from: 2023,
+        to: 2024,
+        scope: 'Moving enterprise applications off a legacy stack, then leading a B2B order platform into production.',
         built: [
           "The pilot's Angular codebase and team standards from scratch; it got the wider migration approved",
+          'The shared framework every source-system integration runs on',
           "The program's first single sign-on",
+        ],
+        delivered: [
+          'A B2B order platform live in production, its architecture co-designed with the solution architect',
+          'An inventory valuation app, a month ahead of schedule',
+          'Led teams of up to 10 engineers',
+        ],
+        tools: ['Java', 'Spring', 'Angular', 'TypeScript', 'Oracle', 'OpenShift', 'Azure AD'],
+      },
+      {
+        title: 'Application Developer',
+        from: 2020,
+        to: 2022,
+        scope: 'The global tax engines behind every in-store and online sale of a multinational retailer.',
+        built: [
           'A unit-testing framework for a legacy Spring codebase that had none',
+          'An advance-check process that replaced repeated tax-holiday firefighting',
         ],
         delivered: [
           'Two platform migrations: OpenShift 3 to 4, then OpenShift to GKE',
-          'A 10,000-item dropdown that feels instant',
           'Production deployments and high-priority incidents, owned end to end',
-          'Led teams of up to 10 engineers',
         ],
-        tools: ['Java', 'Spring', 'Angular', 'TypeScript', 'OpenShift', 'GKE', 'Azure AD'],
+        tools: ['Java', 'Spring', 'Angular', 'OpenShift', 'GKE'],
       },
     ],
   },

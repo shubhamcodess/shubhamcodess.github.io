@@ -112,7 +112,7 @@ State on 2026-11-15: every page in `DESIGN.md` is built, typed, formatted and co
 
 | Item | Where it goes |
 |---|---|
-| Years each role began | `Role` has no dates today. Add a field and show it in the role card when known |
+| Check the tools list | `content/tools.ts`. Spring Boot and Vercel were added on the owner's word |
 | One title everywhere? | Today: hero "Cloud Full Stack Developer" (`hero.role`), experience "Sr. Cloud Full Stack Developer", badge "AI Engineer" (`contact.badge.role`). The badge title is the owner's choice |
 | Substack address | `contact.links` in `config/site.ts`, icon `substack` |
 | Recordings or motion graphics per build | `media` on the build in `content/builds.ts` |

@@ -158,6 +158,7 @@ export interface SiteConfig {
     readonly title: string
     readonly lead: string
     readonly more: string
+    readonly toolsLabel: string
     /** The page itself. */
     readonly page: { readonly title: string; readonly lead: string }
     readonly labels: {

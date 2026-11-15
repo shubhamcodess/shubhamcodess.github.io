@@ -73,6 +73,7 @@ export const site = {
     title: 'Six years at IBM.',
     lead: 'From keeping production running to owning products end to end.',
     more: 'Full experience',
+    toolsLabel: 'Tools of the trade',
     page: { title: 'Experience', lead: 'Where I have worked, what I built there and what came of it.' },
     labels: {
       now: 'Now',

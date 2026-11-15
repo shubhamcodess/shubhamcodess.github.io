@@ -30,20 +30,20 @@ A developer's portfolio that reads like a well-kept workspace: black frame, roun
 
 Two palettes, chosen by `theme.palette` in the config. Each has a light and a dark theme. Switching the one value changes every page; nothing else needs touching.
 
-**Signature (default).** The hero light has two colours, a deep blue and a warm amber, and each becomes a theme: midnight for dark, warm paper for light. The frame is ink blue in both, so the site never sits on pure black or pure white.
+**Signature (default).** The hero light has two colours, a deep blue and a warm amber, and each becomes a theme: midnight for dark, warm paper for light. Midnight is blue held close to black: a tint, not a colour. The frame is ink blue in both, so the site never sits on pure black or pure white.
 
 | Role | Light: warm paper | Dark: midnight |
 |---|---|---|
-| `--backplate` (frame) | `#070b16` | `#070b16` |
-| `--surface` (panel) | `#f3ede1` | `#0c1220` |
-| `--surface-raised` (sheets, cards) | `#fbf8f1` | `#141c30` |
-| `--surface-sunken` (plates, wells) | `#e8dfce` | `#070b15` |
-| `--ink` | `#1c1915` | `#e9eefb` |
-| `--ink-muted` | `#645b4e` | `#98a4bf` |
-| `--line` | `#dccfb9` | `#222c45` |
+| `--backplate` (frame) | `#05070c` | `#05070c` |
+| `--surface` (panel) | `#f3ede1` | `#0a0d14` |
+| `--surface-raised` (sheets, cards) | `#fbf8f1` | `#11151e` |
+| `--surface-sunken` (plates, wells) | `#e8dfce` | `#06080c` |
+| `--ink` | `#1c1915` | `#e8ebf2` |
+| `--ink-muted` | `#645b4e` | `#939aa9` |
+| `--line` | `#dccfb9` | `#1e2331` |
 | `--accent` (focus ring only) | `#1e40af` | `#8fb4ff` |
 
-- Night surfaces (hero, project title, contact) are `#04060d`: almost black, with the frame's blue in it. The light shader paints on that same colour.
+- Night surfaces (hero, project title, contact) are `#030409`: almost black, with the frame's blue in it. The light shader paints on that same colour.
 - Every themed panel has a soft wash of light from its top edge (`--panel-wash`): cream on paper, blue on midnight.
 - Card shadows carry the theme's tint, warm on paper and blue-black on midnight.
 
@@ -150,10 +150,11 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - **A page of its own,** built as layers on one lane of light. The present is at the top with a softly pulsing node; each employer is a layer beneath it, closed by a ring at the year it began. The lane fills as the page scrolls.
 - A new employer is a new layer on top. Nothing else changes.
 - **An employer layer:** the name very large, its span and place, then its roles, newest first.
-- **A role is one card,** always open: title, one sentence of scope, then two columns, Built and Delivered, three or four lines each. Only the strongest lines go in. No drawers, tabs or number tiles.
-- At most two or three roles per employer. Fold small steps into the role they led to.
+- **A role is one card,** always open: its years, title, one sentence of scope, then two columns, Built and Delivered, two or three lines each. Only the strongest lines go in. No drawers, tabs or number tiles.
+- At most three roles per employer. Fold small steps into the role they led to.
+- **On phones** the cards drop their boxes: roles are plain reading on the lane, separated by a hairline, at reading sizes.
 - **Recognition** is awards for the work, and sits under the layers. Certifications are not recognition. An award with a certificate shows it matted in a small frame, toned down to sit with the page. Hovering brings back its colours and shows it large beside the pointer, big enough to read; a tap or Enter opens it.
-- **The home teaser** is the short version: the headline, the roles as two cards, and links to the full page and to credentials.
+- **The home teaser** is the short version: the headline, links to the full page and to credentials, and **tools of the trade**: three rows of tools (languages and frameworks, cloud and delivery, AI) drifting slowly in alternating directions, fading at the edges, pausing under the pointer. With reduced motion the rows wrap and stand still. The list is `content/tools.ts`.
 
 ## Credentials
 

@@ -274,6 +274,10 @@ a.honour:focus-visible {
   gap: var(--space-7);
 }
 
+.teaser > * {
+  min-width: 0;
+}
+
 .teaser__links {
   display: flex;
   flex-wrap: wrap;
@@ -281,46 +285,145 @@ a.honour:focus-visible {
   margin-top: var(--space-5);
 }
 
-.teaser__roles {
+/* Tools of the trade: rows that drift slowly in alternating directions and fade at both edges. */
+.tools {
   display: grid;
   gap: var(--space-3);
 }
 
-.teaser__role {
-  display: grid;
+.tools > .eyebrow {
+  margin-bottom: var(--space-2);
+}
+
+.tools__row {
+  display: flex;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--tools-fade), #000 calc(100% - var(--tools-fade)), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 var(--tools-fade), #000 calc(100% - var(--tools-fade)), transparent);
+}
+
+.tools__track {
+  display: flex;
+  flex: none;
   gap: var(--space-2);
-  padding: var(--space-5);
+  padding-right: var(--space-2);
+  animation: tools-drift calc(var(--tools-count) * var(--tools-pace)) linear infinite var(--tools-direction, normal);
+}
+
+.tools__track li {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding-inline: var(--space-4);
   background: var(--surface-raised);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  transition: transform var(--duration-base) var(--ease-out);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-pill);
+  font: var(--weight-body) var(--text-sm) / 1 var(--font-mono);
+  white-space: nowrap;
 }
 
-.teaser__role:focus-visible {
-  border-radius: var(--radius-lg);
-}
-
-.teaser__title {
-  font-size: var(--text-xl);
-  font-weight: var(--weight-heading);
-  line-height: var(--leading-snug);
-}
-
-.teaser__scope {
-  color: var(--ink-muted);
-  font-size: var(--text-sm);
+@keyframes tools-drift {
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
 }
 
 @media (hover: hover) {
-  .teaser__role:hover {
-    transform: translateY(var(--card-lift));
+  .tools__row:hover .tools__track {
+    animation-play-state: paused;
+  }
+}
+
+/* Without motion the rows simply wrap, and the hidden copies go. */
+@media (prefers-reduced-motion: reduce) {
+  .tools__row {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .tools__track {
+    flex: 1;
+    flex-wrap: wrap;
+    animation: none;
+  }
+
+  .tools__track[aria-hidden='true'] {
+    display: none;
+  }
+}
+
+.role__span {
+  color: var(--xp-light);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Phones: the role cards drop their boxes and become plain reading on the lane, at reading sizes. */
+@media (max-width: 640px) {
+  .career {
+    --xp-node-column: 14px;
+    gap: var(--space-7);
+  }
+
+  .career__body {
+    gap: var(--space-6);
+    padding-left: calc(var(--xp-node-column) + var(--space-4));
+  }
+
+  .career__mark {
+    padding-left: calc(var(--xp-node-column) + var(--space-4));
+    font-size: var(--text-xs);
+  }
+
+  .career__employer {
+    margin-bottom: 0;
+  }
+
+  .role {
+    gap: var(--space-2);
+    padding: var(--space-5) 0 0;
+    background: none;
+    border-top: var(--hairline) solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .role__title {
+    font-size: var(--text-xl);
+  }
+
+  .role__scope {
+    font-size: var(--text-md);
+    line-height: var(--leading-body);
+  }
+
+  .role__columns {
+    gap: var(--space-5);
+    margin-block: var(--space-3) var(--space-2);
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .role__list {
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .role__list li {
+    padding-left: var(--space-4);
+  }
+
+  .role__list li::before {
+    width: var(--space-2);
   }
 }
 
 @media (min-width: 900px) {
   .teaser {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    align-items: start;
+    align-items: center;
     gap: var(--space-8);
   }
 

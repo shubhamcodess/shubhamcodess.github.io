@@ -135,6 +135,11 @@
   --honour-frame-width: 180px;
   --honour-tone: grayscale(0.75) contrast(1.05);
 
+  /* Component: tools of the trade */
+  --tools-fade: 48px;
+  /* Seconds each tool takes to pass. Higher is slower. */
+  --tools-pace: 5s;
+
   /* Component: scroll light */
   --scroll-light-width: 2px;
   --scroll-light-inset: 28px;
@@ -171,8 +176,8 @@
  * It only re-points the semantic tokens above, so `theme.palette: 'plain'` in the config restores everything.
  */
 :root[data-palette='signature'] {
-  --backplate: #070b16;
-  --night-surface: #04060d;
+  --backplate: #05070c;
+  --night-surface: #030409;
   --night-ink: #edf1fb;
   --night-ink-muted: #98a4bf;
   --night-glass: rgb(10 16 32 / 42%);
@@ -190,15 +195,15 @@
 }
 
 :root[data-palette='signature'][data-theme='dark'] {
-  --surface: #0c1220;
-  --surface-raised: #141c30;
-  --surface-sunken: #070b15;
-  --ink: #e9eefb;
-  --ink-muted: #98a4bf;
-  --line: #222c45;
+  --surface: #0a0d14;
+  --surface-raised: #11151e;
+  --surface-sunken: #06080c;
+  --ink: #e8ebf2;
+  --ink-muted: #939aa9;
+  --line: #1e2331;
   --accent: #8fb4ff;
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 35%), 0 14px 34px rgb(0 4 20 / 45%);
-  --panel-wash: radial-gradient(120% 55% at 50% 0%, rgb(70 110 220 / 13%), transparent 62%);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 40%), 0 14px 34px rgb(0 2 10 / 50%);
+  --panel-wash: radial-gradient(120% 55% at 50% 0%, rgb(60 90 170 / 8%), transparent 62%);
 }
 
 @media (max-width: 640px) {

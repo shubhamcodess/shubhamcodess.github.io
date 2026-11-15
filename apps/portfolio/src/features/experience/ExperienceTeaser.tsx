@@ -1,11 +1,15 @@
 import { site } from '../../config/site'
-import { credentials, employers } from '../../content/experience'
+import { credentials } from '../../content/experience'
+import { toolGroups } from '../../content/tools'
 import { hrefTo } from '../../lib/routes'
 import { ActionLink } from '../../ui/ActionLink'
 import { Reveal } from '../../ui/Reveal'
 import './experience.css'
 
-/** The home page's short version: who, how long, which roles, and the way to the full pages. */
+/**
+ * The home page's short version: the headline, the ways to the full pages, and the tools of the trade
+ * drifting past in rows, so a quick scan shows what the work was done with.
+ */
 export function ExperienceTeaser() {
   const { experience: copy, credentialsPage, features } = site
   const headingId = `${copy.id}-title`
@@ -30,23 +34,29 @@ export function ExperienceTeaser() {
             ) : null}
           </div>
         </Reveal>
-        <ol className="teaser__roles">
-          {employers.flatMap((employer) =>
-            employer.roles.map((role, index) => (
-              <li key={`${employer.name}-${role.title}`}>
-                <Reveal index={index}>
-                  <a className="teaser__role" href={hrefTo('experience')}>
-                    <span className="eyebrow">
-                      {employer.name} · {index === 0 && employer.to === undefined ? copy.labels.now : employer.from}
-                    </span>
-                    <span className="teaser__title">{role.title}</span>
-                    <span className="teaser__scope">{role.scope}</span>
-                  </a>
-                </Reveal>
-              </li>
-            )),
-          )}
-        </ol>
+
+        <Reveal index={1} className="tools">
+          <h3 className="eyebrow">{copy.toolsLabel}</h3>
+          {toolGroups.map((group, row) => (
+            <div key={group.label} className="tools__row" role="group" aria-label={group.label}>
+              {/* The list runs twice so the drift can loop without a seam. The copy is hidden from screen readers. */}
+              {[false, true].map((copyOf) => (
+                <ul
+                  key={String(copyOf)}
+                  className="tools__track"
+                  aria-hidden={copyOf}
+                  style={
+                    { '--tools-direction': row % 2 ? 'reverse' : 'normal', '--tools-count': group.tools.length } as React.CSSProperties
+                  }
+                >
+                  {group.tools.map((tool) => (
+                    <li key={tool}>{tool}</li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+          ))}
+        </Reveal>
       </div>
     </section>
   )

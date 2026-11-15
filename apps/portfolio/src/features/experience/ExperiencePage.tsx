@@ -94,8 +94,8 @@ export function ExperiencePage() {
                 {employer.roles.map((role, index) => (
                   <Reveal key={role.title} index={index}>
                     <article className="role">
-                      <p className="eyebrow">
-                        {String(employer.roles.length - index).padStart(2, '0')} / {String(employer.roles.length).padStart(2, '0')}
+                      <p className="role__span">
+                        {role.from} to {role.to ?? copy.labels.now.toLowerCase()}
                       </p>
                       <h3 className="role__title">{role.title}</h3>
                       <p className="role__scope">{role.scope}</p>
