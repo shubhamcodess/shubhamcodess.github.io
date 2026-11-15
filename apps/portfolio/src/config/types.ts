@@ -201,6 +201,8 @@ export interface SiteConfig {
     readonly lead: string
     readonly more: string
     readonly toolsLabel: string
+    /** One line under the Credentials heading on the home page. */
+    readonly credentialsLead: string
     /** The page itself. */
     readonly page: { readonly title: string; readonly lead: string }
     readonly labels: {

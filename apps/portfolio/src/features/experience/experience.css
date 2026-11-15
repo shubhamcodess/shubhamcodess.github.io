@@ -388,6 +388,88 @@ a.honour:focus-visible {
   }
 }
 
+/* The left column: the experience headline on top, the credentials beneath. */
+.teaser__side {
+  display: grid;
+  gap: var(--space-7);
+}
+
+.teaser__creds {
+  padding-top: var(--space-6);
+  border-top: var(--hairline) solid var(--line);
+}
+
+.teaser__creds-title {
+  font-size: var(--text-xl);
+  letter-spacing: -0.01em;
+}
+
+.teaser__creds .section__lead {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+/*
+ * Patches: a credential as a small sewn-on patch. A raised card with a stitched line just inside its
+ * edge, the level in mono above the title, the issuer beneath. Same lean and lift as every card.
+ */
+.patches {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.patch {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  height: 100%;
+  padding: var(--space-4);
+  background: var(--surface-raised);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.patch::before {
+  content: '';
+  position: absolute;
+  inset: var(--patch-stitch-inset);
+  border: var(--hairline) dashed var(--patch-stitch);
+  border-radius: calc(var(--radius-md) - var(--patch-stitch-inset));
+  pointer-events: none;
+}
+
+.patch:focus-visible {
+  border-radius: var(--radius-md);
+}
+
+.patch__level {
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.patch__title {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-snug);
+}
+
+.patch__issuer {
+  color: var(--ink-muted);
+  font-size: var(--text-xs);
+}
+
+/* Narrow phones: three abreast would cramp the titles, so the patches stack. */
+@media (max-width: 479px) {
+  .patches {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* Tools of the trade: one lean strip under the roles, inside the page edge. Plain names, kept quiet, drifting slowly. */
 .tools {
   display: flex;
@@ -524,7 +606,7 @@ a.honour:focus-visible {
 @media (min-width: 900px) {
   .teaser {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    align-items: center;
+    align-items: start;
     gap: var(--space-8);
   }
 

@@ -162,6 +162,10 @@
   --tilt-glare: rgb(255 255 255 / 2%);
   --tilt-glare-size: 90px;
 
+  /* Component: credential patch */
+  --patch-stitch-inset: 5px;
+  --patch-stitch: color-mix(in srgb, var(--ink) 22%, transparent);
+
   /* Component: /me */
   --me-tile-min: 240px;
   --me-title-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);

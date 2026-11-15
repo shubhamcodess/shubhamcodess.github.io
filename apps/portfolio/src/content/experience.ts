@@ -106,3 +106,36 @@ export const recognition: readonly Recognition[] = [
 ]
 
 // Credentials are not here: see credentials-source.ts and public/data/credentials.json.
+
+export interface FeaturedCredential {
+  /** The level, shown small above the title, such as "Professional". */
+  readonly level: string
+  readonly title: string
+  readonly issuer: string
+  readonly href: `https://${string}`
+}
+
+/**
+ * The three credentials shown as patches on the home page: the highest level from each main issuer.
+ * Kept here, not loaded with the full list, so they are there on first paint. Links match public/data/credentials.json.
+ */
+export const featuredCredentials: readonly FeaturedCredential[] = [
+  {
+    level: 'Professional',
+    title: 'Claude Certified Architect',
+    issuer: 'Anthropic',
+    href: 'https://www.credly.com/badges/cc59c5f1-1ddb-4a12-bd7f-8398b7407834/public_url',
+  },
+  {
+    level: 'Foundations',
+    title: 'Claude Certified Architect',
+    issuer: 'Anthropic',
+    href: 'https://www.credly.com/badges/a2e244ea-f008-415b-a4b1-5473415de90e/public_url',
+  },
+  {
+    level: 'Associate',
+    title: 'Cloud Engineer',
+    issuer: 'Google Cloud',
+    href: 'https://www.credly.com/badges/e5c52470-9f7f-41b7-9ed5-1d300f5e7b5c/public_url',
+  },
+]
