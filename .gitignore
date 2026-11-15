@@ -14,3 +14,6 @@ docs/
 *.local.*
 apps/web/AGENTS.md
 dist/
+
+# Original photos waiting to be processed for /me. They carry location data, so they never leave this machine.
+apps/portfolio/photo-inbox/

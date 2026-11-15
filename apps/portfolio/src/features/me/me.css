@@ -433,11 +433,15 @@ a.me-frame:focus-visible {
   animation-timing-function: var(--ease-out);
 }
 
-/* The opened home tile's heading: the places, not the city on the tile. */
+/* The opened Work tile's heading: the places, not the city on the tile, and a tab for each city. */
 .me-places-head {
   display: grid;
   gap: var(--space-3);
-  padding: clamp(var(--space-5), 3vw, var(--space-7)) clamp(var(--space-5), 3vw, var(--space-7)) var(--space-2);
+  padding: var(--place-pad) var(--place-pad) 0;
+}
+
+.me-detail {
+  --place-pad: clamp(var(--space-5), 3vw, var(--space-7));
 }
 
 .me-places-head__title {
@@ -446,101 +450,100 @@ a.me-frame:focus-visible {
   line-height: 0.95;
 }
 
-/*
- * The places, oldest first, one row each, joined by a thin ink line running down through a dot on each
- * row, the current place's dot filled. A row: role, city and state, the state in fine line with the city
- * marked, and a clothesline for photos beneath. Plain cards, not links.
- */
-.me-places {
-  --place-dot: 9px;
-  --place-pad: clamp(var(--space-5), 3vw, var(--space-7));
-  position: relative;
-  display: grid;
-  gap: var(--space-4);
-  margin: 0;
-  padding: var(--space-5) var(--place-pad) var(--place-pad);
+/* The city tabs: each city with its role above, the open one in full ink and underlined. */
+.me-city-tabs {
+  display: flex;
+  gap: var(--space-2) var(--space-6);
+  margin-top: var(--space-5);
+  overflow-x: auto;
+  border-bottom: var(--hairline) solid var(--line);
+  scrollbar-width: none;
 }
 
-.me-places::before {
+.me-city-tabs a {
+  position: relative;
+  display: grid;
+  flex: none;
+  gap: var(--space-1);
+  padding: var(--space-2) 0 var(--space-3);
+  color: var(--ink-muted);
+  transition: color var(--duration-fast) linear;
+}
+
+.me-city-tabs a:hover,
+.me-city-tabs a[aria-current] {
+  color: var(--ink);
+}
+
+.me-city-tabs a[aria-current]::after {
   content: '';
   position: absolute;
-  top: calc(var(--space-5) + var(--space-5) + var(--space-1));
-  bottom: var(--place-pad);
-  left: calc(var(--place-pad) + var(--space-5) + var(--place-dot) / 2);
-  border-left: var(--hairline) solid var(--marker-lane);
+  right: 0;
+  bottom: calc(var(--hairline) * -1);
+  left: 0;
+  height: 2px;
+  background: var(--ink);
 }
 
-.me-place {
-  position: relative;
+.me-city-tabs__role {
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.me-city-tabs__name {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-heading);
+}
+
+/* A city's own page: its name and state large, the state drawn with the city marked, its photos below. */
+.me-city {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--me-place-map);
-  grid-template-areas:
-    'text map'
-    'strip strip';
+  gap: var(--space-7);
+  padding: var(--space-6) var(--place-pad) calc(var(--place-pad) + var(--clothesline-sag));
+  animation: enter var(--duration-base) var(--ease-out);
+}
+
+.me-city__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--me-city-map);
   align-items: center;
-  gap: var(--space-4) var(--space-5);
-  padding: var(--space-5) var(--space-5) var(--space-5) calc(var(--space-5) * 2 + var(--place-dot));
-  background: var(--surface);
-  border: var(--hairline) solid var(--line);
-  border-radius: var(--radius-md);
+  gap: var(--space-5);
 }
 
-.me-place__node {
-  position: absolute;
-  top: calc(var(--space-5) + var(--space-1));
-  left: var(--space-5);
-  width: var(--place-dot);
-  height: var(--place-dot);
-  background: var(--surface);
-  border: var(--hairline) solid var(--marker);
-  border-radius: 50%;
-}
-
-.me-place[aria-current] .me-place__node {
-  background: var(--marker-strong);
-  border-color: var(--marker-strong);
-}
-
-.me-place__text {
-  grid-area: text;
+.me-city__text {
   display: grid;
   align-content: start;
   gap: var(--space-2);
-  align-self: start;
 }
 
-.me-place__city {
+.me-city__name {
   margin-top: var(--space-1);
   font-size: var(--me-place-city);
-  letter-spacing: -0.02em;
-  overflow-wrap: anywhere;
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
-.me-place__region {
+.me-city__region {
   color: var(--ink-muted);
   font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.me-place__line {
+.me-city__line {
   margin-top: var(--space-3);
   max-width: 36rem;
   color: var(--ink-muted);
 }
 
-/* The state, small and in place: not the floating backdrop the tile uses. */
-.me-map.me-place__map {
+/* The state, large and in place: not the floating backdrop the tile uses. */
+.me-map.me-city__map {
   position: static;
-  grid-area: map;
   justify-self: end;
   width: 100%;
-  height: var(--me-place-map);
+  height: var(--me-city-map);
   transform: none;
-}
-
-.me-place .clothesline {
-  grid-area: strip;
 }
 
 /*
@@ -548,6 +551,12 @@ a.me-frame:focus-visible {
  * hanging lower toward the middle. Empty frames are dashed outlines, for judging the layout only.
  */
 .clothesline {
+  display: grid;
+  gap: var(--clothesline-row-gap);
+}
+
+/* One line and its prints. As many rows are strung as the photos need. */
+.clothesline__row {
   position: relative;
   padding-top: var(--space-2);
 }
@@ -569,15 +578,16 @@ a.me-frame:focus-visible {
 }
 
 .clothesline__prints {
-  display: flex;
-  justify-content: space-around;
-  gap: var(--space-3);
+  display: grid;
+  grid-template-columns: repeat(var(--per-line), minmax(0, 1fr));
+  gap: var(--space-5);
+  justify-items: center;
   padding-top: var(--space-2);
 }
 
 .clothesline__print {
   position: relative;
-  flex: 0 1 var(--clothesline-print);
+  width: min(100%, var(--clothesline-print));
   aspect-ratio: 4 / 5;
   padding: var(--polaroid-edge) var(--polaroid-edge) var(--polaroid-foot);
   background: var(--surface-raised);
@@ -656,32 +666,29 @@ a.me-frame:focus-visible {
 }
 
 @media (max-width: 599px) {
-  .me-places {
-    --place-pad: var(--space-3);
+  .me-detail {
+    --place-pad: var(--space-4);
   }
 
-  .me-places-head {
-    padding-inline: var(--space-4);
-  }
-
-  .me-place {
-    --me-place-map: 72px;
+  .me-city__head {
+    --me-city-map: 96px;
     gap: var(--space-3);
-    padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) * 2 + var(--place-dot));
   }
 
-  .me-place__node {
-    top: calc(var(--space-4) + var(--space-1));
-    left: var(--space-4);
+  .me-city {
+    gap: var(--space-6);
   }
 
-  .me-places::before {
-    left: calc(var(--place-pad) + var(--space-4) + var(--place-dot) / 2);
+  .me-city-tabs {
+    gap: var(--space-2) var(--space-5);
   }
 
-  .me-place__city {
-    font-size: var(--text-xl);
-    overflow-wrap: normal;
+  .me-city-tabs__name {
+    font-size: var(--text-md);
+  }
+
+  .clothesline__prints {
+    gap: var(--space-4);
   }
 }
 

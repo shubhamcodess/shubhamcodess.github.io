@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { site } from '../../config/site'
 import { home, pursuits, type Home, type Pursuit } from '../../content/me'
@@ -9,7 +9,7 @@ import { ActionLink } from '../../ui/ActionLink'
 import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
 import { Art } from './Art'
-import { Clothesline } from './Clothesline'
+import { Places } from './Places'
 import { StateMap } from './StateMap'
 import './me.css'
 
@@ -19,10 +19,12 @@ type Entry = { readonly kind: 'pursuit'; readonly item: Pursuit } | { readonly k
 const entries: readonly Entry[] = [...pursuits.map((item) => ({ kind: 'pursuit' as const, item })), { kind: 'home', item: home }]
 const ids = new Set(entries.map((entry) => entry.item.id))
 
+/** The open tile, and for the home tile the place open within it: #work, #work/jamshedpur. */
 const readHash = () => {
-  const id = decodeURIComponent(window.location.hash.slice(1))
+  const [id = ''] = decodeURIComponent(window.location.hash.slice(1)).split('/')
   return ids.has(id) ? id : null
 }
+const readPlace = () => decodeURIComponent(window.location.hash.slice(1)).split('/')[1] ?? null
 
 /** The face of a tile: its number or label, its name, and whatever content/me.ts gives it. */
 function TileFace({ entry, index, open }: { readonly entry: Entry; readonly index: number; readonly open: boolean }) {
@@ -78,6 +80,7 @@ export function MePage() {
   const { me, features } = site
   const reducedMotion = useReducedMotion()
   const [openId, setOpenId] = useState<string | null>(readHash)
+  const [placeId, setPlaceId] = useState<string | null>(readPlace)
 
   // Changes the view inside a view transition when the browser has one, so tiles morph rather than jump.
   const show = useCallback(
@@ -92,8 +95,19 @@ export function MePage() {
     [reducedMotion],
   )
 
+  const openIdRef = useRef(openId)
+  openIdRef.current = openId
+
   useEffect(() => {
-    const onHash = () => show(readHash())
+    const onHash = () => {
+      const next = readHash()
+      // Moving between places in the same open tile is a quiet swap, not a tile transition.
+      if (next && next === openIdRef.current) setPlaceId(readPlace())
+      else {
+        setPlaceId(readPlace())
+        show(next)
+      }
+    }
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [show])
@@ -151,30 +165,10 @@ export function MePage() {
 
             <article className={`me-detail me-frame me-frame--${frameOf(open)}`} style={{ viewTransitionName: `me-${open.item.id}` }}>
               {open.kind === 'home' && open.item.places?.length ? (
-                <header className="me-places-head">
-                  <p className="eyebrow">{me.placesKicker}</p>
-                  <h1 className="me-places-head__title">{me.placesTitle}</h1>
-                </header>
+                <Places home={open.item} placeId={placeId} emptySlots={me.emptyPhotoSlots} />
               ) : (
                 <TileFace entry={open} index={openIndex} open />
               )}
-              {open.kind === 'home' && open.item.places?.length ? (
-                <ol className="me-places" aria-label={me.placesLabel}>
-                  {open.item.places.map((place, index, all) => (
-                    <li key={place.city} className="me-place" {...(index === all.length - 1 ? { 'aria-current': 'step' as const } : {})}>
-                      <span className="me-place__node" aria-hidden="true" />
-                      <div className="me-place__text">
-                        <p className="eyebrow">{place.role}</p>
-                        <h2 className="me-place__city">{place.city}</h2>
-                        <p className="me-place__region">{place.region}</p>
-                        {place.line ? <p className="me-place__line">{place.line}</p> : null}
-                      </div>
-                      <StateMap state={place.map} at={place.at} className="me-place__map" />
-                      <Clothesline photos={place.photos ?? []} emptySlots={me.emptyPhotoSlots} label={`Photos from ${place.city}`} />
-                    </li>
-                  ))}
-                </ol>
-              ) : null}
               {open.item.story?.length ? (
                 <div className="me-detail__story">
                   {open.item.story.map((paragraph) => (

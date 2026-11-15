@@ -27,8 +27,10 @@ export interface Pursuit {
   readonly story?: readonly string[]
 }
 
-/** One stop on the path through places, shown when the home tile is opened. Not a link. */
+/** A place lived in, shown as its own page when the home tile is opened. */
 export interface Place {
+  /** Its address on the page: /me/#work for the first place, /me/#work/<id> for the others. */
+  readonly id: string
   /** What the place was to the owner, in a natural phrase, such as "What I call home". */
   readonly role: string
   readonly city: string
@@ -38,7 +40,7 @@ export interface Place {
   readonly at: readonly [lat: number, lon: number]
   /** A sentence or two in the owner's words. */
   readonly line?: string
-  /** Photos hung on the place's clothesline, oldest first. */
+  /** Photos hung on the place's clotheslines, in order. As many lines are strung as the photos need. */
   readonly photos?: readonly PlacePhoto[]
 }
 
@@ -67,7 +69,7 @@ export interface Home {
   readonly at?: readonly [lat: number, lon: number]
   /** The tile's own page, shown when it is opened. */
   readonly story?: readonly string[]
-  /** The places lived in, oldest first, shown as a path when the tile is opened. The last is now. */
+  /** The places lived in, in the order their tabs show: where the owner is now first. Each is a page of its own. */
   readonly places?: readonly Place[]
 }
 
@@ -85,9 +87,8 @@ export const home: Home = {
   map: 'karnataka',
   at: [12.9716, 77.5946],
   places: [
-    { role: 'What I call home', city: 'Jamshedpur', region: 'Jharkhand', map: 'jharkhand', at: [22.8046, 86.2029] },
-    { role: 'Where I studied', city: 'Bhubaneswar', region: 'Odisha', map: 'odisha', at: [20.2961, 85.8245] },
     {
+      id: 'bengaluru',
       role: 'Where I work now',
       city: 'Bengaluru',
       region: 'Karnataka',
@@ -116,5 +117,7 @@ export const home: Home = {
         },
       ],
     },
+    { id: 'jamshedpur', role: 'What I call home', city: 'Jamshedpur', region: 'Jharkhand', map: 'jharkhand', at: [22.8046, 86.2029] },
+    { id: 'bhubaneswar', role: 'Where I studied', city: 'Bhubaneswar', region: 'Odisha', map: 'odisha', at: [20.2961, 85.8245] },
   ],
 }

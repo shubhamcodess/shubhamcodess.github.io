@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "data": "node --experimental-strip-types --no-warnings scripts/fetch-credentials.mjs && node scripts/fetch-previews.mjs",
     "previews": "node scripts/fetch-previews.mjs",
+    "photos": "node scripts/add-photos.mjs",
     "format": "prettier --write src scripts vite.config.ts"
   },
   "dependencies": {
