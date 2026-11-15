@@ -58,6 +58,7 @@ Imports only go down this table. A feature never imports another feature. If two
 4. **Config drives the site.** `config/site.ts` decides what is said, what is featured, how the light behaves and which parts are on. Turning a flag off must leave a complete page.
 5. **Tokens only.** A component's CSS reads `var(--…)`. A new value is added to `tokens.css` first.
 6. **One CSS file per component,** imported by that component, with class names prefixed by the component (`.folder__tab`, `.hero__name`).
+   **A class used by more than one page goes in `styles/base.css`** (today: `.section`, `.section__*`, `.build-stack`, `.page-onward`, `.enter`, `.reveal-fill`). Pages load as separate chunks, so a style kept in one feature's file is missing on any page that doesn't import that feature. That is how the Experience page lost its heading spacing once.
 7. **One page, one HTML file.** Each route has its own HTML entry that names its route in `data-route`. Project pages share `project/index.html`; the build writes one real file per build with its own title and description. Pages load directly, with no SPA fallback and no client router.
 8. **Effects clean up.** Every observer, listener, animation frame and WebGL resource is released in its effect's cleanup.
 9. **Progressive.** The page is complete without WebGL, with reduced motion, and on touch. Enhancements switch on only when they can run.

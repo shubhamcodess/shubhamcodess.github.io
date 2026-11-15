@@ -201,3 +201,66 @@ button {
     transform: translate3d(0, var(--page-rise), 0);
   }
 }
+
+/*
+ * Shared page parts. Every page loads this file, and pages load as separate chunks,
+ * so anything more than one page uses lives here, never in a feature's own stylesheet.
+ */
+
+.section {
+  padding-block: var(--space-8) var(--space-9);
+}
+
+.section__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+  margin-bottom: var(--space-7);
+}
+
+.section__title {
+  font-size: var(--text-2xl);
+  letter-spacing: -0.02em;
+}
+
+.section__lead {
+  max-width: 36rem;
+  margin-top: var(--space-3);
+  color: var(--ink-muted);
+}
+
+/* A mono list of tools or tech, separated by space. */
+.build-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / var(--leading-snug) var(--font-mono);
+}
+
+.page-onward {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-8);
+  padding-top: var(--space-4);
+  border-top: var(--hairline) solid var(--line);
+}
+
+/* The entrance for things that are on screen as the page opens. Set --enter-index to stagger. */
+.enter {
+  animation: enter var(--duration-enter) var(--ease-out) backwards;
+  animation-delay: calc(var(--enter-index, 0) * var(--stagger) + var(--enter-delay, 0ms));
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-distance), 0);
+  }
+}
+
+.reveal-fill {
+  height: 100%;
+}

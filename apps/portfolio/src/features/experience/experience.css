@@ -256,14 +256,6 @@ a.honour:focus-visible {
   }
 }
 
-.page-onward {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: var(--space-8);
-  padding-top: var(--space-4);
-  border-top: var(--hairline) solid var(--line);
-}
-
 /* ---- The home teaser ---- */
 .teaser-section {
   padding-bottom: var(--space-5);
