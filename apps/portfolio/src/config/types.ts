@@ -19,6 +19,8 @@ export interface RouteConfig {
 /** Turn a part of the site on or off without touching components. */
 export interface FeatureFlags {
   readonly themeToggle: boolean
+  /** The sound toggle in the header, and the site's sound design behind it. */
+  readonly sound: boolean
   /** The WebGL light behind the hero. Off leaves the static CSS backdrop. */
   readonly heroLight: boolean
   /** Pointer and scroll depth in the hero. */
@@ -204,6 +206,18 @@ export interface SiteConfig {
       readonly reveal: { readonly cell: number; readonly holdMs: number; readonly dissolveMs: number; readonly pulseMs: number }
       readonly swing: SwingConfig
     }
+  }
+  readonly sound: {
+    /** Off until the visitor turns it on. Browsers won't play sound before a click anyway. */
+    readonly defaultOn: boolean
+    readonly storageKey: string
+    /** Master level, 0 to 1. Every voice is already quiet; this scales them all. */
+    readonly volume: number
+    /** A very low room tone under everything while sound is on. */
+    readonly ambient: boolean
+    /** A soft page-turn after this many pixels of scrolling, and no closer together than gapMs. */
+    readonly scroll: { readonly every: number; readonly gapMs: number }
+    readonly label: string
   }
   /** Order of the groups on the All builds page. */
   readonly kinds: readonly BuildKind[]

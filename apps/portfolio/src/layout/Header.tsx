@@ -1,7 +1,9 @@
 import { site } from '../config/site'
 import type { RouteId } from '../config/types'
 import { hrefTo } from '../lib/routes'
+import { setSound, soundState } from '../lib/sound/sound'
 import { useTheme } from '../lib/useTheme'
+import { useSyncExternalStore } from 'react'
 import { Icon } from '../ui/Icon'
 import './header.css'
 
@@ -12,6 +14,7 @@ interface HeaderProps {
 
 export function Header({ current }: HeaderProps) {
   const [theme, toggleTheme] = useTheme()
+  const sound = useSyncExternalStore(soundState.subscribe, soundState.get, () => false)
   const { features } = site
   const enabled: Readonly<Record<string, boolean>> = {
     builds: features.buildsPage,
@@ -38,11 +41,26 @@ export function Header({ current }: HeaderProps) {
             {item.label}
           </a>
         ))}
+        {features.sound ? (
+          <button
+            className="site-header__theme site-header__sound"
+            type="button"
+            onClick={() => void setSound(!sound)}
+            aria-pressed={sound}
+            aria-label={site.sound.label}
+            data-sound={sound ? 'close' : 'none'}
+          >
+            <span key={String(sound)} className="site-header__turn">
+              <Icon name={sound ? 'soundOn' : 'soundOff'} size={18} />
+            </span>
+          </button>
+        ) : null}
         {site.features.themeToggle ? (
           <button
             className="site-header__theme"
             type="button"
             onClick={toggleTheme}
+            data-sound="chime"
             aria-pressed={theme === 'dark'}
             aria-label="Dark theme"
           >

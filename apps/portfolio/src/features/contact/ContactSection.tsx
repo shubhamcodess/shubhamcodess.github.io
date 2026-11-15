@@ -43,6 +43,7 @@ export function ContactSection() {
       </div>
       <button
         className="contact__replay"
+        data-sound="clink"
         type="button"
         onClick={() => setReplay((count) => count + 1)}
         aria-label={contact.badge.replayLabel}

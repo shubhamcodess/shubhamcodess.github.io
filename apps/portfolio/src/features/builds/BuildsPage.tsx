@@ -35,6 +35,7 @@ export function BuildsPage() {
                   key={option.id}
                   type="button"
                   className="build-filter__chip"
+                  data-sound="chime"
                   aria-pressed={filter === option.id}
                   onClick={() => setFilter(option.id)}
                 >

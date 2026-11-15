@@ -11,6 +11,7 @@ import { ProjectPage } from '../features/project/ProjectPage'
 import { Footer } from '../layout/Footer'
 import { Header } from '../layout/Header'
 import { ScrollLight } from '../layout/ScrollLight'
+import { SoundDesign } from '../layout/SoundDesign'
 import { LinkPreview } from '../ui/LinkPreview'
 
 function HomePage() {
@@ -59,6 +60,7 @@ export function App({ page }: AppProps) {
       {site.features.footer ? <Footer /> : null}
       {site.features.scrollLight ? <ScrollLight /> : null}
       {site.features.linkPreviews ? <LinkPreview /> : null}
+      {site.features.sound ? <SoundDesign /> : null}
     </div>
   )
 }

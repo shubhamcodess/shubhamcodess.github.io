@@ -173,6 +173,27 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
   - **The portrait** arrives the way a generated image loads: a field of soft, round-cornered, muted grey cells that says nothing about the picture, clearing slowly from the top down while the field breathes in rolling waves. The photo is monochrome from its first frame, so cells and photo share one tone. A trace of the hero's light lanes stays over it.
 - On phones the badge hangs first and centred, and the copy follows at phone sizes of its own.
 
+## Sound
+
+Sound design like a film's: quiet, warm, felt more than heard. Off until the visitor turns it on with the speaker button beside the theme toggle; the choice is remembered.
+
+- **Made, not sampled.** Every sound is synthesised in the browser (Web Audio), in one key (A major pentatonic) and one small, warm room (a soft reverb). No audio files; the engine loads only when sound is first turned on.
+- **The signature:** turning sound on plays the site's motif, an open A chord rolled upward and left to bloom.
+- **Room tone:** while sound is on, a very low bed of two beating low notes and air under a slowly breathing filter. It pauses with the tab.
+
+| Moment | Voice |
+|---|---|
+| Hover over anything interactive (pointer only) | A felt tick, barely there |
+| Press a link or button | A small wooden tap |
+| Scroll a good stretch | A soft page-turn of air, rising when going down, louder when faster |
+| Theme toggle, filter chips | A chime: the next note of the key, ringing in the room |
+| Badge swap and replay | A clink, like the badge's metal clip |
+| Turning sound off | A softer, lower tap |
+
+- An element picks its press sound with `data-sound` (`tap`, `chime`, `clink`, `close`, or `none`). Anything interactive without it gets a tap.
+- Levels, room tone and scroll spacing are `sound` in the config. Voices themselves are in `lib/sound/engine.ts`.
+- While sound is on, the speaker's waves breathe slowly.
+
 ## Scrollbar
 
 The browser's scrollbar is replaced by a thread of light in the frame's right edge. It runs down from the top as the page scrolls, with a bright drop at its head. It hides on pages too short to scroll, and the native bar returns when the flag is off.

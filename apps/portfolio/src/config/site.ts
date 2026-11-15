@@ -66,6 +66,14 @@ export const site = {
     next: 'Next build',
     previous: 'Previous build',
   },
+  sound: {
+    defaultOn: false,
+    storageKey: 'portfolio-sound',
+    volume: 0.6,
+    ambient: true,
+    scroll: { every: 520, gapMs: 420 },
+    label: 'Sound',
+  },
   kinds: ['AI tooling', 'Developer tool', 'In-browser AI', 'App'],
   experience: {
     id: 'experience',
@@ -121,6 +129,7 @@ export const site = {
   },
   features: {
     themeToggle: true,
+    sound: true,
     heroLight: true,
     heroParallax: true,
     featured: true,

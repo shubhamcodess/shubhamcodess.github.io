@@ -84,3 +84,14 @@
     transform: rotate(-70deg) scale(0.6);
   }
 }
+
+/* While sound is on, the waves in the icon breathe slowly. */
+.site-header__sound[aria-pressed='true'] .icon path:not(:first-child) {
+  animation: sound-breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes sound-breathe {
+  50% {
+    opacity: 0.35;
+  }
+}

@@ -40,7 +40,7 @@ The dev server is on port 5180. `build` type-checks first and writes static file
 | `src/config` | The site config and its types: copy, routes, featured builds, light tuning, feature flags | `content` |
 | `src/content` | Typed content. `builds.ts` is the one source for every build | nothing |
 | `src/styles` | `tokens.css` (all design values) and `base.css` (reset, frame, shared helpers) | nothing |
-| `src/lib` | Small hooks and helpers with no markup | `config` |
+| `src/lib` | Small hooks and helpers with no markup. `sound/` is the sound state and the Web Audio engine (loaded on first use) | `config` |
 | `src/ui` | Reusable parts that know nothing about this site's content: `FolderCard`, `ActionLink`, `Icon`, `Reveal`, `LinkPreview`, and `light/` (the shader and its backdrop) | `lib`, `config` types |
 | `src/layout` | Header and footer | `config`, `lib`, `ui` |
 | `src/features/*` | One folder per part of the site: `hero`, `builds`, `project`, `experience`, `credentials`, `contact` | everything above |
@@ -98,7 +98,7 @@ pnpm --filter @portfolio/app data
 ## Known gaps
 
 - **Content is rendered in the browser.** Before launch, pre-render each page to static HTML at build time, so search engines and AI readers get the content without running JavaScript. This is the one launch blocker.
-- **JavaScript is close to the 90 kB budget** (88.6 kB gzipped). Credentials and link previews are runtime JSON, not bundled. Split by page before adding anything heavy.
+- **JavaScript is just over the 90 kB budget** (90.3 kB gzipped). The sound engine is its own 1.5 kB chunk; the wiring and toggle are in the main bundle. Credentials and link previews are runtime JSON, not bundled. Split by page before adding anything heavy.
 - **CSS is slightly over its 10 kB budget** (10.4 kB). Splitting it by page is the fix.
 - **Credentials load after the page,** so they aren't in the HTML for search engines. Pre-rendering (below) should inline `public/data/credentials.json`.
 - **Page transitions** use cross-document view transitions, which Firefox doesn't have yet. It simply navigates.
