@@ -21,6 +21,13 @@ const linkLabels = {
   download: 'Download',
 } as const satisfies Record<BuildLinkKind, string>
 
+/** The stage's name: the build's repository as @owner/name, or its title when the code is private. */
+function stageName(build: Build): string {
+  const code = build.links.find((link) => link.kind === 'code')
+  const match = code ? /^https:\/\/github\.com\/([\w.-]+)\/([\w.-]+)\/?$/.exec(code.href) : null
+  return match ? `@${match[1] ?? ''}/${match[2] ?? ''}` : build.title
+}
+
 /** The same light as the hero, turned down. Made once, so the scene never restarts on render. */
 const titleLight: HeroLightConfig = { ...site.hero.light, intensity: site.projectPage.lightIntensity }
 
@@ -109,7 +116,7 @@ export function ProjectPage({ build }: ProjectPageProps) {
             <Reveal>
               <figure className="project-stage">
                 <div className="project-stage__bar" aria-hidden="true">
-                  <p>{build.title}</p>
+                  <p>{stageName(build)}</p>
                 </div>
                 <div className={`project-stage__screen${motion ? ' project-stage__screen--motion' : ''}`}>
                   {motion ? (

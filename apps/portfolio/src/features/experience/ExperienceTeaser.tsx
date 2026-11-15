@@ -1,7 +1,10 @@
 import { site } from '../../config/site'
+import type { CredentialRecord } from '../../content/credentials-source'
 import { employers, featuredCredentials } from '../../content/experience'
+import { credentialsFile } from '../credentials/CredentialsPage'
 import { toolGroups } from '../../content/tools'
 import { hrefTo } from '../../lib/routes'
+import { useStaticData } from '../../lib/useStaticData'
 import { ActionLink } from '../../ui/ActionLink'
 import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
@@ -16,6 +19,7 @@ import './experience.css'
 export function ExperienceTeaser() {
   const { experience: copy, credentialsPage, features } = site
   const headingId = `${copy.id}-title`
+  const credentials = useStaticData<readonly CredentialRecord[]>(credentialsFile)
   const tools = toolGroups.flatMap((group) => group.tools)
 
   return (
@@ -61,6 +65,7 @@ export function ExperienceTeaser() {
               <div className="teaser__links">
                 <ActionLink href={hrefTo('credentials')} icon="arrowRight">
                   {credentialsPage.more}
+                  {credentials.state === 'ready' ? ` (${credentials.data.length})` : null}
                 </ActionLink>
               </div>
             </Reveal>
