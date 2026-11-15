@@ -86,11 +86,34 @@
 
 .project-stage__bar p {
   flex: 1;
+  min-width: 0;
   overflow: hidden;
   color: var(--ink-muted);
   font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.project-stage__controls {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.project-stage__controls button {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  padding: 0;
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--duration-fast) linear;
+}
+
+.project-stage__controls button:hover {
+  color: var(--ink);
 }
 
 .project-stage__screen {
@@ -104,36 +127,20 @@
 
 /* A motion graphic sets its own height: the replay as its own site showed it, on a plain sunken ground. */
 .project-stage__screen--motion {
-  position: relative;
   display: block;
   place-items: normal;
   aspect-ratio: auto;
   height: var(--project-motion-height);
   padding: var(--project-motion-pad);
-  overflow: hidden;
   background: var(--surface-sunken);
 }
 
-/*
- * The replay is laid out wider and scaled down to fit the fixed screen, by the tallest it gets over its loop,
- * so the screen never changes size while it plays. MotionStage sets its width, --motion-scale and --motion-top.
- */
+/* The replay fills the screen's fixed height exactly, with the same room on every side. */
 .project-stage__motion {
   width: 100%;
+  height: 100%;
   opacity: 0;
-  transform: translateY(var(--motion-top, 0px)) scale(var(--motion-scale, 1));
-  transform-origin: top left;
   transition: opacity var(--duration-base) var(--ease-out);
-}
-
-/* When even the smallest scale can't fit it all, the foot of the replay fades out at the screen's edge. */
-.project-stage__screen--motion[data-clipped]::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 0;
-  height: var(--space-8);
-  background: linear-gradient(transparent, var(--surface-sunken));
-  pointer-events: none;
 }
 
 .project-stage__motion[data-ready] {

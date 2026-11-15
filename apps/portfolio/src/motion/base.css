@@ -5,6 +5,7 @@
  */
 :host {
   display: block;
+  height: 100%;
   container-type: inline-size;
   color: var(--text, var(--fg));
   -webkit-font-smoothing: antialiased;
@@ -53,4 +54,9 @@ button {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* The replay's own root fills the stage's fixed height; each replay's fit.css lays itself out inside it. */
+.motion-root {
+  height: 100%;
 }

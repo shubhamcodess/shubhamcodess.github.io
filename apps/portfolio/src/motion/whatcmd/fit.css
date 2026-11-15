@@ -1,0 +1,12 @@
+/* How the replay fills the stage: the terminal takes the whole fixed height, and its scrollback stretches. */
+.term {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.term .term__body {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}

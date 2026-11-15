@@ -1,0 +1,46 @@
+/* How the replay fills the stage: the agent window takes the whole fixed height, and its body stretches. */
+.mock {
+  height: 100%;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-bottom: 1px solid var(--m-line-2);
+  border-radius: 14px;
+}
+
+.app .app__body {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}
+
+.app .app__chat {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app .insp__body {
+  min-height: 0;
+}
+
+/* On a phone only the heart of it: the server's JSON being pruned, and the token count falling. */
+@container (max-width: 759px) {
+  .app .app__side,
+  .app .app__chat {
+    display: none;
+  }
+
+  /* Both tabs and the token count on one line, at full size. */
+  .app .insp__tabs {
+    gap: 0;
+    padding: 0 8px;
+  }
+
+  .app .insp__tab {
+    padding: 5px 6px;
+  }
+}

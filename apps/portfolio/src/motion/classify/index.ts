@@ -1,5 +1,6 @@
-import { escapeHtml as esc, part, prefersStill, styles, type Motion } from '../types'
+import { escapeHtml as esc, part, prefersStill, styles, type Motion, type MotionControls } from '../types'
 import css from './classify.css?inline'
+import fit from './fit.css?inline'
 
 /*
  * From classify's landing page (github.com/shubhamcodess/classify, src/demo.js): a replay of real output.
@@ -78,9 +79,9 @@ const ICON = '<svg class="s" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 
 const FIXED_DECISION = 'Send to engineering'
 const OPTIONS = ['Reply with help article', 'Send to engineering', 'Add to backlog']
 
-function mount(root: HTMLElement) {
+function mount(root: HTMLElement): MotionControls {
   const still = prefersStill()
-  root.innerHTML = `<figure class="demo" style="margin:0">
+  root.innerHTML = `<figure class="demo">
     <div class="demo__bar"><span class="demo__dots"><i></i><i></i><i></i></span><span data-title>Support ticket triage</span><span class="demo__stat" data-stat></span></div>
     <div class="demo__stage" aria-hidden="true">
       <div class="demo__drop" data-drop>${ICON}<span>Drop a file</span></div>
@@ -94,8 +95,6 @@ function mount(root: HTMLElement) {
       <div class="demo__card" data-card></div>
       <div class="demo__done" data-done>${ICON}<span data-done-text></span></div>
     </div>
-    <figcaption class="demo__foot"><span>Replay of real output from the sample tickets, sped up.</span>
-      <span class="row"><button type="button" class="btn btn--ghost btn--sm" data-pause>Pause</button><button type="button" class="btn btn--ghost btn--sm" data-replay>Replay</button></span></figcaption>
   </figure>`
   const q = (selector: string) => part(root, selector)
   const rowOf = (i: number) => part<HTMLTableRowElement>(root, `[data-r="${i}"]`)
@@ -203,11 +202,9 @@ function mount(root: HTMLElement) {
     }
   }
 
-  const pauseButton = q('[data-pause]')
   const start = () => {
     const me = ++token
     paused = false
-    pauseButton.textContent = 'Pause'
     play(me).catch(() => {})
   }
   const finalFrame = () => {
@@ -215,29 +212,29 @@ function mount(root: HTMLElement) {
     q('[data-table]').classList.add('is-on')
     ROWS.forEach((_, i) => fill(i, false))
     stat(ROWS.length, ROWS.filter((r) => r.needsReview).length)
-    pauseButton.hidden = true
-    q('[data-replay]').hidden = true
   }
 
-  pauseButton.addEventListener('click', () => {
-    paused = !paused
-    pauseButton.textContent = paused ? 'Resume' : 'Pause'
-  })
-  q('[data-replay]').addEventListener('click', start)
   const io = new IntersectionObserver(([entry]) => {
     visible = entry?.isIntersecting ?? false
   })
   io.observe(root)
   if (still) finalFrame()
   else start()
-  return () => {
-    token++
-    cancelAnimationFrame(frame)
-    io.disconnect()
+  return {
+    still,
+    setPaused: (next) => {
+      paused = next
+    },
+    replay: start,
+    stop: () => {
+      token++
+      cancelAnimationFrame(frame)
+      io.disconnect()
+    },
   }
 }
 
 export const motion: Motion = {
-  css: styles(css),
+  css: styles(css, fit),
   mount,
 }

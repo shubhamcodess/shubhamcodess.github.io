@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type SVGProps } from 'react'
 import { createRoot } from 'react-dom/client'
-import { prefersStill, styles, type Motion } from '../types'
+import { prefersStill, styles, type Motion, type MotionControls } from '../types'
 import css from './mcp-token-optimizer.css?inline'
+import fit from './fit.css?inline'
 
 /*
  * From MCP Token Optimizer's landing page (github.com/shubhamcodess/mcp-token-optimizer, site/src/AgentMock.tsx):
@@ -31,21 +32,6 @@ function Base({ children, ...p }: SVGProps<SVGSVGElement> & { children: ReactNod
 const IconCheck = (p: SVGProps<SVGSVGElement>) => (
   <Base {...p}>
     <path d="M5 12.5 10 17.5 19 7" />
-  </Base>
-)
-const IconReplay = () => (
-  <Base>
-    <path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" />
-  </Base>
-)
-const IconPause = () => (
-  <Base>
-    <path d="M9 5v14M15 5v14" />
-  </Base>
-)
-const IconPlay = () => (
-  <Base>
-    <path d="M7 5v14l12-7z" />
   </Base>
 )
 
@@ -167,7 +153,13 @@ function Toon({ text }: { text: string }) {
   )
 }
 
-function AgentMock() {
+/** Filled in by the replay, so the stage's own Pause and Replay can drive it. */
+interface Remote {
+  setPaused: (paused: boolean) => void
+  replay: () => void
+}
+
+function AgentMock({ remote }: { readonly remote: Remote }) {
   const [reduced] = useState(prefersStill)
   const root = useRef<HTMLDivElement>(null)
   const [t, setT] = useState(reduced ? FINAL : 0)
@@ -210,6 +202,8 @@ function AgentMock() {
     setT(0)
     setPaused(false)
   }
+  remote.setPaused = setPaused
+  remote.replay = replay
 
   const prompt = t < T.send ? typed(PROMPT, t, T.promptStart, T.promptEnd) : PROMPT
   const sent = t >= T.send
@@ -247,7 +241,7 @@ function AgentMock() {
   })
 
   return (
-    <div ref={root}>
+    <div ref={root} className="mock">
       <div className="app" aria-hidden="true" style={{ opacity: fadeOut, transition: 'opacity 400ms' }}>
         <div className="app__bar">
           <span className="app__dots">
@@ -362,32 +356,21 @@ function AgentMock() {
           <span>fail-open · originals kept for mto_expand</span>
         </div>
       </div>
-      <div className="app-cap">
-        <p className="cap">
-          Replay of a real call: <b>npm run demo</b> on the repo&rsquo;s sample data. Agent wording is illustrative.
-        </p>
-        {!reduced && (
-          <span className="ctl">
-            <button type="button" onClick={() => setPaused((p) => !p)} aria-pressed={paused}>
-              {paused ? <IconPlay /> : <IconPause />}
-              {paused ? 'Play' : 'Pause'}
-            </button>
-            <button type="button" onClick={replay}>
-              <IconReplay />
-              Replay
-            </button>
-          </span>
-        )}
-      </div>
     </div>
   )
 }
 
 export const motion: Motion = {
-  css: styles(css),
-  mount(root) {
+  css: styles(css, fit),
+  mount(root): MotionControls {
+    const remote: Remote = { setPaused: () => {}, replay: () => {} }
     const app = createRoot(root)
-    app.render(<AgentMock />)
-    return () => app.unmount()
+    app.render(<AgentMock remote={remote} />)
+    return {
+      still: prefersStill(),
+      setPaused: (paused) => remote.setPaused(paused),
+      replay: () => remote.replay(),
+      stop: () => app.unmount(),
+    }
   },
 }

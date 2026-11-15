@@ -1,5 +1,6 @@
-import { escapeHtml as esc, makeClock, part, prefersStill, styles, type Motion } from '../types'
+import { escapeHtml as esc, makeClock, part, prefersStill, styles, type Motion, type MotionControls } from '../types'
 import css from './whatcmd.css?inline'
+import fit from './fit.css?inline'
 
 /*
  * From whatcmd's landing page (github.com/shubhamcodess/whatcmd, site/src/main.js): a terminal that installs
@@ -69,10 +70,8 @@ const SCRIPT: readonly Step[] = [
   ['wait', 2600],
 ]
 
-const REPLAY_ICON =
-  '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 109.3-4M12.5 1.5V4.5H9.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 
-function mount(root: HTMLElement) {
+function mount(root: HTMLElement): MotionControls {
   root.innerHTML = `<div class="term mac">
     <div class="term__bar">
       <span class="mac__dots" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -80,17 +79,14 @@ function mount(root: HTMLElement) {
       <span class="mac__hint" aria-hidden="true">demo · loops</span>
     </div>
     <div class="term__body" aria-hidden="true"><div class="term__scroll" data-term></div></div>
-    <div class="term__foot">
-      <span>Commands land on your prompt. You press Enter, or edit them first.</span>
-      <button type="button" class="copy" data-replay>${REPLAY_ICON}<span>Replay</span></button>
-    </div>
   </div>`
   const host = part(root, '[data-term]')
   const body = part(root, '.term__body')
   const still = prefersStill()
 
   let visible = false
-  const clock = makeClock(() => visible && !document.hidden)
+  let paused = false
+  const clock = makeClock(() => visible && !paused && !document.hidden)
   const io = new IntersectionObserver(([entry]) => {
     visible = entry?.isIntersecting ?? false
   })
@@ -193,15 +189,24 @@ function mount(root: HTMLElement) {
     }
   }
 
-  part(root, '[data-replay]').addEventListener('click', () => void start())
   void start()
-  return () => {
-    clock.stop()
-    io.disconnect()
+  return {
+    still,
+    setPaused: (next) => {
+      paused = next
+    },
+    replay: () => {
+      paused = false
+      void start()
+    },
+    stop: () => {
+      clock.stop()
+      io.disconnect()
+    },
   }
 }
 
 export const motion: Motion = {
-  css: styles(css),
+  css: styles(css, fit),
   mount,
 }

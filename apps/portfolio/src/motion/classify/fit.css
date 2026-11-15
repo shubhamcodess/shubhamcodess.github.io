@@ -1,0 +1,43 @@
+/* How the replay fills the stage: the window takes the whole fixed height, and its stage stretches. */
+.demo {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+}
+
+.demo .demo__stage {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}
+
+/* On a phone only the heart of it: each message and the decision it gets. */
+@container (width < 560px) {
+  .demo .tbl th:last-child,
+  .demo .tbl td:last-child {
+    display: none;
+  }
+
+  .demo .tbl col:nth-child(3) {
+    width: 46% !important;
+  }
+
+  .demo .tbl col:last-child {
+    width: 0 !important;
+  }
+
+  .demo .tbl :is(th, td) {
+    padding-inline: 10px;
+  }
+
+  .demo .tbl .dec {
+    white-space: normal;
+  }
+
+  .demo .demo__bar [data-title] {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

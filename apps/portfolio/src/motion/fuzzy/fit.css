@@ -1,0 +1,11 @@
+/* How the replay fills the stage: the window takes the whole fixed height, and the scene between its bar and its foot stretches. */
+.demo {
+  display: flex;
+  flex-direction: column;
+}
+
+.demo .d-stage {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}

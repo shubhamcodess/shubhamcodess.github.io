@@ -116,20 +116,24 @@ export function ProjectPage({ build }: ProjectPageProps) {
           {features.projectMedia ? (
             <Reveal>
               <figure className="project-stage">
-                <div className="project-stage__bar" aria-hidden="true">
-                  <p>{stageName(build)}</p>
-                </div>
-                <div className={`project-stage__screen${motion ? ' project-stage__screen--motion' : ''}`}>
-                  {motion ? (
-                    <MotionStage motion={motion} />
-                  ) : build.media?.kind === 'video' ? (
-                    <video src={build.media.src} aria-label={build.media.alt} autoPlay muted loop playsInline />
-                  ) : build.media ? (
-                    <img src={build.media.src} alt={build.media.alt} loading="lazy" decoding="async" />
-                  ) : (
-                    <p className="eyebrow">{projectPage.mediaPending}</p>
-                  )}
-                </div>
+                {motion ? (
+                  <MotionStage motion={motion} name={stageName(build)} />
+                ) : (
+                  <>
+                    <div className="project-stage__bar" aria-hidden="true">
+                      <p>{stageName(build)}</p>
+                    </div>
+                    <div className="project-stage__screen">
+                      {build.media?.kind === 'video' ? (
+                        <video src={build.media.src} aria-label={build.media.alt} autoPlay muted loop playsInline />
+                      ) : build.media ? (
+                        <img src={build.media.src} alt={build.media.alt} loading="lazy" decoding="async" />
+                      ) : (
+                        <p className="eyebrow">{projectPage.mediaPending}</p>
+                      )}
+                    </div>
+                  </>
+                )}
               </figure>
             </Reveal>
           ) : null}

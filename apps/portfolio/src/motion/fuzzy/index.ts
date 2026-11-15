@@ -1,5 +1,6 @@
-import { escapeHtml as esc, makeClock, part, prefersStill, styles, type Motion } from '../types'
+import { escapeHtml as esc, makeClock, part, prefersStill, styles, type Motion, type MotionControls } from '../types'
 import css from './fuzzy.css?inline'
+import fit from './fit.css?inline'
 
 /*
  * From fuzzy's landing page (github.com/shubhamcodess/fuzzy, src/demo.ts): a scripted replay of a real run.
@@ -74,13 +75,11 @@ function resultHtml(r: Result, highlight: string) {
     <pre>${r.lines.map((l, i) => `<div><span class="n">${r.start + i}</span><span>${mark(l) || ' '}</span></div>`).join('')}</pre></div></div>`
 }
 
-function mount(root: HTMLElement) {
-  root.className = 'demo'
+function mount(root: HTMLElement): MotionControls {
+  root.classList.add('demo')
   root.innerHTML = `
     <div class="win"><span><i></i><i></i><i></i></span><b data-title></b><em data-status></em></div>
-    <div class="d-stage" aria-hidden="true">${STAGE}</div>
-    <div class="d-foot"><span>Replay of a real run on ${RUN.repo}. Embedding is sped up here.</span>
-      <span class="d-ctl"><button type="button" data-pause class="link">Pause</button><button type="button" data-replay class="link">Replay</button></span></div>`
+    <div class="d-stage" aria-hidden="true">${STAGE}</div>`
   const q = (selector: string) => part(root, selector)
 
   let paused = false
@@ -196,22 +195,9 @@ function mount(root: HTMLElement) {
 
   if (prefersStill()) {
     finalFrame()
-    q('.d-ctl').hidden = true
-    return () => clock.stop()
+    return { still: true, setPaused: () => {}, replay: () => {}, stop: () => clock.stop() }
   }
 
-  const pauseButton = q('[data-pause]')
-  pauseButton.onclick = () => {
-    paused = !paused
-    pauseButton.textContent = paused ? 'Play' : 'Pause'
-    root.classList.toggle('paused', paused)
-  }
-  q('[data-replay]').onclick = () => {
-    paused = false
-    pauseButton.textContent = 'Pause'
-    root.classList.remove('paused')
-    void play()
-  }
   const io = new IntersectionObserver(
     ([entry]) => {
       visible = entry?.isIntersecting ?? false
@@ -220,13 +206,25 @@ function mount(root: HTMLElement) {
   )
   io.observe(root)
   void play()
-  return () => {
-    clock.stop()
-    io.disconnect()
+  return {
+    still: false,
+    setPaused: (next) => {
+      paused = next
+      root.classList.toggle('paused', paused)
+    },
+    replay: () => {
+      paused = false
+      root.classList.remove('paused')
+      void play()
+    },
+    stop: () => {
+      clock.stop()
+      io.disconnect()
+    },
   }
 }
 
 export const motion: Motion = {
-  css: styles(css),
+  css: styles(css, fit),
   mount,
 }

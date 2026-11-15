@@ -4,8 +4,21 @@ import base from './base.css?inline'
 export interface Motion {
   /** The replay's own styles. They live in a shadow root, so they never reach the rest of the page. */
   readonly css: string
-  /** Builds the replay inside `root` and starts it. Returns the way to stop it and let it go. */
-  mount(root: HTMLElement): () => void
+  /**
+   * Builds the replay inside `root`, which has a fixed height the replay fills exactly, and starts it.
+   * With reduced motion it shows its last frame, still.
+   */
+  mount(root: HTMLElement): MotionControls
+}
+
+/** What the stage's own Pause and Replay buttons drive. */
+export interface MotionControls {
+  /** True when the replay is a still frame (reduced motion): there is nothing to pause or replay. */
+  readonly still: boolean
+  setPaused(paused: boolean): void
+  replay(): void
+  /** Stops the replay and lets it go. */
+  stop(): void
 }
 
 /** A pausable wait. Rejects once the run it belongs to has been replaced, which ends that run. */
@@ -42,5 +55,9 @@ export function part<T extends HTMLElement = HTMLElement>(root: ParentNode, sele
   return element
 }
 
-/** The replay's own styles between the shared base and the site's typefaces. */
-export const styles = (own: string) => `${base}\n${own}\n:host{--sans:var(--font-sans);--mono:var(--font-mono)}`
+/**
+ * The replay's styles: the shared base, its site's own rules, then how it fills the stage (`fit`), and last the
+ * site's two typefaces.
+ */
+export const styles = (own: string, fit: string) =>
+  `${base}\n${own}\n${fit}\n:host{--sans:var(--font-sans);--mono:var(--font-mono)}`
