@@ -66,7 +66,7 @@
   padding-block: var(--space-8) var(--space-9);
 }
 
-/* The stage: a browser-like frame for the build in motion. It holds its shape before the recording exists. */
+/* The stage: a plain box for the build in motion, named at its top left. It holds its shape before the recording exists. */
 .project-stage {
   margin: 0 0 var(--space-8);
   background: var(--surface-sunken);
@@ -84,20 +84,11 @@
   border-bottom: var(--hairline) solid var(--line);
 }
 
-.project-stage__bar span {
-  width: 10px;
-  height: 10px;
-  background: var(--line);
-  border-radius: 50%;
-}
-
 .project-stage__bar p {
   flex: 1;
-  margin-right: 46px;
   overflow: hidden;
   color: var(--ink-muted);
   font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
-  text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

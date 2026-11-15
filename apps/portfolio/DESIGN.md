@@ -210,7 +210,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 ## Project page
 
 - **Title plate** (night): back link, position and kind, the name very large, summary, outside links as frosted chips, then up to three facts as a title card. The hero light runs behind it at lower strength.
-- **Stage:** a browser-like frame for the build in motion (recording or motion graphic). It keeps its shape and says so plainly until the recording exists.
+- **Stage:** a plain box for the build in motion (recording or motion graphic), with the build's name in small mono at its top left; no browser dots or address, since the replays inside are windows of their own. The replay sits with equal room on every side. It keeps its shape and says so plainly until the recording exists.
 - **Motion graphics:** where a build's own site has a replay (MCP Token Optimizer, whatcmd, fuzzy, classify), the stage plays that replay itself, brought over as code, not video: the build's own UI in its own colours (light or dark with the site's theme), set in Geist and Geist Mono, on a plain sunken ground. It keeps its own Pause and Replay, waits while off screen, and shows its last frame still with reduced motion. On phones it takes its own site's phone layout.
 - **Rail:** section links, kind, year and stack. It stays in view on wide screens. On phones the section links become a row of chips stuck under the top edge.
 - **Sections, in order:** What it does (numbered tiles), Use case (prose, only when written), How it is built (notes on a thin ink lane), Honest limits (a quiet note). Each kind of content has its own shape; nothing is a plain divider list.

@@ -37,7 +37,6 @@ export function ProjectPage({ build }: ProjectPageProps) {
   const previous = builds[(position - 1 + builds.length) % builds.length]
   const next = builds[(position + 1) % builds.length]
 
-  const live = build.links.find((link) => link.kind === 'live') ?? build.links[0]
   const motion = motions[build.slug]
   const sections = [
     { id: 'what', title: projectPage.sections.features, shown: true },
@@ -110,10 +109,7 @@ export function ProjectPage({ build }: ProjectPageProps) {
             <Reveal>
               <figure className="project-stage">
                 <div className="project-stage__bar" aria-hidden="true">
-                  <span />
-                  <span />
-                  <span />
-                  {live ? <p>{new URL(live.href).host + new URL(live.href).pathname.replace(/\/$/, '')}</p> : null}
+                  <p>{build.title}</p>
                 </div>
                 <div className={`project-stage__screen${motion ? ' project-stage__screen--motion' : ''}`}>
                   {motion ? (
