@@ -83,7 +83,7 @@ export const site = {
     scroll: { every: 520, gapMs: 420 },
     label: 'Sound',
   },
-  tilt: { maxDeg: 3.5 },
+  tilt: { maxDeg: 1.2 },
   kinds: ['AI tooling', 'Developer tool', 'In-browser AI', 'App'],
   experience: {
     id: 'experience',

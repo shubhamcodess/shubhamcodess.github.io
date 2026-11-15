@@ -43,7 +43,6 @@ export interface Build {
   readonly highlight?: BuildHighlight
   /** Private projects carry no links. The first link is the card's main action. */
   readonly links: readonly BuildLink[]
-  readonly story: BuildStory
   /** The build in motion: a recording or motion graphic, served from /public. */
   readonly media?: { readonly kind: 'video' | 'image'; readonly src: string; readonly alt: string }
 }

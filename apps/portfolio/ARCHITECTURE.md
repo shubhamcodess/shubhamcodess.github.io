@@ -46,7 +46,7 @@ The dev server is on port 5180. `build` type-checks first and writes static file
 | `src/features/*` | One folder per part of the site: `hero`, `builds`, `project`, `experience`, `credentials`, `contact` | everything above |
 | `scripts` | Build-time helpers that need the network. `fetch-credentials.mjs` reads the Credly wallet; `fetch-previews.mjs` saves the social preview of every outside link | `src/content/credentials-source.ts` |
 | `public/data` | Data loaded at runtime, kept out of the bundle: `credentials.json`, `link-previews.json`. Written by the scripts, committed | nothing |
-| `src/app` | Puts pages together and picks the page for a route | everything above |
+| `src/app` | `App.tsx` is the frame every page shares. `pages.tsx` loads each page as its own chunk | everything above |
 
 Imports only go down this table. A feature never imports another feature. If two need the same thing, it moves to `ui` or `lib`.
 
@@ -65,13 +65,13 @@ Imports only go down this table. A feature never imports another feature. If two
 
 ## Adding things
 
-**A build:** add one object to `content/builds.ts`, with its `story`. Its page, card and filter group follow. To feature it, add its slug to `featured.slugs` in `config/site.ts` (five at most; the type enforces it). Then refresh the runtime data (credentials and link previews):
+**A build:** add its card data to `content/builds.ts` and its story to `content/build-stories.ts` (the compiler insists on both). Its page, card and filter group follow. To feature it, add its slug to `featured.slugs` in `config/site.ts` (five at most; the type enforces it). Then refresh the runtime data (credentials and link previews):
 
 ```bash
 pnpm --filter @portfolio/app data
 ```
 
-**A use case or recording for a build:** fill `story.useCase` or `media` on that build. The page shows the section only when it exists.
+**A use case or recording for a build:** fill `useCase` in its entry in `content/build-stories.ts`, or `media` on the build in `content/builds.ts`. The page shows the section only when it exists.
 
 **A role, employer or recognition:** edit `content/experience.ts`. A new employer goes at the top of `employers`.
 
@@ -80,9 +80,9 @@ pnpm --filter @portfolio/app data
 **A certificate for a recognition:** put the image in `public/certificates/` and set `certificate: 'certificates/<file>'` on that recognition. It then follows the pointer over the card. Any element can do the same with `data-hover-image` and `data-hover-title`.
 
 **A page:**
-1. Add its id to `RouteId` in `config/types.ts`, and its entry to `routes` in `config/site.ts`.
+1. Add its id to `RouteId` in `config/types.ts`, its entry to `routes` and its header links to `nav` in `config/site.ts`.
 2. Add `<name>/index.html` with `data-route`, and list it in `vite.config.ts`.
-3. Add its component to `pages` in `app/App.tsx`. The compiler flags this step if it's missed.
+3. Add its loader to `loadPage` in `app/pages.tsx`. The compiler flags this step if it's missed.
 
 **A section on the home page:** build it as a feature folder, add its flag and copy to the config, and place it in `HomePage`.
 
@@ -98,7 +98,8 @@ pnpm --filter @portfolio/app data
 ## Known gaps
 
 - **Content is rendered in the browser.** Before launch, pre-render each page to static HTML at build time, so search engines and AI readers get the content without running JavaScript. This is the one launch blocker.
-- **JavaScript is over the 90 kB budget** (91.2 kB gzipped), and CSS over 10 kB (10.8 kB). The sound engine is its own 1.5 kB chunk; the wiring and toggle are in the main bundle. Credentials and link previews are runtime JSON, not bundled. Split by page before adding anything heavy.
+- **JavaScript per page** (gzipped, everything a page downloads): home 89.0 kB, project 88.6, experience 81.7, builds 80.4, credentials 80.2. Budget 90 kB per page. React and the shared frame are 78 kB of that.
+- **Long text stays out of shared code.** Each build's full story is in `content/build-stories.ts`, loaded only by project pages. Keep `content/builds.ts` to card data, because every page imports it. The sound engine is its own 1.5 kB chunk; the wiring and toggle are in the main bundle. Credentials and link previews are runtime JSON, not bundled. Split by page before adding anything heavy.
 - **CSS is slightly over its 10 kB budget** (10.4 kB). Splitting it by page is the fix.
 - **Credentials load after the page,** so they aren't in the HTML for search engines. Pre-rendering (below) should inline `public/data/credentials.json`.
 - **Page transitions** use cross-document view transitions, which Firefox doesn't have yet. It simply navigates.
@@ -121,7 +122,7 @@ State on 2026-11-15: every page in `DESIGN.md` is built, typed, formatted and co
 | One title everywhere? | Today: hero "Cloud Full Stack Developer" (`hero.role`), experience "Sr. Cloud Full Stack Developer", badge "AI Engineer" (`contact.badge.role`). The badge title is the owner's choice |
 | Substack address | `contact.links` in `config/site.ts`, icon `substack` |
 | Recordings or motion graphics per build | `media` on the build in `content/builds.ts` |
-| Use-case write-ups | `story.useCase` on the build |
+| Use-case write-ups | `useCase` on the build in `content/build-stories.ts` |
 | Whether to list career-os, lets-dsa and 90-days-challenge | Left out so far, because they point at job hunting |
 | Whether this app replaces `apps/web` | Decisions 001 and 003 in `docs/decisions` still describe the old site |
 

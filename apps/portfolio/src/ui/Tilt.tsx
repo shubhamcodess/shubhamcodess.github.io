@@ -39,8 +39,10 @@ export function TiltLayer() {
       // The side under the pointer dips toward it.
       active.style.setProperty('--tilt-y', `${((x - 0.5) * 2 * maxDeg).toFixed(2)}deg`)
       active.style.setProperty('--tilt-x', `${((0.5 - y) * 2 * maxDeg).toFixed(2)}deg`)
-      active.style.setProperty('--glare-x', `${(x * 100).toFixed(1)}%`)
-      active.style.setProperty('--glare-y', `${(y * 100).toFixed(1)}%`)
+      // The light is placed on the surface that carries it, which for a folder is its sheet.
+      const surface = active.querySelector<HTMLElement>('[data-tilt-surface]')?.getBoundingClientRect() ?? box
+      active.style.setProperty('--glare-x', `${(last.clientX - surface.left).toFixed(0)}px`)
+      active.style.setProperty('--glare-y', `${(last.clientY - surface.top).toFixed(0)}px`)
       active.dataset.tilting = ''
     }
 

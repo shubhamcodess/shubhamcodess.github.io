@@ -1,6 +1,7 @@
 import { site } from '../../config/site'
 import type { HeroLightConfig } from '../../config/types'
-import { builds } from '../../content/builds'
+import { builds, type BuildSlug } from '../../content/builds'
+import { buildStories } from '../../content/build-stories'
 import type { Build, BuildLinkKind } from '../../content/types'
 import { Header } from '../../layout/Header'
 import { hrefTo, hrefToBuild } from '../../lib/routes'
@@ -25,7 +26,7 @@ interface ProjectPageProps {
 
 export function ProjectPage({ build }: ProjectPageProps) {
   const { projectPage, features } = site
-  const { story } = build
+  const story = buildStories[build.slug as BuildSlug]
   const position = builds.findIndex((candidate) => candidate.slug === build.slug)
   const previous = builds[(position - 1 + builds.length) % builds.length]
   const next = builds[(position + 1) % builds.length]

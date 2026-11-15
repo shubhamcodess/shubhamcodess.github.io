@@ -3,7 +3,8 @@ import '@fontsource-variable/geist-mono'
 import { StrictMode } from 'react'
 import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
-import { App, type Page } from './app/App'
+import { App } from './app/App'
+import { loadPage, type Page } from './app/pages'
 import { site } from './config/site'
 import { buildFromPath, hrefTo, isRouteId } from './lib/routes'
 import './styles/tokens.css'
@@ -32,21 +33,23 @@ document.documentElement.style.setProperty('--light-content-shift', `${light.par
 
 /*
  * No jitter between pages. The script tag is render-blocking, so the browser shows nothing until this module
- * finishes. Wait briefly for the text fonts (cached after the first visit), then draw the whole page in one
- * synchronous pass. The first frame the visitor sees, and the one the page transition fades to, is complete.
+ * finishes. Load this page's code and wait briefly for the text fonts (cached after the first visit),
+ * then draw the whole page in one synchronous pass. The first frame the visitor sees, and the one the page transition fades to, is complete.
  */
 const fontWaitMs = 250
-await Promise.race([
+const fonts = Promise.race([
   Promise.all([document.fonts.load('1em "Geist Variable"'), document.fonts.load('1em "Geist Mono Variable"')]),
   new Promise((resolve) => setTimeout(resolve, fontWaitMs)),
 ]).catch(() => undefined)
 
 if (page) {
+  // The page's own code and the fonts load side by side.
+  const [content] = await Promise.all([loadPage(page), fonts])
   const app = createRoot(root)
   flushSync(() =>
     app.render(
       <StrictMode>
-        <App page={page} />
+        <App>{content}</App>
       </StrictMode>,
     ),
   )

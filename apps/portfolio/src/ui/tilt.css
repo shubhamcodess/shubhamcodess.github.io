@@ -17,20 +17,25 @@
   transition-duration: var(--tilt-follow);
 }
 
-[data-tilt]::after {
+/*
+ * The light sits on the element's own surface. A folder's surface is its sheet, so the light stays
+ * inside the folder's cut-out shape and never fills the empty corner beside the tab.
+ */
+[data-tilt]:not(.folder)::after,
+.folder[data-tilt] .folder__sheet::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 3;
   border-radius: inherit;
-  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), var(--tilt-glare), transparent 60%);
-  mix-blend-mode: soft-light;
+  background: radial-gradient(circle var(--tilt-glare-size) at var(--glare-x, 50%) var(--glare-y, 50%), var(--tilt-glare), transparent);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--duration-base) linear;
 }
 
-[data-tilt][data-tilting]::after {
+[data-tilt][data-tilting]:not(.folder)::after,
+.folder[data-tilting] .folder__sheet::after {
   opacity: 1;
 }
 

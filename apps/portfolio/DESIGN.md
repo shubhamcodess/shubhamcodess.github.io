@@ -153,7 +153,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - **Stage:** a browser-like frame for the build in motion (recording or motion graphic). It keeps its shape and says so plainly until the recording exists.
 - **Rail:** section links, kind, year and stack. It stays in view on wide screens. On phones the section links become a row of chips stuck under the top edge.
 - **Sections, in order:** What it does (numbered tiles), Use case (prose, only when written), How it is built (notes on a lane of light), Honest limits (a quiet note). Each kind of content has its own shape; nothing is a plain divider list.
-- A use-case write-up goes in `story.useCase` of that build. The recording goes in `media`.
+- A use-case write-up goes in `useCase` for that build in `content/build-stories.ts`. The recording goes in `media` in `content/builds.ts`.
 
 ## Experience
 
@@ -209,13 +209,15 @@ Hovering an outside link shows a small frosted card that follows the pointer: th
 
 ## Tilt
 
-Cards lean toward the pointer like a card turned under a lamp: a lean, never a flip.
+On hover, cards lean the slightest amount toward the pointer: felt, barely seen. Everything else about the card is unchanged.
 
 - Any element with `data-tilt` takes part. Today: build cards, the home role cards, credential cards, recognition, project feature tiles, and the previous and next build panels.
-- Up to `tilt.maxDeg` (3.5°) at the edge, in 1000px of perspective, with the 4px lift. A soft light (`--tilt-glare`) sits under the pointer.
+- At most `tilt.maxDeg` (1.2°) at the edge, in 1000px of perspective, with the usual 4px lift.
+- A very faint light (4% white, 160px across) sits under the pointer. It lives on the card's own surface: on a folder that is its sheet, so the light never fills the empty corner beside the tab.
 - The lean follows in 220ms and settles back over 900ms, so it feels weighted.
 - Not on large reading blocks (role cards on the Experience page, prose), and not on the badge, which has its own swing.
 - Pointer only. Off with reduced motion. `features.tilt` turns it off everywhere.
+- Tried and pulled back as too much: 3.5° lean, a large soft-light glow over the whole card box.
 
 ## Motion, in full
 
@@ -224,7 +226,7 @@ Cards lean toward the pointer like a card turned under a lamp: a lean, never a f
 | Page open | Name, role, statement and chips rise in, one after another |
 | Scroll | Sections and cards rise in once, the first time they are seen |
 | Between pages | The old page dims and sinks back a touch (260ms) while the new one rises gently into place (560ms). A build's title travels from its card to its page. The new page is shown only once fully drawn, so nothing jumps |
-| Cards | Lean up to 3.5° toward the pointer in 2.5D, lift 4px, and carry a soft light where the pointer is. The lean follows quickly and settles back slowly. Pointer only; touch gets the lift |
+| Cards | Lift 4px and lean just over a degree toward the pointer, with a faint light on the card's surface. Pointer only; touch gets the lift |
 | Theme toggle | The icon turns in |
 | Experience | The lane fills with scroll; the present node pulses |
 | Badge | Spring swing, card swap, portrait clearing from grey cells |

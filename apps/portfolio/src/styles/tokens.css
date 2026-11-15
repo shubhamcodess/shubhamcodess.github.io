@@ -133,7 +133,9 @@
   --tilt-depth: 1000px;
   /* How quickly the lean follows the pointer. Settling back uses --duration-slow. */
   --tilt-follow: 220ms;
-  --tilt-glare: rgb(255 255 255 / 55%);
+  /* The light under the pointer: small and barely there. */
+  --tilt-glare: rgb(255 255 255 / 4%);
+  --tilt-glare-size: 160px;
 
   /* Component: link preview */
   --preview-width: 280px;

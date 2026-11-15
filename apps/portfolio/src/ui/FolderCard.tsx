@@ -28,7 +28,7 @@ export function FolderCard({ index, label, title, headingLevel, summary, href, t
   return (
     <article className={plate ? 'folder folder--plate' : 'folder'} data-tilt="">
       {plate ? <div className="folder__plate">{plate}</div> : null}
-      <div className="folder__sheet">
+      <div className="folder__sheet" data-tilt-surface="">
         <p className="folder__tab">
           <span className="folder__index">{index}</span>
           <span>{label}</span>
