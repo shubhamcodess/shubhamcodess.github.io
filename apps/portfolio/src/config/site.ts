@@ -109,7 +109,7 @@ export const site = {
     lead: 'From keeping production running to owning products end to end.',
     more: 'Full experience',
     toolsLabel: 'Tools of the trade',
-    credentialsTitle: 'Certified across AI and cloud.',
+    credentialsTitle: 'AI & cloud certified.',
     credentialsLead: 'By Anthropic, Google Cloud, Microsoft and others.',
     page: { title: 'Experience', lead: 'Where I have worked, what I built there and what came of it.' },
     labels: {
