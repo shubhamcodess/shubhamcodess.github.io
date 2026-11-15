@@ -10,7 +10,7 @@ export const site = {
     storageKey: 'portfolio-theme',
     palette: 'signature',
     buttons: 'lean',
-    texture: 'blueprint',
+    texture: 'grain',
     label: 'Dark theme',
   },
   routes: {

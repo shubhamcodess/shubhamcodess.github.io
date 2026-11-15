@@ -9,8 +9,8 @@ export type PaletteName = 'plain' | 'signature'
 /** "pill": round and roomy. "lean": the same round shape, slimmer, with small mono labels and plain states. */
 export type ButtonStyle = 'pill' | 'lean'
 
-/** "blueprint": fine grain and a faint drafting grid on the page panels. "none": plain panels. */
-export type TextureName = 'blueprint' | 'none'
+/** "grain": a barely-there film grain on the page panels. "none": clean gradient panels. */
+export type TextureName = 'grain' | 'none'
 
 /** Routes are a closed set. Add one here, add its HTML entry, and the compiler points at the rest. */
 export type RouteId = 'home' | 'builds' | 'experience' | 'credentials'

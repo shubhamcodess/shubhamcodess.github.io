@@ -64,16 +64,15 @@ Rules for both:
 - Large type tightens: -0.035em on the hero name, -0.02em on section titles. Mono labels are uppercase with 0.04em tracking.
 - Headings balance their lines, paragraphs avoid orphans.
 
-## Paper texture
+## Grain
 
-The page panels are blueprint paper: a fine grain with a faint drafting grid, far behind everything. Chosen by `theme.texture` in the config (`'blueprint'` or `'none'`).
+A barely-there film grain on the page panels, so the background reads as a surface rather than a clean gradient. Chosen by `theme.texture` in the config (`'grain'` or `'none'`).
 
-- **Where:** themed panels only (Featured, the experience teaser, All builds, Experience, Credentials, a build's story). Never the night panels (hero, project title, contact), never cards: cards are sheets laid on the paper, so they stay clean and come forward.
-- **The grid:** a hair line every 24px and a firmer one every fifth square. Blue ink on warm paper (4.5% and 7%), pale blue on midnight (3.5% and 6%).
-- **The grain:** fractal noise, 20% strength on paper, 12% on midnight. Stronger looked dirty on paper and noisy on midnight.
-- The panel's top light (`--panel-wash`) falls over the paper, so the texture fades toward the top edge.
-- **It has a sound:** with sound on, scrolling makes a dry, grainy, fluttering paper slide.
-- Tuning is four tokens in `styles/texture.css`.
+- **Where:** themed panels only (Featured, the experience teaser, All builds, Experience, Credentials, a build's story). Never the night panels (hero, project title, contact), never cards.
+- **How much:** 9% grain on paper, 5.5% on midnight. It should be noticed only side by side with the clean version.
+- The panel's top light (`--panel-wash`) falls over it, so the grain fades toward the top edge.
+- Tried and removed: a blueprint drafting grid, and grain at 20%. Both changed the site's look instead of adding depth to it.
+- Tuning is in `styles/texture.css`.
 
 ## Buttons
 
