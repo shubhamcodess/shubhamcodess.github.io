@@ -1,0 +1,10 @@
+/* Above the page, under the link preview card, and never in the way of the pointer. */
+.chalk-trail {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}

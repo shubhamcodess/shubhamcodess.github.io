@@ -48,6 +48,8 @@ export interface FeatureFlags {
   readonly credentials: boolean
   /** The framed stage for a build's recording on its page, shown even before the recording exists. */
   readonly projectMedia: boolean
+  /** A short chalk line and a little dust behind the pointer. */
+  readonly chalkTrail: boolean
   /** Cards lean toward the pointer in 2.5D, with a soft light where it is. */
   readonly tilt: boolean
   /** A preview card that follows the pointer over outside links. */
@@ -242,6 +244,11 @@ export interface SiteConfig {
     readonly scroll: { readonly every: number; readonly gapMs: number }
     readonly label: string
   }
+  /**
+   * The chalk trail. `lifeMs` is how long the line lasts, `width` its thickness in px at the pointer,
+   * `opacity` its strength (0 to 1), `dust` the chance (0 to 1) of shedding a speck on each pointer move.
+   */
+  readonly chalkTrail: { readonly lifeMs: number; readonly width: number; readonly opacity: number; readonly dust: number }
   /** How far a card leans toward the pointer, in degrees at its edge. Keep it small: a lean, not a flip. */
   readonly tilt: { readonly maxDeg: number }
   /** Order of the groups on the All builds page. */

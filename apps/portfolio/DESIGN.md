@@ -252,6 +252,16 @@ On hover, cards lean the slightest amount toward the pointer: felt, barely seen.
 - Pointer only. Off with reduced motion. `features.tilt` turns it off everywhere.
 - Tried and pulled back as too much: 3.5° lean, a large soft-light glow over the whole card box, then a 4% light 160px across.
 
+## Chalk trail
+
+A short hand-drawn line follows the pointer, like chalk dragged across the page, shedding a little dust. Switched by `features.chalkTrail`; tuned by `chalkTrail` in the config.
+
+- **The line:** about a quarter of a second long (`lifeMs` 240), 1.6px at the pointer and tapering to nothing, at 38% strength. Each segment is drawn in three slightly offset passes, so its edge is grainy like chalk rather than a clean vector stroke.
+- **The dust:** about one move in three sheds a speck that drifts, slows and fades over a second.
+- **Colour:** drawn white and blended by difference, so it is pale chalk on the dark hero and faint graphite on the paper, in both themes, with no colour of its own.
+- Pointer only. Off with reduced motion. Nothing runs while the pointer is still.
+- Keep it small. It should be noticed on the second look, not the first.
+
 ## Motion, in full
 
 | Where | What moves |
@@ -263,6 +273,7 @@ On hover, cards lean the slightest amount toward the pointer: felt, barely seen.
 | Theme toggle | The icon turns in |
 | Experience | The lane fills with scroll; the present node pulses |
 | Badge | Spring swing, card swap, portrait clearing from grey cells |
+| Pointer | A short chalk line with a little dust, gone in a quarter of a second |
 
 Everything uses `--ease-out`, the duration tokens and `--stagger`. Entrances play once and never replay on scroll back.
 

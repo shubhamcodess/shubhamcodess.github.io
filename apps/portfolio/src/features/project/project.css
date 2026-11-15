@@ -108,8 +108,7 @@
   aspect-ratio: var(--project-stage-ratio);
   background:
     linear-gradient(to top, var(--surface-sunken) 5%, transparent 60%),
-    repeating-linear-gradient(to right, transparent 0 39px, var(--marker-lane) 39px 40px),
-    var(--surface-sunken);
+    repeating-linear-gradient(to right, transparent 0 39px, var(--marker-lane) 39px 40px), var(--surface-sunken);
 }
 
 .project-stage__screen :is(video, img) {
