@@ -252,6 +252,17 @@ On hover, cards lean the slightest amount toward the pointer: felt, barely seen.
 - Pointer only. Off with reduced motion. `features.tilt` turns it off everywhere.
 - Tried and pulled back as too much: 3.5° lean, a large soft-light glow over the whole card box, then a 4% light 160px across.
 
+## Comet cursor
+
+The pointer is a comet. Switched by `features.cometCursor`, separately from the chalk trail; tuned by `cometCursor` in the config.
+
+- **The head:** a sharp dart about the size of the system arrow, pointing up and left, its tip exactly on the click point, so it never feels out of place or imprecise.
+- **The tail:** a thin tapered streak behind the head along its axis. A stub at rest; it stretches with speed (up to `tailMax` 1.25 times its length) and draws back in when the pointer stops.
+- **Bending space:** a faint curved arc just ahead of the tip, like a bow wave, that appears once the comet is moving fast (`bowAt` 0.3).
+- **Over something clickable** the head grows 12% and the bow wave holds quietly. **A press** squeezes the head.
+- **Colour:** white, blended by difference, like the chalk trail: dark on paper, light on the hero and on midnight, inverted over text. Aware of the theme and of the surface beneath it, with no colour of its own.
+- Pointer devices only; touch keeps nothing. With reduced motion it stays a comet but doesn't stretch. Turning it off brings back the system arrow.
+
 ## Chalk trail
 
 A short hand-drawn line follows the pointer, like chalk dragged across the page, shedding a little dust. Switched by `features.chalkTrail`; tuned by `chalkTrail` in the config.

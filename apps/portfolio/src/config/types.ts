@@ -48,6 +48,8 @@ export interface FeatureFlags {
   readonly credentials: boolean
   /** The framed stage for a build's recording on its page, shown even before the recording exists. */
   readonly projectMedia: boolean
+  /** The pointer drawn as a comet: dart head, speed tail, bow wave. Off brings back the system arrow. */
+  readonly cometCursor: boolean
   /** A short chalk line and a little dust behind the pointer. */
   readonly chalkTrail: boolean
   /** Cards lean toward the pointer in 2.5D, with a soft light where it is. */
@@ -244,6 +246,11 @@ export interface SiteConfig {
     readonly scroll: { readonly every: number; readonly gapMs: number }
     readonly label: string
   }
+  /**
+   * The comet cursor. `tailMax` is how many times its resting length the tail stretches at full speed,
+   * `bowAt` the speed (0 to 1) above which the bow wave starts to show.
+   */
+  readonly cometCursor: { readonly tailMax: number; readonly bowAt: number }
   /**
    * The chalk trail. `lifeMs` is how long the line lasts, `width` its thickness in px at the tip,
    * `opacity` its strength (0 to 1), `dust` the chance (0 to 1) of shedding a speck on each pointer move,

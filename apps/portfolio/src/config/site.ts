@@ -91,6 +91,7 @@ export const site = {
     label: 'Sound',
   },
   tilt: { maxDeg: 1.2 },
+  cometCursor: { tailMax: 1.25, bowAt: 0.3 },
   chalkTrail: { lifeMs: 220, width: 1.5, opacity: 0.38, dust: 0.25, follow: 0.16, maxLength: 60 },
   kinds: ['AI tooling', 'Developer tool', 'In-browser AI', 'App'],
   experience: {
@@ -156,6 +157,7 @@ export const site = {
     projectMedia: true,
     tilt: true,
     chalkTrail: true,
+    cometCursor: true,
     linkPreviews: true,
     contact: true,
     buildsPage: true,

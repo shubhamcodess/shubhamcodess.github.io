@@ -1,0 +1,65 @@
+/* The system cursor steps aside only while the comet is running (it sets data-cursor). */
+:root[data-cursor='comet'],
+:root[data-cursor='comet'] * {
+  cursor: none !important;
+}
+
+.comet {
+  --comet-speed: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  transition: opacity var(--duration-fast) linear;
+  will-change: transform;
+}
+
+.comet[data-shown='false'] {
+  opacity: 0;
+}
+
+/* The SVG is placed so the dart's tip (its 0,0) sits exactly on the pointer. */
+.comet__svg {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  overflow: visible;
+}
+
+.comet__head {
+  transform-origin: 0 0;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+/* The tail: from a stub at rest to `--comet-tail-max` times its length at full speed. */
+.comet__tail {
+  transform-origin: 7.3px 7.3px;
+  transform: scale(calc(0.35 + var(--comet-speed) * (var(--comet-tail-max) - 0.35)));
+  opacity: calc(0.25 + var(--comet-speed) * 0.55);
+}
+
+/* The bow wave shows only once the comet is really moving, and ahead of the tip. */
+.comet__bow {
+  opacity: calc(max(0, var(--comet-speed) - var(--comet-bow-at)) * 1.4);
+  transform-origin: 0 0;
+  transform: scale(calc(1 + var(--comet-speed) * 0.35));
+  transition: opacity var(--duration-fast) linear;
+}
+
+/* Over something clickable, the head grows a touch and the bow wave holds, quietly. */
+.comet[data-over='clickable'] .comet__head {
+  transform: scale(1.12);
+}
+
+.comet[data-over='clickable'] .comet__bow {
+  opacity: max(0.45, calc(max(0, var(--comet-speed) - var(--comet-bow-at)) * 1.4));
+}
+
+/* A press squeezes the head. */
+.comet[data-pressed] .comet__head {
+  transform: scale(0.86);
+}

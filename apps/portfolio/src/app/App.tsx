@@ -5,6 +5,7 @@ import { ScrollLight } from '../layout/ScrollLight'
 import { SoundDesign } from '../layout/SoundDesign'
 import { LinkPreview } from '../ui/LinkPreview'
 import { ChalkTrail } from '../ui/ChalkTrail'
+import { CometCursor } from '../ui/CometCursor'
 import { TiltLayer } from '../ui/Tilt'
 
 interface AppProps {
@@ -24,6 +25,7 @@ export function App({ children }: AppProps) {
       {site.features.scrollLight ? <ScrollLight /> : null}
       {site.features.tilt ? <TiltLayer /> : null}
       {site.features.chalkTrail ? <ChalkTrail /> : null}
+      {site.features.cometCursor ? <CometCursor /> : null}
       {site.features.linkPreviews ? <LinkPreview /> : null}
       {site.features.sound ? <SoundDesign /> : null}
     </div>
