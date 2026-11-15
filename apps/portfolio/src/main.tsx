@@ -21,12 +21,13 @@ function resolvePage(route: string | undefined): Page | null {
     const build = site.features.projectPages ? buildFromPath(window.location.pathname) : undefined
     return build ? { id: 'project', build } : null
   }
+  if (route === 'me' && !site.features.mePage) return null
   return isRouteId(route) ? { id: route } : null
 }
 
 const page = resolvePage(root.dataset.route)
-// An address that names no build goes to the index, which is the nearest true answer.
-if (!page) window.location.replace(hrefTo('builds'))
+// An address that names no build goes to the index, which is the nearest true answer; a page that is switched off goes home.
+if (!page) window.location.replace(hrefTo(root.dataset.route === 'project' ? 'builds' : 'home'))
 if (page?.id === 'project') document.title = `${page.build.title} | ${site.owner}`
 
 const { light } = site.hero

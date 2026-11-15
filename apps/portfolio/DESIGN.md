@@ -68,7 +68,7 @@ Rules for both:
 
 ## Me
 
-`/me/`, "Off the clock": life away from work. A step less formal than the rest of the site, and still made of the same parts.
+`/me/`, "Off the clock": life away from work. **Switched off until finished** (`features.mePage: false`): no page, no links, not in the sitemap, and `/me/` goes home. Set it true to bring it all back. A step less formal than the rest of the site, and still made of the same parts.
 
 - **Reached from** a quiet underlined "More about me" under the hero's statement, and from the footer index. Not the header.
 - **The grid:** tiles framed for what they hold, each turned a degree or so (`me.turns` in the config), straightening on hover. Biking takes a wide plain sheet, Photography a print with a white border, Filmmaking a dark film strip with sprocket holes, and Home the city set large with the region small. The grid packs densely, so a narrow tile fills the gap beside a wide one.

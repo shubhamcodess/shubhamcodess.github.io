@@ -78,7 +78,8 @@ function staticHosting(): Plugin {
       order: 'post',
       handler(_options, bundle) {
         const base = `${site.url}${process.env.PORTFOLIO_BASE ?? '/'}`
-        const paths = [...Object.values(site.routes).map((route) => route.path), ...builds.map((build) => `builds/${build.slug}/`)]
+        const routes = Object.entries(site.routes).filter(([id]) => id !== 'me' || site.features.mePage)
+        const paths = [...routes.map(([, route]) => route.path), ...builds.map((build) => `builds/${build.slug}/`)]
         const urls = paths.map((path) => `  <url><loc>${base}${path}</loc></url>`).join('\n')
         this.emitFile({
           type: 'asset',
@@ -107,7 +108,7 @@ export default defineConfig({
         builds: 'builds/index.html',
         experience: 'experience/index.html',
         credentials: 'credentials/index.html',
-        me: 'me/index.html',
+        ...(site.features.mePage ? { me: 'me/index.html' } : {}),
         project: template,
       },
     },

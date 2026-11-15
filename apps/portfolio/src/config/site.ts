@@ -173,7 +173,7 @@ export const site = {
     featured: true,
     experience: true,
     credentials: true,
-    mePage: true,
+    mePage: false, // Turned off until /me is finished. Set true to bring back the page, its links and its place in the sitemap.
     projectMedia: true,
     tilt: true,
     chalkTrail: true,
