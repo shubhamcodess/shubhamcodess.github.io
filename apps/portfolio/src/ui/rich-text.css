@@ -1,0 +1,42 @@
+/* Inline marks inside running text. Sizes are in em, so they follow whatever text they sit in. */
+.rich__code {
+  padding: 0.08em 0.38em;
+  color: var(--ink);
+  font: var(--weight-body) 0.82em / 1 var(--font-mono);
+  letter-spacing: 0;
+  background: var(--surface-sunken);
+  border: var(--hairline) solid var(--line);
+  border-radius: 0.35em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.rich__strong {
+  color: var(--ink);
+  font-weight: var(--weight-heading);
+}
+
+.rich__quote {
+  font-style: italic;
+  quotes: '“' '”';
+}
+
+.rich__quote::before,
+.rich__quote::after {
+  color: var(--ink-muted);
+  font-style: normal;
+}
+
+.rich__key {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 0.1em 0.45em;
+  color: var(--ink);
+  font: var(--weight-body) 0.72em / 1.2 var(--font-mono);
+  text-align: center;
+  vertical-align: 0.1em;
+  background: var(--surface-raised);
+  border: var(--hairline) solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 0.35em;
+}

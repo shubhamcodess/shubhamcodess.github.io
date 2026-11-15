@@ -20,6 +20,7 @@ export interface BuildHighlight {
 
 /** What the project page says. Every line must be true and come from the project's own README. */
 export interface BuildStory {
+  /** Plain text with inline marks: `command`, **key word**, “quotation”, [[Key]]. See ui/RichText.tsx. */
   readonly overview: string
   /** Up to three measured facts, shown large at the top of the page. Each label names its source or conditions. */
   readonly facts?: readonly BuildHighlight[]

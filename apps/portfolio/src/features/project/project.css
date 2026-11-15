@@ -104,18 +104,36 @@
 
 /* A motion graphic sets its own height: the replay as its own site showed it, on a plain sunken ground. */
 .project-stage__screen--motion {
+  position: relative;
   display: block;
   place-items: normal;
   aspect-ratio: auto;
-  min-height: var(--project-motion-min);
+  height: var(--project-motion-height);
   padding: var(--project-motion-pad);
+  overflow: hidden;
   background: var(--surface-sunken);
 }
 
+/*
+ * The replay is laid out wider and scaled down to fit the fixed screen, by the tallest it gets over its loop,
+ * so the screen never changes size while it plays. MotionStage sets its width, --motion-scale and --motion-top.
+ */
 .project-stage__motion {
   width: 100%;
   opacity: 0;
+  transform: translateY(var(--motion-top, 0px)) scale(var(--motion-scale, 1));
+  transform-origin: top left;
   transition: opacity var(--duration-base) var(--ease-out);
+}
+
+/* When even the smallest scale can't fit it all, the foot of the replay fades out at the screen's edge. */
+.project-stage__screen--motion[data-clipped]::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--space-8);
+  background: linear-gradient(transparent, var(--surface-sunken));
+  pointer-events: none;
 }
 
 .project-stage__motion[data-ready] {

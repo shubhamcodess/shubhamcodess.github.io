@@ -8,7 +8,7 @@ import type { BuildStory } from './types'
 export const buildStories: Readonly<Record<BuildSlug, BuildStory>> = {
   'mcp-token-optimizer': {
     overview:
-      'Every token an MCP tool returns is paid for and fills the context window, and real tool output is mostly noise: null fields, hypermedia URLs, repeated blocks and progress-bar spam. This proxy sits between the agent and its MCP servers and shrinks each response by pruning, TOON encoding and local summarization. It talks only to your own MCP servers and a local Ollama.',
+      'Every token an MCP tool returns is paid for and fills the context window, and real tool output is **mostly noise**: null fields, hypermedia URLs, repeated blocks and progress-bar spam. This proxy sits between the agent and its MCP servers and shrinks each response by **pruning**, **TOON encoding** and **local summarization**. It talks only to your own MCP servers and a local Ollama.',
     facts: [
       { value: '98.4%', label: 'tokens saved on a CI build log' },
       { value: '64.5%', label: 'saved on a list of 40 GitHub issues' },
@@ -30,7 +30,7 @@ export const buildStories: Readonly<Record<BuildSlug, BuildStory>> = {
   },
   whatcmd: {
     overview:
-      'Type /w followed by what you want, such as "find files bigger than 100MB", and the line is replaced with the right command for your machine. It knows your OS, shell, GNU or BSD flags and installed tools, and it never runs anything until you press Enter.',
+      'Type `/w` followed by what you want, such as `/w find files bigger than 100MB`, and the line is replaced with the right command for your machine: `find . -type f -size +100M`. It knows your **OS, shell, GNU or BSD flags and installed tools**, and it **never runs anything** until you press [[Enter]].',
     facts: [
       { value: '217 ms', label: 'median end to end, on an M4 Pro' },
       { value: '92.7%', label: 'overall on my 500-case benchmark' },
@@ -56,7 +56,7 @@ export const buildStories: Readonly<Record<BuildSlug, BuildStory>> = {
   },
   'everything-tech': {
     overview:
-      'A newspaper that publishes itself every day at 08:30 IST. Scripts gather articles overnight and collapse coverage of the same story into one, and a scheduled routine picks, ranks and writes from the full text. There is no server, database or API key.',
+      'A newspaper that **publishes itself** every day at **08:30 IST**. Scripts gather articles overnight and collapse coverage of the same story into one, and a scheduled routine picks, ranks and writes from the full text. There is **no server, database or API key**.',
     facts: [
       { value: '45+', label: 'sources read overnight' },
       { value: '08:30', label: 'published daily, IST' },
@@ -77,7 +77,7 @@ export const buildStories: Readonly<Record<BuildSlug, BuildStory>> = {
   },
   'tiny-browse': {
     overview:
-      'A small MCP server and Node library that searches the web in the Chrome you already have, reads the best results and returns clean Markdown inside a hard token budget. There is no bundled browser, no API key and no LLM inside.',
+      'A small MCP server and Node library that searches the web in **the Chrome you already have**, reads the best results and returns clean Markdown inside a **hard token budget**. There is no bundled browser, no API key and no LLM inside.',
     facts: [
       { value: '0', label: 'runtime dependencies' },
       { value: '126 kB', label: 'package size' },
@@ -99,7 +99,7 @@ export const buildStories: Readonly<Record<BuildSlug, BuildStory>> = {
   },
   fuzzy: {
     overview:
-      'Paste a repository such as expressjs/express. It splits the code into functions and builds a search index in your browser. Search by keyword, typo or plain-English meaning. There is no server, and the code never leaves the browser.',
+      'Paste a repository such as `expressjs/express`. It splits the code into functions and builds a search index **in your browser**. Search by **keyword**, **typo** or **plain-English meaning**. There is no server, and the code **never leaves the browser**.',
     facts: [
       { value: '139 KB', label: 'search engine, gzipped' },
       { value: '0.8 ms', label: 'typo query, native benchmark on 11,839 chunks' },
@@ -124,7 +124,7 @@ export const buildStories: Readonly<Record<BuildSlug, BuildStory>> = {
   },
   openvox: {
     overview:
-      'Type a GitHub username or repository. It introduces it out loud, then answers spoken questions in a natural voice. There is no backend and no API key, and audio never leaves the browser.',
+      'Type a GitHub username or repository. It **introduces it out loud**, then answers spoken questions in a natural voice. There is no backend and no API key, and **audio never leaves the browser**.',
     facts: [
       { value: '0', label: 'servers. Audio never leaves the browser' },
       { value: '9/10', label: 'on the built-in 10-question eval, single run' },
@@ -149,7 +149,7 @@ export const buildStories: Readonly<Record<BuildSlug, BuildStory>> = {
   },
   classify: {
     overview:
-      'Write a playbook of categories, decisions and rules, then drop in Excel, CSV, JSON or logs. It fills in each row, queues the unsure ones for you, and hands back the same file with new columns. Everything runs in the tab.',
+      'Write a **playbook** of categories, decisions and rules, then drop in Excel, CSV, JSON or logs. It fills in each row, **queues the unsure ones** for you, and hands back **the same file with new columns**. Everything runs in the tab.',
     features: [
       'Rules always win. Then a word-based model, then embedding similarity, then an optional second opinion from a larger model on unsure rows.',
       'A review queue with a reason for every row, and your corrections become training examples.',
@@ -164,7 +164,7 @@ export const buildStories: Readonly<Record<BuildSlug, BuildStory>> = {
   },
   'notch-porch': {
     overview:
-      'The notch is dead space. Notch Porch turns it into a small, quiet dock for the things you want a glance away. Hover and a card drops down. Move away and it folds back.',
+      'The notch is dead space. Notch Porch turns it into a **small, quiet dock** for the things you want a glance away. Hover and a card drops down. Move away and it folds back.',
     features: [
       'Small live items sit beside the notch, and each widget gets its own page in the card.',
       'When menus or status icons crowd the notch, the items roll behind it, so the menu bar stays yours.',
@@ -175,7 +175,7 @@ export const buildStories: Readonly<Record<BuildSlug, BuildStory>> = {
   },
   'focusify-yt': {
     overview:
-      'Tell it what you are studying and it hides the YouTube videos that do not fit, so opening YouTube does not cost you an hour. Videos stay hidden until they are checked, so distractions never flash on screen.',
+      'Tell it what you are studying and it **hides the YouTube videos that do not fit**, so opening YouTube does not cost you an hour. Videos stay hidden **until they are checked**, so distractions never flash on screen.',
     features: [
       'Two styles: Strict judges every video against your topic, and Discover also lets in related topics from new channels.',
       'Hides Shorts everywhere, and stops loading a feed after 40 off-topic videos in a row.',

@@ -8,6 +8,7 @@ import { hrefTo, hrefToBuild } from '../../lib/routes'
 import { ActionLink } from '../../ui/ActionLink'
 import { NpmDownloads } from '../../ui/NpmDownloads'
 import { Reveal } from '../../ui/Reveal'
+import { RichText } from '../../ui/RichText'
 import { TechTag } from '../../ui/TechTag'
 import { LightBackdrop } from '../../ui/light/LightBackdrop'
 import { motions } from '../../motion'
@@ -169,7 +170,7 @@ export function ProjectPage({ build }: ProjectPageProps) {
 
             <article className="project-body">
               <p className="project-body__overview" id="overview">
-                {story.overview}
+                <RichText text={story.overview} />
               </p>
 
               <Reveal>

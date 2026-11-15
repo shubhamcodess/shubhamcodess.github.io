@@ -120,9 +120,11 @@
   --project-fact-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.75rem);
   --project-rail-width: 200px;
   --project-stage-ratio: 16 / 9;
-  /* A motion graphic's ground: room around the replay, and the height it holds while it loads. */
+  /* A motion graphic's screen: one fixed height for every build, and the room around the replay inside it. */
+  --project-motion-height: 640px;
   --project-motion-pad: clamp(10px, 3vw, 40px);
-  --project-motion-min: 320px;
+  /* The smallest a replay is scaled to fit; past that its foot fades out instead, so text stays readable. */
+  --project-motion-min-scale: 0.6;
   --project-measure: 46rem;
 
   /* Component: experience timeline */
@@ -283,5 +285,6 @@
 @media (max-width: 640px) {
   :root {
     --header-height: 64px;
+    --project-motion-height: min(640px, 80svh);
   }
 }
