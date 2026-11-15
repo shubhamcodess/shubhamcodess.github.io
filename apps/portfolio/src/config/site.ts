@@ -70,7 +70,6 @@ export const site = {
     defaultOn: false,
     storageKey: 'portfolio-sound',
     volume: 0.6,
-    galaxy: { onHome: true, withinMs: 12000 },
     scroll: { every: 520, gapMs: 420 },
     label: 'Sound',
   },

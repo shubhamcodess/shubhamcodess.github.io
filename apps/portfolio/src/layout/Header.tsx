@@ -48,7 +48,7 @@ export function Header({ current }: HeaderProps) {
             onClick={() => void setSound(!sound)}
             aria-pressed={sound}
             aria-label={site.sound.label}
-            data-sound={sound ? 'close' : 'none'}
+            data-sound={sound ? undefined : 'none'}
           >
             <span key={String(sound)} className="site-header__turn">
               <Icon name={sound ? 'soundOn' : 'soundOff'} size={18} />

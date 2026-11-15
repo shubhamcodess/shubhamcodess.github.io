@@ -1,11 +1,11 @@
 /**
  * The site's sound, made in the browser with Web Audio. No files: every voice is synthesised,
- * so it costs a few kilobytes and every voice shares one small, warm room. Sound plays only on actions,
- * apart from one short swell when landing on the home page.
+ * so it costs a few kilobytes. There are two voices, a tap for presses and a page-turn for scrolling,
+ * sharing one small, warm room. Nothing plays unless the visitor does something.
  * Loaded only once the visitor turns sound on.
  */
 
-export type Voice = 'tap' | 'swish' | 'close' | 'galaxy'
+export type Voice = 'tap' | 'swish'
 
 export interface EngineOptions {
   /** Master level, 0 to 1. Each voice is already quiet; this scales them all. */
@@ -125,82 +125,12 @@ export function play(voice: Voice, strength = 1, direction = 1): void {
       tone(540, 'triangle', now, 0.07, 0.003, 0.09, 0.16, 250)
       breath(now, 0.025, 0.002, 0.03, 2600, 1800, 0)
       break
-    case 'close':
-      tone(420, 'triangle', now, 0.05, 0.003, 0.1, 0.16, 210)
-      break
     case 'swish': {
       // A page turning past: air through a slowly opening filter, rising when scrolling down.
       const [from, to] = direction > 0 ? [500, 2200] : [2200, 500]
       breath(now, 0.012 + strength * 0.035, 0.12, 0.32, from, to, 0.3)
       break
     }
-    case 'galaxy':
-      galaxy(now)
-      break
-  }
-}
-
-/**
- * The galaxy: far away and very faint, a slow whirl for landing on the home page. Only the room hears it
- * (no direct sound), it sits behind a low filter, and it turns slowly from side to side. About twelve seconds.
- */
-function galaxy(at: number): void {
-  if (!context) return
-  const audio = context
-  const end = at + 12.2
-
-  // Distance: everything goes through a low filter and only into the room.
-  const far = audio.createBiquadFilter()
-  far.type = 'lowpass'
-  far.frequency.value = 900
-  const swell = audio.createGain()
-  swell.gain.setValueAtTime(0.0001, at)
-  swell.gain.exponentialRampToValueAtTime(1, at + 4)
-  swell.gain.setValueAtTime(1, at + 6)
-  swell.gain.exponentialRampToValueAtTime(0.0001, end - 0.1)
-  // The whirl: the sound turns slowly between left and right.
-  const turn = audio.createStereoPanner()
-  const turnRate = audio.createOscillator()
-  const turnDepth = audio.createGain()
-  turnRate.frequency.value = 0.11
-  turnDepth.gain.value = 0.8
-  turnRate.connect(turnDepth).connect(turn.pan)
-  swell.connect(far).connect(turn).connect(room)
-
-  for (const [frequency, level] of [
-    [55, 0.012],
-    [82.6, 0.006],
-    [164.8, 0.0025],
-  ] as const) {
-    const oscillator = audio.createOscillator()
-    const gain = audio.createGain()
-    oscillator.frequency.value = frequency
-    gain.gain.value = level
-    oscillator.connect(gain).connect(swell)
-    oscillator.start(at)
-    oscillator.stop(end)
-  }
-
-  // A wind that circles: noise through a band that wanders up and down.
-  const air = audio.createBufferSource()
-  const band = audio.createBiquadFilter()
-  const airGain = audio.createGain()
-  const wander = audio.createOscillator()
-  const wanderDepth = audio.createGain()
-  air.buffer = noise
-  air.loop = true
-  band.type = 'bandpass'
-  band.Q.value = 2.2
-  band.frequency.value = 420
-  wander.frequency.value = 0.17
-  wanderDepth.gain.value = 220
-  wander.connect(wanderDepth).connect(band.frequency)
-  airGain.gain.value = 0.01
-  air.connect(band).connect(airGain).connect(swell)
-
-  for (const source of [air, wander, turnRate]) {
-    source.start(at)
-    source.stop(end)
   }
 }
 

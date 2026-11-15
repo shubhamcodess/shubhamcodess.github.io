@@ -7,8 +7,8 @@ const interactive = 'a[href], button, summary, [data-sound]'
 
 /**
  * The site's sound, wired once for every page, and only on actions: every link and button taps when
- * pressed, and a long scroll gives a soft page-turn. An element can opt out with data-sound="none"
- * or take the softer data-sound="close". No hover sounds: scrolling passes over too many things.
+ * pressed, and a long scroll gives a soft page-turn. Nothing else. An element can opt out with data-sound="none".
+ * No hover sounds: scrolling passes over too many things.
  */
 export function SoundDesign() {
   useEffect(() => {
@@ -24,7 +24,7 @@ export function SoundDesign() {
       if (!(event.target instanceof Element)) return
       const target = event.target.closest<HTMLElement>(interactive)
       if (!target || target.dataset.sound === 'none') return
-      play(target.dataset.sound === 'close' ? 'close' : 'tap')
+      play('tap')
     }
 
     const onScroll = () => {

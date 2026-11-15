@@ -175,22 +175,19 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 
 ## Sound
 
-Quiet, warm, felt more than heard, and **only on actions**: nothing plays on hover or while the visitor is idle. Off until the visitor turns it on with the speaker button beside the theme toggle; the choice is remembered across pages.
-
-- **Made, not sampled.** Every sound is synthesised in the browser (Web Audio) and shares one small, warm room (a soft reverb). No audio files.
-- **Two voices only:**
+A clean, cinematic quiet. **Two voices, only on actions.** Nothing plays on hover, on load or while idle. Off until the visitor turns it on with the speaker button beside the theme toggle; the choice is remembered on every page.
 
 | Moment | Voice |
 |---|---|
-| Press any link or button, the badge included | A small wooden tap |
+| Press any link or button, the badge and the sound toggle included | A small wooden tap |
 | Scroll a good stretch | A soft page-turn of air, rising when going down, louder when faster |
-| Turning sound off | A softer, lower tap |
 
-- **The galaxy:** on the home page's first screen only, a slow whirl very far back: heard only through the room, behind a low filter, turning from side to side, at a whisper, gone in about twelve seconds. Once per page load.
-- **Across pages:** browsers start audio only from a click, tap or key press, so on each new page the sound wakes on the first one, and that click is heard. Scrolling with a wheel or trackpad before any click stays silent; no site can change that.
-- An element can opt out with `data-sound="none"` or take the softer `data-sound="close"`.
-- Tried and removed as too much: hover ticks (scrolling passes over too many things), room tone, chimes, clinks, an opening chord.
-- Level, scroll spacing and the galaxy's window are `sound` in the config. The voices are in `lib/sound/engine.ts`.
+- **Made, not sampled.** Both are synthesised in the browser (Web Audio) in one small, warm room. No audio files; the engine loads only for visitors who have sound on.
+- **Across pages:** the saved choice is the only truth. A page re-reads it when it is opened, when it comes back through Back or Forward, when its tab regains focus, and when another tab changes it.
+- **Starting audio:** browsers allow it only from a click, tap or key press, on every page and after every return. The first one wakes the sound and is heard itself. Scrolling with a wheel or trackpad before any click stays silent; no site can change that.
+- An element can opt out with `data-sound="none"`.
+- **Do not add voices.** Tried and removed as too much: hover ticks, a room tone, chimes, clinks, an opening chord, a galaxy swell.
+- Level and scroll spacing are `sound` in the config. The two voices are in `lib/sound/engine.ts`.
 
 ## Scrollbar
 
