@@ -106,7 +106,7 @@ pnpm --filter @portfolio/app data
 
 - **Content is rendered in the browser.** Before launch, pre-render each page to static HTML at build time, so search engines and AI readers get the content without running JavaScript. This is the one launch blocker.
 - **JavaScript per page** (gzipped, everything a page downloads): home 89.0 kB, project 88.6, experience 81.7, builds 80.4, credentials 80.2. Budget 90 kB per page. React and the shared frame are 78 kB of that.
-- **Long text stays out of shared code.** Each build's full story is in `content/build-stories.ts`, loaded only by project pages. Keep `content/builds.ts` to card data, because every page imports it. The sound engine is its own 1.5 kB chunk; the wiring and toggle are in the main bundle. Credentials and link previews are runtime JSON, not bundled. Split by page before adding anything heavy.
+- **Long text stays out of shared code.** Each build's full story is in `content/build-stories.ts`, loaded only by project pages. Keep `content/builds.ts` to card data, because every page imports it. The sound engine is its own 1.5 kB chunk; the wiring and toggle are in the main bundle. Credentials and link previews are runtime JSON, not bundled. npm download counts are fetched live in the browser (`lib/npmDownloads.ts`, cached in localStorage), the one outside request the pages make. Split by page before adding anything heavy.
 - **CSS is slightly over its 10 kB budget** (10.4 kB). Splitting it by page is the fix.
 - **Credentials load after the page,** so they aren't in the HTML for search engines. Pre-rendering (below) should inline `public/data/credentials.json`.
 - **Page transitions** use cross-document view transitions, which Firefox doesn't have yet. It simply navigates.

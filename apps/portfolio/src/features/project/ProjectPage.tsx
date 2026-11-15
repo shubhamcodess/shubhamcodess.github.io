@@ -6,6 +6,7 @@ import type { Build, BuildLinkKind } from '../../content/types'
 import { Header } from '../../layout/Header'
 import { hrefTo, hrefToBuild } from '../../lib/routes'
 import { ActionLink } from '../../ui/ActionLink'
+import { NpmDownloads } from '../../ui/NpmDownloads'
 import { Reveal } from '../../ui/Reveal'
 import { TechTag } from '../../ui/TechTag'
 import { LightBackdrop } from '../../ui/light/LightBackdrop'
@@ -78,6 +79,9 @@ export function ProjectPage({ build }: ProjectPageProps) {
                 <li key={link.href}>
                   <ActionLink href={link.href} variant="glass" external>
                     {linkLabels[link.kind]}
+                    {link.kind === 'package' && site.features.npmDownloads ? (
+                      <NpmDownloads href={link.href} settings={site.npmDownloads} />
+                    ) : null}
                   </ActionLink>
                 </li>
               ))}

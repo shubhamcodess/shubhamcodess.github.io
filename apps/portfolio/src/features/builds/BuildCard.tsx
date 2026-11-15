@@ -3,6 +3,7 @@ import type { Build, BuildLinkKind } from '../../content/types'
 import { hrefToBuild } from '../../lib/routes'
 import { ActionLink } from '../../ui/ActionLink'
 import { FolderCard } from '../../ui/FolderCard'
+import { NpmDownloads } from '../../ui/NpmDownloads'
 import './builds.css'
 
 export const linkLabels = {
@@ -53,6 +54,9 @@ export function BuildCard({ build, position, variant, headingLevel }: BuildCardP
             actions: build.links.map((link) => (
               <ActionLink key={link.href} href={link.href} external label={`${linkLabels[link.kind]}: ${build.title}`}>
                 {linkLabels[link.kind]}
+                {link.kind === 'package' && site.features.npmDownloads ? (
+                  <NpmDownloads href={link.href} settings={site.npmDownloads} />
+                ) : null}
               </ActionLink>
             )),
           }
