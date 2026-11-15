@@ -154,7 +154,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - At most three roles per employer. Fold small steps into the role they led to.
 - **On phones** the cards drop their boxes: roles are plain reading on the lane, separated by a hairline, at reading sizes.
 - **Recognition** is awards for the work, and sits under the layers. Certifications are not recognition. An award with a certificate shows it matted in a small frame, toned down to sit with the page. Hovering brings back its colours and shows it large beside the pointer, big enough to read; a tap or Enter opens it.
-- **The home teaser** is the short version. Left: the headline, with links to the full page and to credentials. Right: every role as a row on one unbroken lane, years then title, so the whole span reads at a glance with no gaps. Along the bottom: **tools of the trade**, one lean strip of plain mono names drifting slowly, fading at the edges, pausing under the pointer, still with reduced motion. Names only, no chips. The list is `content/tools.ts`.
+- **The home teaser** is the one-glance version. Left: the headline, with links to the full page and to credentials. Right: every role as a card on one unbroken lane, each with a years badge, the title and one line on what it covered, so the whole span reads with no gaps. Under both, inside the page edge: **tools of the trade**, one lean strip of small mono names, quieter than everything above it, drifting slowly, fading at its ends, pausing under the pointer, still with reduced motion. Names only, no chips. The list is `content/tools.ts`.
 
 ## Credentials
 

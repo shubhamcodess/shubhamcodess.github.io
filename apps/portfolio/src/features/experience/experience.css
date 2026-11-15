@@ -270,13 +270,12 @@ a.honour:focus-visible {
 
 /* ---- The home teaser ---- */
 .teaser-section {
-  padding-bottom: 0;
+  padding-bottom: var(--space-5);
 }
 
 .teaser {
   display: grid;
   gap: var(--space-7);
-  padding-bottom: var(--space-8);
 }
 
 .teaser > * {
@@ -297,44 +296,34 @@ a.honour:focus-visible {
   padding-bottom: var(--space-3);
 }
 
-/* The roles sit on one unbroken lane: a node per role, a line through all of them. */
+/* The roles are cards on one unbroken lane: a node per role, a line through all of them. */
 .teaser__roles {
   position: relative;
-  border-top: var(--hairline) solid var(--line);
+  display: grid;
+  gap: var(--space-3);
+  padding-left: calc(var(--xp-node-size) + var(--space-4));
 }
 
 .teaser__roles::before {
   content: '';
   position: absolute;
-  top: calc(var(--teaser-row) / 2);
-  bottom: calc(var(--teaser-row) / 2);
+  top: var(--space-6);
+  bottom: var(--space-6);
   left: calc(var(--xp-node-size) / 2 - var(--xp-rail-width) / 2);
   width: var(--xp-rail-width);
   background: var(--xp-light);
   border-radius: var(--radius-pill);
 }
 
-.teaser__role {
+.teaser__roles li {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    'years arrow'
-    'title arrow';
-  align-items: center;
-  gap: var(--space-1) var(--space-4);
-  min-height: var(--teaser-row);
-  padding-block: var(--space-3);
-  padding-left: calc(var(--xp-node-size) + var(--space-5));
-  border-bottom: var(--hairline) solid var(--line);
-  transition: padding var(--duration-base) var(--ease-out);
 }
 
-.teaser__role::before {
+.teaser__roles li::before {
   content: '';
   position: absolute;
   top: 50%;
-  left: 0;
+  left: calc((var(--xp-node-size) + var(--space-4)) * -1);
   width: var(--xp-node-size);
   height: var(--xp-node-size);
   background: var(--xp-light);
@@ -343,9 +332,34 @@ a.honour:focus-visible {
   transform: translateY(-50%);
 }
 
+.teaser__role {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'years arrow'
+    'title arrow'
+    'scope arrow';
+  align-items: center;
+  gap: var(--space-2) var(--space-5);
+  padding: var(--space-5);
+  background: var(--surface-raised);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.teaser__role:focus-visible {
+  border-radius: var(--radius-lg);
+}
+
+/* The years, as a small badge. */
 .teaser__years {
   grid-area: years;
-  color: var(--ink-muted);
+  justify-self: start;
+  padding: var(--space-2) var(--space-3);
+  color: var(--ink);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-pill);
   font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -353,9 +367,16 @@ a.honour:focus-visible {
 
 .teaser__title {
   grid-area: title;
-  font-size: var(--text-lg);
+  margin-top: var(--space-1);
+  font-size: var(--text-xl);
   font-weight: var(--weight-heading);
   line-height: var(--leading-snug);
+}
+
+.teaser__scope {
+  grid-area: scope;
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
 }
 
 .teaser__role .icon {
@@ -368,7 +389,7 @@ a.honour:focus-visible {
 
 @media (hover: hover) {
   .teaser__role:hover {
-    padding-left: calc(var(--xp-node-size) + var(--space-5) + var(--space-2));
+    transform: translateY(var(--card-lift));
   }
 
   .teaser__role:hover .icon {
@@ -377,7 +398,7 @@ a.honour:focus-visible {
   }
 }
 
-/* Tools of the trade: one lean strip along the bottom of the panel. Plain names, drifting slowly. */
+/* Tools of the trade: one lean strip under the roles, inside the page edge. Plain names, kept quiet, drifting slowly. */
 .tools {
   display: flex;
   overflow: hidden;
@@ -398,7 +419,7 @@ a.honour:focus-visible {
   gap: var(--space-5);
   height: var(--tools-height);
   padding-left: var(--space-5);
-  color: var(--ink-muted);
+  color: color-mix(in srgb, var(--ink-muted) var(--tools-strength), transparent);
   font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -409,7 +430,7 @@ a.honour:focus-visible {
   content: '';
   width: 3px;
   height: 3px;
-  background: var(--xp-light);
+  background: var(--line);
   border-radius: 50%;
 }
 
@@ -517,9 +538,8 @@ a.honour:focus-visible {
     gap: var(--space-8);
   }
 
-  .teaser__role {
-    grid-template-columns: var(--teaser-years) minmax(0, 1fr) auto;
-    grid-template-areas: 'years title arrow';
+  .teaser > .tools {
+    grid-column: 1 / -1;
   }
 
   .career__name {

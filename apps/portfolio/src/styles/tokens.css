@@ -137,11 +137,11 @@
 
   /* Component: tools of the trade */
   --tools-fade: 64px;
-  --tools-height: 52px;
+  --tools-height: 48px;
   /* Seconds each tool takes to pass. Higher is slower. */
   --tools-pace: 3.2s;
-  --teaser-row: 64px;
-  --teaser-years: 130px;
+  /* How strong the tool names are, against the muted ink. */
+  --tools-strength: 70%;
 
   /* Component: scroll light */
   --scroll-light-width: 2px;

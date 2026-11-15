@@ -9,8 +9,8 @@ import './experience.css'
 
 /**
  * The home page's short version. Left: the headline and the ways to the full pages.
- * Right: every role on one lane with its years, so the whole span reads at a glance with no gaps.
- * Underneath: one lean strip of the tools the work was done with.
+ * Right: every role as a card on one lane, with its years and one line on what it covered, so the whole span reads at a glance with no gaps.
+ * Underneath, inside the same page edge: one lean, quiet strip of the tools the work was done with.
  */
 export function ExperienceTeaser() {
   const { experience: copy, credentialsPage, features } = site
@@ -55,6 +55,7 @@ export function ExperienceTeaser() {
                         {role.from} to {role.to ?? copy.labels.now.toLowerCase()}
                       </span>
                       <span className="teaser__title">{role.title}</span>
+                      <span className="teaser__scope">{role.scope}</span>
                       <Icon name="arrowRight" size={14} />
                     </a>
                   </li>
@@ -63,22 +64,22 @@ export function ExperienceTeaser() {
             </Reveal>
           ))}
         </div>
-      </div>
 
-      <div className="tools" role="group" aria-label={copy.toolsLabel}>
-        {/* The list runs twice so the drift can loop without a seam. The copy is hidden from screen readers. */}
-        {[false, true].map((copyOf) => (
-          <ul
-            key={String(copyOf)}
-            className="tools__track"
-            aria-hidden={copyOf}
-            style={{ '--tools-count': tools.length } as React.CSSProperties}
-          >
-            {tools.map((tool) => (
-              <li key={tool}>{tool}</li>
-            ))}
-          </ul>
-        ))}
+        <div className="tools" role="group" aria-label={copy.toolsLabel}>
+          {/* The list runs twice so the drift can loop without a seam. The copy is hidden from screen readers. */}
+          {[false, true].map((copyOf) => (
+            <ul
+              key={String(copyOf)}
+              className="tools__track"
+              aria-hidden={copyOf}
+              style={{ '--tools-count': tools.length } as React.CSSProperties}
+            >
+              {tools.map((tool) => (
+                <li key={tool}>{tool}</li>
+              ))}
+            </ul>
+          ))}
+        </div>
       </div>
     </section>
   )
