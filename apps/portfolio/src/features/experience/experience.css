@@ -390,12 +390,14 @@ a.honour:focus-visible {
 
 /* The left column: the experience headline on top, the credentials beneath. */
 .teaser__side {
-  display: grid;
-  gap: var(--space-7);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-6);
 }
 
 .teaser__creds {
-  padding-top: var(--space-6);
+  padding-top: var(--space-5);
   border-top: var(--hairline) solid var(--line);
 }
 
@@ -594,9 +596,13 @@ a.honour:focus-visible {
 }
 
 @media (min-width: 900px) {
+  /*
+   * Both columns share one top and one bottom edge: the left column's label sits on the line of
+   * "IBM … 2020 to now", and its last link sits level with the bottom of the last role card.
+   */
   .teaser {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    align-items: center;
+    align-items: stretch;
     gap: var(--space-8);
   }
 
