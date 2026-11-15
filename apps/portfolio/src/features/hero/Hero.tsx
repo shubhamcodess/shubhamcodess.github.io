@@ -29,15 +29,20 @@ export function Hero() {
       <div className="hero__content container">
         <div className="hero__intro">
           <h1 className="hero__name">
-            <span>{firstName}</span> <span>{lastName}</span>
+            <span className="enter" style={{ '--enter-index': 0 } as React.CSSProperties}>
+              {firstName}
+            </span>{' '}
+            <span className="enter" style={{ '--enter-index': 1 } as React.CSSProperties}>
+              {lastName}
+            </span>
           </h1>
-          <p className="hero__role">
+          <p className="hero__role enter" style={{ '--enter-index': 3 } as React.CSSProperties}>
             {hero.role} <span className="hero__at">at</span> {hero.employer}
           </p>
-          <p className="hero__statement">{hero.statement}</p>
+          <p className="hero__statement enter" style={{ '--enter-index': 4 } as React.CSSProperties}>{hero.statement}</p>
         </div>
 
-        <nav className="hero__actions" aria-label="Start here">
+        <nav className="hero__actions enter" aria-label="Start here" style={{ '--enter-index': 7 } as React.CSSProperties}>
           {hero.actions.map((action) => (
             <ActionLink
               key={action.to}

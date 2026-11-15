@@ -28,7 +28,7 @@
 .site-header__nav {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: clamp(var(--space-1), 1.5vw, var(--space-4));
 }
 
 .site-header__link {
@@ -69,5 +69,18 @@
 
   .site-header__theme:hover {
     background: color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+}
+
+/* The icon turns in when the theme changes. */
+.site-header__turn {
+  display: grid;
+  animation: turn var(--duration-base) var(--ease-out) backwards;
+}
+
+@keyframes turn {
+  from {
+    opacity: 0;
+    transform: rotate(-70deg) scale(0.6);
   }
 }

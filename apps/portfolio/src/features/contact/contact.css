@@ -1,0 +1,135 @@
+.contact {
+  background:
+    radial-gradient(ellipse 60% 70% at 78% 0%, rgb(20 60 140 / 26%), transparent 70%),
+    var(--night-surface);
+}
+
+.contact__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7);
+  padding-bottom: var(--space-8);
+}
+
+/* On phones the badge hangs first, centred, from the top edge of the panel. */
+.contact__badge {
+  order: -1;
+  display: flex;
+  justify-content: center;
+  --badge-width: min(56vw, 230px);
+  --badge-strap-length: 72px;
+}
+
+.contact__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.contact__title {
+  font-size: var(--contact-title-size);
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.contact__lead {
+  color: var(--ink-muted);
+  font-size: var(--text-lg);
+}
+
+.contact__mail {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 100%;
+  min-height: var(--target-min);
+  font-size: var(--contact-mail-size);
+  letter-spacing: -0.01em;
+}
+
+.contact__mail span {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 var(--hairline) no-repeat;
+  transition: background-size var(--duration-base) var(--ease-out);
+}
+
+.contact__mail .icon {
+  flex: none;
+  color: var(--ink-muted);
+}
+
+.contact__find {
+  margin-top: var(--space-6);
+}
+
+/* The other places are a plain list: icon, name, handle. Rows, not buttons. */
+.contact__list {
+  width: min(100%, var(--contact-list-width));
+  border-top: var(--hairline) solid var(--line);
+}
+
+.contact__row {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: calc(var(--target-min) + var(--space-2));
+  border-bottom: var(--hairline) solid var(--line);
+  transition: padding var(--duration-base) var(--ease-out);
+}
+
+.contact__row .icon {
+  color: var(--ink-muted);
+  transition:
+    color var(--duration-fast) linear,
+    transform var(--duration-base) var(--ease-out);
+}
+
+.contact__row-detail {
+  overflow: hidden;
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (hover: hover) {
+  .contact__mail:hover span {
+    background-size: 100% var(--hairline);
+  }
+
+  .contact__row:hover {
+    padding-inline: var(--space-2);
+  }
+
+  .contact__row:hover .icon {
+    color: var(--ink);
+  }
+
+  .contact__row:hover .icon:last-child {
+    transform: translate(2px, -2px);
+  }
+}
+
+@media (min-width: 900px) {
+  .contact__grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: var(--space-8);
+    min-height: 62vh;
+  }
+
+  .contact__badge {
+    order: 0;
+    padding-inline: var(--space-7) var(--space-5);
+    --badge-width: clamp(210px, 22vw, 270px);
+    --badge-strap-length: clamp(90px, 14vh, 150px);
+  }
+
+  .contact__copy {
+    align-self: center;
+    padding-top: var(--space-8);
+  }
+}

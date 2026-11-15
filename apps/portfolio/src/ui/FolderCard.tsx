@@ -11,6 +11,8 @@ interface FolderCardProps {
   readonly summary: string
   /** Makes the whole card open this address. Links in `actions` stay clickable on top. */
   readonly href?: string
+  /** A name shared with the page this card opens, so the title travels there. */
+  readonly transitionName?: string
   /** The area above the sheet: a headline fact now, a drawing or screenshot later. Leave out for the compact card. */
   readonly plate?: ReactNode
   readonly meta?: ReactNode
@@ -21,7 +23,7 @@ interface FolderCardProps {
  * The folder: a tab that rises out of a sheet, over an optional plate.
  * It knows nothing about builds, so anything filed on the site can use it.
  */
-export function FolderCard({ index, label, title, headingLevel, summary, href, plate, meta, actions }: FolderCardProps) {
+export function FolderCard({ index, label, title, headingLevel, summary, href, transitionName, plate, meta, actions }: FolderCardProps) {
   const Heading = `h${headingLevel}` as const
   return (
     <article className={plate ? 'folder folder--plate' : 'folder'}>
@@ -33,7 +35,7 @@ export function FolderCard({ index, label, title, headingLevel, summary, href, p
         </p>
         <Heading className="folder__title">
           {href ? (
-            <a className="folder__link" href={href}>
+            <a className="folder__link" href={href} {...(transitionName ? { style: { viewTransitionName: transitionName } } : {})}>
               {title}
             </a>
           ) : (

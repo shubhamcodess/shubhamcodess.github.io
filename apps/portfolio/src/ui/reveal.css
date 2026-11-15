@@ -1,0 +1,35 @@
+[data-reveal] {
+  transition:
+    opacity var(--duration-enter) var(--ease-out),
+    transform var(--duration-enter) var(--ease-out);
+  transition-delay: calc(var(--reveal-index, 0) * var(--stagger));
+}
+
+[data-reveal='out'] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-distance), 0);
+}
+
+/* The entrance for things that are on screen as the page opens. Set --enter-index to stagger. */
+.enter {
+  animation: enter var(--duration-enter) var(--ease-out) backwards;
+  animation-delay: calc(var(--enter-index, 0) * var(--stagger) + var(--enter-delay, 0ms));
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-distance), 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal='out'] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal-fill {
+  height: 100%;
+}

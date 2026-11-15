@@ -22,6 +22,13 @@ export interface FeatureFlags {
   /** Pointer and scroll depth in the hero. */
   readonly heroParallax: boolean
   readonly featured: boolean
+  readonly experience: boolean
+  readonly credentials: boolean
+  /** The framed stage for a build's recording on its page, shown even before the recording exists. */
+  readonly projectMedia: boolean
+  /** A preview card that follows the pointer over outside links. */
+  readonly linkPreviews: boolean
+  readonly contact: boolean
   readonly buildsPage: boolean
   /** Filter chips by kind on the All builds page. */
   readonly buildsFilter: boolean
@@ -86,9 +93,26 @@ export type FeaturedSlugs =
   | readonly [S, S, S, S]
   | readonly [S, S, S, S, S]
 
+/** How the contact badge hangs and swings. */
+export interface SwingConfig {
+  /** Spring stiffness. Higher swings faster. */
+  readonly stiffness: number
+  /** Friction. Lower keeps it swinging longer. */
+  readonly damping: number
+  /** Degrees it starts from when it first comes into view. */
+  readonly dropAngle: number
+  /** Most degrees the pointer can pull it to either side. */
+  readonly pointerPull: number
+  /** Degrees per second added by a tap. */
+  readonly tapKick: number
+}
+
 export interface SocialLink {
   readonly label: string
   readonly href: ExternalUrl
+  readonly icon: 'github' | 'linkedin' | 'producthunt' | 'substack'
+  /** The handle or name shown beside the label. */
+  readonly detail: string
 }
 
 export interface SiteConfig {
@@ -96,7 +120,7 @@ export interface SiteConfig {
   readonly monogram: string
   readonly theme: { readonly default: ThemeName; readonly storageKey: string }
   readonly routes: Readonly<Record<RouteId, RouteConfig>>
-  readonly nav: readonly RouteId[]
+  readonly nav: readonly { readonly label: string; readonly to: RouteId | `#${string}` }[]
   readonly hero: HeroConfig
   readonly featured: {
     readonly id: string
@@ -112,11 +136,46 @@ export interface SiteConfig {
     readonly sections: { readonly features: string; readonly engineering: string; readonly limits: string }
     readonly labels: { readonly year: string; readonly kind: string; readonly stack: string; readonly links: string }
     readonly back: string
+    readonly overview: string
+    readonly useCase: string
+    /** Shown in the media stage until a build has its recording. */
+    readonly mediaPending: string
     readonly next: string
     readonly previous: string
   }
+  readonly experience: {
+    readonly id: string
+    readonly kicker: string
+    readonly title: string
+    readonly lead: string
+    /** "record" is the scannable employer record. "story" is the light timeline, chapter by chapter. */
+    readonly variant: 'record' | 'story'
+    readonly employer: { readonly name: string; readonly span: string; readonly place: string }
+    readonly labels: { readonly roles: string; readonly highlights: string; readonly recognition: string }
+    readonly credentials: { readonly id: string; readonly title: string; readonly lead: string; readonly verify: string }
+  }
+  readonly contact: {
+    readonly id: string
+    readonly kicker: string
+    readonly title: string
+    readonly lead: string
+    readonly email: `${string}@${string}`
+    readonly findLabel: string
+    readonly links: readonly SocialLink[]
+    readonly badge: {
+      readonly kind: string
+      readonly handle: string
+      readonly serial: string
+      readonly swapLabel: string
+      readonly strap: string
+      readonly portraitAlt: string
+      readonly labs: { readonly name: string; readonly by: string; readonly status: string }
+      /** The portrait's arrival: block sizes in pixels, largest first, and how long each holds. */
+      readonly reveal: { readonly blocks: readonly number[]; readonly stepMs: number }
+      readonly swing: SwingConfig
+    }
+  }
   /** Order of the groups on the All builds page. */
   readonly kinds: readonly BuildKind[]
-  readonly socials: readonly SocialLink[]
   readonly features: FeatureFlags
 }

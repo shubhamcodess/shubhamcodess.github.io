@@ -1,0 +1,106 @@
+{
+  "https://github.com/shubhamcodess/mcp-token-optimizer": {
+    "title": "GitHub - shubhamcodess/mcp-token-optimizer: Smartest context aware Token Optimizer for mcp tools.",
+    "description": "Smartest context aware Token Optimizer for mcp tools. - shubhamcodess/mcp-token-optimizer",
+    "image": "previews/9ee5736bd2e0.png"
+  },
+  "https://shubhamcodess.github.io/mcp-token-optimizer/": {
+    "title": "mto: shrink MCP tool responses for AI agents and cut token cost",
+    "description": "A self-hosted proxy between your AI agent and its MCP servers. Shrinks every tool response, keeps the original recoverable, fails open, and cuts token cost. Open source.",
+    "image": "previews/3e9b4474a833.png"
+  },
+  "https://github.com/shubhamcodess/whatcmd": {
+    "title": "GitHub - shubhamcodess/whatcmd: A Bash Utility for typing English for getting a runnable command back",
+    "description": "A Bash Utility for typing English for getting a runnable command back - shubhamcodess/whatcmd",
+    "image": "previews/94081278f8eb.png"
+  },
+  "https://shubhamcodess.github.io/whatcmd/": {
+    "title": "whatcmd: stop googling shell commands",
+    "description": "Plain English in, the right command out. Local, grounded, and it never runs anything by itself.",
+    "image": "previews/937e1a9d0207.png"
+  },
+  "https://shubhamcodess.github.io/everything-tech-newsletter/": {
+    "title": "EverythingTech · all at once.",
+    "description": "A daily tech newspaper. 45+ sources, read in full and edited by an LLM every morning.",
+    "image": "previews/5cba185c0ccd.png"
+  },
+  "https://github.com/shubhamcodess/everything-tech-newsletter": {
+    "title": "GitHub - shubhamcodess/everything-tech-newsletter: The only AI Curated Tech Newsletter to keep you updated on #EVERYTHINGTECH",
+    "description": "The only AI Curated Tech Newsletter to keep you updated on #EVERYTHINGTECH - shubhamcodess/everything-tech-newsletter",
+    "image": "previews/65650cdcf305.png"
+  },
+  "https://github.com/shubhamcodess/tiny-browse": {
+    "title": "GitHub - shubhamcodess/tiny-browse: A tiny MCP to give your local agent the web search capability. Use it as MCP or a dependency in Code.",
+    "description": "A tiny MCP to give your local agent the web search capability. Use it as MCP or a dependency in Code. - shubhamcodess/tiny-browse",
+    "image": "previews/423a666c6d62.png"
+  },
+  "https://shubhamcodess.github.io/fuzzy/": {
+    "title": "[fuzzy] — search any GitHub repo",
+    "description": "Search any GitHub repository by name or by meaning. Keyword, fuzzy and semantic code search that runs entirely in your browser."
+  },
+  "https://github.com/shubhamcodess/fuzzy": {
+    "title": "GitHub - shubhamcodess/fuzzy: Index and search any repo lightning fast",
+    "description": "Index and search any repo lightning fast. Contribute to shubhamcodess/fuzzy development by creating an account on GitHub."
+  },
+  "https://shubhamcodess.github.io/openvox/": {
+    "title": "openvox",
+    "description": ""
+  },
+  "https://github.com/shubhamcodess/openvox": {
+    "title": "GitHub - shubhamcodess/openvox",
+    "description": "Contribute to shubhamcodess/openvox development by creating an account on GitHub.",
+    "image": "previews/4afcfb05c0b2.png"
+  },
+  "https://shubhamcodess.github.io/classify/": {
+    "title": "classify: decisions for every row of your file",
+    "description": "Teach it your categories and decisions with a few examples. It goes through your spreadsheet row by row, fills in the answers and flags what a person should check. Runs in your browser; nothing is uploaded."
+  },
+  "https://github.com/shubhamcodess/classify": {
+    "title": "GitHub - shubhamcodess/classify: Web app to classify any data with on spot training and Decision model.",
+    "description": "Web app to classify any data with on spot training and Decision model. - shubhamcodess/classify"
+  },
+  "https://github.com/shubhamcodess/notch-porch": {
+    "title": "GitHub - shubhamcodess/notch-porch: A widget dock that lives in your MacBook's notch. Starts with a full YouTube Music player; more widgets coming.",
+    "description": "A widget dock that lives in your MacBook's notch. Starts with a full YouTube Music player; more widgets coming. - shubhamcodess/notch-porch",
+    "image": "previews/5cc221dc9fa3.png"
+  },
+  "https://github.com/shubhamcodess/notch-porch/releases": {
+    "title": "Releases · shubhamcodess/notch-porch",
+    "description": "A widget dock that lives in your MacBook's notch. Starts with a full YouTube Music player; more widgets coming. - Releases · shubhamcodess/notch-porch",
+    "image": "previews/55249539386c.png"
+  },
+  "https://github.com/shubhamcodess/focusify-yt": {
+    "title": "GitHub - shubhamcodess/focusify-yt: Want to study, and Youtube feed keeps distracting you. Not any more with FocusifyYT",
+    "description": "Want to study, and Youtube feed keeps distracting you. Not any more with FocusifyYT - shubhamcodess/focusify-yt"
+  },
+  "https://github.com/shubhamcodess": {
+    "title": "shubhamcodess - Overview",
+    "description": "Here for the bigger picture. shubhamcodess has 31 repositories available. Follow their code on GitHub.",
+    "image": "previews/2c865b7ede2e.jpg"
+  },
+  "https://www.credly.com/badges/cc59c5f1-1ddb-4a12-bd7f-8398b7407834/public_url": {
+    "title": "Claude Certified Architect - Professional was issued by Anthropic to Shubham Prakash.",
+    "description": "The Claude Certified Architect – Professional credential is designed for experienced solution architects. Earners can design and lead enterprise-scale Claude deployments, architect integrations, optimize systems at scale, and apply governance and responsible deployment practices.",
+    "image": "previews/c9064fd239a1.png"
+  },
+  "https://www.credly.com/badges/a2e244ea-f008-415b-a4b1-5473415de90e/public_url": {
+    "title": "Claude Certified Architect - Foundations was issued by Anthropic to Shubham Prakash.",
+    "description": "The Claude Certified Architect – Foundations credential is designed for solution architects. Earners can design and build production-grade applications with Claude using Claude Code, the Claude Agent SDK, the Claude API, and MCP.",
+    "image": "previews/309a2041670f.png"
+  },
+  "https://www.credly.com/badges/e5c52470-9f7f-41b7-9ed5-1d300f5e7b5c/public_url": {
+    "title": "Associate Cloud Engineer Certification was issued by Google Cloud to Shubham Prakash.",
+    "description": "Associate Cloud Engineers deploy applications, monitor operations, and manage enterprise solutions. They use Google Cloud Console and the command-line interface to perform common platform-based tasks to maintain one or more deployed solutions that leverage Google-managed or self-managed services on Google Cloud.",
+    "image": "previews/58d959c8668b.png"
+  },
+  "https://www.credly.com/badges/ca549244-79c2-45a1-9b75-0f972ec11f47/public_url": {
+    "title": "Generative AI Leader Certification was issued by Google Cloud to Shubham Prakash.",
+    "description": "A Generative AI Leader is a visionary professional with comprehensive knowledge of how gen AI can transform businesses. They have business-level knowledge of Google Cloud's gen AI offerings and understand how Google's AI-first approach can lead organizations toward innovative and responsible AI adoption. They influence gen AI-powered initiatives and identify opportunities across business functions and industries, using Google Cloud's enterprise-ready offerings to accelerate innovation.",
+    "image": "previews/995c38b01034.png"
+  },
+  "https://www.credly.com/badges/0c61b0e2-e3b1-4009-8948-52661ba8f284/public_url": {
+    "title": "Cloud Digital Leader Certification was issued by Google Cloud to Shubham Prakash.",
+    "description": "A Cloud Digital Leader can articulate the capabilities of Google Cloud core products and services and how they benefit organizations. They can also describe common business use cases and how cloud solutions support an enterprise.This certification is for anyone who wishes to demonstrate their knowledge of cloud computing basics and how Google Cloud products and services can be used to achieve an organization’s goals.",
+    "image": "previews/85954c09a486.png"
+  }
+}

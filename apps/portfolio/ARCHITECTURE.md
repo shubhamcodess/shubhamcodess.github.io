@@ -35,9 +35,10 @@ The dev server is on port 5180. `build` type-checks first and writes static file
 | `src/content` | Typed content. `builds.ts` is the one source for every build | nothing |
 | `src/styles` | `tokens.css` (all design values) and `base.css` (reset, frame, shared helpers) | nothing |
 | `src/lib` | Small hooks and helpers with no markup | `config` |
-| `src/ui` | Reusable parts that know nothing about this site's content: `FolderCard`, `ActionLink`, `Icon` | `lib` |
+| `src/ui` | Reusable parts that know nothing about this site's content: `FolderCard`, `ActionLink`, `Icon`, `Reveal`, `LinkPreview`, and `light/` (the shader and its backdrop) | `lib`, `config` types |
 | `src/layout` | Header and footer | `config`, `lib`, `ui` |
-| `src/features/*` | One folder per part of the site: `hero`, `builds` | everything above |
+| `src/features/*` | One folder per part of the site: `hero`, `builds`, `project`, `experience`, `contact` | everything above |
+| `scripts` | Build-time helpers. `fetch-previews.mjs` saves the social preview of every outside link | nothing in `src` |
 | `src/app` | Puts pages together and picks the page for a route | everything above |
 
 Imports only go down this table. A feature never imports another feature. If two need the same thing, it moves to `ui` or `lib`.
@@ -50,14 +51,22 @@ Imports only go down this table. A feature never imports another feature. If two
 4. **Config drives the site.** `config/site.ts` decides what is said, what is featured, how the light behaves and which parts are on. Turning a flag off must leave a complete page.
 5. **Tokens only.** A component's CSS reads `var(--…)`. A new value is added to `tokens.css` first.
 6. **One CSS file per component,** imported by that component, with class names prefixed by the component (`.folder__tab`, `.hero__name`).
-7. **One page, one HTML file.** Each route has its own HTML entry that names its route in `data-route`. Pages load directly, with no SPA fallback and no client router.
+7. **One page, one HTML file.** Each route has its own HTML entry that names its route in `data-route`. Project pages share `project/index.html`; the build writes one real file per build with its own title and description. Pages load directly, with no SPA fallback and no client router.
 8. **Effects clean up.** Every observer, listener, animation frame and WebGL resource is released in its effect's cleanup.
 9. **Progressive.** The page is complete without WebGL, with reduced motion, and on touch. Enhancements switch on only when they can run.
 10. **Budget.** JavaScript stays under 90 kB gzipped and CSS under 10 kB. Check the build output before adding anything heavy.
 
 ## Adding things
 
-**A build:** add one object to `content/builds.ts`. To feature it, add its slug to `featured.slugs` in `config/site.ts`.
+**A build:** add one object to `content/builds.ts`, with its `story`. Its page, card and filter group follow. To feature it, add its slug to `featured.slugs` in `config/site.ts` (five at most; the type enforces it). Then refresh the link previews:
+
+```bash
+pnpm --filter @portfolio/app previews
+```
+
+**A use case or recording for a build:** fill `story.useCase` or `media` on that build. The page shows the section only when it exists.
+
+**A role, credential or recognition:** edit `content/experience.ts`.
 
 **A page:**
 1. Add its id to `RouteId` in `config/types.ts`, and its entry to `routes` in `config/site.ts`.
@@ -68,15 +77,18 @@ Imports only go down this table. A feature never imports another feature. If two
 
 **A design value:** add the token, then use it. Update `DESIGN.md` in the same change.
 
-## The hero light
+## The light
 
-- `features/hero/coveLight.ts` is the shader and its WebGL2 setup. It returns `null` when WebGL2 isn't available, and the hero keeps its CSS backdrop.
-- `features/hero/useHeroScene.ts` runs the single animation loop. It writes `--hero-pointer-x`, `--hero-pointer-y` and `--hero-scroll` on the hero, and `hero.css` decides what moves.
+- `ui/light/coveLight.ts` is the shader and its WebGL2 setup. It returns `null` when WebGL2 isn't available, and the backdrop keeps its CSS glow.
+- `ui/light/useLightScene.ts` runs one animation loop per backdrop. It writes `--light-pointer-x`, `--light-pointer-y` and `--light-scroll` on the backdrop's parent, and that parent's CSS decides what moves.
+- `ui/light/LightBackdrop.tsx` is the component. The hero and the project title plate both use it.
 - All tuning is `hero.light` in the config. Nothing is hard-coded in the shader except the shape of the scene.
 
 ## Known gaps
 
 - **Content is rendered in the browser.** Before launch, pre-render each page to static HTML at build time, so search engines and AI readers get the content without running JavaScript.
+- **JavaScript is at the 90 kB budget.** The saved link previews ride in the main bundle. Load them on first hover if more is added.
+- **Page transitions** use cross-document view transitions, which Firefox doesn't have yet. It simply navigates.
 - **No automated tests or gates yet.** The repository's responsive and performance gates still point at `apps/web`. They should be pointed here once this app becomes the deployed site.
 - **No content security policy, sitemap or social image yet.** Add them with the deploy setup.
 - **Font subsets.** Fontsource ships every script. Only the Latin files are ever downloaded, but the others still sit in `dist`.

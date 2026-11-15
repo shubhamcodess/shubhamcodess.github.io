@@ -2,6 +2,7 @@ import { site } from '../../config/site'
 import { getBuild } from '../../content/builds'
 import { hrefTo } from '../../lib/routes'
 import { ActionLink } from '../../ui/ActionLink'
+import { Reveal } from '../../ui/Reveal'
 import { BuildCard } from './BuildCard'
 
 export function FeaturedSection() {
@@ -11,6 +12,7 @@ export function FeaturedSection() {
   return (
     <section className="panel section" id={featured.id} aria-labelledby={headingId}>
       <div className="container">
+        <Reveal>
         <header className="section__header">
           <div>
             <h2 className="section__title" id={headingId}>
@@ -24,10 +26,13 @@ export function FeaturedSection() {
             </ActionLink>
           ) : null}
         </header>
+        </Reveal>
         <ul className="build-grid build-grid--feature" data-count={featured.slugs.length}>
           {featured.slugs.map((slug, index) => (
             <li key={slug}>
-              <BuildCard build={getBuild(slug)} position={index + 1} variant="feature" headingLevel={3} />
+              <Reveal className="reveal-fill" index={index}>
+                <BuildCard build={getBuild(slug)} position={index + 1} variant="feature" headingLevel={3} />
+              </Reveal>
             </li>
           ))}
         </ul>

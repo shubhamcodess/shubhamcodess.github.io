@@ -125,3 +125,27 @@
   width: fit-content;
   min-width: 100%;
 }
+
+.folder--plate {
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.folder__plate > * {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .folder--plate:hover {
+    box-shadow: var(--shadow-card);
+  }
+
+  .folder--plate:hover .folder__plate > * {
+    transform: translate3d(0, -3px, 0);
+  }
+}
+
+.folder:active {
+  transform: translateY(0) scale(0.995);
+}

@@ -10,7 +10,7 @@ export function Footer() {
         © {new Date().getFullYear()} {site.owner}
       </p>
       <ul className="site-footer__links">
-        {site.socials.map((social) => (
+        {(site.features.contact ? [] : site.contact.links).map((social) => (
           <li key={social.href}>
             <ActionLink href={social.href} external>
               {social.label}

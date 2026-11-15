@@ -1,0 +1,310 @@
+.badge {
+  display: block;
+  width: var(--badge-width);
+  /* Room on the right for the card that hangs behind. */
+  margin-right: calc(var(--badge-width) * var(--badge-peek));
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.badge:focus-visible {
+  outline: none;
+}
+
+.badge:focus-visible .badge__card {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* Everything hangs from the top edge, so that is where it turns. */
+.badge__swing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: rotate(var(--swing, 0deg));
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+
+/* Strap: woven webbing with stitched edges and a printed mark. */
+.badge__strap {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: var(--badge-strap-width);
+  height: var(--badge-strap-length);
+  padding-bottom: var(--space-3);
+  background:
+    linear-gradient(to right, rgb(255 255 255 / 10%) 0 1px, transparent 1px calc(100% - 1px), rgb(255 255 255 / 10%) calc(100% - 1px)),
+    repeating-linear-gradient(135deg, rgb(255 255 255 / 5%) 0 1px, transparent 1px 4px),
+    linear-gradient(to right, #0d0f12, #1c2026 50%, #0d0f12);
+  box-shadow: inset 4px 0 0 -3px rgb(255 255 255 / 14%), inset -4px 0 0 -3px rgb(255 255 255 / 14%);
+}
+
+.badge__strap-mark {
+  color: var(--badge-ink-muted);
+  font: var(--weight-body) 0.5625rem / 1.3 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  border-right: 2px solid var(--badge-accent);
+  padding-right: var(--space-1);
+}
+
+/* Hook: a bar that grips the strap, a swivel block, then a ring through the card's slot. */
+.badge__buckle {
+  width: calc(var(--badge-strap-width) + 8px);
+  height: 12px;
+  background: linear-gradient(to bottom, #6d757d, #3a4046 60%, #22262a);
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 25%) inset, 0 2px 4px rgb(0 0 0 / 60%);
+}
+
+.badge__swivel {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 22px;
+  margin-top: 3px;
+  color: var(--badge-ink-muted);
+  background: linear-gradient(to bottom, #4b5259, #2a2e33);
+  border-radius: 5px;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 20%) inset, 0 2px 4px rgb(0 0 0 / 60%);
+  font: var(--weight-heading) 0.5625rem / 1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.badge__ring {
+  position: relative;
+  z-index: 4;
+  width: 18px;
+  height: 20px;
+  margin-bottom: -14px;
+  border: 2.5px solid #7b838b;
+  border-top: 0;
+  border-radius: 0 0 7px 7px;
+  box-shadow: 0 2px 3px rgb(0 0 0 / 50%);
+}
+
+.badge__cards {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--badge-ratio);
+}
+
+/* Two tones: a graphite frame around a near-black face, with the slot the ring passes through. */
+.badge__card {
+  position: absolute;
+  inset: 0;
+  display: block;
+  padding: var(--badge-frame);
+  background: linear-gradient(160deg, #54595f, #2f3338 40%, #3d4247);
+  border-radius: var(--badge-radius);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 22%) inset,
+    0 28px 56px rgb(0 0 0 / 60%);
+  text-align: left;
+  transform-origin: 50% 0;
+  transition:
+    transform var(--duration-enter) var(--ease-out),
+    z-index 0s calc(var(--duration-enter) / 3);
+}
+
+.badge__card::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--badge-frame) * 0.45);
+  left: 50%;
+  z-index: 1;
+  width: 34px;
+  height: 7px;
+  background: #050607;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 12%);
+  transform: translateX(-50%);
+}
+
+.badge__face {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  color: var(--badge-ink);
+  background: radial-gradient(ellipse 90% 50% at 50% 100%, rgb(47 123 255 / 10%), transparent), linear-gradient(170deg, #1b1d20, #0c0d0f);
+  border-radius: calc(var(--badge-radius) - var(--badge-frame));
+  box-shadow: inset 0 0 0 var(--hairline) rgb(255 255 255 / 6%);
+  overflow: hidden;
+}
+
+.badge__card--labs {
+  background: linear-gradient(160deg, #2a4a8a, #14223f 45%, #1c315c);
+}
+
+.badge__card--labs .badge__face {
+  position: relative;
+  background:
+    radial-gradient(ellipse 120% 55% at 50% 110%, rgb(47 123 255 / 45%), transparent),
+    radial-gradient(rgb(207 228 255 / 14%) 1px, transparent 1.5px) 0 0 / 14px 14px,
+    #080e1a;
+  color: var(--badge-labs-ink);
+}
+
+/* The card in front hangs straight. The one behind hangs to the side, far enough to read its edge. */
+[data-front='dev'] .badge__card--dev,
+[data-front='labs'] .badge__card--labs {
+  z-index: 2;
+}
+
+[data-front='dev'] .badge__card--labs,
+[data-front='labs'] .badge__card--dev {
+  z-index: 1;
+  transform: rotate(var(--badge-fan)) translate(calc(var(--badge-peek) * 100%), 0);
+}
+
+.badge__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--badge-ink-muted);
+  font: var(--weight-body) 0.625rem / 1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.badge__row--foot {
+  margin-top: auto;
+}
+
+.badge__monogram {
+  color: var(--badge-ink);
+  font: var(--weight-heading) var(--text-lg) / 1 var(--font-sans);
+  letter-spacing: 0;
+}
+
+.badge__kind {
+  padding-bottom: var(--space-1);
+  border-bottom: 2px solid var(--badge-accent);
+}
+
+/* The window. Before the photo forms it shows the hero's light; afterwards a trace of it stays on as the tint. */
+.badge__window {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: radial-gradient(ellipse 80% 70% at 50% 30%, #2a2d31, #0b0c0e);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.badge__window::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, #0b0c0e 2%, transparent 40%),
+    repeating-linear-gradient(to right, transparent 0 9px, rgb(47 123 255 / 70%) 9px 10px, transparent 10px 23px, rgb(255 138 40 / 55%) 23px 24px, transparent 24px 31px);
+  transition: opacity var(--duration-slow) linear;
+}
+
+.badge__window:has([data-state='forming'])::after {
+  opacity: 0.45;
+}
+
+.badge__window:has([data-state='done'])::after {
+  opacity: var(--badge-photo-lanes);
+  mix-blend-mode: screen;
+}
+
+.badge__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition:
+    opacity var(--duration-base) linear,
+    filter var(--duration-slow) linear;
+}
+
+.badge__photo:not([data-state='waiting']) {
+  opacity: 1;
+}
+
+.badge__photo[data-state='done'] {
+  filter: var(--badge-photo-filter);
+}
+
+.badge__id {
+  display: grid;
+  gap: var(--space-1);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--badge-accent);
+}
+
+.badge__name {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-tight);
+}
+
+.badge__role {
+  font: var(--weight-heading) 0.625rem / var(--leading-snug) var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.badge__handle {
+  color: var(--badge-ink-muted);
+  font: var(--weight-body) 0.625rem / var(--leading-snug) var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.badge__swap {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--badge-ink);
+  background: rgb(255 255 255 / 8%);
+  border-radius: 50%;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+/* Labs: its name runs down the edge that shows from behind the developer card. */
+.badge__labs-name {
+  position: absolute;
+  top: var(--space-5);
+  right: calc(var(--badge-width) * var(--badge-peek) * 0.12);
+  font-size: calc(var(--badge-width) * var(--badge-peek) * 0.62);
+  font-weight: var(--weight-heading);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  writing-mode: vertical-rl;
+}
+
+.badge__labs-by {
+  position: absolute;
+  right: calc(var(--badge-width) * var(--badge-peek) * 0.3);
+  bottom: var(--space-4);
+  font: var(--weight-body) 0.5625rem / 1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  opacity: 0.75;
+}
+
+@media (hover: hover) {
+  .badge:hover [data-front='dev'] .badge__card--labs,
+  .badge:hover [data-front='labs'] .badge__card--dev {
+    transform: rotate(calc(var(--badge-fan) * 1.6)) translate(calc(var(--badge-peek) * 118%), 0);
+  }
+
+  .badge:hover .badge__swap {
+    transform: translateX(3px);
+  }
+}

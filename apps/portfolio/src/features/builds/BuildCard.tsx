@@ -36,7 +36,7 @@ export function BuildCard({ build, position, variant, headingLevel }: BuildCardP
       title={build.title}
       headingLevel={headingLevel}
       summary={build.summary}
-      {...(site.features.projectPages ? { href: hrefToBuild(build.slug) } : {})}
+      {...(site.features.projectPages ? { href: hrefToBuild(build.slug), transitionName: `build-${build.slug}` } : {})}
       {...(variant === 'feature' && stat ? { plate: stat } : {})}
       meta={
         <>

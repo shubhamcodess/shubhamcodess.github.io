@@ -42,6 +42,10 @@
   background: radial-gradient(closest-side, rgb(0 0 0 / 55%), transparent);
 }
 
+.hero__name span {
+  display: inline-block;
+}
+
 .hero__name {
   font-size: var(--hero-name-size);
   letter-spacing: -0.035em;

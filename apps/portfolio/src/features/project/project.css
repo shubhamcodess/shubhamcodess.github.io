@@ -66,17 +66,109 @@
   padding-block: var(--space-8) var(--space-9);
 }
 
+/* The stage: a browser-like frame for the build in motion. It holds its shape before the recording exists. */
+.project-stage {
+  margin: 0 0 var(--space-8);
+  background: var(--surface-sunken);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.project-stage__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--target-min);
+  padding-inline: var(--space-4);
+  border-bottom: var(--hairline) solid var(--line);
+}
+
+.project-stage__bar span {
+  width: 10px;
+  height: 10px;
+  background: var(--line);
+  border-radius: 50%;
+}
+
+.project-stage__bar p {
+  flex: 1;
+  margin-right: 46px;
+  overflow: hidden;
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-stage__screen {
+  display: grid;
+  place-items: center;
+  aspect-ratio: var(--project-stage-ratio);
+  background:
+    linear-gradient(to top, var(--surface-sunken) 5%, transparent 60%),
+    repeating-linear-gradient(to right, transparent 0 39px, color-mix(in srgb, var(--xp-light) 26%, transparent) 39px 40px),
+    var(--surface-sunken);
+}
+
+.project-stage__screen :is(video, img) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .project-story__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-7);
+  gap: var(--space-6);
+}
+
+/* On phones the rail dissolves into the grid, so its nav can stay stuck for the whole story. */
+.project-rail {
+  display: contents;
+}
+
+/* On phones the page's sections are a row of chips that stays under the top edge. */
+.project-rail__nav {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  gap: var(--space-2);
+  margin-inline: calc(var(--page-gutter) * -1);
+  padding: var(--space-3) var(--page-gutter);
+  overflow-x: auto;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  scrollbar-width: none;
+}
+
+.project-rail__nav a {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: 36px;
+  padding-inline: var(--space-4);
+  color: var(--ink-muted);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  transition: color var(--duration-fast) linear, border-color var(--duration-fast) linear;
 }
 
 .project-rail dl {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-5);
   margin: 0;
+}
+
+.project-rail dl > div:last-child {
+  grid-column: 1 / -1;
 }
 
 .project-rail dt {
@@ -93,34 +185,85 @@
 }
 
 .project-body {
+  min-width: 0;
   max-width: var(--project-measure);
 }
 
 .project-body__overview {
   font-size: var(--text-xl);
   line-height: 1.45;
+  scroll-margin-top: var(--space-9);
 }
 
 .project-section {
   margin-top: var(--space-8);
+  scroll-margin-top: var(--space-9);
 }
 
 .project-section h2 {
   display: flex;
   align-items: baseline;
   gap: var(--space-4);
+  margin-bottom: var(--space-5);
   font-size: var(--text-2xl);
   letter-spacing: -0.02em;
 }
 
-.project-section ul {
-  margin-top: var(--space-5);
-  border-top: var(--hairline) solid var(--line);
+/* What it does: numbered tiles, two across when there is room. */
+.project-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: var(--space-3);
 }
 
-.project-section li {
-  padding-block: var(--space-4);
-  border-bottom: var(--hairline) solid var(--line);
+.project-tiles li {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--surface-raised);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+/* How it is built: engineering notes on a lane of light. */
+.project-notes {
+  display: grid;
+  gap: var(--space-4);
+  padding-left: var(--space-5);
+  border-left: var(--xp-rail-width) solid color-mix(in srgb, var(--xp-light) 45%, var(--line));
+}
+
+.project-notes li {
+  position: relative;
+}
+
+.project-notes li::before {
+  content: '';
+  position: absolute;
+  top: 0.6em;
+  left: calc(var(--space-5) * -1 - var(--xp-rail-width) / 2 - 3px);
+  width: 6px;
+  height: 6px;
+  background: var(--xp-light);
+  border-radius: 50%;
+}
+
+/* Limits: set apart and quieter, like a note in the margin. */
+.project-limits {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  color: var(--ink-muted);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+
+.project-prose {
+  display: grid;
+  gap: var(--space-4);
+  font-size: var(--text-lg);
 }
 
 .project-onward {
@@ -160,20 +303,71 @@
   }
 }
 
-/* Wide screens: the rail stays in view while the story scrolls past it. */
+@media (hover: hover) {
+  .project-rail__nav a:hover {
+    color: var(--ink);
+    border-color: var(--ink-muted);
+  }
+}
+
+@media (max-width: 640px) {
+  .project-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: var(--space-5);
+  }
+
+  .project-title__summary {
+    font-size: var(--text-lg);
+  }
+
+  .project-title__body > .eyebrow {
+    margin-top: var(--space-5);
+  }
+
+  .project-story {
+    padding-block: var(--space-6) var(--space-8);
+  }
+
+  .project-stage {
+    margin-bottom: var(--space-5);
+    border-radius: var(--radius-md);
+  }
+}
+
+/* Wide screens: the rail stays in view while the story scrolls past it, and its nav becomes a plain list. */
 @media (min-width: 900px) {
   .project-story__grid {
     grid-template-columns: var(--project-rail-width) minmax(0, 1fr);
     gap: var(--space-8);
   }
 
-  .project-rail dl {
+  .project-rail {
+    display: grid;
     position: sticky;
-    top: var(--space-7);
-    grid-template-columns: 1fr;
+    top: var(--space-6);
+    align-self: start;
+    gap: var(--space-6);
   }
 
-  .project-rail {
-    height: 100%;
+  .project-rail__nav {
+    position: static;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0 0 var(--space-5);
+    background: none;
+    border-bottom: var(--hairline) solid var(--line);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .project-rail__nav a {
+    min-height: 32px;
+    padding: 0;
+    border: 0;
+  }
+
+  .project-rail dl {
+    grid-template-columns: 1fr;
   }
 }

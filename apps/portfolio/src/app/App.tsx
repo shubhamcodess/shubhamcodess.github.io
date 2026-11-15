@@ -2,11 +2,14 @@ import { site } from '../config/site'
 import type { Build } from '../content/types'
 import { BuildsPage } from '../features/builds/BuildsPage'
 import { FeaturedSection } from '../features/builds/FeaturedSection'
+import { ContactSection } from '../features/contact/ContactSection'
+import { ExperienceSection } from '../features/experience/ExperienceSection'
 import { Hero } from '../features/hero/Hero'
 import { ProjectPage } from '../features/project/ProjectPage'
 import { Footer } from '../layout/Footer'
 import { Header } from '../layout/Header'
 import { ScrollLight } from '../layout/ScrollLight'
+import { LinkPreview } from '../ui/LinkPreview'
 
 function HomePage() {
   return (
@@ -16,6 +19,8 @@ function HomePage() {
         <Hero />
       </div>
       {site.features.featured ? <FeaturedSection /> : null}
+      {site.features.experience ? <ExperienceSection /> : null}
+      {site.features.contact ? <ContactSection /> : null}
     </main>
   )
 }
@@ -47,6 +52,7 @@ export function App({ page }: AppProps) {
       {render(page)}
       {site.features.footer ? <Footer /> : null}
       {site.features.scrollLight ? <ScrollLight /> : null}
+      {site.features.linkPreviews ? <LinkPreview /> : null}
     </div>
   )
 }

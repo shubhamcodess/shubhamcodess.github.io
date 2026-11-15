@@ -77,7 +77,7 @@ What was dropped from the prototype, and why:
 | Three.js | About 500 kB to draw one rectangle. The same shader now runs on raw WebGL2 |
 | "Labs" and saved versions in the header and footer | Prototype scaffolding, not part of a portfolio |
 | Full-brightness floor lanes at the screen edges | They pulled the eye away from the name |
-| 3D carousel for three featured builds | It hid two of three projects. All three now show at once |
+| 3D carousel for three featured builds | It hid two of three projects. All featured builds now show at once |
 | Stock photos on build cards | Not the projects. A real fact holds the space until real graphics exist |
 
 ## Folder card
@@ -106,6 +106,62 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - Short link labels carry a fuller accessible name, for example "Code: whatcmd".
 - No native `title` tooltips.
 
+## Pages and navigation
+
+- **Home** is one scroll: hero, featured builds, experience, contact. The header links to Builds, Experience and Contact.
+- **All builds** is the index. Filter chips group it by kind; a kind needs at least two builds.
+- **A page per build** at `/builds/<slug>/`. Every card opens its build. The last panel leads to the previous and next build.
+- Featured holds one to five builds, with a designed grid for each count: 1 full width, 2 halves, 3 thirds, 4 as two rows of two, 5 as two halves over three thirds.
+- The hero's action chips fade out once the visitor has scrolled past them.
+
+## Project page
+
+- **Title plate** (night): back link, position and kind, the name very large, summary, outside links as frosted chips, then up to three facts as a title card. The hero light runs behind it at lower strength.
+- **Stage:** a browser-like frame for the build in motion (recording or motion graphic). It keeps its shape and says so plainly until the recording exists.
+- **Rail:** section links, kind, year and stack. It stays in view on wide screens. On phones the section links become a row of chips stuck under the top edge.
+- **Sections, in order:** What it does (numbered tiles), Use case (prose, only when written), How it is built (notes on a lane of light), Honest limits (a quiet note). Each kind of content has its own shape; nothing is a plain divider list.
+- A use-case write-up goes in `story.useCase` of that build. The recording goes in `media`.
+
+## Experience
+
+Two views of the same content, chosen by `experience.variant` in the config.
+
+- **Record** (default): the employer's name very large with span and place, four highlight numbers, then roles as drawers, newest first, one open at a time. Recognition sits under the roles. A new employer becomes a new block on top.
+- **Story:** one lane of light down the page. It fills as you scroll, and each chapter comes up to full strength when the light reaches it.
+- Log lines read like commit history: a mono verb, then what was done.
+- **Credentials** are a block at the end of Experience (`#credentials`), grouped by issuer. A credential with a public record links to it. They stay a section, not a page, until there are too many to scan.
+
+## Contact
+
+- A night panel, about two thirds of a screen. Copy on the left: title, "Mail reaches me fastest", the address with a mail icon, then the other places as a plain list of rows (icon, name, handle). Rows, not buttons.
+- **The badge** hangs from the panel's top edge on a woven strap with a buckle, swivel and ring. It is two-tone: a graphite frame around a near-black face, with a blue accent.
+  - It swings on a spring: it drops in when first seen, leans after the pointer, and kicks when pressed.
+  - The developer card is in front. The Labs card hangs behind, far enough to the side that "Labs" can be read. Pressing the badge swaps them.
+  - **The portrait** arrives the way a generated image does: big over-coloured blocks that get finer until they are the photo. It then settles to near-monochrome, with a trace of the hero's light lanes over it, so it reads as part of the badge.
+- On phones the badge hangs first and centred, and the copy follows at phone sizes of its own.
+
+## Scrollbar
+
+The browser's scrollbar is replaced by a thread of light in the frame's right edge. It runs down from the top as the page scrolls, with a bright drop at its head. It hides on pages too short to scroll, and the native bar returns when the flag is off.
+
+## Link previews
+
+Hovering an outside link shows a small frosted card that follows the pointer: the destination's social image, title and host. The previews are saved at build time, so nothing is fetched from other sites until the visitor clicks. Pointer only.
+
+## Motion, in full
+
+| Where | What moves |
+|---|---|
+| Page open | Name, role, statement and chips rise in, one after another |
+| Scroll | Sections and cards rise in once, the first time they are seen |
+| Between pages | A short cross-fade, and a build's title travels from its card to its page |
+| Cards | Lift 4px, the fact shifts up, arrows nudge. A press settles back |
+| Theme toggle | The icon turns in |
+| Experience | Drawers open with a rise; the story lane fills with scroll |
+| Badge | Spring swing, card swap, portrait forming |
+
+Everything uses `--ease-out`, the duration tokens and `--stagger`. Entrances play once and never replay on scroll back.
+
 ## Not decided yet
 
-Don't build these until they are: About, Experience, Contact, project pages, the graphics for each build, scroll transitions between panels, and a richer footer.
+Don't build these until they are: an About section, the Labs site, the recordings for each build, scroll transitions between panels, and Substack (add its link to `contact.links` when the address exists).

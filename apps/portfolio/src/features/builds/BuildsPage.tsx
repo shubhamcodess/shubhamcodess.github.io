@@ -43,9 +43,9 @@ export function BuildsPage() {
               ))}
           </div>
         ) : null}
-        <ul className="build-grid build-grid--compact" aria-live="polite">
+        <ul key={filter} className="build-grid build-grid--compact" aria-live="polite">
           {shown.map((build, index) => (
-            <li key={build.slug}>
+            <li key={build.slug} className="enter" style={{ '--enter-index': Math.min(index, 8) } as React.CSSProperties}>
               <BuildCard build={build} position={index + 1} variant="compact" headingLevel={2} />
             </li>
           ))}

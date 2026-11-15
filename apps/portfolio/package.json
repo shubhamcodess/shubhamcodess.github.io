@@ -7,7 +7,8 @@
     "dev": "vite --host --port 5180",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 5181",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "previews": "node scripts/fetch-previews.mjs"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

@@ -43,6 +43,10 @@
   --duration-fast: 180ms;
   --duration-base: 420ms;
   --duration-slow: 900ms;
+  --duration-enter: 800ms;
+  --duration-page: 360ms;
+  --stagger: 80ms;
+  --reveal-distance: 20px;
 
   /* The frame: black backplate with rounded panels inset from it */
   --backplate: #000000;
@@ -85,7 +89,44 @@
   --project-name-size: clamp(2.75rem, 1.5rem + 6vw, 7rem);
   --project-fact-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.75rem);
   --project-rail-width: 200px;
+  --project-stage-ratio: 16 / 9;
   --project-measure: 46rem;
+
+  /* Component: experience timeline */
+  --xp-light: var(--scroll-light-color);
+  --xp-rail-width: 2px;
+  --xp-node-size: 11px;
+  --xp-node-column: 24px;
+  --xp-stop-column: 120px;
+  --xp-verb-column: 5.5rem;
+  --xp-dim: 0.35;
+
+  --record-name-size: clamp(4rem, 2rem + 9vw, 9rem);
+
+  /* Component: contact */
+  --contact-title-size: clamp(2.75rem, 1.5rem + 6vw, 6rem);
+  --contact-mail-size: clamp(1rem, 0.6rem + 2.2vw, 1.5rem);
+  --contact-list-width: 28rem;
+
+  /* Component: contact badge */
+  --badge-width: clamp(210px, 22vw, 270px);
+  --badge-ratio: 5 / 7.4;
+  --badge-radius: 26px;
+  --badge-frame: 9px;
+  --badge-strap-width: 34px;
+  --badge-strap-length: clamp(90px, 14vh, 150px);
+  --badge-ink: #f2f4f5;
+  --badge-ink-muted: #8c949b;
+  --badge-labs-ink: #cfe4ff;
+  --badge-accent: var(--scroll-light-color);
+  --badge-fan: 5deg;
+  /* How much of the back card shows, as a share of the card's width. */
+  --badge-peek: 0.3;
+  --badge-photo-filter: grayscale(0.85) contrast(1.08) brightness(0.92);
+  --badge-photo-lanes: 0.16;
+
+  /* Component: link preview */
+  --preview-width: 280px;
 
   /* Component: scroll light */
   --scroll-light-width: 2px;

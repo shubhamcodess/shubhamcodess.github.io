@@ -24,6 +24,8 @@ export interface BuildStory {
   /** Up to three measured facts, shown large at the top of the page. Each label names its source or conditions. */
   readonly facts?: readonly BuildHighlight[]
   readonly features: readonly string[]
+  /** A longer write-up of one real use, in paragraphs. Shown as its own section when present. */
+  readonly useCase?: { readonly title: string; readonly paragraphs: readonly string[] }
   readonly engineering?: readonly string[]
   /** Stated plainly. A project that names its limits reads as more credible, not less. */
   readonly limits?: readonly string[]
@@ -42,4 +44,6 @@ export interface Build {
   /** Private projects carry no links. The first link is the card's main action. */
   readonly links: readonly BuildLink[]
   readonly story: BuildStory
+  /** The build in motion: a recording or motion graphic, served from /public. */
+  readonly media?: { readonly kind: 'video' | 'image'; readonly src: string; readonly alt: string }
 }
