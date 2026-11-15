@@ -56,7 +56,7 @@ export function BuildsPage() {
         {/* Where to go after the work: the career behind it, or a hello. */}
         <nav className="page-onward" aria-label="Continue">
           {features.experience ? (
-            <ActionLink href={hrefTo('experience')} icon="arrowRight">
+            <ActionLink href={hrefTo('experience')} icon="arrowLeft" iconFirst>
               {buildsPage.experience}
             </ActionLink>
           ) : null}
