@@ -41,7 +41,7 @@ export const site = {
       path: 'me/',
       label: 'Me',
       title: 'Off the clock | Shubham Prakash',
-      description: 'Shubham Prakash away from work: biking, photography, filmmaking, and the places he has called home.',
+      description: 'Shubham Prakash away from work: biking, photography, filmmaking, and the places Shubham has called home.',
     },
     credentials: {
       path: 'credentials/',

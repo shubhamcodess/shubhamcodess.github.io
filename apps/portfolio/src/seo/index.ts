@@ -504,7 +504,7 @@ export function llmsTxt(root: string): string {
     '',
     `> ${owner} (${contact.badge.handle}) is a ${seo.person.jobTitle.join(' and ')} at ${seo.person.employer.name} in ${seo.person.locality}. ${site.hero.statement}`,
     '',
-    `He builds open source AI and developer tools: MCP tooling, local-model command line tools, in-browser AI and small apps. Every number on the site comes from the project's own README or benchmark. Each link below is the page's Markdown copy; drop \`index.html.md\` from it for the page itself.`,
+    `Shubham builds open source AI and developer tools: MCP tooling, local-model command line tools, in-browser AI and small apps. Every number on the site comes from the project's own README or benchmark. Each link below is the page's Markdown copy; drop \`index.html.md\` from it for the page itself.`,
     '',
     '## Pages',
     '',
