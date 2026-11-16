@@ -490,10 +490,8 @@ a.honour:focus-visible {
  */
 .patch__badge {
   display: none;
-  width: 64px;
-  height: 64px;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--ink) 14%, transparent));
+  width: 72px;
+  height: 72px;
 }
 
 @media (min-width: 480px) {
@@ -526,7 +524,7 @@ a.honour:focus-visible {
   }
 
   .patch--badge .patch__badge {
-    display: block;
+    display: grid;
   }
 }
 
@@ -542,12 +540,12 @@ a.honour:focus-visible {
   }
 
   .patch__badge {
-    display: block;
+    display: grid;
     grid-column: 2;
     grid-row: 1 / span 3;
     align-self: center;
-    width: 52px;
-    height: 52px;
+    width: 60px;
+    height: 60px;
   }
 }
 

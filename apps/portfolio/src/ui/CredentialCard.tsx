@@ -1,3 +1,4 @@
+import { BadgeImage } from './BadgeImage'
 import { Icon } from './Icon'
 import './credential-card.css'
 
@@ -44,9 +45,7 @@ export function CredentialCard({ name, issuer, level, href, image, fallbackLevel
         <span className="credcard__mark">
           <Icon name="credential" size={20} />
         </span>
-        {image ? (
-          <img className="credcard__badge" src={`${import.meta.env.BASE_URL}${image}`} alt="" loading="lazy" decoding="async" />
-        ) : null}
+        {image ? <BadgeImage className="credcard__badge" src={image} /> : null}
       </span>
       <span className="credcard__level">{level ?? fallbackLevel}</span>
       <span className="credcard__name">{name}</span>

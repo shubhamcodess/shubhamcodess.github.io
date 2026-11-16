@@ -8,6 +8,7 @@ import { hrefTo } from '../../lib/routes'
 import { usePauseOffscreen } from '../../lib/usePauseOffscreen'
 import { useStaticData } from '../../lib/useStaticData'
 import { ActionLink } from '../../ui/ActionLink'
+import { BadgeImage } from '../../ui/BadgeImage'
 import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
 import './experience.css'
@@ -68,15 +69,7 @@ export function ExperienceTeaser() {
                         <Icon name="credential" size={14} />
                         {credential.issuer}
                       </span>
-                      {credential.badge ? (
-                        <img
-                          className="patch__badge"
-                          src={`${import.meta.env.BASE_URL}${credential.badge}`}
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      ) : null}
+                      {credential.badge ? <BadgeImage className="patch__badge" src={credential.badge} /> : null}
                     </a>
                   </li>
                 ))}
