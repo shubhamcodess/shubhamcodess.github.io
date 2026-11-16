@@ -219,6 +219,7 @@ export const site = {
     wallet: 'https://www.credly.com/users/shubham-prakash.b983dbb5/badges',
     walletLabel: 'See them on Credly',
     card: 'badge',
+    homeCard: 'text',
     fallbackLevel: 'Credential',
   },
   contact: {

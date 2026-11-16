@@ -422,7 +422,8 @@ a.honour:focus-visible {
 
 .patch {
   display: grid;
-  align-content: start;
+  /* Level and title at the top, the issuer at the foot, so every patch in a row ends on the same line. */
+  grid-template-rows: auto auto 1fr;
   gap: var(--space-1);
   height: 100%;
   padding: var(--space-4);
@@ -459,14 +460,94 @@ a.honour:focus-visible {
 }
 
 .patch__issuer {
+  align-self: end;
   color: var(--ink-muted);
   font-size: var(--text-xs);
+}
+
+/* The award mark leads the patch's top line: beside the level, or beside the issuer in the badge form. */
+.patch__level,
+.patch--badge .patch__issuer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.patch__level .icon,
+.patch__issuer .icon {
+  flex: none;
+  color: var(--marker);
+}
+
+.patch__issuer .icon {
+  display: none;
+}
+
+/*
+ * The badge. Three abreast, credentialsPage.homeCard picks: "text" hides it; "badge" shows the issuer on top and the
+ * badge in the middle, without the level and name. Stacked on a phone, every patch shows its text with the badge
+ * on the right, whatever the setting.
+ */
+.patch__badge {
+  display: none;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--ink) 14%, transparent));
+}
+
+@media (min-width: 480px) {
+  .patch--badge {
+    justify-items: center;
+    gap: var(--space-3);
+    text-align: center;
+  }
+
+  .patch--badge .patch__level,
+  .patch--badge .patch__title {
+    display: none;
+  }
+
+  .patch--badge .patch__issuer .icon {
+    display: block;
+  }
+
+  .patch--badge {
+    grid-template-rows: auto 1fr;
+  }
+
+  .patch--badge .patch__issuer {
+    order: -1;
+    align-self: start;
+    color: var(--ink-muted);
+    font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .patch--badge .patch__badge {
+    display: block;
+  }
 }
 
 /* Narrow phones: three abreast would cramp the titles, so the patches stack. */
 @media (max-width: 479px) {
   .patches {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .patch {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--space-4);
+  }
+
+  .patch__badge {
+    display: block;
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: center;
+    width: 52px;
+    height: 52px;
   }
 }
 
@@ -626,9 +707,4 @@ a.honour:focus-visible {
   .career__name {
     line-height: 0.8;
   }
-}
-
-/* With the badge card, the three are wide rows, one under another: each card reads left to right, like on a phone. */
-.patches--rows {
-  grid-template-columns: minmax(0, 1fr);
 }

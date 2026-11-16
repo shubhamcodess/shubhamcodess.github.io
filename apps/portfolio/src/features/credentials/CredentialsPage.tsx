@@ -73,7 +73,7 @@ export function CredentialsPage() {
                       {issuer.name}
                     </h2>
                   </Reveal>
-                  <ul className="creds__list">
+                  <ul className={`creds__list${copy.card === 'badge' ? ' creds__list--thirds' : ''}`}>
                     {issuer.items.map((credential, index) => (
                       <li key={credential.title}>
                         <Reveal index={index} className="reveal-fill">

@@ -299,6 +299,11 @@ export interface SiteConfig {
      * "classic": the cards as they were before (home's patches, the credentials page's plain cards).
      */
     readonly card: 'badge' | 'classic'
+    /**
+     * Home's three featured credentials, always as the three stitched patches abreast.
+     * "text": level, name and issuer. "badge": the issuer on top and the credential's own badge in the middle.
+     */
+    readonly homeCard: 'text' | 'badge'
     /** The small line above a credential's name when its title names no level. */
     readonly fallbackLevel: string
   }

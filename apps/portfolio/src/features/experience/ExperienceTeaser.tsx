@@ -1,4 +1,5 @@
 import { site } from '../../config/site'
+import type { SiteConfig } from '../../config/types'
 import type { CredentialRecord } from '../../content/credentials-source'
 import { employers, featuredCredentials } from '../../content/experience'
 import { credentialsFile } from '../credentials/CredentialsPage'
@@ -7,7 +8,6 @@ import { hrefTo } from '../../lib/routes'
 import { usePauseOffscreen } from '../../lib/usePauseOffscreen'
 import { useStaticData } from '../../lib/useStaticData'
 import { ActionLink } from '../../ui/ActionLink'
-import { CredentialCard } from '../../ui/CredentialCard'
 import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
 import './experience.css'
@@ -24,6 +24,7 @@ export function ExperienceTeaser() {
   const credentials = useStaticData<readonly CredentialRecord[]>(credentialsFile)
   const tools = toolGroups.flatMap((group) => group.tools)
   const toolsRef = usePauseOffscreen<HTMLDivElement>()
+  const showBadge = (credentialsPage.homeCard as SiteConfig['credentialsPage']['homeCard']) === 'badge'
 
   return (
     <section className="panel section teaser-section" id={copy.id} aria-labelledby={headingId}>
@@ -47,34 +48,36 @@ export function ExperienceTeaser() {
               <p className="eyebrow">{credentialsPage.title}</p>
               <h3 className="section__title">{copy.credentialsTitle}</h3>
               <p className="section__lead">{copy.credentialsLead}</p>
-              <ul className={`patches${credentialsPage.card === 'badge' ? ' patches--rows' : ''}`}>
+              <ul className="patches">
                 {featuredCredentials.map((credential) => (
                   <li key={credential.href}>
-                    {credentialsPage.card === 'badge' ? (
-                      <CredentialCard
-                        compact
-                        name={credential.title}
-                        level={credential.level}
-                        issuer={credential.issuer}
-                        href={credential.href}
-                        image={credential.badge}
-                        fallbackLevel={credentialsPage.fallbackLevel}
-                        verify={credentialsPage.verify}
-                      />
-                    ) : (
-                      <a
-                        className="patch"
-                        href={credential.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        data-tilt=""
-                        aria-label={`${credentialsPage.verify}: ${credential.title}, ${credential.level}, ${credential.issuer}`}
-                      >
-                        <span className="patch__level">{credential.level}</span>
-                        <span className="patch__title">{credential.title}</span>
-                        <span className="patch__issuer">{credential.issuer}</span>
-                      </a>
-                    )}
+                    <a
+                      className={`patch${showBadge && credential.badge ? ' patch--badge' : ''}`}
+                      href={credential.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-tilt=""
+                      aria-label={`${credentialsPage.verify}: ${credential.title}, ${credential.level}, ${credential.issuer}`}
+                    >
+                      <span className="patch__level">
+                        <Icon name="credential" size={14} />
+                        {credential.level}
+                      </span>
+                      <span className="patch__title">{credential.title}</span>
+                      <span className="patch__issuer">
+                        <Icon name="credential" size={14} />
+                        {credential.issuer}
+                      </span>
+                      {credential.badge ? (
+                        <img
+                          className="patch__badge"
+                          src={`${import.meta.env.BASE_URL}${credential.badge}`}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      ) : null}
+                    </a>
                   </li>
                 ))}
               </ul>

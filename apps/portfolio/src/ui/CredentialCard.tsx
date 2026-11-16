@@ -7,13 +7,16 @@ const levels = ['Professional', 'Associate', 'Foundations', 'Fundamentals', 'Pra
 /**
  * A credential's level and name, read from its title.
  * "Claude Certified Architect, Professional" gives Professional and Claude Certified Architect;
- * "Azure Developer Associate" gives Associate and Azure Developer; "Azure Fundamentals" keeps its whole name.
+ * "Azure Developer Associate" gives Associate and Azure Developer; "Associate Cloud Engineer" gives Associate and
+ * Cloud Engineer; "Azure Fundamentals" keeps its whole name.
  */
 export function splitCredential(title: string): { readonly level?: string; readonly name: string } {
   const [, head, tail] = /^(.*), ([^,]+)$/.exec(title) ?? []
   if (head && tail && levels.includes(tail)) return { level: tail, name: head }
   const last = levels.find((level) => title.endsWith(` ${level}`))
   if (last) return { level: last, name: title.split(' ').length > 2 ? title.slice(0, -last.length - 1) : title }
+  const first = levels.find((level) => title.startsWith(`${level} `))
+  if (first) return { level: first, name: title.slice(first.length + 1) }
   return { name: title }
 }
 
@@ -27,8 +30,6 @@ interface CredentialCardProps {
   /** Shown when there is no level. */
   readonly fallbackLevel: string
   readonly verify: string
-  /** The shorter form, for home's narrow column: level beside the mark, Verify beside the issuer. */
-  readonly compact?: boolean
 }
 
 /**
@@ -36,19 +37,18 @@ interface CredentialCardProps {
  * the award mark and the level on the left, the credential's own badge on the right, then its name, its issuer
  * and Verify. The whole card is the link to the issuer's record.
  */
-export function CredentialCard({ name, issuer, level, href, image, fallbackLevel, verify, compact = false }: CredentialCardProps) {
+export function CredentialCard({ name, issuer, level, href, image, fallbackLevel, verify }: CredentialCardProps) {
   const content = (
     <>
       <span className="credcard__head">
         <span className="credcard__mark">
           <Icon name="credential" size={20} />
         </span>
-        {compact ? <span className="credcard__level">{level ?? fallbackLevel}</span> : null}
         {image ? (
           <img className="credcard__badge" src={`${import.meta.env.BASE_URL}${image}`} alt="" loading="lazy" decoding="async" />
         ) : null}
       </span>
-      {compact ? null : <span className="credcard__level">{level ?? fallbackLevel}</span>}
+      <span className="credcard__level">{level ?? fallbackLevel}</span>
       <span className="credcard__name">{name}</span>
       <span className="credcard__foot">
         <span className="credcard__issuer">{issuer}</span>
@@ -61,7 +61,7 @@ export function CredentialCard({ name, issuer, level, href, image, fallbackLevel
       </span>
     </>
   )
-  const className = `credcard${compact ? ' credcard--compact' : ''}`
+  const className = 'credcard'
   return href ? (
     <a
       className={className}
