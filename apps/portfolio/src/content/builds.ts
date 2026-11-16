@@ -61,6 +61,7 @@ export const builds = [
     highlight: { value: '0', label: 'runtime dependencies' },
     links: [
       { kind: 'code', href: 'https://github.com/shubhamcodess/tiny-browse' },
+      { kind: 'live', href: 'https://shubhamcodess.github.io/tiny-browse/' },
       { kind: 'package', href: 'https://www.npmjs.com/package/@shubhamcodess/tiny-browse' },
     ],
   },
