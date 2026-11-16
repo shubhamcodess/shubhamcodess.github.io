@@ -34,6 +34,16 @@
     "description": "A tiny MCP to give your local agent the web search capability. Use it as MCP or a dependency in Code. - shubhamcodess/tiny-browse",
     "image": "previews/423a666c6d62.png"
   },
+  "https://shubhamcodess.github.io/tiny-browse/": {
+    "title": "tiny-browse: give your local AI agent the web, in 126 kB",
+    "description": "Searches Google in the Chrome you already have and returns clean Markdown inside a hard token budget. An MCP server for your local agent and a zero-dependency Node.js library.",
+    "image": "previews/16a913a51086.png"
+  },
+  "https://www.npmjs.com/package/@shubhamcodess/tiny-browse": {
+    "title": "@shubhamcodess/tiny-browse",
+    "description": "Web search and page reading for AI agents and Node.js: an MCP server and a library. Uses your installed Chrome, returns clean Markdown within a token budget. Zero dependencies.. Latest version: 0.1.0, last published: 8 days ago. Start using @shubhamcodess/tiny-browse in your project by running `npm i @shubhamcodess/tiny-browse`. There are 1 other projects in the npm registry using @shubhamcodess/tiny-browse.",
+    "image": "previews/58d4252d2a8d.png"
+  },
   "https://shubhamcodess.github.io/fuzzy/": {
     "title": "[fuzzy] — search any GitHub repo",
     "description": "Search any GitHub repository by name or by meaning. Keyword, fuzzy and semantic code search that runs entirely in your browser."
@@ -78,12 +88,12 @@
   },
   "https://github.com/shubhamcodess": {
     "title": "shubhamcodess - Overview",
-    "description": "Here for the bigger picture. shubhamcodess has 31 repositories available. Follow their code on GitHub.",
+    "description": "Here for the bigger picture. shubhamcodess has 32 repositories available. Follow their code on GitHub.",
     "image": "previews/2c865b7ede2e.jpg"
   },
   "https://theshubhamprakash.substack.com/": {
     "title": "Beyond-Stack Development | Shubham Prakash | Substack",
-    "description": "Software engineer by trade, curious builder by habit. Sharing thoughts, experiments, and conversations on technology, AI, and the craft of building tech that matters. Click to read Beyond-Stack Development, by Shubham Prakash, a Substack publication. Launched 19 days ago.",
+    "description": "Software engineer by trade, curious builder by habit. Sharing thoughts, experiments, and conversations on technology, AI, and the craft of building tech that matters. Click to read Beyond-Stack Development, by Shubham Prakash, a Substack publication. Launched 20 days ago.",
     "image": "previews/2c3b0c514ade.png"
   },
   "https://www.credly.com/badges/cc59c5f1-1ddb-4a12-bd7f-8398b7407834/public_url": {
@@ -126,10 +136,25 @@
     "description": "A Cloud Digital Leader can articulate the capabilities of Google Cloud core products and services and how they benefit organizations. They can also describe common business use cases and how cloud solutions support an enterprise.This certification is for anyone who wishes to demonstrate their knowledge of cloud computing basics and how Google Cloud products and services can be used to achieve an organization’s goals.",
     "image": "previews/85954c09a486.png"
   },
-  "https://www.credly.com/badges/c71041ab-b384-4dd3-a31e-c6325d797f56/public_url": {
-    "title": "Microsoft Certified: Azure Fundamentals was issued by Microsoft to Shubham Prakash.",
-    "description": "Earners of the Azure Fundamentals certification have demonstrated foundational level knowledge of cloud services and how those services are provided with Microsoft Azure.",
-    "image": "previews/c24912deab02.png"
+  "https://learn.microsoft.com/api/credentials/share/en-us/ShubhamPrakash-0907/A9A4C4AC8AE15190": {
+    "title": "Microsoft Certified: Azure Developer Associate",
+    "description": "",
+    "image": "previews/learn-azure-developer.png"
+  },
+  "https://learn.microsoft.com/api/credentials/share/en-us/ShubhamPrakash-0907/A5AA8C0B9FDE08DF": {
+    "title": "Microsoft Certified: Azure Fundamentals",
+    "description": "",
+    "image": "previews/learn-azure-fundamentals.png"
+  },
+  "https://learn.microsoft.com/api/credentials/share/en-us/ShubhamPrakash-0907/BD28F1B729CDFF64": {
+    "title": "GitHub Copilot",
+    "description": "",
+    "image": "previews/learn-github-copilot.png"
+  },
+  "https://learn.microsoft.com/api/credentials/share/en-us/ShubhamPrakash-0907/31B22DB52FA5AE9B": {
+    "title": "GitHub Actions",
+    "description": "",
+    "image": "previews/learn-github-actions.png"
   },
   "https://www.credly.com/badges/b3f16bf6-86b6-4cdd-a584-096d99b3134b/public_url": {
     "title": "Introduction to Red Hat OpenShift Applications (DO101) - Ver. 4.6 was issued by Red Hat to Shubham Prakash.",

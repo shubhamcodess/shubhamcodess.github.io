@@ -25,6 +25,10 @@ const meta = (html, key) => {
   return value?.replaceAll('&amp;', '&').replaceAll('&#39;', "'").replaceAll('&quot;', '"').trim()
 }
 
+// Images chosen by hand win over what a site sends. A link whose image fails to download this time keeps the one it had.
+const fixedImages = JSON.parse(await readFile(new URL('src/content/preview-images.json', root), 'utf8'))
+const before = JSON.parse(await readFile(new URL('public/data/link-previews.json', root), 'utf8').catch(() => '{}'))
+
 const previews = {}
 await mkdir(new URL('public/previews/', root), { recursive: true })
 
@@ -41,7 +45,8 @@ for (const href of links) {
     if (!title) throw new Error('no title')
     const preview = { title, description: meta(html, 'og:description') ?? meta(html, 'description') ?? '' }
 
-    if (imageUrl) {
+    if (fixedImages[href]) preview.image = fixedImages[href]
+    else if (imageUrl) {
       const image = await fetch(new URL(imageUrl, href), { signal: AbortSignal.timeout(12_000) })
       const extension = imageTypes[image.headers.get('content-type')?.split(';')[0] ?? '']
       const bytes = Buffer.from(await image.arrayBuffer())
@@ -51,6 +56,8 @@ for (const href of links) {
         preview.image = `previews/${name}`
       }
     }
+    preview.image ??= before[href]?.image
+    if (!preview.image) delete preview.image
     previews[href] = preview
     console.log('ok  ', href)
   } catch (error) {

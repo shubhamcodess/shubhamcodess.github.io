@@ -1,0 +1,7 @@
+{
+  "//": "Link previews to use in place of the image a site sends. Microsoft Learn's credential pages all send one generic picture, so each gets its own badge, drawn into public/previews/.",
+  "https://learn.microsoft.com/api/credentials/share/en-us/ShubhamPrakash-0907/A9A4C4AC8AE15190": "previews/learn-azure-developer.png",
+  "https://learn.microsoft.com/api/credentials/share/en-us/ShubhamPrakash-0907/A5AA8C0B9FDE08DF": "previews/learn-azure-fundamentals.png",
+  "https://learn.microsoft.com/api/credentials/share/en-us/ShubhamPrakash-0907/31B22DB52FA5AE9B": "previews/learn-github-actions.png",
+  "https://learn.microsoft.com/api/credentials/share/en-us/ShubhamPrakash-0907/BD28F1B729CDFF64": "previews/learn-github-copilot.png"
+}

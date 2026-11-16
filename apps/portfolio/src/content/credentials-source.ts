@@ -37,10 +37,15 @@ export const exclude: readonly string[] = [
 ]
 
 /** Credentials that are real but not on Credly. Listed after the Credly ones of the same issuer. */
+/** Microsoft Learn's public page for each of these, from the owner's Microsoft Learn credentials dashboard. */
+const learn = (id: string) => `https://learn.microsoft.com/api/credentials/share/en-us/ShubhamPrakash-0907/${id}`
+
 export const extras: readonly CredentialRecord[] = [
-  { title: 'Azure Developer Associate', issuer: 'Microsoft', expires: '2027-07-11' },
-  { title: 'GitHub Actions', issuer: 'GitHub', expires: '2028-07-01' },
-  { title: 'GitHub Copilot', issuer: 'GitHub' },
+  { title: 'Azure Developer Associate', issuer: 'Microsoft', href: learn('A9A4C4AC8AE15190'), issued: '2022-07-11', expires: '2027-07-12' },
+  // Also on Credly; Microsoft Learn is the issuer's own record, so it replaces that badge.
+  { title: 'Azure Fundamentals', issuer: 'Microsoft', href: learn('A5AA8C0B9FDE08DF'), issued: '2021-04-07' },
+  { title: 'GitHub Actions', issuer: 'GitHub', href: learn('31B22DB52FA5AE9B'), issued: '2026-07-06', expires: '2028-07-07' },
+  { title: 'GitHub Copilot', issuer: 'GitHub', href: learn('BD28F1B729CDFF64'), issued: '2026-08-10', expires: '2028-08-11' },
 ]
 
 /** Issuer names as Credly spells them, mapped to how the page shows them. */
