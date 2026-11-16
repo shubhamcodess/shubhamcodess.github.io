@@ -26,7 +26,7 @@ export const builds = [
     title: 'whatcmd',
     kind: 'Developer tool',
     summary:
-      'Type plain English at your shell prompt and get the right command for your OS and installed tools. A local model, no API keys, and nothing runs until you press Enter.',
+      'Type plain English at your shell prompt and get the right command for your OS and tools. A local model, no API keys, and nothing runs until you press Enter.',
     year: 2026,
     stack: ['TypeScript', 'Node.js', 'Ollama', 'zsh', 'bash'],
     highlight: { value: '217 ms', label: 'median end to end, on an M4 Pro' },
@@ -83,7 +83,7 @@ export const builds = [
     title: 'openvox',
     kind: 'In-browser AI',
     summary:
-      'Talk to GitHub. Name a profile or repository and it introduces it out loud, then answers spoken questions. Speech, retrieval and the model all run in the browser.',
+      'Talk to GitHub. Name a profile or repository and it introduces it out loud, then answers spoken questions. Speech, retrieval and the model run in the browser.',
     year: 2026,
     stack: ['React', 'TypeScript', 'WebGPU', 'WebLLM'],
     highlight: { value: '0', label: 'servers. Audio never leaves the browser' },
@@ -123,7 +123,7 @@ export const builds = [
     title: 'Focusify',
     kind: 'App',
     summary:
-      'A Chrome extension that keeps YouTube on your study topic and hides the videos that do not fit. Everything runs on your machine, with no accounts and no tracking.',
+      'A Chrome extension that keeps YouTube on your study topic and hides videos that do not fit. Everything runs on your machine, with no accounts or tracking.',
     year: 2026,
     stack: ['JavaScript', 'Chrome extension', 'Ollama'],
     links: [{ kind: 'code', href: 'https://github.com/shubhamcodess/focusify-yt' }],

@@ -256,12 +256,59 @@ function seo(): Plugin {
   }
 }
 
+/** Each route's own page module, which main.tsx loads with a dynamic import. */
+const pageModules: Readonly<Record<string, string>> = {
+  home: 'src/features/home/HomePage.tsx',
+  builds: 'src/features/builds/BuildsPage.tsx',
+  experience: 'src/features/experience/ExperiencePage.tsx',
+  credentials: 'src/features/credentials/CredentialsPage.tsx',
+  me: 'src/features/me/MePage.tsx',
+  project: 'src/features/project/ProjectPage.tsx',
+  'not-found': 'src/features/not-found/NotFoundPage.tsx',
+}
+
+/**
+ * Lets each built page fetch everything it needs to draw at once, instead of in a chain.
+ * Without it the browser finds the page's own code, its styles and the text fonts only after the app script runs.
+ * Runs after seo(), so 404.html is in the bundle too.
+ */
+function preloadPage(): Plugin {
+  return {
+    name: 'portfolio-preload-page',
+    generateBundle: {
+      order: 'post',
+      handler(_options, bundle) {
+        const chunks = Object.values(bundle).filter((item) => item.type === 'chunk')
+        const fonts = Object.keys(bundle).filter((name) => /geist(-mono)?-latin-wght-normal-[\w-]+\.woff2$/.test(name))
+        for (const [fileName, asset] of Object.entries(bundle)) {
+          if (asset.type !== 'asset' || !fileName.endsWith('.html')) continue
+          const html = String(asset.source)
+          const module = pageModules[/data-route="([a-z-]+)"/.exec(html)?.[1] ?? '']
+          const page = chunks.find((chunk) => module && chunk.facadeModuleId?.endsWith(module))
+          if (!page) continue
+          const href = (name: string) => `${base}${name}`
+          const scripts = [page.fileName, ...page.imports].filter((name) => !html.includes(`/${name}"`))
+          const styles = [...(page.viteMetadata?.importedCss ?? [])].filter((name) => !html.includes(`/${name}"`))
+          const tags = [
+            ...fonts.map((name) => `<link rel="preload" as="font" type="font/woff2" crossorigin href="${href(name)}" />`),
+            ...styles.map((name) => `<link rel="preload" as="style" href="${href(name)}" />`),
+            ...scripts.map((name) => `<link rel="modulepreload" crossorigin href="${href(name)}" />`),
+          ]
+          asset.source = html.replace('</head>', `  ${tags.join('\n    ')}\n  </head>`)
+        }
+      },
+    },
+  }
+}
+
+const base = process.env.PORTFOLIO_BASE ?? '/'
+
 // One HTML file per route, so every page loads directly on static hosting with no SPA fallback.
 // PORTFOLIO_BASE is the path the site is served from, for example "/shubham-portfolio/".
 export default defineConfig({
-  base: process.env.PORTFOLIO_BASE ?? '/',
+  base,
   appType: 'mpa',
-  plugins: [react(), projectPages(), renderBlocking(), seo()],
+  plugins: [react(), projectPages(), renderBlocking(), seo(), preloadPage()],
   build: {
     target: 'es2022',
     rolldownOptions: {

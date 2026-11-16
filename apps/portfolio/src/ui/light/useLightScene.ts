@@ -45,19 +45,27 @@ export function useLightScene(
 
     const draw = () => scene?.render(seconds, eased.x)
 
+    // Fast screens get the light at most maxFps times a second; a little slack keeps a 60Hz screen at every frame.
+    const minStep = 1000 / config.maxFps - 2
+    let written = { x: '', y: '', scroll: '' }
+
     const tick = (now: number) => {
+      frame = requestAnimationFrame(tick)
+      if (last && now - last < minStep) return
       // Cap the step, so a paused tab resumes where it left off instead of jumping ahead.
       seconds += last ? Math.min(50, now - last) / 1000 : 0
       last = now
       if (depth) {
         eased.x += (target.x - eased.x) * pointerEase
         eased.y += (target.y - eased.y) * pointerEase
-        hero.style.setProperty('--light-pointer-x', eased.x.toFixed(4))
-        hero.style.setProperty('--light-pointer-y', eased.y.toFixed(4))
-        hero.style.setProperty('--light-scroll', `${Math.max(0, window.scrollY).toFixed(1)}px`)
+        // Only touch the styles when a value changes, so a still pointer costs no style work.
+        const next = { x: eased.x.toFixed(4), y: eased.y.toFixed(4), scroll: `${Math.max(0, window.scrollY).toFixed(1)}px` }
+        if (next.x !== written.x) hero.style.setProperty('--light-pointer-x', next.x)
+        if (next.y !== written.y) hero.style.setProperty('--light-pointer-y', next.y)
+        if (next.scroll !== written.scroll) hero.style.setProperty('--light-scroll', next.scroll)
+        written = next
       }
       draw()
-      frame = requestAnimationFrame(tick)
     }
 
     const sync = () => {

@@ -4,6 +4,7 @@ import { employers, featuredCredentials } from '../../content/experience'
 import { credentialsFile } from '../credentials/CredentialsPage'
 import { toolGroups } from '../../content/tools'
 import { hrefTo } from '../../lib/routes'
+import { usePauseOffscreen } from '../../lib/usePauseOffscreen'
 import { useStaticData } from '../../lib/useStaticData'
 import { ActionLink } from '../../ui/ActionLink'
 import { Icon } from '../../ui/Icon'
@@ -21,6 +22,7 @@ export function ExperienceTeaser() {
   const headingId = `${copy.id}-title`
   const credentials = useStaticData<readonly CredentialRecord[]>(credentialsFile)
   const tools = toolGroups.flatMap((group) => group.tools)
+  const toolsRef = usePauseOffscreen<HTMLDivElement>()
 
   return (
     <section className="panel section teaser-section" id={copy.id} aria-labelledby={headingId}>
@@ -99,7 +101,7 @@ export function ExperienceTeaser() {
           ))}
         </div>
 
-        <div className="tools" role="group" aria-label={copy.toolsLabel}>
+        <div className="tools" ref={toolsRef} role="group" aria-label={copy.toolsLabel}>
           {/* The list runs twice so the drift can loop without a seam. The copy is hidden from screen readers. */}
           {[false, true].map((copyOf) => (
             <ul

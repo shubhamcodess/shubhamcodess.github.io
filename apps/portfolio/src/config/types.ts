@@ -120,6 +120,10 @@ export interface HeroLightConfig {
   /** How dim the floor gets as it comes toward the viewer, 0 to 1. */
   readonly nearFade: number
   readonly maxPixelRatio: number
+  /** The most pixels the light draws per frame. On large screens it renders smaller and the browser scales it up. */
+  readonly maxPixels: number
+  /** The most frames a second it draws. 120Hz screens would otherwise draw it twice as often for no visible gain. */
+  readonly maxFps: number
   readonly parallax: {
     /** How far the light follows the pointer, as a fraction of the scene. */
     readonly pointerLight: number

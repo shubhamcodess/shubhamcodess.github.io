@@ -167,7 +167,8 @@ export function createCoveLight(canvas: HTMLCanvasElement, config: HeroLightConf
 
   return {
     resize() {
-      const ratio = Math.min(window.devicePixelRatio || 1, config.maxPixelRatio)
+      const area = Math.max(1, canvas.clientWidth * canvas.clientHeight)
+      const ratio = Math.min(window.devicePixelRatio || 1, config.maxPixelRatio, Math.sqrt(config.maxPixels / area))
       const width = Math.max(1, Math.round(canvas.clientWidth * ratio))
       const height = Math.max(1, Math.round(canvas.clientHeight * ratio))
       if (canvas.width !== width || canvas.height !== height) {

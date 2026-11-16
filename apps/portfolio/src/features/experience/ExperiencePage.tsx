@@ -160,7 +160,9 @@ export function ExperiencePage() {
                       >
                         <span className="honour__frame">
                           <img
-                            src={`${import.meta.env.BASE_URL}${item.certificate}`}
+                            src={`${import.meta.env.BASE_URL}${item.thumbnail ?? item.certificate}`}
+                            width={1600}
+                            height={1125}
                             alt={`Certificate: ${item.title}`}
                             loading="lazy"
                             decoding="async"

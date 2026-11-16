@@ -60,16 +60,23 @@
   border: var(--hairline) solid var(--marker);
 }
 
-/* The present pulses softly: the lane is still running. */
-.career__layer:first-of-type > .career__mark:first-child .career__node {
+/*
+ * The present pulses softly: the lane is still running. The pulse is a ring that only fades and scales,
+ * so the compositor runs it and the page is never repainted for it.
+ */
+.career__layer:first-of-type > .career__mark:first-child .career__node::after {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--space-1) - 1px);
+  border: 1px solid var(--marker-lane);
+  border-radius: 50%;
+  opacity: 0;
   animation: career-pulse 2.6s var(--ease-out) infinite;
 }
 
 @keyframes career-pulse {
   50% {
-    box-shadow:
-      0 0 0 var(--space-1) var(--surface),
-      0 0 0 calc(var(--space-1) + 1px) var(--marker-lane);
+    opacity: 1;
   }
 }
 
@@ -206,6 +213,7 @@ a.honour:focus-visible {
 .honour__frame img {
   display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 10 / 7;
   object-fit: cover;
   border-radius: calc(var(--radius-md) - var(--space-2));
@@ -508,6 +516,11 @@ a.honour:focus-visible {
   .tools:hover .tools__track {
     animation-play-state: paused;
   }
+}
+
+/* Off screen the strip stops, so it costs nothing while the visitor reads elsewhere. */
+.tools[data-offscreen] .tools__track {
+  animation-play-state: paused;
 }
 
 /* Without motion the strip stands still and can be scrolled sideways. */

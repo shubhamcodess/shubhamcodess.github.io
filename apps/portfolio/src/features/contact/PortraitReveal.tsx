@@ -27,20 +27,41 @@ export function PortraitReveal() {
     const context = canvas?.getContext('2d')
     if (!canvas || !context) return
     const image = new Image()
-    const seeds = new Map<number, number>()
+    const seeds: number[] = []
+    // Every cell is one of a few dozen greys, so each grey is drawn once into a strip of sprites
+    // and the field is stamped from it: one image copy per cell instead of building a rounded path.
+    const shades = { min: 28, count: 43 }
+    let atlas: { canvas: HTMLCanvasElement; size: number; tile: number } | null = null
+    const atlasFor = (size: number) => {
+      if (atlas?.size === size) return atlas
+      const tile = Math.ceil(size)
+      const sheet = document.createElement('canvas')
+      sheet.width = tile * shades.count
+      sheet.height = tile
+      const pen = sheet.getContext('2d')
+      if (!pen) return null
+      for (let level = 0; level < shades.count; level++) {
+        const shade = shades.min + level
+        const x = level * tile
+        pen.fillStyle = '#0d0e10'
+        pen.fillRect(x, 0, tile, tile)
+        pen.fillStyle = `rgb(${shade} ${shade} ${shade + 3})`
+        pen.beginPath()
+        const inset = size * cellGap
+        const side = size * (1 - cellGap * 2)
+        if (pen.roundRect) pen.roundRect(x + inset, inset, side, side, size * cellRadius)
+        else pen.rect(x + inset, inset, side, side)
+        pen.fill()
+      }
+      atlas = { canvas: sheet, size, tile }
+      return atlas
+    }
     let frame = 0
     let start = 0
     let seen = false
     let playing = false
 
-    const seedOf = (index: number) => {
-      let seed = seeds.get(index)
-      if (seed === undefined) {
-        seed = Math.random()
-        seeds.set(index, seed)
-      }
-      return seed
-    }
+    const seedOf = (index: number) => (seeds[index] ??= Math.random())
 
     // `elapsed` is ms since the reveal began. Infinity draws the finished photo.
     const draw = (elapsed: number) => {
@@ -72,6 +93,8 @@ export function PortraitReveal() {
       if (elapsed === Infinity) return
 
       const size = reveal.cell * ratio
+      const sprites = atlasFor(size)
+      if (!sprites) return
       const columns = Math.ceil(width / size)
       const rows = Math.ceil(height / size)
       // The dissolve eases in and out, so it gathers pace and settles instead of sweeping at one speed.
@@ -88,17 +111,14 @@ export function PortraitReveal() {
           // The field breathes in slow waves that roll down and across it, one per pulse.
           const wave = Math.sin(beat - row * 0.45 - column * 0.14) * 0.5 + 0.5
           const shade = Math.round(28 + seed * 16 + wave * 26)
-          const x = column * size
-          const y = row * size
           context.globalAlpha = alpha
-          context.fillStyle = '#0d0e10'
-          context.fillRect(x, y, size, size)
-          context.fillStyle = `rgb(${shade} ${shade} ${shade + 3})`
-          context.beginPath()
-          if (context.roundRect)
-            context.roundRect(x + size * cellGap, y + size * cellGap, size * (1 - cellGap * 2), size * (1 - cellGap * 2), size * cellRadius)
-          else context.rect(x + size * cellGap, y + size * cellGap, size * (1 - cellGap * 2), size * (1 - cellGap * 2))
-          context.fill()
+          const level = Math.min(shades.count - 1, Math.max(0, shade - shades.min))
+          // Whole-pixel edges, so neighbouring cells meet exactly and no photo shows through the seams.
+          const x = Math.floor(column * size)
+          const y = Math.floor(row * size)
+          const w = Math.floor((column + 1) * size) - x
+          const h = Math.floor((row + 1) * size) - y
+          context.drawImage(sprites.canvas, level * sprites.tile, 0, size, size, x, y, w, h)
         }
       }
       context.globalAlpha = 1
@@ -135,7 +155,16 @@ export function PortraitReveal() {
     )
     visibility.observe(canvas)
     image.onload = play
-    image.src = portrait
+    // The photo is at the foot of the page: fetch it only as the visitor nears it, so it never competes with the first paint.
+    const nearby = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return
+        nearby.disconnect()
+        image.src = portrait
+      },
+      { rootMargin: '800px 0px' },
+    )
+    nearby.observe(canvas)
     const resize = new ResizeObserver(() => {
       if (canvas.dataset.state === 'done') draw(Infinity)
     })
@@ -143,6 +172,7 @@ export function PortraitReveal() {
 
     return () => {
       cancelAnimationFrame(frame)
+      nearby.disconnect()
       visibility.disconnect()
       resize.disconnect()
     }

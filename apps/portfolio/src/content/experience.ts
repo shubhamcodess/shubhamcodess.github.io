@@ -94,6 +94,8 @@ export interface Recognition {
    * When set, the certificate follows the pointer while it is over this recognition.
    */
   readonly certificate?: string
+  /** A small copy of the certificate for its frame on the page, 640px wide. The full image opens on click. */
+  readonly thumbnail?: string
 }
 
 export const recognition: readonly Recognition[] = [
@@ -102,6 +104,7 @@ export const recognition: readonly Recognition[] = [
     when: '2026',
     by: 'IBM Consulting',
     certificate: 'certificates/ibm-delivery-exemplar-2026.jpg',
+    thumbnail: 'certificates/ibm-delivery-exemplar-2026-640.webp',
   },
 ]
 

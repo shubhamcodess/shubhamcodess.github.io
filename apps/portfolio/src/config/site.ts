@@ -135,6 +135,8 @@ export const site = {
       warmShare: 0.18,
       nearFade: 0.8,
       maxPixelRatio: 1.5,
+      maxPixels: 1_600_000,
+      maxFps: 60,
       parallax: { pointerLight: 0.03, pointerContent: 6, scrollLight: 0.35 },
     },
   },
