@@ -107,7 +107,7 @@ export function ProjectPage({ build }: ProjectPageProps) {
       {/* The story: the build in motion, then a rail of particulars beside the reading column. */}
       <div className="panel project-story">
         <div className="container">
-          {features.projectMedia ? (
+          {features.projectMedia && (motion || build.media || features.projectMediaPending) ? (
             <Reveal>
               <figure className="project-stage">
                 {motion ? (

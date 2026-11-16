@@ -256,6 +256,7 @@ export const site = {
     credentials: true,
     mePage: false, // Turned off until /me is finished. Set true to bring back the page, its links and its place in the sitemap.
     projectMedia: true,
+    projectMediaPending: false,
     tilt: true,
     chalkTrail: true,
     cometCursor: true,

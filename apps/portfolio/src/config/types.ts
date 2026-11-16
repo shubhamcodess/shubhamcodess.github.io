@@ -73,8 +73,10 @@ export interface FeatureFlags {
   readonly credentials: boolean
   /** The /me page (life away from work) and the links to it. */
   readonly mePage: boolean
-  /** The framed stage for a build's recording on its page, shown even before the recording exists. */
+  /** The framed stage for a build's motion graphic or recording on its page. */
   readonly projectMedia: boolean
+  /** Keep the stage, with its "coming" note, on builds that have no preview yet. Off hides it there until one is added. */
+  readonly projectMediaPending: boolean
   /** The pointer drawn as a comet: dart head, speed tail, bow wave. Off brings back the system arrow. */
   readonly cometCursor: boolean
   /** A short chalk line and a little dust behind the pointer. */
