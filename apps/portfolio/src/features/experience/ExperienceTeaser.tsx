@@ -7,6 +7,7 @@ import { hrefTo } from '../../lib/routes'
 import { usePauseOffscreen } from '../../lib/usePauseOffscreen'
 import { useStaticData } from '../../lib/useStaticData'
 import { ActionLink } from '../../ui/ActionLink'
+import { CredentialCard } from '../../ui/CredentialCard'
 import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
 import './experience.css'
@@ -46,21 +47,34 @@ export function ExperienceTeaser() {
               <p className="eyebrow">{credentialsPage.title}</p>
               <h3 className="section__title">{copy.credentialsTitle}</h3>
               <p className="section__lead">{copy.credentialsLead}</p>
-              <ul className="patches">
+              <ul className={`patches${credentialsPage.card === 'badge' ? ' patches--rows' : ''}`}>
                 {featuredCredentials.map((credential) => (
                   <li key={credential.href}>
-                    <a
-                      className="patch"
-                      href={credential.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      data-tilt=""
-                      aria-label={`${credentialsPage.verify}: ${credential.title}, ${credential.level}, ${credential.issuer}`}
-                    >
-                      <span className="patch__level">{credential.level}</span>
-                      <span className="patch__title">{credential.title}</span>
-                      <span className="patch__issuer">{credential.issuer}</span>
-                    </a>
+                    {credentialsPage.card === 'badge' ? (
+                      <CredentialCard
+                        compact
+                        name={credential.title}
+                        level={credential.level}
+                        issuer={credential.issuer}
+                        href={credential.href}
+                        image={credential.badge}
+                        fallbackLevel={credentialsPage.fallbackLevel}
+                        verify={credentialsPage.verify}
+                      />
+                    ) : (
+                      <a
+                        className="patch"
+                        href={credential.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-tilt=""
+                        aria-label={`${credentialsPage.verify}: ${credential.title}, ${credential.level}, ${credential.issuer}`}
+                      >
+                        <span className="patch__level">{credential.level}</span>
+                        <span className="patch__title">{credential.title}</span>
+                        <span className="patch__issuer">{credential.issuer}</span>
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

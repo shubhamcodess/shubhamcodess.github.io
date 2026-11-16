@@ -116,6 +116,8 @@ export interface FeaturedCredential {
   readonly title: string
   readonly issuer: string
   readonly href: `https://${string}`
+  /** The credential's own badge, as a path under /public. */
+  readonly badge?: string
 }
 
 /**
@@ -128,17 +130,20 @@ export const featuredCredentials: readonly FeaturedCredential[] = [
     title: 'Claude Certified Architect',
     issuer: 'Anthropic',
     href: 'https://www.credly.com/badges/cc59c5f1-1ddb-4a12-bd7f-8398b7407834/public_url',
+    badge: 'badges/claude-certified-architect-professional.webp',
   },
   {
     level: 'Foundations',
     title: 'Claude Certified Architect',
     issuer: 'Anthropic',
     href: 'https://www.credly.com/badges/a2e244ea-f008-415b-a4b1-5473415de90e/public_url',
+    badge: 'badges/claude-certified-architect-foundations.webp',
   },
   {
     level: 'Associate',
     title: 'Cloud Engineer',
     issuer: 'Google Cloud',
     href: 'https://www.credly.com/badges/e5c52470-9f7f-41b7-9ed5-1d300f5e7b5c/public_url',
+    badge: 'badges/associate-cloud-engineer.webp',
   },
 ]

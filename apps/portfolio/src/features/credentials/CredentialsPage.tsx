@@ -1,9 +1,10 @@
 import { site } from '../../config/site'
-import type { CredentialRecord } from '../../content/credentials-source'
+import { issuerLogos, type CredentialRecord } from '../../content/credentials-source'
 import { Header } from '../../layout/Header'
 import { hrefTo } from '../../lib/routes'
 import { useStaticData } from '../../lib/useStaticData'
 import { ActionLink } from '../../ui/ActionLink'
+import { CredentialCard, splitCredential } from '../../ui/CredentialCard'
 import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
 import './credentials.css'
@@ -76,15 +77,26 @@ export function CredentialsPage() {
                     {issuer.items.map((credential, index) => (
                       <li key={credential.title}>
                         <Reveal index={index} className="reveal-fill">
-                          <div className="cred" data-tilt="">
-                            <Icon name="credential" size={20} />
-                            <span className="cred__title">{credential.title}</span>
-                            {credential.href ? (
-                              <ActionLink href={credential.href} external label={`${copy.verify}: ${credential.title}`}>
-                                {copy.verify}
-                              </ActionLink>
-                            ) : null}
-                          </div>
+                          {copy.card === 'badge' ? (
+                            <CredentialCard
+                              {...splitCredential(credential.title)}
+                              issuer={issuer.name}
+                              href={credential.href}
+                              image={credential.badge ?? issuerLogos[issuer.name]}
+                              fallbackLevel={copy.fallbackLevel}
+                              verify={copy.verify}
+                            />
+                          ) : (
+                            <div className="cred" data-tilt="">
+                              <Icon name="credential" size={20} />
+                              <span className="cred__title">{credential.title}</span>
+                              {credential.href ? (
+                                <ActionLink href={credential.href} external label={`${copy.verify}: ${credential.title}`}>
+                                  {copy.verify}
+                                </ActionLink>
+                              ) : null}
+                            </div>
+                          )}
                         </Reveal>
                       </li>
                     ))}

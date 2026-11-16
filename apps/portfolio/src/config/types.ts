@@ -293,6 +293,14 @@ export interface SiteConfig {
     /** Where the full record lives, offered when the list can't load. */
     readonly wallet: `https://${string}`
     readonly walletLabel: string
+    /**
+     * How every credential card looks, on home and on /credentials/.
+     * "badge": the stitched card with the award mark, the credential's own badge, level, name, issuer and Verify.
+     * "classic": the cards as they were before (home's patches, the credentials page's plain cards).
+     */
+    readonly card: 'badge' | 'classic'
+    /** The small line above a credential's name when its title names no level. */
+    readonly fallbackLevel: string
   }
   readonly contact: {
     readonly id: string

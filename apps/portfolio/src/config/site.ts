@@ -218,6 +218,8 @@ export const site = {
     failed: 'The list could not load.',
     wallet: 'https://www.credly.com/users/shubham-prakash.b983dbb5/badges',
     walletLabel: 'See them on Credly',
+    card: 'badge',
+    fallbackLevel: 'Credential',
   },
   contact: {
     id: 'contact',

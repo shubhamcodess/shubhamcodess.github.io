@@ -13,6 +13,20 @@ export interface CredentialRecord {
   /** ISO dates. */
   readonly issued?: string
   readonly expires?: string
+  /** The credential's own badge image, as a path under /public. Filled in by the script from public/badges/. */
+  readonly badge?: string
+}
+
+/**
+ * The issuer's official mark, shown in a card's badge spot when a credential has no badge image of its own.
+ * Simple Icons (CC0) where it has the issuer; Microsoft's four squares drawn to its published colours.
+ */
+export const issuerLogos: Readonly<Record<string, string>> = {
+  Anthropic: 'issuers/anthropic.svg',
+  'Google Cloud': 'issuers/googlecloud.svg',
+  Microsoft: 'issuers/microsoft.svg',
+  GitHub: 'issuers/github.svg',
+  'Red Hat': 'issuers/redhat.svg',
 }
 
 export const credlyUser = 'shubham-prakash.b983dbb5'

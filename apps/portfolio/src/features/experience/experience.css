@@ -627,3 +627,8 @@ a.honour:focus-visible {
     line-height: 0.8;
   }
 }
+
+/* With the badge card, the three are wide rows, one under another: each card reads left to right, like on a phone. */
+.patches--rows {
+  grid-template-columns: minmax(0, 1fr);
+}
