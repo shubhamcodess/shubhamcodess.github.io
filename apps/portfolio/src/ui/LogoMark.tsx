@@ -19,7 +19,9 @@ export function LogoMark() {
         <rect x="110" y="110" width="760" height="760" rx="82" fill="black" />
       </mask>
       <rect className="logo-mark__step" x="145" y="145" width="760" height="760" rx="82" mask={`url(#${mask})`} />
-      <path className="logo-mark__letters" d={letters} fillRule="evenodd" transform="translate(490 490) scale(0.82) translate(-490 -490)" />
+      <g className="logo-mark__lift">
+        <path className="logo-mark__letters" d={letters} fillRule="evenodd" transform="translate(490 490) scale(0.82) translate(-490 -490)" />
+      </g>
     </svg>
   )
 }

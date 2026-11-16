@@ -18,3 +18,37 @@
 .logo-mark__letters {
   fill: var(--ink);
 }
+
+/*
+ * Hover: the tile tips back in 3D and leans, and the letters lift off it, so the mark reads as a raised plate.
+ * Pointer devices only; keyboard focus gets the same. Reduced motion keeps the pose but drops the movement.
+ */
+.logo-mark,
+.logo-mark__lift {
+  transition: transform 320ms var(--ease-out);
+}
+
+@media (hover: hover) {
+  a:hover > .logo-mark {
+    transform: perspective(220px) rotateX(16deg) rotateY(-20deg) skewY(-4deg);
+  }
+
+  a:hover > .logo-mark .logo-mark__lift {
+    transform: translate(-40px, -40px);
+  }
+}
+
+a:focus-visible > .logo-mark {
+  transform: perspective(220px) rotateX(16deg) rotateY(-20deg) skewY(-4deg);
+}
+
+a:focus-visible > .logo-mark .logo-mark__lift {
+  transform: translate(-40px, -40px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-mark,
+  .logo-mark__lift {
+    transition: none;
+  }
+}

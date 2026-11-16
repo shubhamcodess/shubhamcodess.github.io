@@ -79,7 +79,7 @@ export const site = {
       path: 'social.png',
       width: 1200,
       height: 630,
-      alt: 'Shubham Prakash, AI Engineer, beside his developer ID badge',
+      alt: 'Shubham Prakash, AI Engineer, with a developer ID badge',
     },
     projectTitle: '{title} | {kind} by Shubham Prakash',
     themeColor: { light: '#f3ede1', dark: '#0a0d14' },
