@@ -20,35 +20,56 @@
 }
 
 /*
- * Hover: the tile tips back in 3D and leans, and the letters lift off it, so the mark reads as a raised plate.
+ * Hover: the tile skews back while the letters come up off it, leaving their shadow on the tile.
  * Pointer devices only; keyboard focus gets the same. Reduced motion keeps the pose but drops the movement.
  */
-.logo-mark,
+.logo-mark {
+  overflow: visible;
+}
+
+.logo-mark__plate,
 .logo-mark__lift {
-  transition: transform 320ms var(--ease-out);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 340ms var(--ease-out);
+}
+
+.logo-mark__shade {
+  fill: var(--logo-mark-step);
+  opacity: 0;
+  transition: opacity 340ms var(--ease-out);
 }
 
 @media (hover: hover) {
-  a:hover > .logo-mark {
-    transform: perspective(220px) rotateX(16deg) rotateY(-20deg) skewY(-4deg);
+  a:hover > .logo-mark .logo-mark__plate {
+    transform: skew(-10deg, 4deg) scale(0.96);
   }
 
   a:hover > .logo-mark .logo-mark__lift {
-    transform: translate(-40px, -40px);
+    transform: translate(-50px, -60px) scale(1.06);
+  }
+
+  a:hover > .logo-mark .logo-mark__shade {
+    opacity: 1;
   }
 }
 
-a:focus-visible > .logo-mark {
-  transform: perspective(220px) rotateX(16deg) rotateY(-20deg) skewY(-4deg);
+a:focus-visible > .logo-mark .logo-mark__plate {
+  transform: skew(-10deg, 4deg) scale(0.96);
 }
 
 a:focus-visible > .logo-mark .logo-mark__lift {
-  transform: translate(-40px, -40px);
+  transform: translate(-50px, -60px) scale(1.06);
+}
+
+a:focus-visible > .logo-mark .logo-mark__shade {
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .logo-mark,
-  .logo-mark__lift {
+  .logo-mark__plate,
+  .logo-mark__lift,
+  .logo-mark__shade {
     transition: none;
   }
 }

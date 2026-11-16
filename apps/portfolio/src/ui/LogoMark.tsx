@@ -10,6 +10,8 @@ const letters =
   'M500 170 213 334 213 435 513 610 513 747 498 754 278 628 277 563 213 525 213 665 500 830 578 785 577 573 278 399 277 372 500 244 722 372 721 394 556 491 621 528 786 430 786 334Z' +
   'M500 306 379 383 500 460 621 383Z'
 
+const fit = 'translate(490 490) scale(0.82) translate(-490 -490)'
+
 export function LogoMark() {
   const mask = useId()
   return (
@@ -18,9 +20,13 @@ export function LogoMark() {
         <rect x="100" y="100" width="815" height="815" fill="white" />
         <rect x="110" y="110" width="760" height="760" rx="82" fill="black" />
       </mask>
-      <rect className="logo-mark__step" x="145" y="145" width="760" height="760" rx="82" mask={`url(#${mask})`} />
+      <g className="logo-mark__plate">
+        <rect className="logo-mark__step" x="145" y="145" width="760" height="760" rx="82" mask={`url(#${mask})`} />
+        {/* The letters' shadow on the tile, seen only once they lift off it on hover. */}
+        <path className="logo-mark__shade" d={letters} fillRule="evenodd" transform={fit} />
+      </g>
       <g className="logo-mark__lift">
-        <path className="logo-mark__letters" d={letters} fillRule="evenodd" transform="translate(490 490) scale(0.82) translate(-490 -490)" />
+        <path className="logo-mark__letters" d={letters} fillRule="evenodd" transform={fit} />
       </g>
     </svg>
   )
