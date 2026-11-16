@@ -1,0 +1,107 @@
+/*
+ * One credential card, on home and on /credentials/, built from the site's own tokens.
+ * Top row: the award mark and the level on the left, the credential's own badge on the right.
+ * Then the name, the issuer, and Verify at the foot. The patch's stitched line runs just inside the edge.
+ */
+.cred.cc,
+.patch.cc {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-1);
+  height: 100%;
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  color: var(--ink);
+  background: var(--surface-raised);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+}
+
+.cc::before {
+  content: '';
+  position: absolute;
+  inset: var(--patch-stitch-inset);
+  border: var(--hairline) dashed var(--patch-stitch);
+  border-radius: calc(var(--radius-md) - var(--patch-stitch-inset));
+  pointer-events: none;
+}
+
+.cc__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.cc__mark {
+  display: flex;
+  padding-top: var(--space-1);
+  color: var(--marker);
+}
+
+.cc__level {
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cc__badge {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--ink) 14%, transparent));
+}
+
+.cc__name {
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-snug);
+  text-wrap: balance;
+}
+
+.cc__issuer {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+.cc__verify {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: start;
+  margin-top: auto;
+  padding-top: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.cc__verify > span {
+  border-bottom: 1px dotted var(--link-underline);
+}
+
+@media (hover: hover) {
+  .cc:hover .cc__verify > span {
+    border-bottom-color: var(--link-underline-hover);
+  }
+}
+
+/* Home's three sit in a narrow column: the same card, a size down. */
+.patches .cc {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+}
+
+.patches .cc__badge {
+  width: 44px;
+  height: 44px;
+}
+
+.patches .cc__name {
+  font-size: var(--text-sm);
+}
+
+.patches .cc__level {
+  font-size: 0.6875rem;
+}
