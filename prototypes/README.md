@@ -31,6 +31,7 @@ Keep every prototype here. Don't overwrite or delete one: new ideas get a new nu
 | `26-mto-drawing` | mcp-token-optimizer's production drawing: a rack, a window striking real JSON lines, a drawer of kept originals, and a reel of hand-drawn agent marks |
 | `27-mto-stream` | The same drawing, far simpler and skewed like the story's figures: an outlined server, anonymous JSON lines, and a stream of tokens where some get cut |
 | `28-mto-window` | Back to prototype 26's rack, window and agent reel in the old slight skew: tokens pour in as small cards, and the JSON and pruning are pen lines with no text |
+| `33-not-found` | The page for an address with no page: home's header and night sky, a mono 404, "Page not found" at the hero's size, the address that was typed, and Home and Builds buttons. Runs over the built portfolio with `serve.mjs`. |
 | `09-nav-skyline` | Traditional top nav with the daytime inverted skyline, three ways of fitting them together: Street, Apart and Behind. On scroll it keeps a bar, or drops it for floating buttons with a Clear, Fog or Mist face. Logo, links and page text are placeholders. |
 
 The four themes in `08-daylight-themes` are now in the real site, in `packages/design/src/palettes.ts`.
