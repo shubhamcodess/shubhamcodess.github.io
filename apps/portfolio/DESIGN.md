@@ -188,6 +188,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 | A build | `/builds/<slug>/` | Any build card, the previous and next links on a build |
 | Experience | `/experience/` | Header, hero, the home teaser, the credentials page, footer |
 | Credentials | `/credentials/` | The home teaser, the experience page, footer |
+| Not found | any address with no page (`404.html`) | A mistyped or old link |
 
 - **Home** is one scroll: hero, featured builds, an experience teaser, contact.
 - **Header links differ by page,** set by `nav` in the config, so a phone header stays uncluttered:
@@ -207,6 +208,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - **All builds:** filter chips group it by kind; a kind needs at least two builds. At its foot: "← Professional experience" on the left and "Say hello →" on the right. In a two-link row the left link's arrow always points left.
 - Featured holds one to five builds, with a designed grid for each count: 1 full width, 2 halves, 3 thirds, 4 as two rows of two, 5 as two halves over three thirds.
 - The hero's action chips fade out once the visitor has scrolled past them.
+- **Not found:** home's header and night sky, a small mono `404`, "Page not found" in Geist at up to 72px (well under the hero name, so it isn't loud), the address that was typed in a mono chip, and Home and Builds as glass chips. No other sections. Status 404 and noindex. The words are `notFound` in the config. From prototype `33-not-found`.
 
 ## Project page
 

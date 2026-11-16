@@ -21,6 +21,7 @@ function resolvePage(route: string | undefined): Page | null {
     const build = site.features.projectPages ? buildFromPath(window.location.pathname) : undefined
     return build ? { id: 'project', build } : null
   }
+  if (route === 'not-found') return { id: 'notFound' }
   if (route === 'me' && !site.features.mePage) return null
   return isRouteId(route) ? { id: route } : null
 }

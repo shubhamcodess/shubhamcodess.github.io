@@ -103,6 +103,15 @@ export const site = {
       { label: 'Experience', to: 'experience' },
     ],
   },
+  notFound: {
+    code: '404',
+    title: 'Page not found',
+    lead: ['Nothing lives at ', '. It may have moved, or the address has a typo.'],
+    actions: [
+      { label: 'Home', to: 'home' },
+      { label: 'Builds', to: 'builds' },
+    ],
+  },
   hero: {
     name: ['Shubham', 'Prakash'],
     role: 'Cloud Full Stack Developer',

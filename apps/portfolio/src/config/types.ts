@@ -141,6 +141,14 @@ export interface HeroConfig {
   readonly light: HeroLightConfig
 }
 
+/** The page at any address with no page (404.html). The address that was typed sits between the two parts of `lead`. */
+export interface NotFoundConfig {
+  readonly code: string
+  readonly title: string
+  readonly lead: readonly [before: string, after: string]
+  readonly actions: readonly { readonly label: string; readonly to: RouteId }[]
+}
+
 type S = BuildSlug
 /** One to five builds. The featured grid has a designed layout for each count, and none beyond five. */
 export type FeaturedSlugs = readonly [S] | readonly [S, S] | readonly [S, S, S] | readonly [S, S, S, S] | readonly [S, S, S, S, S]
@@ -195,6 +203,7 @@ export interface SiteConfig {
   /** The header's links on each page. Keep each short: on a phone the header holds the logo, these and two icons. */
   readonly nav: Readonly<Record<NavPage, readonly NavItem[]>>
   readonly hero: HeroConfig
+  readonly notFound: NotFoundConfig
   readonly featured: {
     readonly id: string
     readonly title: string

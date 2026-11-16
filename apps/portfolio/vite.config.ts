@@ -82,6 +82,9 @@ function renderBlocking(): Plugin {
   }
 }
 
+/** Home's HTML made into the 404 page: the app reads the route and draws the not-found page instead. */
+const notFoundHtml = (html: string) => html.replace('data-route="home"', 'data-route="not-found"')
+
 const seoMarker = /\s*<!-- seo:[^>]*-->/
 const routeOf = (html: string) => /data-route="([a-z]+)"/.exec(html)?.[1]
 const siteRoot = () => `${site.url}${process.env.PORTFOLIO_BASE ?? '/'}`
@@ -204,7 +207,7 @@ function seo(): Plugin {
           // Known pages have been rewritten to their index.html by now; an address still without a file type names nothing.
           const path = (request.url ?? '').split('?')[0] ?? ''
           if (request.method !== 'GET' || !request.headers.accept?.includes('text/html') || extname(path)) return next()
-          const html = await server.transformIndexHtml(`${base}index.html`, readFileSync('index.html', 'utf8'), '404.html')
+          const html = await server.transformIndexHtml(`${base}index.html`, notFoundHtml(readFileSync('index.html', 'utf8')), '404.html')
           response.statusCode = 404
           response.setHeader('content-type', 'text/html; charset=utf-8')
           response.end(html)
@@ -226,10 +229,10 @@ function seo(): Plugin {
               `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${contentSecurityPolicy(html)}" />`,
             )
 
-        // GitHub Pages serves 404.html for any unknown address. It is the home page, marked noindex.
+        // GitHub Pages serves 404.html for any unknown address. It is home's HTML naming its own page, marked noindex.
         const home = bundle['index.html']
         if (home?.type === 'asset')
-          this.emitFile({ type: 'asset', fileName: '404.html', source: finish(String(home.source), { id: 'notFound' }) })
+          this.emitFile({ type: 'asset', fileName: '404.html', source: finish(notFoundHtml(String(home.source)), { id: 'notFound' }) })
 
         for (const [fileName, asset] of Object.entries(bundle)) {
           if (asset.type !== 'asset' || !fileName.endsWith('.html') || fileName === '404.html') continue
