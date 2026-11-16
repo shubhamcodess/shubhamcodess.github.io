@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
+import { extname } from 'node:path'
 import react from '@vitejs/plugin-react'
 import { defineConfig, type Plugin } from 'vite'
 import { site } from './src/config/site'
@@ -171,6 +172,43 @@ function seo(): Plugin {
         const tags = headTags(page, { root, portrait: `${root}src/assets/portrait.webp`, credentials: readCredentials() })
         return html.replace(seoMarker, `\n    ${tags}`)
       },
+    },
+    // In development the same files are made on request, and an unknown address gets the 404 page, as on GitHub Pages.
+    configureServer(server) {
+      const base = server.config.base
+      const files = (): Record<string, [string, () => string]> => {
+        const root = siteRoot()
+        const context = { root, portrait: `${root}src/assets/portrait.webp`, credentials: readCredentials() }
+        const text = 'text/plain; charset=utf-8'
+        return {
+          'robots.txt': [text, () => robotsTxt(root)],
+          'sitemap.xml': ['application/xml; charset=utf-8', () => sitemapXml(root, lastCommit)],
+          'site.webmanifest': ['application/manifest+json', () => webManifest(root)],
+          'llms.txt': [text, () => llmsTxt(root)],
+          'llms-full.txt': [text, () => llmsFullTxt(context)],
+          '.well-known/security.txt': [text, () => securityTxt(root)],
+          ...Object.fromEntries(
+            indexablePages().map((page) => [markdownPathOf(page), ['text/markdown; charset=utf-8', () => pageMarkdown(page, context)]]),
+          ),
+        }
+      }
+      server.middlewares.use((request, response, next) => {
+        const path = (request.url ?? '').split('?')[0]?.slice(base.length) ?? ''
+        const file = files()[path]
+        if (!file) return next()
+        response.setHeader('content-type', file[0])
+        response.end(file[1]())
+      })
+      return () =>
+        server.middlewares.use(async (request, response, next) => {
+          // Known pages have been rewritten to their index.html by now; an address still without a file type names nothing.
+          const path = (request.url ?? '').split('?')[0] ?? ''
+          if (request.method !== 'GET' || !request.headers.accept?.includes('text/html') || extname(path)) return next()
+          const html = await server.transformIndexHtml(`${base}index.html`, readFileSync('index.html', 'utf8'), '404.html')
+          response.statusCode = 404
+          response.setHeader('content-type', 'text/html; charset=utf-8')
+          response.end(html)
+        })
     },
     generateBundle: {
       order: 'post',
