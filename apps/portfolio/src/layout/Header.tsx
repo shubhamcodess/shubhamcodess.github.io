@@ -1,8 +1,10 @@
+import { useEffect, useId, useRef, useState } from 'react'
 import { site } from '../config/site'
 import type { NavItem, NavPage, SiteConfig } from '../config/types'
 import { LogoMark } from '../ui/LogoMark'
 import { hrefTo } from '../lib/routes'
 import { useCurrentSection } from '../lib/sections'
+import { Icon } from '../ui/Icon'
 import { Toggles } from './Toggles'
 import './header.css'
 
@@ -22,7 +24,7 @@ export function Header({ page }: HeaderProps) {
     '#contact': features.contact,
     '#featured': features.featured,
   }
-  const links = site.nav[page].filter((item) => enabled[item.to] ?? true)
+  const links: readonly NavItem[] = site.nav[page].filter((item) => enabled[item.to] ?? true)
 
   // A link is current when it is this page, or, on home, when its section is the one being read.
   const current = (item: NavItem) =>
@@ -39,12 +41,78 @@ export function Header({ page }: HeaderProps) {
       </a>
       <nav className="site-header__nav" aria-label="Main">
         {links.map((item) => (
-          <a key={item.to} className="site-header__link" href={hrefTo(item.to)} {...current(item)}>
+          <a
+            key={item.to}
+            className={`site-header__link${item.more ? ' site-header__link--more' : ''}`}
+            href={hrefTo(item.to)}
+            {...current(item)}
+          >
             {item.label}
           </a>
         ))}
+        <MoreMenu items={links.filter((item) => item.more)} />
         <Toggles />
       </nav>
     </header>
+  )
+}
+
+/**
+ * Phones only: the secondary links (`more` in the nav config) leave the bar for a small paper sheet under a
+ * "More" button, each with a few words beneath it, so the bar keeps the work first and never overflows.
+ * Escape, a click outside or choosing a link closes it.
+ */
+function MoreMenu({ items }: { readonly items: readonly NavItem[] }) {
+  const [open, setOpen] = useState(false)
+  const sheetId = useId()
+  const root = useRef<HTMLDivElement>(null)
+  const button = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setOpen(false)
+      button.current?.focus()
+    }
+    const onPointer = (event: PointerEvent) => {
+      if (!root.current?.contains(event.target as Node)) setOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    document.addEventListener('pointerdown', onPointer)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('pointerdown', onPointer)
+    }
+  }, [open])
+
+  if (!items.length) return null
+  return (
+    <div className="more-menu" ref={root}>
+      <button
+        ref={button}
+        type="button"
+        className="site-header__link more-menu__button"
+        aria-expanded={open}
+        aria-controls={sheetId}
+        onClick={() => setOpen((value) => !value)}
+      >
+        {site.navMore.label}
+        <span className="more-menu__chevron" aria-hidden="true" />
+      </button>
+      <div className="more-menu__sheet" id={sheetId} role="region" aria-label={site.navMore.sheetLabel} hidden={!open}>
+        <ul>
+          {items.map((item) => (
+            <li key={item.to}>
+              <a className="more-menu__link" href={hrefTo(item.to)} onClick={() => setOpen(false)}>
+                <span className="more-menu__label">{item.label}</span>
+                {item.note ? <span className="more-menu__note">{item.note}</span> : null}
+                <Icon name="arrowRight" size={14} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   )
 }

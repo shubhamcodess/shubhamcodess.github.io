@@ -113,25 +113,3 @@
   }
 }
 
-/* The quiet way to the person: a small underlined line under the statement, not a button. */
-.hero__me {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--target-min);
-  color: var(--ink-muted);
-  font-size: var(--text-sm);
-  text-decoration: underline dotted;
-  text-decoration-color: var(--link-underline);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 5px;
-  transition:
-    color var(--duration-fast) linear,
-    text-decoration-color var(--duration-fast) linear;
-}
-
-@media (hover: hover) {
-  .hero__me:hover {
-    color: var(--ink);
-    text-decoration-color: var(--link-underline-hover);
-  }
-}

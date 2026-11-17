@@ -23,6 +23,10 @@ export interface NavItem {
   readonly to: RouteId | `#${string}`
   /** Home page sections (by id) during which this link shows as current. */
   readonly activeOn?: readonly string[]
+  /** Secondary: on phones it moves out of the bar into the More sheet, with its `note` beneath it. */
+  readonly more?: true
+  /** A few words under the link in the More sheet. */
+  readonly note?: string
 }
 
 export interface RouteConfig {
@@ -213,6 +217,8 @@ export interface SiteConfig {
   readonly seo: SeoConfig
   /** The header's links on each page. Keep each short: on a phone the header holds the logo, these and two icons. */
   readonly nav: Readonly<Record<NavPage, readonly NavItem[]>>
+  /** The phone header's button for the secondary links (`more` in `nav`), and its sheet's name for screen readers. */
+  readonly navMore: { readonly label: string; readonly sheetLabel: string }
   readonly hero: HeroConfig
   readonly notFound: NotFoundConfig
   readonly featured: {
@@ -273,8 +279,6 @@ export interface SiteConfig {
     readonly kicker: string
     readonly title: string
     readonly lead: string
-    /** The quiet link under the hero's role line, and in the footer. */
-    readonly link: string
     readonly onward: string
     /** The link back to the professional side, at the foot of the page. */
     readonly back: string
@@ -333,6 +337,8 @@ export interface SiteConfig {
     readonly lead: string
     readonly email: `${string}@${string}`
     readonly findLabel: string
+    /** A quiet link under the profiles to /me, for whoever wants to know the person too. */
+    readonly offClock: string
     readonly links: readonly SocialLink[]
     readonly badge: {
       readonly kind: string

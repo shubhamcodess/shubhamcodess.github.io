@@ -78,7 +78,7 @@ Rules for both:
 
 `/me/`, "Off the clock": life away from work. On (`features.mePage`); false takes away the page, its links and its place in the sitemap. A step less formal than the rest of the site, made of the same paper, ink and type. Built from prototype 35.
 
-- **Reached from** a quiet underlined "More about me" under the hero's statement, and from the footer index. Not the header.
+- **Reached from** the header ("Me", after the work links; in the More sheet on phones), a quiet mono "Off the clock →" under the contact profiles, and the footer index. Not the hero: its only calls to action are Featured builds and Experience.
 - **Tags:** one paper luggage tag per thing the owner does: Biking, Photography, Filmmaking, Food, People, Places. Each has its top corners cut, a reinforced punched hole with a loop of twine threaded through it (both ends run over the top edge into the hole), a dotted rule inside the paper, a small fine-line drawing in muted ink (a bike on the road, a camera in its viewfinder, a reel trailing film, a steaming bowl, three friends, a pin on a map), the name, on paper a shade lighter than the page in dark mode (`--me-tag-paper`), and how many photos it has in mono ("4 photos"; the line stays empty when there are none yet, so every name sits at the same height). Tags hang turned a degree or two (`me.turns`) and straighten on hover, lifting a little while the drawing darkens. 150px wide; three to a row on phones. A new tag is one more entry in `topics` in `content/me.ts` and one more drawing in `TopicArt`.
 - **A tag isn't a page.** It shows that topic's photos and brings the gallery up; "Every photo ↓" under the tags shows all of them. The address follows the choice (`/me/#gallery`, `/me/#gallery/food`), so a link lands on it.
 - **The dock:** once the tags scroll away and the gallery is on screen, the same names wait at the top as a small solid pill bar (no blur), with **All** first; the chosen one is ink on paper. It scrolls sideways on phones.
@@ -100,7 +100,7 @@ A barely-there film grain on the page panels, so the background reads as a surfa
 
 ## Text links
 
-A link that isn't a button (See all builds, Full experience, Credentials, Professional experience, Say hello, Code, Live, npm, More about me) carries a link's underline: dotted, 1px, very faded (`--link-underline`, muted ink at 45%), firming to 80% on hover. Only the words are underlined, never the arrow.
+A link that isn't a button (See all builds, Full experience, Credentials, Professional experience, Say hello, Code, Live, npm) carries a link's underline: dotted, 1px, very faded (`--link-underline`, muted ink at 45%), firming to 80% on hover. Only the words are underlined, never the arrow.
 
 ## Buttons
 
@@ -196,14 +196,17 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 
 | Page | Header links |
 |---|---|
-| Home | Builds, Experience, Contact |
-| All builds, a build | Experience |
-| Experience | Builds |
-| Credentials | Builds, Experience |
+| Home | Builds, Experience, Me, Contact |
+| All builds, a build | Experience, Me |
+| Experience | Builds, Me |
+| Credentials | Builds, Experience, Me |
 | Me | Builds, Experience |
+
+- **Work first, then the person:** Me always comes after the work links. Secondary links (`more: true` in `nav`: Me, Contact) sit in the bar from 600px up. On phones they fold into a **More** sheet: a small panel under a "More" button with a drawn chevron, each link with a few words beneath it in mono ("Off the clock: rides, food, photos"). It takes the panel's own colours, paper on paper pages and a shade up from the night surface on the hero. Escape, a click outside or choosing a link closes it. Writing joins the same way when it exists.
 
 - **The current link** is in full ink with a small ink dot beneath it. On home it follows the section being read: Builds over Featured, Experience over the experience teaser, Contact over contact.
 - **Hash in the address bar:** on home, the address follows the section being read (`/#featured`, `/#experience`, `/#contact`, nothing at the top), replacing the history entry rather than adding to it. Opening `/#contact` from any page lands on that section.
+- **Experience's foot:** "← All builds" on the left and "All credentials →" on the right.
 - **Narrow phones (under 480px):** the sound and theme switches leave the header and live only in the footer, so the header links never overflow.
 - **The footer is the site index:** every page and Contact, from every page. It also carries the sound and theme switches, so they are in reach from anywhere. On phones they share a row with the copyright.
 - **All builds:** filter chips group it by kind; a kind needs at least two builds. At its foot: "← Professional experience" on the left and "Say hello →" on the right. In a two-link row the left link's arrow always points left.

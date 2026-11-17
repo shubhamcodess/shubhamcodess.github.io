@@ -89,20 +89,32 @@ export const site = {
     home: [
       { label: 'Builds', to: 'builds', activeOn: ['featured'] },
       { label: 'Experience', to: 'experience', activeOn: ['experience'] },
-      { label: 'Contact', to: '#contact', activeOn: ['contact'] },
+      { label: 'Me', to: 'me', more: true, note: 'Off the clock: rides, food, photos' },
+      { label: 'Contact', to: '#contact', activeOn: ['contact'], more: true, note: 'Email and profiles' },
     ],
-    builds: [{ label: 'Experience', to: 'experience' }],
-    project: [{ label: 'Experience', to: 'experience' }],
-    experience: [{ label: 'Builds', to: 'builds' }],
+    builds: [
+      { label: 'Experience', to: 'experience' },
+      { label: 'Me', to: 'me', more: true, note: 'Off the clock: rides, food, photos' },
+    ],
+    project: [
+      { label: 'Experience', to: 'experience' },
+      { label: 'Me', to: 'me', more: true, note: 'Off the clock: rides, food, photos' },
+    ],
+    experience: [
+      { label: 'Builds', to: 'builds' },
+      { label: 'Me', to: 'me', more: true, note: 'Off the clock: rides, food, photos' },
+    ],
     credentials: [
       { label: 'Builds', to: 'builds' },
       { label: 'Experience', to: 'experience' },
+      { label: 'Me', to: 'me', more: true, note: 'Off the clock: rides, food, photos' },
     ],
     me: [
       { label: 'Builds', to: 'builds' },
       { label: 'Experience', to: 'experience' },
     ],
   },
+  navMore: { label: 'More', sheetLabel: 'More pages' },
   notFound: {
     code: '404',
     title: 'Page not found',
@@ -201,7 +213,6 @@ export const site = {
     kicker: 'Off the clock',
     title: 'Away from the keyboard.',
     lead: 'Life between commits, one photo at a time.',
-    link: 'More about me',
     onward: 'Say hello',
     back: 'Professional experience',
     topicsLabel: 'What I do',
@@ -237,6 +248,7 @@ export const site = {
     lead: 'Mail reaches me fastest.',
     email: 'prakashshubham36@gmail.com',
     findLabel: 'Find me here',
+    offClock: 'Off the clock',
     links: [
       { label: 'GitHub', href: 'https://github.com/shubhamcodess', icon: 'github', detail: '@shubhamcodess' },
       { label: 'LinkedIn', href: 'https://www.linkedin.com/in/shubham-prakash-dev/', icon: 'linkedin', detail: 'shubham-prakash-dev' },

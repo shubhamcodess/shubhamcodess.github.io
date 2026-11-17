@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { site } from '../../config/site'
+import { hrefTo } from '../../lib/routes'
 import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
 import { Badge } from './Badge'
@@ -36,6 +37,12 @@ export function ContactSection() {
               </li>
             ))}
           </ul>
+          {site.features.mePage ? (
+            <a className="contact__offclock" href={hrefTo('me')}>
+              <span>{contact.offClock}</span>
+              <Icon name="arrowRight" size={14} />
+            </a>
+          ) : null}
         </Reveal>
         <div className="contact__badge">
           <Badge replay={replay} />
