@@ -42,23 +42,36 @@
   filter: drop-shadow(0 1px 1px rgb(0 0 0 / 40%)) drop-shadow(0 10px 18px rgb(0 0 0 / 35%));
 }
 
-/* The loop of twine through the hole, rising above the tag. */
+/* The loop of twine, threaded through the hole: it rises above the tag and both ends run down into the hole. */
 .me-tag__string {
   position: absolute;
-  top: calc(var(--space-5) * -1 - 4px);
+  /* Its foot sits on the hole's centre (the hole is 10px + 4.5px into the card). */
+  top: calc(14.5px - 43px);
   left: 50%;
   z-index: 1;
-  width: 20px;
-  height: 26px;
+  width: 28px;
+  height: 46px;
   overflow: visible;
   transform: translateX(-50%);
+  pointer-events: none;
 }
 
 .me-tag__string path {
   fill: none;
-  stroke: var(--rope-core);
-  stroke-width: 1.6;
   stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.me-tag__twine {
+  stroke: var(--rope-core);
+  stroke-width: 2.4;
+}
+
+/* A lighter ply wound round it, so it reads as twine rather than a drawn line. */
+.me-tag__twine-ply {
+  stroke: var(--rope-light);
+  stroke-width: 1.1;
+  stroke-dasharray: 1.8 1.8;
 }
 
 /* The tag itself: paper, the top corners cut away, a reinforced hole. */
@@ -70,7 +83,7 @@
   gap: var(--space-1);
   aspect-ratio: 5 / 6;
   padding: calc(var(--space-6) + 6px) var(--space-4) var(--space-4);
-  background: var(--surface-raised);
+  background: var(--me-tag-paper);
   clip-path: polygon(22% 0, 78% 0, 100% 15%, 100% 100%, 0 100%, 0 15%);
 }
 
@@ -92,7 +105,9 @@
   height: 9px;
   background: var(--surface);
   border-radius: 50%;
+  /* A reinforcing ring round the hole, and a little shade inside it where the twine goes through. */
   box-shadow:
+    inset 0 1px 2px rgb(40 30 15 / 30%),
     0 0 0 3px var(--surface-sunken),
     0 0 0 3.6px var(--line);
   transform: translateX(-50%);

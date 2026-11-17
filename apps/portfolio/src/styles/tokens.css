@@ -179,6 +179,7 @@
 
   /* Component: /me */
   --me-tag-width: 150px;
+  --me-tag-paper: var(--surface-raised);
   /* A print on the line at its largest; each takes an equal share of its line up to this. */
   --clothesline-print: 220px;
   --clothesline-row-gap: var(--space-8);
@@ -237,7 +238,8 @@
 }
 
 :root[data-theme='dark'] {
-  /* /me: the twine a little lighter and the pegs a little deeper, against the dark wall. */
+  /* /me: the twine a little lighter and the pegs a little deeper, against the dark wall; the tags a shade lighter, so they stand off it. */
+  --me-tag-paper: color-mix(in srgb, var(--surface-raised) 90%, white);
   --rope-core: #8b8170;
   --rope-dark: #5f574b;
   --rope-light: #b9ae98;

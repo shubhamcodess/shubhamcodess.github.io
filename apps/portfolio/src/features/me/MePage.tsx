@@ -106,9 +106,6 @@ export function MePage() {
                         choose(item.id)
                       }}
                     >
-                      <svg className="me-tag__string" viewBox="0 0 24 30" aria-hidden="true" focusable="false">
-                        <path d="M12 29C5 22 3 12 8 6s11-4 10 4-4 13-6 19" />
-                      </svg>
                       <span className="me-tag__card">
                         <span className="me-tag__hole" aria-hidden="true" />
                         <TopicArt topic={item.id} />
@@ -118,6 +115,11 @@ export function MePage() {
                           {count ? countLabel(count) : '\u00a0'}
                         </span>
                       </span>
+                      {/* A loop of twine threaded through the hole: both ends run over the tag's top edge into it. */}
+                      <svg className="me-tag__string" viewBox="0 0 28 46" aria-hidden="true" focusable="false">
+                        <path className="me-tag__twine" d="M12.6 43C9 34 4 22 6.5 12 9 3 20 2 21.5 10.5S17 33 15.4 43" />
+                        <path className="me-tag__twine-ply" d="M12.6 43C9 34 4 22 6.5 12 9 3 20 2 21.5 10.5S17 33 15.4 43" />
+                      </svg>
                     </a>
                   </Reveal>
                 </li>
