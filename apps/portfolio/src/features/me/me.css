@@ -464,6 +464,32 @@
   background: var(--surface-sunken);
 }
 
+/* A clip's print: its poster with a small round play mark. */
+.print__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  background: rgb(10 9 8 / 55%);
+  border: var(--hairline) solid rgb(255 255 255 / 35%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.print__play svg {
+  width: 22px;
+  height: 22px;
+  fill: #fff;
+}
+
+.print__open:hover .print__play {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
 /* The short title, written on the polaroid's foot. */
 .print__title {
   display: block;
@@ -627,7 +653,7 @@
   border-radius: 1px;
 }
 
-.darkroom__photo img {
+.darkroom__photo :is(img, video) {
   display: block;
   width: auto;
   max-width: calc(min(var(--photo-viewer-max), 100vw - var(--space-6) * 2) - var(--space-4) * 2);
@@ -717,7 +743,7 @@
     gap: var(--space-4);
   }
 
-  .darkroom__photo img {
+  .darkroom__photo :is(img, video) {
     max-width: calc(100vw - var(--space-3) * 2 - var(--space-4) * 2);
   }
 

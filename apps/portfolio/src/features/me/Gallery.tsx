@@ -17,8 +17,8 @@ const placesAt = (width: number) => (width < 440 ? 2 : width < 760 ? 3 : width <
 const firstLines = 3
 const moreLines = 2
 
-export const photoUrl = (photo: MePhoto, size: 'print' | 'large') =>
-  `${import.meta.env.BASE_URL}me/photos/${photo.name}${size === 'print' ? '-print' : ''}.webp`
+export const photoUrl = (photo: MePhoto, size: 'print' | 'large' | 'video') =>
+  `${import.meta.env.BASE_URL}me/photos/${photo.name}${size === 'print' ? '-print' : ''}.${size === 'video' ? 'mp4' : 'webp'}`
 
 const isWide = (photo: MePhoto) => photo.width > photo.height * 1.15
 
@@ -126,6 +126,13 @@ export function Gallery({ photos, onOpen, label }: GalleryProps) {
                     <span className="print__photo">
                       <img src={photoUrl(photo, 'print')} alt="" width={photo.width} height={photo.height} loading="lazy" decoding="async" />
                       <span className="photo-glass" aria-hidden="true" />
+                      {photo.video ? (
+                        <span className="print__play" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M9 7.5v9l7.5-4.5Z" />
+                          </svg>
+                        </span>
+                      ) : null}
                     </span>
                     <span className="print__title">{photo.title}</span>
                   </button>

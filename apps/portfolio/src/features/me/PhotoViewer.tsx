@@ -13,7 +13,7 @@ interface PhotoViewerProps {
 }
 
 /**
- * One photo, opened: a darkroom with a rope across the top, the print hanging from it larger (one peg, or two
+ * One photo or clip, opened: a darkroom with a rope across the top, the print hanging from it larger (one peg, or two
  * for a wide photo) with its caption on the foot, and previous and next in one bar at the bottom. Arrow keys
  * step, Escape or a click on the room closes, and focus goes back to the print that opened it.
  */
@@ -74,8 +74,27 @@ export function PhotoViewer({ photos, index, onIndex, onClose }: PhotoViewerProp
           <Peg className="print__peg" />
         )}
         <span className="darkroom__photo">
-          <img key={photo.name} src={photoUrl(photo, 'large')} alt={photo.caption} width={photo.width} height={photo.height} decoding="async" />
-          <span className="photo-glass" aria-hidden="true" />
+          {photo.video ? (
+            // A clip plays from its poster, muted at first so the browser lets it start; the controls bring the sound up.
+            <video
+              key={photo.name}
+              src={photoUrl(photo, 'video')}
+              poster={photoUrl(photo, 'large')}
+              width={photo.width}
+              height={photo.height}
+              aria-label={photo.caption}
+              controls
+              autoPlay
+              muted
+              playsInline
+              preload="metadata"
+            />
+          ) : (
+            <>
+              <img key={photo.name} src={photoUrl(photo, 'large')} alt={photo.caption} width={photo.width} height={photo.height} decoding="async" />
+              <span className="photo-glass" aria-hidden="true" />
+            </>
+          )}
         </span>
         <figcaption className="darkroom__caption">{photo.caption}</figcaption>
       </figure>

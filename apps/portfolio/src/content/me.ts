@@ -32,10 +32,23 @@ export interface MePhoto {
   readonly caption: string
   /** One or two of the topics; the tag of each shows it. */
   readonly topics: readonly [TopicId] | readonly [TopicId, TopicId]
+  /**
+   * A clip rather than a still: me/photos/<name>.mp4 (720p, H.264, metadata stripped) plays when it's opened,
+   * and the two WebP copies are its poster.
+   */
+  readonly video?: true
 }
 
 /** Every photo, in the order it hangs. Add a photo by adding its two files and one entry here. */
 export const photos: readonly MePhoto[] = [
+  {
+    name: 'tank-badge',
+    width: 900,
+    height: 1600,
+    title: 'The tank badge',
+    caption: 'The brushed-metal emblem on the side of the bike’s tank, up close.',
+    topics: ['biking', 'photography'],
+  },
   {
     name: 'office',
     width: 1600,
@@ -69,6 +82,14 @@ export const photos: readonly MePhoto[] = [
     topics: ['biking'],
   },
   {
+    name: 'out-for-a-ride',
+    width: 1600,
+    height: 900,
+    title: 'Out for a ride',
+    caption: 'The handlebars and dashboard on a sunny ride, the road ahead.',
+    topics: ['biking'],
+  },
+  {
     name: 'doughnuts',
     width: 900,
     height: 1600,
@@ -83,6 +104,22 @@ export const photos: readonly MePhoto[] = [
     title: 'The figurine',
     caption: 'A figurine in a striped shirt and chinos, standing on a desk.',
     topics: ['people'],
+  },
+  {
+    name: 'night-traffic',
+    width: 900,
+    height: 1600,
+    title: 'Night traffic',
+    caption: 'Waiting in evening traffic, the dashboard showing the next turn.',
+    topics: ['biking'],
+  },
+  {
+    name: 'yellow-taxi',
+    width: 1600,
+    height: 900,
+    title: 'Yellow taxi',
+    caption: 'A yellow Ambassador taxi outside the station, under the New Cab Road sign.',
+    topics: ['places', 'photography'],
   },
   {
     name: 'christmas',
