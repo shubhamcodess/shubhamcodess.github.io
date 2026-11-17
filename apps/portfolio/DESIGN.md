@@ -202,7 +202,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 | Credentials | Builds, Experience, Me |
 | Me | Builds, Experience |
 
-- **Work first, then the person:** Me always comes after the work links. Secondary links (`more: true` in `nav`: Me, Contact) sit in the bar from 600px up. On phones they fold into a **More** sheet: a small panel under a "More" button with a drawn chevron, each link with a few words beneath it in mono ("Off the clock: rides, food, photos"). It takes the panel's own colours, paper on paper pages and a shade up from the night surface on the hero. Escape, a click outside or choosing a link closes it. Writing joins the same way when it exists.
+- **Work first, then the person:** Me always comes after the work links. Secondary links (`more: true` in `nav`: Me, Contact) sit in the bar from 600px up. On phones they fold into a **More** sheet: a small panel under a "More" button with a drawn chevron, holding just the names, each with an arrow. It takes the panel's own colours, paper on paper pages and a shade up from the night surface on the hero. Escape, a click outside or choosing a link closes it. Writing joins the same way when it exists.
 
 - **The current link** is in full ink with a small ink dot beneath it. On home it follows the section being read: Builds over Featured, Experience over the experience teaser, Contact over contact.
 - **Hash in the address bar:** on home, the address follows the section being read (`/#featured`, `/#experience`, `/#contact`, nothing at the top), replacing the history entry rather than adding to it. Opening `/#contact` from any page lands on that section.

@@ -23,10 +23,8 @@ export interface NavItem {
   readonly to: RouteId | `#${string}`
   /** Home page sections (by id) during which this link shows as current. */
   readonly activeOn?: readonly string[]
-  /** Secondary: on phones it moves out of the bar into the More sheet, with its `note` beneath it. */
+  /** Secondary: on phones it moves out of the bar into the More sheet. */
   readonly more?: true
-  /** A few words under the link in the More sheet. */
-  readonly note?: string
 }
 
 export interface RouteConfig {

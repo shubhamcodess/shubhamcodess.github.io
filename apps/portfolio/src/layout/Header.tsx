@@ -58,8 +58,8 @@ export function Header({ page }: HeaderProps) {
 }
 
 /**
- * Phones only: the secondary links (`more` in the nav config) leave the bar for a small paper sheet under a
- * "More" button, each with a few words beneath it, so the bar keeps the work first and never overflows.
+ * Phones only: the secondary links (`more` in the nav config) leave the bar for a small sheet under a
+ * "More" button, so the bar keeps the work first and never overflows.
  * Escape, a click outside or choosing a link closes it.
  */
 function MoreMenu({ items }: { readonly items: readonly NavItem[] }) {
@@ -106,7 +106,6 @@ function MoreMenu({ items }: { readonly items: readonly NavItem[] }) {
             <li key={item.to}>
               <a className="more-menu__link" href={hrefTo(item.to)} onClick={() => setOpen(false)}>
                 <span className="more-menu__label">{item.label}</span>
-                {item.note ? <span className="more-menu__note">{item.note}</span> : null}
                 <Icon name="arrowRight" size={14} />
               </a>
             </li>

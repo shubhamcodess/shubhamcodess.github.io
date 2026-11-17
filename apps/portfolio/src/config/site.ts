@@ -89,25 +89,25 @@ export const site = {
     home: [
       { label: 'Builds', to: 'builds', activeOn: ['featured'] },
       { label: 'Experience', to: 'experience', activeOn: ['experience'] },
-      { label: 'Me', to: 'me', more: true, note: 'Off the clock: rides, food, photos' },
-      { label: 'Contact', to: '#contact', activeOn: ['contact'], more: true, note: 'Email and profiles' },
+      { label: 'Me', to: 'me', more: true },
+      { label: 'Contact', to: '#contact', activeOn: ['contact'], more: true },
     ],
     builds: [
       { label: 'Experience', to: 'experience' },
-      { label: 'Me', to: 'me', more: true, note: 'Off the clock: rides, food, photos' },
+      { label: 'Me', to: 'me', more: true },
     ],
     project: [
       { label: 'Experience', to: 'experience' },
-      { label: 'Me', to: 'me', more: true, note: 'Off the clock: rides, food, photos' },
+      { label: 'Me', to: 'me', more: true },
     ],
     experience: [
       { label: 'Builds', to: 'builds' },
-      { label: 'Me', to: 'me', more: true, note: 'Off the clock: rides, food, photos' },
+      { label: 'Me', to: 'me', more: true },
     ],
     credentials: [
       { label: 'Builds', to: 'builds' },
       { label: 'Experience', to: 'experience' },
-      { label: 'Me', to: 'me', more: true, note: 'Off the clock: rides, food, photos' },
+      { label: 'Me', to: 'me', more: true },
     ],
     me: [
       { label: 'Builds', to: 'builds' },
