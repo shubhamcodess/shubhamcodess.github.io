@@ -33,6 +33,7 @@ Keep every prototype here. Don't overwrite or delete one: new ideas get a new nu
 | `28-mto-window` | Back to prototype 26's rack, window and agent reel in the old slight skew: tokens pour in as small cards, and the JSON and pruning are pen lines with no text |
 | `33-not-found` | The page for an address with no page: home's header and night sky, a mono 404, "Page not found" at the hero's size, the address that was typed, and Home and Builds buttons. Runs over the built portfolio with `serve.mjs`. |
 | `34-credential-card` | One credential card for home and /credentials/: the patch's dashed stitch, the award mark and the credential's own badge on the top row, then level, name, issuer and Verify. Runs over the built portfolio with `serve.mjs`. |
+| `35-me-gallery` | /me as small blocks (Biking, Photography, Filmmaking, Places) on top and one endless gallery of hanging prints below. Blocks aren't pages: each scrolls to the gallery, and a small pill bar of them stays at the top while it's on screen. No labels or categories. Runs over the built portfolio with `serve.mjs`. |
 | `09-nav-skyline` | Traditional top nav with the daytime inverted skyline, three ways of fitting them together: Street, Apart and Behind. On scroll it keeps a bar, or drops it for floating buttons with a Clear, Fog or Mist face. Logo, links and page text are placeholders. |
 
 The four themes in `08-daylight-themes` are now in the real site, in `packages/design/src/palettes.ts`.
