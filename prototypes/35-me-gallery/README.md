@@ -34,4 +34,4 @@ Open `/me/`. It prints an address for a phone on the same Wi-Fi too.
 ## Third pass
 
 - **Rope:** twisted twine instead of a thin line: a core cord with two plies dashed half a twist apart, and a soft shadow on the wall. Drawn at the line's real width, so the twist keeps its pitch on every screen. Its own colours in dark mode.
-- **Pegs:** wooden clothes pegs (two halves with grain, a seam and a groove for the rope, a steel spring across the middle). The jaws sit over the rope and bite the print's top edge; a wide print gets two.
+- **Pegs:** wooden clothes pegs, each one tapered piece of wood with a little grain, a groove for the rope and a steel spring across the middle (a first try drew two halves with a seam, which read as two clips). The jaws sit over the rope and bite the print's top edge; a wide print gets two.

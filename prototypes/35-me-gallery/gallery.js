@@ -156,16 +156,15 @@
       </svg>`
     }
 
-    // A wooden clothes peg: two halves with grain, a steel spring across the middle, its jaws over the
-    // rope at the top and biting the print's top edge below.
+    // A wooden clothes peg, seen from the front: one tapered piece of wood with a little grain, a steel spring
+    // wound round its waist, its top over the rope and its jaw biting the print's top edge below.
     const clip = (extra = '') => `<span class="me35-clip${extra}" aria-hidden="true"><svg viewBox="0 0 12 34" width="12" height="34">
-        <rect class="me35-clip__half" x="0.6" y="0.5" width="5" height="33" rx="2"/>
-        <rect class="me35-clip__half me35-clip__half--far" x="6.4" y="0.5" width="5" height="33" rx="2"/>
-        <path class="me35-clip__grain" d="M2.4 3v9M3.6 19v11M8.4 2v8M9.4 21v9"/>
-        <path class="me35-clip__seam" d="M6 1v32"/>
-        <path class="me35-clip__notch" d="M4.2 8.5h3.6"/>
-        <rect class="me35-clip__spring" x="0" y="13.5" width="12" height="4.2" rx="1.2"/>
-        <path class="me35-clip__coil" d="M2 14.2v2.8M4 14.2v2.8M6 14.2v2.8M8 14.2v2.8M10 14.2v2.8"/>
+        <path class="me35-clip__body" d="M3 0.6h6a1.8 1.8 0 0 1 1.8 1.8L10 31.6a1.8 1.8 0 0 1-1.8 1.8H3.8A1.8 1.8 0 0 1 2 31.6L1.2 2.4A1.8 1.8 0 0 1 3 0.6z"/>
+        <path class="me35-clip__shade" d="M8.4 1.2a1.5 1.5 0 0 1 1.8 1.4L9.5 31.4a1.5 1.5 0 0 1-1.3 1.4z"/>
+        <path class="me35-clip__grain" d="M4.4 3v10M6.6 20v10M5.6 4v6"/>
+        <path class="me35-clip__notch" d="M3.4 8.5h5.2"/>
+        <rect class="me35-clip__spring" x="0.6" y="13.6" width="10.8" height="3.8" rx="1.3"/>
+        <path class="me35-clip__coil" d="M3 14.2v2.6M5 14.2v2.6M7 14.2v2.6M9 14.2v2.6"/>
       </svg></span>`
 
     const string = (row) => {
