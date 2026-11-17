@@ -23,7 +23,7 @@ export interface NavItem {
   readonly to: RouteId | `#${string}`
   /** Home page sections (by id) during which this link shows as current. */
   readonly activeOn?: readonly string[]
-  /** Secondary: on phones it moves out of the bar into the More sheet. */
+  /** Secondary: it sits in the More menu rather than the bar. */
   readonly more?: true
 }
 
@@ -214,7 +214,11 @@ export interface SiteConfig {
   readonly routes: Readonly<Record<RouteId, RouteConfig>>
   readonly seo: SeoConfig
   /** The header's links on each page. Keep each short: on a phone the header holds the logo, these and two icons. */
-  readonly nav: Readonly<Record<NavPage, readonly NavItem[]>>
+  /**
+   * Every header link, in order. Each page shows all but its own: the work links in the bar, the rest
+   * (`more: true`) in the More menu, with the sound and theme switches.
+   */
+  readonly nav: readonly NavItem[]
   /** The phone header's button for the secondary links (`more` in `nav`), and its sheet's name for screen readers. */
   readonly navMore: { readonly label: string; readonly sheetLabel: string }
   readonly hero: HeroConfig

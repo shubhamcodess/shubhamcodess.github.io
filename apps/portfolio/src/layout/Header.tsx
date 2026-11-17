@@ -9,7 +9,7 @@ import { Toggles } from './Toggles'
 import './header.css'
 
 interface HeaderProps {
-  /** The kind of page this header is on. It picks the links, from `nav` in the config. */
+  /** The kind of page this header is on. Its own link is left out; on home, links follow the section being read. */
   readonly page: NavPage
 }
 
@@ -24,7 +24,8 @@ export function Header({ page }: HeaderProps) {
     '#contact': features.contact,
     '#featured': features.featured,
   }
-  const links: readonly NavItem[] = site.nav[page].filter((item) => enabled[item.to] ?? true)
+  // Every page reaches every other: all the links but this page's own.
+  const links: readonly NavItem[] = site.nav.filter((item) => item.to !== page && (enabled[item.to] ?? true))
 
   // A link is current when it is this page, or, on home, when its section is the one being read.
   const current = (item: NavItem) =>
@@ -40,29 +41,31 @@ export function Header({ page }: HeaderProps) {
         {(site.logo as SiteConfig['logo']) === 'mark' ? <LogoMark /> : site.monogram}
       </a>
       <nav className="site-header__nav" aria-label="Main">
-        {links.map((item) => (
-          <a
-            key={item.to}
-            className={`site-header__link${item.more ? ' site-header__link--more' : ''}`}
-            href={hrefTo(item.to)}
-            {...current(item)}
-          >
-            {item.label}
-          </a>
-        ))}
-        <MoreMenu items={links.filter((item) => item.more)} />
-        <Toggles />
+        {links
+          .filter((item) => !item.more)
+          .map((item) => (
+            <a key={item.to} className="site-header__link" href={hrefTo(item.to)} {...current(item)}>
+              {item.label}
+            </a>
+          ))}
+        <MoreMenu items={links.filter((item) => item.more)} current={current} />
       </nav>
     </header>
   )
 }
 
 /**
- * Phones only: the secondary links (`more` in the nav config) leave the bar for a small sheet under a
- * "More" button, so the bar keeps the work first and never overflows.
- * Escape, a click outside or choosing a link closes it.
+ * The secondary links (`more` in the nav config) and the sound and theme switches, in a small sheet under a
+ * "More" button, so the bar keeps the work first on every screen. The button carries the current dot when
+ * one of its links is the page or section in view. Escape, a click outside or choosing a link closes it.
  */
-function MoreMenu({ items }: { readonly items: readonly NavItem[] }) {
+function MoreMenu({
+  items,
+  current,
+}: {
+  readonly items: readonly NavItem[]
+  readonly current: (item: NavItem) => { readonly 'aria-current'?: 'page' | 'location' }
+}) {
   const [open, setOpen] = useState(false)
   const sheetId = useId()
   const root = useRef<HTMLDivElement>(null)
@@ -86,7 +89,7 @@ function MoreMenu({ items }: { readonly items: readonly NavItem[] }) {
     }
   }, [open])
 
-  if (!items.length) return null
+  const inside = items.some((item) => current(item)['aria-current'])
   return (
     <div className="more-menu" ref={root}>
       <button
@@ -95,6 +98,7 @@ function MoreMenu({ items }: { readonly items: readonly NavItem[] }) {
         className="site-header__link more-menu__button"
         aria-expanded={open}
         aria-controls={sheetId}
+        data-current={inside || undefined}
         onClick={() => setOpen((value) => !value)}
       >
         {site.navMore.label}
@@ -104,13 +108,16 @@ function MoreMenu({ items }: { readonly items: readonly NavItem[] }) {
         <ul>
           {items.map((item) => (
             <li key={item.to}>
-              <a className="more-menu__link" href={hrefTo(item.to)} onClick={() => setOpen(false)}>
+              <a className="more-menu__link" href={hrefTo(item.to)} onClick={() => setOpen(false)} {...current(item)}>
                 <span className="more-menu__label">{item.label}</span>
                 <Icon name="arrowRight" size={14} />
               </a>
             </li>
           ))}
         </ul>
+        <div className="more-menu__switches">
+          <Toggles />
+        </div>
       </div>
     </div>
   )

@@ -79,7 +79,7 @@ Rules for both:
 
 `/gallery/` ("Gallery" in the header and footer; route id `me` in the code), "Off the clock": life away from work. On (`features.mePage`); false takes away the page, its links and its place in the sitemap. A step less formal than the rest of the site, made of the same paper, ink and type. Built from prototype 35.
 
-- **Reached from** the header ("Gallery", after the work links; in the More sheet on phones), a quiet mono "Off the clock →" under the contact profiles, and the footer index. Not the hero: its only calls to action are Featured builds and Experience.
+- **Reached from** the header's More menu, a quiet mono "Off the clock →" under the contact profiles, and the footer index. Not the hero: its only calls to action are Featured builds and Experience.
 - **Tags:** one paper luggage tag per thing the owner does: Biking, Photography, Filmmaking, Food, People, Places. Each has its top corners cut, a reinforced punched hole with a loop of twine threaded through it (both ends run over the top edge into the hole), a dotted rule inside the paper, a small fine-line drawing in muted ink (a bike on the road, a camera in its viewfinder, a reel trailing film, a steaming bowl, three friends, a pin on a map), the name, on paper a shade lighter than the page in dark mode (`--me-tag-paper`), and how many photos it has in mono ("4 photos"; the line stays empty when there are none yet, so every name sits at the same height). Tags hang turned a degree or two (`me.turns`) and straighten on hover, lifting a little while the drawing darkens. 150px wide; three to a row on phones. A new tag is one more entry in `topics` in `content/me.ts` and one more drawing in `TopicArt`.
 - **A tag isn't a page.** It shows that topic's photos and brings the gallery up; "Every photo ↓" under the tags shows all of them. The address follows the choice (`/gallery/#photos` for all of them, `/gallery/#food` for a topic), so a link lands on it.
 - **The dock:** once the tags scroll away and the gallery is on screen, the same names wait at the top as a small solid pill bar (no blur), with **All** first; the chosen one is ink on paper. It scrolls sideways on phones.
@@ -193,22 +193,13 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 | Not found | any address with no page (`404.html`) | A mistyped or old link |
 
 - **Home** is one scroll: hero, featured builds, an experience teaser, contact.
-- **Header links differ by page,** set by `nav` in the config, so a phone header stays uncluttered:
+- **Every page reaches every other,** from one list (`nav` in the config): each page shows all the links but its own, and the logo goes home.
+  - **The bar** holds the work: Builds and Experience. **More** holds the rest: Gallery, Credentials and Contact, then the sound and theme switches in a row past a hairline. The same on every screen, so the bar never overflows and the work always comes first. Writing joins the bar or More with one entry when it exists.
+  - **The More sheet** is a small panel under the button, with a drawn chevron that turns when it opens, a clear 1px edge, and just the names, each with an arrow. It takes the panel's own colours: paper on paper pages, a shade up from the night surface on the hero. Escape, a click outside or choosing a link closes it.
 
-| Page | Header links |
-|---|---|
-| Home | Builds, Experience, Gallery, Contact |
-| All builds, a build | Experience, Gallery |
-| Experience | Builds, Gallery |
-| Credentials | Builds, Experience, Gallery |
-| Gallery | Builds, Experience |
-
-- **Work first, then the person:** Gallery always comes after the work links. Secondary links (`more: true` in `nav`: Gallery, Contact) sit in the bar from 600px up. On phones they fold into a **More** sheet: a small panel under a "More" button with a drawn chevron, holding just the names, each with an arrow. It takes the panel's own colours, paper on paper pages and a shade up from the night surface on the hero. Escape, a click outside or choosing a link closes it. Writing joins the same way when it exists.
-
-- **The current link** is in full ink with a small ink dot beneath it. On home it follows the section being read: Builds over Featured, Experience over the experience teaser, Contact over contact.
+- **The current link** is in full ink with a small ink dot beneath it. On home it follows the section being read: Builds over Featured, Experience over the experience teaser, and More (with Contact underlined inside it) over contact.
 - **Hash in the address bar:** on home, the address follows the section being read (`/#featured`, `/#experience`, `/#contact`, nothing at the top), replacing the history entry rather than adding to it. Opening `/#contact` from any page lands on that section.
 - **Experience's foot:** "← All builds" on the left and "All credentials →" on the right. **Credentials' foot:** "← All builds" on the left and the experience link on the right.
-- **Narrow phones (under 480px):** the sound and theme switches leave the header and live only in the footer, so the header links never overflow.
 - **The footer is the site index:** every page and Contact, from every page. It also carries the sound and theme switches, so they are in reach from anywhere. On phones they share a row with the copyright.
 - **All builds:** filter chips group it by kind; a kind needs at least two builds. At its foot: "← Professional experience" on the left and "Say hello →" on the right. In a two-link row the left link's arrow always points left.
 - Featured holds one to five builds, with a designed grid for each count: 1 full width, 2 halves, 3 thirds, 4 as two rows of two, 5 as two halves over three thirds.

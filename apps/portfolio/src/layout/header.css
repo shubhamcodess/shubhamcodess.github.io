@@ -77,20 +77,23 @@
   }
 }
 
-/* Narrow phones: the switches leave the header (they are in every footer), so the links never overflow. */
-@media (max-width: 479px) {
-  .site-header__nav .icon-toggle {
-    display: none;
-  }
-}
 
 /*
- * Secondary links (Me, Contact) sit in the bar on wider screens. On phones they fold into the More sheet,
- * so the bar keeps Builds and Experience first and never overflows.
+ * More: the secondary links (Gallery, Credentials, Contact) and the sound and theme switches, in one small
+ * sheet, so the bar keeps the work first on every screen and never overflows.
  */
 .more-menu {
   position: relative;
-  display: none;
+}
+
+/* The current dot under More, when the page or section in view is one of its links. */
+.more-menu__button[data-current] {
+  color: var(--ink);
+}
+
+.more-menu__button[data-current]::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
 }
 
 .more-menu__button {
@@ -131,7 +134,8 @@
   min-width: 168px;
   padding: var(--space-1);
   background: var(--surface-raised);
-  border: var(--hairline) solid var(--line);
+  /* A clear edge, so the sheet reads as its own panel over the page. */
+  border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card), 0 18px 40px -18px rgb(0 0 0 / 30%);
   transform-origin: 90% 0;
@@ -175,10 +179,26 @@
   color: var(--ink-muted);
 }
 
+.more-menu__link[aria-current] .more-menu__label {
+  text-decoration: underline;
+  text-decoration-color: var(--marker-strong);
+  text-underline-offset: 4px;
+}
+
+/* The sound and theme switches, in a row under the links, past a hairline. */
+.more-menu__switches {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+  padding-top: var(--space-1);
+  border-top: var(--hairline) solid var(--line);
+}
+
 /* On a night panel (the hero, a project's title plate) the sheet is night too, a shade up from the surface. */
 .panel--night .more-menu__sheet {
   background: color-mix(in srgb, var(--night-surface) 88%, white);
-  border-color: var(--night-line);
+  border-color: rgb(255 255 255 / 16%);
   box-shadow: 0 18px 40px -16px rgb(0 0 0 / 70%);
 }
 
@@ -191,16 +211,6 @@
   from {
     opacity: 0;
     transform: translateY(-6px) scale(0.97);
-  }
-}
-
-@media (max-width: 599px) {
-  .site-header__link--more {
-    display: none;
-  }
-
-  .more-menu {
-    display: block;
   }
 }
 

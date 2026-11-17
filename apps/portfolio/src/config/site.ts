@@ -85,35 +85,13 @@ export const site = {
     themeColor: { light: '#f3ede1', dark: '#0a0d14' },
   },
   // Home carries all three. Elsewhere only the other main page: Contact is in every footer, and the logo goes home.
-  nav: {
-    home: [
-      { label: 'Builds', to: 'builds', activeOn: ['featured'] },
-      { label: 'Experience', to: 'experience', activeOn: ['experience'] },
-      { label: 'Gallery', to: 'me', more: true },
-      { label: 'Contact', to: '#contact', activeOn: ['contact'], more: true },
-    ],
-    builds: [
-      { label: 'Experience', to: 'experience' },
-      { label: 'Gallery', to: 'me', more: true },
-    ],
-    project: [
-      { label: 'Experience', to: 'experience' },
-      { label: 'Gallery', to: 'me', more: true },
-    ],
-    experience: [
-      { label: 'Builds', to: 'builds' },
-      { label: 'Gallery', to: 'me', more: true },
-    ],
-    credentials: [
-      { label: 'Builds', to: 'builds' },
-      { label: 'Experience', to: 'experience' },
-      { label: 'Gallery', to: 'me', more: true },
-    ],
-    me: [
-      { label: 'Builds', to: 'builds' },
-      { label: 'Experience', to: 'experience' },
-    ],
-  },
+  nav: [
+    { label: 'Builds', to: 'builds', activeOn: ['featured'] },
+    { label: 'Experience', to: 'experience', activeOn: ['experience'] },
+    { label: 'Gallery', to: 'me', more: true },
+    { label: 'Credentials', to: 'credentials', more: true },
+    { label: 'Contact', to: '#contact', activeOn: ['contact'], more: true },
+  ],
   navMore: { label: 'More', sheetLabel: 'More pages' },
   notFound: {
     code: '404',
