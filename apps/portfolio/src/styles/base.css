@@ -158,6 +158,26 @@ button {
   background: var(--night-surface);
 }
 
+/*
+ * A hairline rim round a panel, so it holds its shape against the frame where the two are near the same colour:
+ * night panels (hero, contact, a project's title) in both themes, and every panel in dark mode. Drawn on top of
+ * the panel's own art (the hero's light, the contact glow), never taking pointer events.
+ */
+.panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.panel--night::after,
+:root[data-theme='dark'] .panel::after {
+  box-shadow:
+    inset 0 0 0 var(--hairline) var(--panel-rim),
+    inset 0 1px 0 var(--panel-rim-top);
+}
+
 .panel--grow {
   flex: 1;
 }

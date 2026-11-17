@@ -87,6 +87,9 @@
   /* Glass with no blur behind it (on the moving light), so it carries more of its own tint. */
   --night-glass-solid: rgb(14 18 24 / 62%);
   --night-glass-line: rgb(255 255 255 / 14%);
+  /* The rim that keeps a dark panel distinct from the frame, a little brighter along the top edge. */
+  --panel-rim: rgb(255 255 255 / 11%);
+  --panel-rim-top: rgb(255 255 255 / 8%);
 
   /* Semantic: light theme */
   color-scheme: light;
@@ -272,6 +275,9 @@
   --night-ink-muted: #98a4bf;
   --night-glass: rgb(10 16 32 / 42%);
   --night-glass-solid: rgb(14 20 38 / 64%);
+  /* The rim that keeps a dark panel distinct from the frame, a little brighter along the top edge. */
+  --panel-rim: rgb(160 185 255 / 13%);
+  --panel-rim-top: rgb(190 210 255 / 9%);
 
   --surface: #f3ede1;
   --surface-raised: #fbf8f1;
