@@ -82,7 +82,7 @@ export function PhotoViewer({ photos, index, onIndex, onClose }: PhotoViewerProp
               poster={photoUrl(photo, 'large')}
               width={photo.width}
               height={photo.height}
-              aria-label={photo.caption}
+              aria-label={photo.alt}
               controls
               autoPlay
               muted
@@ -91,7 +91,7 @@ export function PhotoViewer({ photos, index, onIndex, onClose }: PhotoViewerProp
             />
           ) : (
             <>
-              <img key={photo.name} src={photoUrl(photo, 'large')} alt={photo.caption} width={photo.width} height={photo.height} decoding="async" />
+              <img key={photo.name} src={photoUrl(photo, 'large')} alt={photo.alt} width={photo.width} height={photo.height} decoding="async" />
               <span className="photo-glass" aria-hidden="true" />
             </>
           )}

@@ -6,7 +6,7 @@
 // ("night-ride.jpg"). Each becomes public/me/photos/<name>.webp (1600px on the long side, for the viewer)
 // and <name>-print.webp (560px tall, for the line). The originals move to photo-inbox/done/. The inbox is
 // ignored by git: originals carry location data and never leave this machine. The script prints the entries
-// for `photos` in src/content/me.ts; each still needs its title, caption and one or two topics.
+// for `photos` in src/content/me.ts; each still needs its title, a caption in the owner's voice, a plain alt text and one or two topics.
 // Needs cwebp (brew install webp) and macOS's sips.
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readdirSync, renameSync, rmSync } from 'node:fs'
@@ -62,8 +62,8 @@ for (const file of photos) {
   run('cwebp', ['-quiet', '-q', '76', '-metadata', 'none', '-resize', '0', '560', source, '-o', join(out, `${name}-print.webp`)])
   if (temporary) rmSync(temporary)
   renameSync(join(inbox, file), join(done, file))
-  entries.push(`  { name: '${name}', width: ${width}, height: ${height}, title: '', caption: '', topics: [] }, // ${file}`)
+  entries.push(`  { name: '${name}', width: ${width}, height: ${height}, title: '', caption: '', alt: '', topics: [] }, // ${file}`)
 }
 
-console.log(`Made ${entries.length} photo(s). Add to photos in src/content/me.ts, each with a title, a caption and its topics:\n`)
+console.log(`Made ${entries.length} photo(s). Add to photos in src/content/me.ts, each with a title, a caption in your voice, a plain alt text and its topics:\n`)
 console.log(entries.join('\n'))

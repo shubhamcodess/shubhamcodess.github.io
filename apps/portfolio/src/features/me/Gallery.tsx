@@ -122,7 +122,7 @@ export function Gallery({ photos, onOpen, label }: GalleryProps) {
                   ) : (
                     <Peg className="print__peg" />
                   )}
-                  <button type="button" className="print__open" onClick={() => onOpen(index)} aria-label={`${photo.title}. ${photo.caption}`}>
+                  <button type="button" className="print__open" onClick={() => onOpen(index)} aria-label={`${photo.title}. ${photo.alt}`}>
                     <span className="print__photo">
                       <img src={photoUrl(photo, 'print')} alt="" width={photo.width} height={photo.height} loading="lazy" decoding="async" />
                       <span className="photo-glass" aria-hidden="true" />
