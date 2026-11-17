@@ -1,0 +1,39 @@
+/* Prototype 36: the phone header, floating back in at the top once past the hero. */
+@media (max-width: 599px) {
+  .site-header.hr-floating {
+    position: fixed;
+    top: var(--frame-inset);
+    right: var(--frame-inset);
+    left: var(--frame-inset);
+    z-index: 50;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    /* The header keeps the panel it came from: night on home, paper on paper pages. A shade solid, no blur. */
+    background: var(--hr-surface, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+    border-radius: calc(var(--frame-radius) - 6px);
+    box-shadow: 0 14px 34px -14px rgb(0 0 0 / 55%);
+    transform: translateY(calc(-100% - var(--frame-inset) - 8px));
+    transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .panel--night .site-header.hr-floating {
+    --hr-surface: var(--night-surface);
+  }
+
+  .site-header.hr-floating[data-dock='shown'] {
+    transform: none;
+  }
+
+  /* The hairline under the header belongs to the page, not to the floating bar. */
+  .site-header.hr-floating::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header.hr-floating {
+    transition: none;
+  }
+}
