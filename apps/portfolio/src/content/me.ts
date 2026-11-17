@@ -134,6 +134,15 @@ export const photos: readonly MePhoto[] = [
     topics: ['places', 'photography'],
   },
   {
+    name: 'durga-puja',
+    width: 1200,
+    height: 1600,
+    title: 'Durga Puja',
+    caption: 'Durga Puja, and the pandal lit up from the roof down.',
+    alt: 'A Durga Puja pandal: a red canopy hung with bamboo, marigold strings and lamps over the idols of Durga and her family.',
+    topics: ['places', 'photography'],
+  },
+  {
     name: 'christmas',
     width: 1600,
     height: 901,
