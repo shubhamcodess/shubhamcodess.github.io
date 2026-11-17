@@ -126,6 +126,11 @@ export interface HeroLightConfig {
   readonly maxPixels: number
   /** The most frames a second it draws. 120Hz screens would otherwise draw it twice as often for no visible gain. */
   readonly maxFps: number
+  /**
+   * How much the light softens behind the words on wide screens, so the lanes blur out where text sits.
+   * It is drawn in the shader: a CSS backdrop blur would re-blur the moving canvas every frame. 0 turns it off.
+   */
+  readonly plateSoften: number
   readonly parallax: {
     /** How far the light follows the pointer, as a fraction of the scene. */
     readonly pointerLight: number

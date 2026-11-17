@@ -96,7 +96,7 @@ A barely-there film grain on the page panels, so the background reads as a surfa
 - **How much:** 9% grain on paper, 5.5% on midnight. It should be noticed only side by side with the clean version.
 - The panel's top light (`--panel-wash`) falls over it, so the grain fades toward the top edge.
 - Tried and removed: a blueprint drafting grid, and grain at 20%. Both changed the site's look instead of adding depth to it.
-- Tuning is in `styles/texture.css`.
+- Tuning is in `scripts/grain.mjs`, which renders the grain into two small WebP tiles (`pnpm grain`). It was a live SVG noise filter, which Chrome recomputed for every new tile while scrolling and dropped frames.
 
 ## Text links
 
@@ -128,7 +128,7 @@ Two styles, chosen by `theme.buttons` in the config. One value changes every chi
 ## Hero
 
 - Name as a real `h1`, solid and crisp. One line on wide screens, two on phones, sized to its container.
-- Under it: role and employer, then one sentence. At the bottom: two frosted chips that lead into the work.
+- Under it: role and employer, then one sentence. At the bottom: two glass chips that lead into the work. They have no live blur: over the moving light a backdrop blur re-runs every frame, so they carry a denser tint instead.
 - **The light** runs lanes along a floor toward the viewer and up a narrow wall far behind the name.
   - It is background. `intensity` stays at or under 0.6, the floor dims as it nears the viewer, and the wall fades as it rises.
   - The horizon sits above the name's centre, so the brightest part is behind the name, not under the reading text.

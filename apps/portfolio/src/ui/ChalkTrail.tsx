@@ -117,9 +117,11 @@ export function ChalkTrail() {
       context.globalAlpha = 1
 
       if (chasing || points.length || specks.length) frame = requestAnimationFrame(draw)
+      else canvas.dataset.idle = ''
     }
 
     const wake = () => {
+      delete canvas.dataset.idle
       frame ||= requestAnimationFrame(draw)
     }
 
@@ -158,5 +160,5 @@ export function ChalkTrail() {
     }
   }, [reducedMotion])
 
-  return <canvas className="chalk-trail" ref={canvasRef} aria-hidden="true" />
+  return <canvas className="chalk-trail" ref={canvasRef} data-idle="" aria-hidden="true" />
 }

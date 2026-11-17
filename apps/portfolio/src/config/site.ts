@@ -137,6 +137,7 @@ export const site = {
       maxPixelRatio: 1.5,
       maxPixels: 1_600_000,
       maxFps: 60,
+      plateSoften: 4,
       parallax: { pointerLight: 0.03, pointerContent: 6, scrollLight: 0.35 },
     },
   },

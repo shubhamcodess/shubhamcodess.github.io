@@ -20,11 +20,10 @@
 .action-link--glass {
   min-height: var(--button-glass-height);
   padding-inline: var(--button-glass-pad);
-  background: var(--night-glass);
+  /* No backdrop blur: these sit on the moving light, and blurring it each frame drops frames. A denser glass reads the same. */
+  background: var(--night-glass-solid);
   border: var(--hairline) solid var(--night-glass-line);
   border-radius: var(--button-radius);
-  -webkit-backdrop-filter: blur(var(--hero-chip-blur)) saturate(140%);
-  backdrop-filter: blur(var(--hero-chip-blur)) saturate(140%);
   transition:
     background-color var(--duration-fast) linear,
     border-color var(--duration-fast) linear;

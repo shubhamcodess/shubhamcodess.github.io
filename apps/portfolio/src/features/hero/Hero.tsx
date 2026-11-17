@@ -15,7 +15,8 @@ export function Hero() {
     const element = heroRef.current
     if (!element) return
     const onScroll = () => {
-      element.dataset.scrolled = String(window.scrollY > hero.actionsHideAfter)
+      const scrolled = String(window.scrollY > hero.actionsHideAfter)
+      if (element.dataset.scrolled !== scrolled) element.dataset.scrolled = scrolled
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -27,7 +28,7 @@ export function Hero() {
       <LightBackdrop config={hero.light} light={features.heroLight} parallax={features.heroParallax} />
 
       <div className="hero__content container">
-        <div className="hero__intro">
+        <div className="hero__intro" data-light-plate>
           <h1 className="hero__name">
             <span className="enter" style={{ '--enter-index': 0 } as React.CSSProperties}>
               {firstName}

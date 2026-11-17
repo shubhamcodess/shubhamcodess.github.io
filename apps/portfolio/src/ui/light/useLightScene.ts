@@ -17,7 +17,7 @@ const pointerEase = 0.06
 /**
  * Runs a light backdrop's one animation loop: the light, and the depth between light and words.
  * The host is the backdrop's parent. The loop stops while the host is off screen or the tab is hidden, and never starts under reduced motion.
- * Depth is written as CSS variables on the host (--light-pointer-x/y, --light-scroll), so the styles decide what moves.
+ * Depth is written as CSS variables (--light-pointer-x/y on the host, --light-scroll on the backdrop), so the styles decide what moves.
  */
 export function useLightScene(
   backdropRef: RefObject<HTMLElement | null>,
@@ -62,7 +62,7 @@ export function useLightScene(
         const next = { x: eased.x.toFixed(4), y: eased.y.toFixed(4), scroll: `${Math.max(0, window.scrollY).toFixed(1)}px` }
         if (next.x !== written.x) hero.style.setProperty('--light-pointer-x', next.x)
         if (next.y !== written.y) hero.style.setProperty('--light-pointer-y', next.y)
-        if (next.scroll !== written.scroll) hero.style.setProperty('--light-scroll', next.scroll)
+        if (next.scroll !== written.scroll) backdrop.style.setProperty('--light-scroll', next.scroll)
         written = next
       }
       draw()
@@ -79,11 +79,21 @@ export function useLightScene(
       }
     }
 
-    const resize = new ResizeObserver(() => {
-      scene?.resize()
+    // The words the light frosts behind, if the host marks them. Measured with the parallax shift taken out.
+    const plate = hero.querySelector<HTMLElement>('[data-light-plate]')
+    const plateBox = () => {
+      if (!plate) return null
+      const box = plate.getBoundingClientRect()
+      const shift = config.parallax.pointerContent
+      return new DOMRect(box.left + eased.x * shift, box.top + eased.y * shift, box.width, box.height)
+    }
+    const fit = () => {
+      scene?.resize(plateBox())
       draw()
-    })
+    }
+    const resize = new ResizeObserver(fit)
     resize.observe(canvas)
+    if (plate) resize.observe(plate)
 
     const visibility = new IntersectionObserver((entries) => {
       onScreen = entries.some((entry) => entry.isIntersecting)
@@ -107,8 +117,7 @@ export function useLightScene(
       hero.addEventListener('pointerleave', onPointerLeave)
     }
     document.addEventListener('visibilitychange', sync)
-    scene?.resize()
-    draw()
+    fit()
     sync()
 
     return () => {

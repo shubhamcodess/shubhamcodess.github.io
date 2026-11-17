@@ -29,6 +29,9 @@ uniform float uWarmShare;
 uniform float uNearFade;
 uniform vec3 uCool;
 uniform vec3 uWarm;
+// The frosted plate behind the words: centre and half size in canvas pixels, and how soft the lanes get inside it.
+uniform vec4 uPlate;
+uniform float uSoften;
 out vec4 outColor;
 
 float hash(float seed) {
@@ -48,8 +51,11 @@ void main() {
   float lanePosition = (across + 0.5) * uLanes;
   float seed = hash(floor(lanePosition));
   float edge = abs(fract(lanePosition) - 0.5);
-  float pixel = max(fwidth(lanePosition), 0.025);
-  float core = exp(-pow(edge / (pixel * (0.65 + projection)), 2.0));
+  // Inside the plate each lane widens and dims, like light seen through frosted glass.
+  float plate = uSoften > 0.0 ? 1.0 - smoothstep(0.45, 1.0, length((gl_FragCoord.xy - uPlate.xy) / uPlate.zw)) : 0.0;
+  float frost = 1.0 + plate * uSoften;
+  float pixel = max(fwidth(lanePosition), 0.025) * frost;
+  float core = exp(-pow(edge / (pixel * (0.65 + projection)), 2.0)) * mix(1.0, 0.5, plate);
   float glow = exp(-edge / (pixel * 3.5));
   float inside = step(0.0, lanePosition) * step(lanePosition, uLanes);
 
@@ -70,6 +76,8 @@ void main() {
   color *= mix(1.0, 0.2, smoothstep(uHorizon, 1.0, uv.y));
   color += uCool * 0.05 * exp(-abs(uv.y - uHorizon) * 12.0) * exp(-abs(across) * 2.4);
   color *= 1.0 - 0.4 * pow(abs(uv.x - 0.5) * 2.0, 2.0);
+  // Behind the words the frost scatters most of the light, as the blurred plate did.
+  color *= mix(1.0, 0.28, plate);
 
   // A little grain hides banding in the dark gradients.
   color += (hash(dot(gl_FragCoord.xy, vec2(0.17, 0.31))) - 0.5) * 0.006;
@@ -93,13 +101,18 @@ const uniformNames = [
   'uNearFade',
   'uCool',
   'uWarm',
+  'uPlate',
+  'uSoften',
 ] as const
 
 type UniformName = (typeof uniformNames)[number]
 
 export interface CoveLight {
-  /** Match the canvas to its box. Call when the box changes size. */
-  resize(): void
+  /**
+   * Match the canvas to its box. Call when the box changes size.
+   * `plate` is the box of the words, in page pixels, for the frosted softening behind them.
+   */
+  resize(plate?: DOMRect | null): void
   /** Draw one frame. `seconds` is the light's own clock; `pointerX` is -0.5 to 0.5. */
   render(seconds: number, pointerX: number): void
   dispose(): void
@@ -107,6 +120,8 @@ export interface CoveLight {
 
 /** Width below which the light uses its narrow-screen tuning. */
 const narrowWidth = 640
+/** Width from which the plate behind the words is frosted, as the CSS plate was before. */
+const frostWidth = 768
 
 function compile(gl: WebGL2RenderingContext, type: number, source: string): WebGLShader | null {
   const shader = gl.createShader(type)
@@ -166,7 +181,7 @@ export function createCoveLight(canvas: HTMLCanvasElement, config: HeroLightConf
   gl.uniform3f(uniforms.uWarm, ...config.warm)
 
   return {
-    resize() {
+    resize(plate) {
       const area = Math.max(1, canvas.clientWidth * canvas.clientHeight)
       const ratio = Math.min(window.devicePixelRatio || 1, config.maxPixelRatio, Math.sqrt(config.maxPixels / area))
       const width = Math.max(1, Math.round(canvas.clientWidth * ratio))
@@ -180,6 +195,17 @@ export function createCoveLight(canvas: HTMLCanvasElement, config: HeroLightConf
       const size = canvas.clientWidth < narrowWidth ? 'narrow' : 'wide'
       gl.uniform1f(uniforms.uWallWidth, config.wallWidth[size])
       gl.uniform1f(uniforms.uLanes, config.lanes[size])
+      const box = canvas.getBoundingClientRect()
+      if (plate && plate.width && canvas.clientWidth >= frostWidth && config.plateSoften > 0) {
+        // The CSS plate reached 6% past the words on each side and 18% above and below.
+        const scale = width / Math.max(1, box.width)
+        const centerX = (plate.left + plate.width / 2 - box.left) * scale
+        const centerY = (box.bottom - (plate.top + plate.height / 2)) * scale
+        gl.uniform4f(uniforms.uPlate, centerX, centerY, plate.width * 0.56 * scale, plate.height * 0.68 * scale)
+        gl.uniform1f(uniforms.uSoften, config.plateSoften)
+      } else {
+        gl.uniform1f(uniforms.uSoften, 0)
+      }
     },
     render(seconds, pointerX) {
       gl.uniform1f(uniforms.uTime, seconds)

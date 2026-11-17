@@ -84,6 +84,8 @@
   --night-ink-muted: #9aa7b0;
   --night-line: rgb(255 255 255 / 12%);
   --night-glass: rgb(10 14 18 / 38%);
+  /* Glass with no blur behind it (on the moving light), so it carries more of its own tint. */
+  --night-glass-solid: rgb(14 18 24 / 62%);
   --night-glass-line: rgb(255 255 255 / 14%);
 
   /* Semantic: light theme */
@@ -113,7 +115,6 @@
   --hero-min-height: 560px;
   --hero-name-size: clamp(3.25rem, 11.5cqi, 11rem);
   --hero-plate-blur: 14px;
-  --hero-chip-blur: 12px;
 
   /* Component: project page */
   --project-name-size: clamp(2.75rem, 1.5rem + 6vw, 7rem);
@@ -266,6 +267,7 @@
   --night-ink: #edf1fb;
   --night-ink-muted: #98a4bf;
   --night-glass: rgb(10 16 32 / 42%);
+  --night-glass-solid: rgb(14 20 38 / 64%);
 
   --surface: #f3ede1;
   --surface-raised: #fbf8f1;

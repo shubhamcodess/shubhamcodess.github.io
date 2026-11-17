@@ -12,7 +12,8 @@ interface LightBackdropProps {
 
 /**
  * The moving light, as the far layer of whatever night surface it is placed in.
- * Its parent must be positioned. The parent receives --light-pointer-x/y and --light-scroll for its own depth.
+ * Its parent must be positioned. The parent receives --light-pointer-x/y for its own depth; the backdrop itself takes --light-scroll.
+ * An element inside the parent marked `data-light-plate` gets the light frosted behind it, drawn in the shader.
  */
 export function LightBackdrop({ config, light, parallax }: LightBackdropProps) {
   const backdropRef = useRef<HTMLDivElement>(null)

@@ -8,3 +8,8 @@
   pointer-events: none;
   mix-blend-mode: difference;
 }
+
+/* A full-screen blended layer costs the compositor every frame, drawn or not, so it leaves the page while empty. */
+.chalk-trail[data-idle] {
+  visibility: hidden;
+}

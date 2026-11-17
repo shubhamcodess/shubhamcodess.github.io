@@ -90,14 +90,13 @@
     visibility 0s var(--duration-base);
 }
 
-/* Blurring a moving canvas is costly on phones, so only wide screens get the frosted plate. */
+/*
+ * Wide screens get the frosted plate. The frost itself is drawn by the light's shader behind [data-light-plate]:
+ * a CSS backdrop blur over the moving canvas re-blurred it every frame and dropped frames on desktop. This is the dimming.
+ */
 @media (min-width: 768px) {
   .hero__intro::before {
-    background: rgb(0 0 0 / 28%);
-    -webkit-backdrop-filter: blur(var(--hero-plate-blur));
-    backdrop-filter: blur(var(--hero-plate-blur));
-    -webkit-mask-image: radial-gradient(closest-side, #000 45%, transparent);
-    mask-image: radial-gradient(closest-side, #000 45%, transparent);
+    background: radial-gradient(closest-side, rgb(0 0 0 / 68%), rgb(0 0 0 / 52%) 45%, transparent);
   }
 }
 

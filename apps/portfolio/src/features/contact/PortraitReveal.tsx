@@ -27,6 +27,8 @@ export function PortraitReveal() {
     const context = canvas?.getContext('2d')
     if (!canvas || !context) return
     const image = new Image()
+    // The photo is decoded off the main thread before its first frame, so drawing it never stalls a scrolling page.
+    let photo: ImageBitmap | HTMLImageElement | null = null
     const seeds: number[] = []
     // Every cell is one of a few dozen greys, so each grey is drawn once into a strip of sprites
     // and the field is stamped from it: one image copy per cell instead of building a rounded path.
@@ -74,15 +76,18 @@ export function PortraitReveal() {
         canvas.height = height
       }
 
+      if (!photo) return
       // The photo covers the window and keeps the face, which is near the top.
-      const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight)
+      const photoWidth = photo.width
+      const photoHeight = photo.height
+      const scale = Math.max(width / photoWidth, height / photoHeight)
       const sourceWidth = width / scale
       const sourceHeight = height / scale
       context.clearRect(0, 0, width, height)
       context.drawImage(
-        image,
-        (image.naturalWidth - sourceWidth) / 2,
-        (image.naturalHeight - sourceHeight) * 0.12,
+        photo,
+        (photoWidth - sourceWidth) / 2,
+        (photoHeight - sourceHeight) * 0.12,
         sourceWidth,
         sourceHeight,
         0,
@@ -137,7 +142,7 @@ export function PortraitReveal() {
       frame = requestAnimationFrame(tick)
     }
     const play = () => {
-      if (playing || canvas.dataset.state === 'done' || !seen || !image.complete || !image.naturalWidth) return
+      if (playing || canvas.dataset.state === 'done' || !seen || !photo) return
       if (reducedMotion) return finish()
       playing = true
       canvas.dataset.state = 'forming'
@@ -154,7 +159,14 @@ export function PortraitReveal() {
       { threshold: 0.6 },
     )
     visibility.observe(canvas)
-    image.onload = play
+    image.onload = () => {
+      const ready = (decoded: ImageBitmap | HTMLImageElement) => {
+        photo = decoded
+        play()
+      }
+      if ('createImageBitmap' in window) createImageBitmap(image).then(ready, () => ready(image))
+      else ready(image)
+    }
     // The photo is at the foot of the page: fetch it only as the visitor nears it, so it never competes with the first paint.
     const nearby = new IntersectionObserver(
       (entries) => {
@@ -175,6 +187,7 @@ export function PortraitReveal() {
       nearby.disconnect()
       visibility.disconnect()
       resize.disconnect()
+      if (photo && 'close' in photo) photo.close()
     }
   }, [reveal, reducedMotion])
 
