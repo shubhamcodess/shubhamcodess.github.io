@@ -264,6 +264,28 @@
   background: var(--ink);
 }
 
+/* A deeper polaroid foot on the line, with the photo's short title written on it. */
+.me35-gallery {
+  --polaroid-foot: 30px;
+}
+
+.me35-caption {
+  position: absolute;
+  right: var(--polaroid-edge);
+  bottom: 0;
+  left: var(--polaroid-edge);
+  display: grid;
+  place-items: center;
+  height: var(--polaroid-foot);
+  overflow: hidden;
+  color: var(--ink-muted);
+  font-size: 12px;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
 /* Prints keep their photo's own shape: nothing is cropped. A wide photo takes two places and two pegs. */
 .me35-gallery .clothesline__print {
   aspect-ratio: auto;
@@ -430,13 +452,6 @@
   font-size: var(--text-lg);
   font-weight: 500;
   letter-spacing: -0.01em;
-}
-
-.me35-viewer__text {
-  max-width: 52ch;
-  color: var(--ink-muted);
-  font-size: var(--text-sm);
-  line-height: 1.5;
 }
 
 .me35-viewer .photo-viewer__count {

@@ -35,3 +35,9 @@ Open `/me/`. It prints an address for a phone on the same Wi-Fi too.
 
 - **Rope:** twisted twine instead of a thin line: a core cord with two plies dashed half a twist apart, and a soft shadow on the wall. Drawn at the line's real width, so the twist keeps its pitch on every screen. Its own colours in dark mode.
 - **Pegs:** wooden clothes pegs, each one tapered piece of wood with a little grain, a groove for the rope and a steel spring across the middle (a first try drew two halves with a seam, which read as two clips). The jaws sit over the rope and bite the print's top edge; a wide print gets two.
+
+## Fourth pass
+
+- **Captions on the line:** each polaroid has a deeper foot with the photo's short title on it.
+- **Viewer:** the same one title on the foot, with the count. No second line.
+- **The owner's own photos** (doughnuts, a grilled sandwich, the bike after rain, the figurine) hang among the stand-ins. They sit in `photos/`, resized and stripped of metadata, and stay out of the public repository. On another machine those four prints simply won't load.

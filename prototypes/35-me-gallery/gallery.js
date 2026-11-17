@@ -53,6 +53,13 @@
       tags: ['places', 'photography'],
     },
   ]
+  // The owner's own photos, kept beside the prototype and out of the repository (photos/.gitignore).
+  real.push(
+    { src: '__proto/photos/doughnuts', w: 900, h: 1600, title: 'A box of doughnuts', text: 'Six glazed doughnuts in an open box, one with rainbow sprinkles.', tags: ['food'] },
+    { src: '__proto/photos/sandwich', w: 900, h: 1600, title: 'Grilled sandwich', text: 'A grilled sandwich with cucumber and lettuce by a window.', tags: ['food'] },
+    { src: '__proto/photos/bike-rain', w: 1600, h: 900, title: 'After the rain', text: 'Rain on the handlebars and dashboard of the bike.', tags: ['biking'] },
+    { src: '__proto/photos/figurine', w: 1066, h: 1600, title: 'The figurine', text: 'A figurine in a striped shirt on a desk.', tags: ['people'] },
+  )
   const library = Array.from({ length: 40 }, (_, i) => ({ ...real[i % real.length], key: i }))
 
   const icons = {
@@ -182,6 +189,7 @@
                 <img src="${url(photo.src)}-print.webp" alt="" loading="lazy" decoding="async">
                 <span class="clothesline__glass" aria-hidden="true"></span>
               </button>
+              <span class="me35-caption">${photo.title}</span>
             </li>`
           })
           .join('')}</ul>`
@@ -254,14 +262,13 @@
       sync()
     }).observe(gallery)
 
-    // ── The viewer: the print comes up larger, its title written on the foot and a line beneath. ──
+    // ── The viewer: the print comes up larger, with the same one title on its foot that it has on the line. ──
     const viewer = document.createElement('dialog')
     viewer.className = 'photo-viewer me35-viewer'
     viewer.innerHTML = `<figure class="photo-viewer__print">
         <span class="photo-viewer__photo"><img alt="" decoding="async"><span class="clothesline__glass" aria-hidden="true"></span></span>
         <figcaption>
           <span class="me35-viewer__head"><strong class="me35-viewer__title"></strong><span class="photo-viewer__count"></span></span>
-          <span class="me35-viewer__text"></span>
         </figcaption>
       </figure>
       <button type="button" class="photo-viewer__close" aria-label="Close photo">${line('M6 6l12 12M18 6L6 18')}</button>
@@ -278,7 +285,6 @@
       img.alt = p.text
       viewer.setAttribute('aria-label', p.title)
       viewer.querySelector('.me35-viewer__title').textContent = p.title
-      viewer.querySelector('.me35-viewer__text').textContent = p.text
       viewer.querySelector('.photo-viewer__count').textContent = `${at + 1} / ${photos.length}`
     }
     const close = () => {
