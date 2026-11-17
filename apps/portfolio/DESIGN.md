@@ -24,7 +24,7 @@ A developer's portfolio that reads like a well-kept workspace: black frame, roun
 - Panel radius is `--frame-radius`: 24px on phones, up to 40px on wide screens. The prototype's fixed 48px ate too much of a phone screen.
 - One content measure for every section: `.container`, 1240px wide with a `--page-gutter` edge. Headers, headings and grids share the same page edge.
 - The hero and footer are **night** surfaces: dark in both themes. Every other panel follows the theme.
-- Dark panels bleed into the frame at their sides on purpose. Only the contact panel, the last one, carries a soft shadow under its bottom edge, so it lifts off the footer.
+- Dark panels bleed into the frame on purpose. The contact panel, the last one, is the exception: its surface sits a few shades up from the frame (`--contact-surface`, `#0c1019`) with a shadow under its bottom edge only, so it reads as a card above the footer even at low screen brightness.
 - Scrolling is native. The scrollbar is thin and takes the frame's colors.
 
 ## Color
