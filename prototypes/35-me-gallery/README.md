@@ -41,3 +41,11 @@ Open `/me/`. It prints an address for a phone on the same Wi-Fi too.
 - **Captions on the line:** each polaroid has a deeper foot with the photo's short title on it.
 - **Viewer:** the same one title on the foot, with the count. No second line.
 - **The owner's own photos** (doughnuts, a grilled sandwich, the bike after rain, the figurine) hang among the stand-ins. They sit in `photos/`, resized and stripped of metadata, and stay out of the public repository. On another machine those four prints simply won't load.
+
+## Fifth pass
+
+- **Two captions:** the short title on the line; the longer description on the print when it's opened.
+- **Viewer as a darkroom:** a warm, dark room instead of a blurred page. The print hangs from its own rope across the top, on one peg (two for a wide photo).
+- **Controls at the bottom:** previous, count and next in one bar under the print; close stays top right.
+- **Cursor:** the site hides the system cursor for its comet, and the viewer covered the comet, so there was no pointer at all. The system cursor shows inside the viewer.
+- **Rope colours:** the site's own line rule was overriding the rope's colours; every part of the rope now names the rope, so the twine shows as twine.

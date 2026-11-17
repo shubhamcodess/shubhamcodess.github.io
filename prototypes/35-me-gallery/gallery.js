@@ -262,18 +262,22 @@
       sync()
     }).observe(gallery)
 
-    // ── The viewer: the print comes up larger, with the same one title on its foot that it has on the line. ──
+    // ── The viewer: a darkroom. The print hangs larger from its own peg on a rope across the top, with the
+    // long caption on its foot; the controls sit in one bar at the bottom. ──
     const viewer = document.createElement('dialog')
     viewer.className = 'photo-viewer me35-viewer'
-    viewer.innerHTML = `<figure class="photo-viewer__print">
+    viewer.innerHTML = `<div class="me35-viewer__rope"></div>
+      <figure class="photo-viewer__print">
+        <span class="me35-viewer__pegs"></span>
         <span class="photo-viewer__photo"><img alt="" decoding="async"><span class="clothesline__glass" aria-hidden="true"></span></span>
-        <figcaption>
-          <span class="me35-viewer__head"><strong class="me35-viewer__title"></strong><span class="photo-viewer__count"></span></span>
-        </figcaption>
+        <figcaption class="me35-viewer__caption"></figcaption>
       </figure>
-      <button type="button" class="photo-viewer__close" aria-label="Close photo">${line('M6 6l12 12M18 6L6 18')}</button>
-      <button type="button" class="photo-viewer__step photo-viewer__step--back" aria-label="Previous photo">${line('M19 12H5M11 6l-6 6 6 6')}</button>
-      <button type="button" class="photo-viewer__step photo-viewer__step--on" aria-label="Next photo">${line('M5 12h14M13 6l6 6-6 6')}</button>`
+      <div class="me35-viewer__bar">
+        <button type="button" class="me35-viewer__step" data-step="-1" aria-label="Previous photo">${line('M19 12H5M11 6l-6 6 6 6')}</button>
+        <span class="me35-viewer__count"></span>
+        <button type="button" class="me35-viewer__step" data-step="1" aria-label="Next photo">${line('M5 12h14M13 6l6 6-6 6')}</button>
+      </div>
+      <button type="button" class="photo-viewer__close" aria-label="Close photo">${line('M6 6l12 12M18 6L6 18')}</button>`
     document.body.append(viewer)
     let at = 0
     let opener = null
@@ -284,8 +288,9 @@
       img.src = `${url(p.src)}.webp`
       img.alt = p.text
       viewer.setAttribute('aria-label', p.title)
-      viewer.querySelector('.me35-viewer__title').textContent = p.title
-      viewer.querySelector('.photo-viewer__count').textContent = `${at + 1} / ${photos.length}`
+      viewer.querySelector('.me35-viewer__caption').textContent = p.text
+      viewer.querySelector('.me35-viewer__count').textContent = `${at + 1} / ${photos.length}`
+      viewer.querySelector('.me35-viewer__pegs').innerHTML = isWide(p) ? clip(' me35-clip--left') + clip(' me35-clip--right') : clip()
     }
     const close = () => {
       viewer.close()
@@ -296,11 +301,11 @@
       if (!button) return
       opener = button
       showPhoto(Number(button.dataset.index))
+      viewer.querySelector('.me35-viewer__rope').innerHTML = rope(innerWidth)
       viewer.showModal()
     })
     viewer.querySelector('.photo-viewer__close').onclick = close
-    viewer.querySelector('.photo-viewer__step--back').onclick = () => showPhoto(at - 1)
-    viewer.querySelector('.photo-viewer__step--on').onclick = () => showPhoto(at + 1)
+    for (const step of viewer.querySelectorAll('[data-step]')) step.onclick = () => showPhoto(at + Number(step.dataset.step))
     viewer.addEventListener('click', (event) => event.target === viewer && close())
     viewer.addEventListener('cancel', (event) => {
       event.preventDefault()

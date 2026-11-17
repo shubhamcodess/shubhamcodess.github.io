@@ -338,27 +338,29 @@
   stroke-linecap: butt;
 }
 
-.me35-rope__shadow {
+/* The site's own line rule is more specific than a bare class, so each part names the rope too. */
+
+.me35-rope .me35-rope__shadow {
   stroke: var(--rope-shadow);
   stroke-width: 3.5;
 }
 
-.me35-rope__core {
+.me35-rope .me35-rope__core {
   stroke: var(--rope-core);
   stroke-width: 3.2;
 }
 
 /* Two plies, dashed half a twist apart: together they draw the slanted wind of a cord. */
-.me35-rope__ply {
+.me35-rope .me35-rope__ply {
   stroke-width: 1.5;
   stroke-dasharray: 2.6 2.6;
 }
 
-.me35-rope__ply--dark {
+.me35-rope .me35-rope__ply--dark {
   stroke: var(--rope-dark);
 }
 
-.me35-rope__ply--light {
+.me35-rope .me35-rope__ply--light {
   stroke: var(--rope-light);
   stroke-dashoffset: 1.3;
 }
@@ -426,37 +428,124 @@
   stroke-width: 0.6;
 }
 
-/* The viewer: the polaroid larger, with a deeper foot that carries the title and a line about the photo. */
-.me35-viewer .photo-viewer__print {
-  padding: var(--space-4) var(--space-4) var(--space-5);
-  gap: var(--space-4);
+/* ── The viewer: a darkroom, the print hanging from its own rope, controls in one bar at the bottom. ── */
+dialog.me35-viewer {
+  /* The rope and pegs keep the gallery's colours in here, where the page's .me35-gallery is out of reach. */
+  --rope-core: #8f7a5c;
+  --rope-dark: #6b5a42;
+  --rope-light: #c4ae88;
+  --rope-shadow: rgb(0 0 0 / 40%);
+  --peg-wood: #d9bb8c;
+  --peg-wood-far: #c7a573;
+  --peg-grain: rgb(120 85 40 / 35%);
+  --peg-steel: #9aa1a8;
+  --peg-steel-line: #6d747b;
+  padding: 0;
 }
 
-.me35-viewer .photo-viewer__print figcaption {
+dialog.me35-viewer[open] {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  justify-content: stretch;
-  gap: var(--space-2);
-  font: inherit;
+  grid-template-rows: 1fr auto;
+  justify-items: center;
+  align-items: start;
 }
 
-.me35-viewer__head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-4);
+/* No blur: a warm darkroom with a little light falling on the print. */
+dialog.me35-viewer::backdrop {
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 38%, rgb(70 55 35 / 55%), transparent 70%),
+    rgb(10 9 8 / 92%);
+  backdrop-filter: none;
 }
 
-.me35-viewer__title {
+/* The site hides the system cursor for its comet, which the viewer would cover: show the real one in here. */
+:root[data-cursor='comet'] .me35-viewer,
+:root[data-cursor='comet'] .me35-viewer * {
+  cursor: auto !important;
+}
+
+:root[data-cursor='comet'] .me35-viewer button {
+  cursor: pointer !important;
+}
+
+.me35-viewer__rope {
+  position: fixed;
+  top: 18px;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+.me35-viewer__rope .me35-rope {
+  display: block;
+  position: static;
+}
+
+dialog.me35-viewer .photo-viewer__print {
+  margin-top: 46px;
+  padding: var(--space-4) var(--space-4) 0;
+  gap: 0;
+}
+
+dialog.me35-viewer .photo-viewer__photo img {
+  max-height: calc(100dvh - 230px);
+}
+
+.me35-viewer .me35-clip {
+  top: -20px;
+  --print-turn: 0deg;
+}
+
+dialog.me35-viewer .me35-viewer__caption {
+  display: block;
+  font-family: var(--font-sans);
+  /* The caption never widens the print beyond its photo. */
+  width: 0;
+  min-width: 100%;
+  padding: var(--space-4) var(--space-1) var(--space-5);
   color: var(--ink);
-  font-size: var(--text-lg);
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  font-size: var(--text-md);
+  line-height: 1.45;
+  text-align: center;
 }
 
-.me35-viewer .photo-viewer__count {
-  color: var(--ink-muted);
+.me35-viewer__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+  padding: var(--space-1);
+  color: var(--night-ink);
+  background: rgb(255 255 255 / 8%);
+  border: var(--hairline) solid rgb(255 255 255 / 14%);
+  border-radius: var(--radius-pill);
+}
+
+.me35-viewer__step {
+  display: grid;
+  place-items: center;
+  width: var(--target-min);
+  height: var(--target-min);
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  transition: background-color var(--duration-fast) linear;
+}
+
+.me35-viewer__step:hover {
+  background: rgb(255 255 255 / 12%);
+}
+
+.me35-viewer__count {
+  min-width: 5ch;
+  color: var(--night-ink-muted);
   font: 400 var(--text-xs, 12px) / 1 var(--font-mono);
+  text-align: center;
+}
+
+dialog.me35-viewer .photo-viewer__close {
+  backdrop-filter: none;
 }
 
 @media (max-width: 560px) {
