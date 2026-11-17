@@ -128,7 +128,7 @@ export interface HeroLightConfig {
   readonly maxFps: number
   /**
    * How much the light softens behind the words on wide screens, so the lanes blur out where text sits.
-   * It is drawn in the shader: a CSS backdrop blur would re-blur the moving canvas every frame. 0 turns it off.
+   * It is drawn in the shader: a CSS backdrop blur would re-blur the moving canvas every frame. 0 (the chosen look) keeps the lanes crisp; about 4 frosts them.
    */
   readonly plateSoften: number
   readonly parallax: {

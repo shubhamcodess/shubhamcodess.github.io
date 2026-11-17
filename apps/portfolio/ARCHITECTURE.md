@@ -108,7 +108,8 @@ pnpm --filter @portfolio/app data
 
 - `ui/light/coveLight.ts` is the shader and its WebGL2 setup. It returns `null` when WebGL2 isn't available, and the backdrop keeps its CSS glow.
 - `ui/light/useLightScene.ts` runs one animation loop per backdrop. It writes `--light-pointer-x` and `--light-pointer-y` on the backdrop's parent, whose CSS decides what moves, and `--light-scroll` on the backdrop alone, so scrolling never restyles the words.
-- The frosted plate behind the hero's words is drawn in the shader: an element marked `data-light-plate` gets the lanes softened and dimmed behind it (`plateSoften`). Never put a CSS `backdrop-filter` over the moving canvas; it re-blurs every frame and drops frames on desktop.
+- The lanes stay crisp behind the hero's words; a CSS gradient only dims them. An optional frost is drawn in the shader behind an element marked `data-light-plate` (`plateSoften`, 0 by choice).
+- `maxPixels` is 4.5M so a large retina window draws the light at its full 1.5x. A lower cap made it render near 1x and stretch, which blurred the lanes; the jank was never the shader. Never put a CSS `backdrop-filter` over the moving canvas; it re-blurs every frame and drops frames on desktop.
 - Smoothness rules learned from GPU traces in Chrome on a Mac: no backdrop blur over anything that animates; no SVG filters (`feTurbulence`) as backgrounds, render them to image tiles; decode canvas images with `createImageBitmap` before drawing; full-screen blended overlays (the chalk trail) leave the page with `visibility: hidden` while idle.
 - `ui/light/LightBackdrop.tsx` is the component. The hero and the project title plate both use it.
 - All tuning is `hero.light` in the config. Nothing is hard-coded in the shader except the shape of the scene.

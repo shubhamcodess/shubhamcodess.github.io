@@ -91,14 +91,9 @@
 }
 
 /*
- * Wide screens get the frosted plate. The frost itself is drawn by the light's shader behind [data-light-plate]:
- * a CSS backdrop blur over the moving canvas re-blurred it every frame and dropped frames on desktop. This is the dimming.
+ * The lanes stay crisp behind the words on every screen; this plate only dims them. No backdrop blur: over the
+ * moving canvas it re-blurred every frame and dropped frames on desktop. For a frosted look, raise hero.light.plateSoften.
  */
-@media (min-width: 768px) {
-  .hero__intro::before {
-    background: radial-gradient(closest-side, rgb(0 0 0 / 68%), rgb(0 0 0 / 52%) 45%, transparent);
-  }
-}
 
 @media (max-width: 640px) {
   .hero {
