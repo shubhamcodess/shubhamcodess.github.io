@@ -63,12 +63,6 @@
   letter-spacing: -0.01em;
 }
 
-.me35-block__note {
-  color: var(--ink-muted);
-  font: 400 10px/1.35 var(--font-mono);
-  letter-spacing: 0.02em;
-}
-
 /* Sheet: paper, a shade lighter than the page. */
 .me35-block--sheet {
   background: var(--surface-raised);
@@ -97,16 +91,31 @@
   margin-top: var(--space-3);
 }
 
-/* Film: a dark frame with sprocket holes down both edges. */
-.me35-block--film {
-  --ink: var(--night-ink);
-  --ink-muted: var(--night-ink-muted);
-  padding-inline: 22px;
-  color: var(--night-ink);
+/* Reel: a strip of film in the paper's own tones, sprocket holes punched down both edges. Never dark. */
+.me35-block--reel {
+  padding-inline: 24px;
   background:
-    radial-gradient(circle, rgb(255 255 255 / 22%) 1.6px, transparent 2px) 7px 4px / 8px 12px repeat-y,
-    radial-gradient(circle, rgb(255 255 255 / 22%) 1.6px, transparent 2px) calc(100% - 7px) 4px / 8px 12px repeat-y,
-    var(--night-surface);
+    radial-gradient(circle at 50% 50%, var(--surface) 0 2.4px, transparent 2.9px) 6px 6px / 10px 13px repeat-y,
+    radial-gradient(circle at 50% 50%, var(--surface) 0 2.4px, transparent 2.9px) calc(100% - 6px) 6px / 10px 13px repeat-y,
+    var(--surface-sunken);
+}
+
+.me35-block--reel::before {
+  content: '';
+  position: absolute;
+  inset: 8px 20px;
+  background: var(--surface-raised);
+  border: var(--hairline) solid var(--line);
+  border-radius: 3px;
+}
+
+.me35-block--reel > * {
+  position: relative;
+  margin-inline: var(--space-2);
+}
+
+.me35-block--reel .me35-icon {
+  margin-top: var(--space-2);
 }
 
 /* A quiet pointer to the gallery under the blocks. */
@@ -212,17 +221,166 @@
   height: 1px;
 }
 
+/* What the gallery is showing, and the way back to every photo. */
+.me35-showing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-6);
+  color: var(--ink);
+  font-size: var(--text-md);
+}
+
+.me35-showing__count {
+  color: var(--ink-muted);
+  font: 400 var(--text-xs, 12px) / 1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.me35-showing__all {
+  padding: 0;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  background: none;
+  border: 0;
+  border-bottom: var(--hairline) dotted currentColor;
+  cursor: pointer;
+}
+
+.me35-showing__all:hover {
+  color: var(--ink);
+}
+
+.me35-empty {
+  color: var(--ink-muted);
+  padding-block: var(--space-6);
+}
+
+.me35-pill[aria-pressed='true'] {
+  color: var(--surface);
+  background: var(--ink);
+}
+
+/* Prints keep their photo's own shape: nothing is cropped. A wide photo takes two places and two pegs. */
+.me35-gallery .clothesline__print {
+  aspect-ratio: auto;
+  align-self: start;
+}
+
+.me35-gallery .clothesline__open {
+  height: auto;
+}
+
+.me35-gallery .clothesline__open img {
+  height: auto;
+  aspect-ratio: var(--ratio);
+}
+
+.me35-gallery .clothesline__print.me35-wide {
+  grid-column: span 2;
+  width: min(100%, calc(var(--clothesline-print) * 2 + var(--space-5)));
+}
+
+.me35-wide .clothesline__peg {
+  left: 22%;
+}
+
+.me35-wide .me35-peg-2 {
+  left: 78%;
+}
+
+/* The viewer: the polaroid larger, with a deeper foot that carries the title and a line about the photo. */
+.me35-viewer .photo-viewer__print {
+  padding: var(--space-4) var(--space-4) var(--space-5);
+  gap: var(--space-4);
+}
+
+.me35-viewer .photo-viewer__print figcaption {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-content: stretch;
+  gap: var(--space-2);
+  font: inherit;
+}
+
+.me35-viewer__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.me35-viewer__title {
+  color: var(--ink);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.me35-viewer__text {
+  max-width: 52ch;
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.me35-viewer .photo-viewer__count {
+  color: var(--ink-muted);
+  font: 400 var(--text-xs, 12px) / 1 var(--font-mono);
+}
+
 @media (max-width: 560px) {
   .me35-blocks {
     gap: var(--space-4);
   }
 
+  /* Three to a row on phones, each block a third of the width. */
+  .me35-blocks {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+
   .me35-block {
-    width: 132px;
+    width: 100%;
+    padding: var(--space-3);
+  }
+
+  .me35-block__title {
+    font-size: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .me35-block--print {
+    padding-inline: 6px;
+  }
+
+  .me35-block--print::before {
+    inset: 6px 6px 26px;
+  }
+
+  .me35-block--print > *,
+  .me35-block--reel > * {
+    margin-inline: var(--space-1);
+  }
+
+  .me35-block--reel {
+    padding-inline: 16px;
+  }
+
+  .me35-block--reel::before {
+    inset: 7px 15px;
   }
 
   .me35-pill span {
     display: none;
+  }
+
+  .me35-pill[data-show=''] span {
+    display: inline;
   }
 
   .me35-pill {

@@ -20,3 +20,13 @@ node prototypes/35-me-gallery/serve.mjs
 ```
 
 Open `/me/`. It prints an address for a phone on the same Wi-Fi too.
+
+## Second pass
+
+- **Six blocks:** Biking, Photography, Filmmaking, Food, People, Places. Places no longer lists cities.
+- **Filmmaking is a reel,** not black: a film strip in the paper's own tones, holes punched down both edges, with a reel icon.
+- **Categories:** each photo carries one or two (`tags`). A block or a pill shows only its photos, with a count and "Show all"; the pill bar gains "All" and marks the one chosen. The address follows: `/me/#gallery/food`. A category with no photos yet says so.
+- **Nothing is cropped.** Each print keeps its photo's shape. A wide photo hangs across two places on two pegs, turned less; when it won't fit the end of a line, the next upright photo steps in so lines don't end with a gap.
+- **Viewer:** the polaroid comes up larger, with the photo's title on its foot, the count beside it, and a line about the photo below.
+- **Phones:** the blocks sit three to a row.
+- The stand-ins' titles and lines come from what each photo shows; their categories are only for the demo.
