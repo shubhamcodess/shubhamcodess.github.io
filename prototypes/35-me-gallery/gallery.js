@@ -144,17 +144,41 @@
       }
     }
 
+    // A twisted cord: a dark core, then two strands dashed half a twist apart and offset either side of it,
+    // which reads as plies wound round each other. Drawn at the line's real width, so the twist keeps its pitch.
+    const rope = (width) => {
+      const d = `M0 6 Q${width / 2} 34 ${width} 6`
+      return `<svg class="clothesline__line me35-rope" viewBox="0 0 ${width} 40" preserveAspectRatio="none" aria-hidden="true">
+        <path class="me35-rope__shadow" d="${d}" transform="translate(0 3)"/>
+        <path class="me35-rope__core" d="${d}"/>
+        <path class="me35-rope__ply me35-rope__ply--dark" d="${d}" transform="translate(0 0.7)"/>
+        <path class="me35-rope__ply me35-rope__ply--light" d="${d}" transform="translate(0 -0.7)"/>
+      </svg>`
+    }
+
+    // A wooden clothes peg: two halves with grain, a steel spring across the middle, its jaws over the
+    // rope at the top and biting the print's top edge below.
+    const clip = (extra = '') => `<span class="me35-clip${extra}" aria-hidden="true"><svg viewBox="0 0 12 34" width="12" height="34">
+        <rect class="me35-clip__half" x="0.6" y="0.5" width="5" height="33" rx="2"/>
+        <rect class="me35-clip__half me35-clip__half--far" x="6.4" y="0.5" width="5" height="33" rx="2"/>
+        <path class="me35-clip__grain" d="M2.4 3v9M3.6 19v11M8.4 2v8M9.4 21v9"/>
+        <path class="me35-clip__seam" d="M6 1v32"/>
+        <path class="me35-clip__notch" d="M4.2 8.5h3.6"/>
+        <rect class="me35-clip__spring" x="0" y="13.5" width="12" height="4.2" rx="1.2"/>
+        <path class="me35-clip__coil" d="M2 14.2v2.8M4 14.2v2.8M6 14.2v2.8M8 14.2v2.8M10 14.2v2.8"/>
+      </svg></span>`
+
     const string = (row) => {
       const element = document.createElement('div')
       element.className = 'clothesline__row me35-row'
       element.style.setProperty('--per-line', perLine)
-      element.innerHTML = `<svg class="clothesline__line" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 6 Q500 34 1000 6"/></svg>
+      element.innerHTML = `${rope(Math.max(1, Math.round(lines.clientWidth)))}
         <ul class="clothesline__prints">${row
           .map(({ photo, index, span, from }, k) => {
             const along = (from + span / 2) / perLine
             const turn = turns[index % turns.length] * (span > 1 ? 0.4 : 1)
             return `<li class="clothesline__print${span > 1 ? ' me35-wide' : ''}" style="--print-turn:${turn}deg;--print-drop:${Math.sin(along * Math.PI).toFixed(3)};--k:${k};--ratio:${photo.w}/${photo.h}">
-              <span class="clothesline__peg"></span>${span > 1 ? '<span class="clothesline__peg me35-peg-2"></span>' : ''}
+              ${span > 1 ? clip(' me35-clip--left') + clip(' me35-clip--right') : clip()}
               <button type="button" class="clothesline__open" data-index="${index}" aria-label="Open photo: ${photo.title}">
                 <img src="${url(photo.src)}-print.webp" alt="" loading="lazy" decoding="async">
                 <span class="clothesline__glass" aria-hidden="true"></span>

@@ -30,3 +30,8 @@ Open `/me/`. It prints an address for a phone on the same Wi-Fi too.
 - **Viewer:** the polaroid comes up larger, with the photo's title on its foot, the count beside it, and a line about the photo below.
 - **Phones:** the blocks sit three to a row.
 - The stand-ins' titles and lines come from what each photo shows; their categories are only for the demo.
+
+## Third pass
+
+- **Rope:** twisted twine instead of a thin line: a core cord with two plies dashed half a twist apart, and a soft shadow on the wall. Drawn at the line's real width, so the twist keeps its pitch on every screen. Its own colours in dark mode.
+- **Pegs:** wooden clothes pegs (two halves with grain, a seam and a groove for the rope, a steel spring across the middle). The jaws sit over the rope and bite the print's top edge; a wide print gets two.
