@@ -9,6 +9,7 @@ import type { RouteId } from '../config/types'
 import { buildStories } from '../content/build-stories'
 import { builds } from '../content/builds'
 import { employers, featuredCredentials, recognition } from '../content/experience'
+import { photos as mePhotos } from '../content/me'
 import { toolGroups } from '../content/tools'
 import type { Build } from '../content/types'
 
@@ -489,7 +490,7 @@ export function pageMarkdown(page: SeoPage, context: SeoContext): string {
       lines.push(`## ${site.credentialsPage.title}`, '', site.credentialsPage.lead, '', ...credentialList(context.credentials), '')
       break
     case 'me':
-      lines.push(`## ${site.me.title}`, '', site.me.lead, '')
+      lines.push(`## ${site.me.title}`, '', site.me.lead, '', ...mePhotos.map((photo) => `- ${photo.title}: ${photo.caption}`), '')
       break
   }
   return lines.join('\n')

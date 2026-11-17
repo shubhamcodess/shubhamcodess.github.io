@@ -200,15 +200,22 @@ export const site = {
   me: {
     kicker: 'Off the clock',
     title: 'Away from the keyboard.',
-    lead: 'Biking, photography, filmmaking, and the place I call home.',
+    lead: 'Life between commits, one photo at a time.',
     link: 'More about me',
     onward: 'Say hello',
-    backToAll: 'Back to all',
-    placesLabel: 'Places I have lived',
-    placesKicker: 'Places',
-    placesTitle: 'Places I’ve been.',
     back: 'Professional experience',
-    turns: [-1.2, 1.4, -0.8, 1.1],
+    topicsLabel: 'What I do',
+    turns: [-2, 1.6, -1.2, 2.2, -1.8, 1.2],
+    everyPhoto: 'Every photo',
+    photo: { one: 'photo', many: 'photos' },
+    gallery: {
+      label: 'Gallery',
+      dockLabel: 'Show photos of',
+      all: 'All',
+      showAll: 'Show all',
+      empty: 'No photos here yet.',
+    },
+    viewer: { close: 'Close photo', previous: 'Previous photo', next: 'Next photo' },
   },
   credentialsPage: {
     title: 'Credentials',
@@ -258,7 +265,7 @@ export const site = {
     featured: true,
     experience: true,
     credentials: true,
-    mePage: false, // Turned off until /me is finished. Set true to bring back the page, its links and its place in the sitemap.
+    mePage: true, // /me: off the clock. False takes away the page, its links and its place in the sitemap.
     projectMedia: true,
     projectMediaPending: false,
     tilt: true,

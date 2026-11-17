@@ -1,136 +1,83 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { flushSync } from 'react-dom'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { site } from '../../config/site'
-import { home, pursuits, type Home, type Pursuit } from '../../content/me'
+import { photos, topics, type TopicId } from '../../content/me'
 import { Header } from '../../layout/Header'
 import { hrefTo } from '../../lib/routes'
 import { useReducedMotion } from '../../lib/useReducedMotion'
 import { ActionLink } from '../../ui/ActionLink'
 import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
-import { Art } from './Art'
-import { Places } from './Places'
-import { StateMap } from './StateMap'
+import { Gallery } from './Gallery'
+import { PhotoViewer } from './PhotoViewer'
+import { TopicArt } from './TopicArt'
 import './me.css'
 
-/** Every tile on the page, in order. The home tile is last. */
-type Entry = { readonly kind: 'pursuit'; readonly item: Pursuit } | { readonly kind: 'home'; readonly item: Home }
+const topicIds = new Set<string>(topics.map((topic) => topic.id))
+const countOf = (id: TopicId) => photos.filter((photo) => photo.topics.some((topic) => topic === id)).length
 
-const entries: readonly Entry[] = [...pursuits.map((item) => ({ kind: 'pursuit' as const, item })), { kind: 'home', item: home }]
-const ids = new Set(entries.map((entry) => entry.item.id))
-
-/** The open tile, and for the home tile the place open within it: #places/bengaluru, #places/jamshedpur. */
-const readHash = () => {
-  const [id = ''] = decodeURIComponent(window.location.hash.slice(1)).split('/')
-  return ids.has(id) ? id : null
+/** The topic named in the address: /me/#gallery/food. Plain #gallery, or anything else, is every photo. */
+const readTopic = (): TopicId | null => {
+  const [section, id = ''] = decodeURIComponent(window.location.hash.slice(1)).split('/')
+  return section === 'gallery' && topicIds.has(id) ? (id as TopicId) : null
 }
-const readPlace = () => decodeURIComponent(window.location.hash.slice(1)).split('/')[1] ?? null
-
-/** The face of a tile: its name, a label for the home tile, and whatever content/me.ts gives it. */
-function TileFace({ entry, open }: { readonly entry: Entry; readonly open: boolean }) {
-  const Title = open ? 'h1' : 'h2'
-  if (entry.kind === 'home') {
-    const { item } = entry
-    return (
-      <div className="me-frame__inner">
-        {item.map && item.at ? <StateMap state={item.map} at={item.at} /> : null}
-        {item.art ? <Art src={item.art} label={`${item.city}, ${item.region}`} /> : null}
-        <div className="me-frame__text">
-          <span className="eyebrow">{item.label}</span>
-          <Title className="me-home__city">{item.city}</Title>
-          <p className="me-home__region">{item.region}</p>
-          {item.line ? <p className="me-frame__line">{item.line}</p> : null}
-        </div>
-      </div>
-    )
-  }
-  const { item } = entry
-  return (
-    <div className="me-frame__inner">
-      {item.art ? <Art src={item.art} label={item.title} /> : null}
-      <div className="me-frame__text">
-        <Title className="me-frame__title">{item.title}</Title>
-        {item.line ? <p className="me-frame__line">{item.line}</p> : null}
-        {item.details?.length ? (
-          <dl className="me-frame__details">
-            {item.details.map((detail) => (
-              <div key={detail.label}>
-                <dt>{detail.label}</dt>
-                <dd>{detail.value}</dd>
-              </div>
-            ))}
-          </dl>
-        ) : null}
-      </div>
-    </div>
-  )
-}
-
-const frameOf = (entry: Entry) => (entry.kind === 'home' ? 'sheet me-home' : entry.item.frame)
-const titleOf = (entry: Entry) => (entry.kind === 'home' ? entry.item.city : entry.item.title)
 
 /**
- * Life away from work. The page is a grid of framed tiles; each opens at /me/#<id>. When one is open the
- * others fold into a rail (a column on wide screens, a strip on phones) and the chosen tile grows into the
- * main panel, using a view transition so the tile visibly becomes the panel. Back, Esc or the browser's
- * Back button return to the grid. Every tile shows only what content/me.ts gives it.
+ * Life away from work. Small paper tags for what the owner does, then one gallery of every photo, hung on
+ * twine. A tag isn't a page: it shows that topic's photos and brings the gallery up. While the gallery is on
+ * screen the tags wait at the top as a small bar, with All to see everything again. The address follows the
+ * choice (/me/#gallery/food), so a link lands on it.
  */
 export function MePage() {
   const { me, features } = site
   const reducedMotion = useReducedMotion()
-  const [openId, setOpenId] = useState<string | null>(readHash)
-  const [placeId, setPlaceId] = useState<string | null>(readPlace)
+  const [topic, setTopic] = useState<TopicId | null>(readTopic)
+  const [opened, setOpened] = useState<number | null>(null)
+  const [docked, setDocked] = useState(false)
+  const tagsRef = useRef<HTMLUListElement>(null)
+  const galleryRef = useRef<HTMLElement>(null)
 
-  // Changes the view inside a view transition when the browser has one, so tiles morph rather than jump.
-  const show = useCallback(
-    (id: string | null) => {
-      const apply = () => {
-        flushSync(() => setOpenId(id))
-        document.getElementById('main')?.scrollIntoView({ block: 'start', behavior: 'instant' })
-      }
-      if (reducedMotion || !document.startViewTransition) apply()
-      else document.startViewTransition(apply)
+  const shown = useMemo(() => (topic ? photos.filter((photo) => photo.topics.some((id) => id === topic)) : photos), [topic])
+  const counts = useMemo(() => new Map(topics.map((item) => [item.id, countOf(item.id)])), [])
+
+  const choose = useCallback(
+    (next: TopicId | null) => {
+      setTopic(next)
+      setOpened(null)
+      history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}#gallery${next ? `/${next}` : ''}`)
+      galleryRef.current?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' })
     },
     [reducedMotion],
   )
 
-  const openIdRef = useRef(openId)
-  openIdRef.current = openId
-
+  // Landing on /me/#gallery or /me/#gallery/<topic> opens straight onto the gallery.
   useEffect(() => {
-    const onHash = () => {
-      const next = readHash()
-      // Moving between places in the same open tile is a quiet swap, not a tile transition.
-      if (next && next === openIdRef.current) setPlaceId(readPlace())
-      else {
-        setPlaceId(readPlace())
-        show(next)
-      }
-    }
+    if (window.location.hash.startsWith('#gallery')) galleryRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' })
+    const onHash = () => setTopic(readTopic())
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
-  }, [show])
+  }, [])
 
-  const close = useCallback(() => {
-    history.pushState(history.state, '', `${window.location.pathname}${window.location.search}`)
-    show(null)
-  }, [show])
-
+  // The bar of tags shows once the tags have scrolled away and the gallery is on screen.
   useEffect(() => {
-    if (!openId) return
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') close()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [openId, close])
+    const tags = tagsRef.current
+    const gallery = galleryRef.current
+    if (!tags || !gallery) return
+    let tagsGone = false
+    let galleryOn = false
+    const watch = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.target === tags) tagsGone = !entry.isIntersecting
+        else galleryOn = entry.isIntersecting
+      }
+      setDocked(tagsGone && galleryOn)
+    })
+    watch.observe(tags)
+    watch.observe(gallery)
+    return () => watch.disconnect()
+  }, [])
 
-  // On phones the rail is a sideways strip: keep the open tile in view within it.
-  useEffect(() => {
-    document.querySelector('.me-rail__tile[aria-current]')?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' })
-  }, [openId])
-
-  const open = entries.find((entry) => entry.item.id === openId)
+  const current = topics.find((item) => item.id === topic)
+  const countLabel = (count: number) => `${count} ${count === 1 ? me.photo.one : me.photo.many}`
 
   return (
     <div className="panel panel--grow">
@@ -139,79 +86,96 @@ export function MePage() {
         <header className="section__header enter">
           <div>
             <p className="eyebrow">{me.kicker}</p>
-            {open ? <p className="section__title">{me.title}</p> : <h1 className="section__title">{me.title}</h1>}
-            {open ? null : <p className="section__lead">{me.lead}</p>}
+            <h1 className="section__title">{me.title}</h1>
+            <p className="section__lead">{me.lead}</p>
           </div>
         </header>
 
-        {open ? (
-          <div className="me-open">
-            <nav className="me-rail" aria-label={me.kicker}>
-              {entries.map((entry) => (
-                <a
-                  key={entry.item.id}
-                  className="me-rail__tile"
-                  href={`#${entry.item.id}`}
-                  {...(entry === open ? { 'aria-current': 'page' as const } : {})}
-                  style={{ viewTransitionName: entry === open ? 'none' : `me-${entry.item.id}` }}
-                >
-                  {entry.kind === 'home' ? <span className="eyebrow">{entry.item.label}</span> : null}
-                  <span className="me-rail__title">{titleOf(entry)}</span>
-                </a>
-              ))}
-            </nav>
-
-            <article className={`me-detail me-frame me-frame--${frameOf(open)}`} style={{ viewTransitionName: `me-${open.item.id}` }}>
-              {open.kind === 'home' && open.item.places?.length ? (
-                <Places home={open.item} placeId={placeId} />
-              ) : (
-                <TileFace entry={open} open />
-              )}
-              {open.item.story?.length ? (
-                <div className="me-detail__story">
-                  {open.item.story.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </div>
-              ) : null}
-            </article>
-
-            <p className="me-open__back">
-              <a
-                className="action-link action-link--text action-link--back"
-                href={hrefTo('me')}
-                onClick={(event) => {
-                  event.preventDefault()
-                  close()
-                }}
-              >
-                <span>{me.backToAll}</span>
-                <Icon name="arrowLeft" size={14} />
-              </a>
-            </p>
-          </div>
-        ) : (
-          <ul className="me-grid">
-            {entries.map((entry, index) => (
-              <li
-                key={entry.item.id}
-                className={`me-tile me-tile--${entry.kind === 'home' ? 'home' : entry.item.size}`}
-                style={{ '--me-turn': `${me.turns[index % me.turns.length] ?? 0}deg` } as React.CSSProperties}
-              >
-                <Reveal index={index} className="reveal-fill">
-                  <a
-                    className={`me-frame me-frame--${frameOf(entry)}`}
-                    href={`#${entry.item.id}`}
-                    data-tilt=""
-                    style={{ viewTransitionName: `me-${entry.item.id}` }}
-                  >
-                    <TileFace entry={entry} open={false} />
-                  </a>
-                </Reveal>
-              </li>
-            ))}
+        <section className="me-topics" aria-label={me.topicsLabel}>
+          <ul className="me-tags" ref={tagsRef}>
+            {topics.map((item, index) => {
+              const count = counts.get(item.id) ?? 0
+              return (
+                <li key={item.id} className="me-tags__item" style={{ '--tag-turn': `${me.turns[index % me.turns.length] ?? 0}deg` } as React.CSSProperties}>
+                  <Reveal index={index}>
+                    <a
+                      className="me-tag"
+                      href={`#gallery/${item.id}`}
+                      onClick={(event) => {
+                        event.preventDefault()
+                        choose(item.id)
+                      }}
+                    >
+                      <svg className="me-tag__string" viewBox="0 0 24 30" aria-hidden="true" focusable="false">
+                        <path d="M12 29C5 22 3 12 8 6s11-4 10 4-4 13-6 19" />
+                      </svg>
+                      <span className="me-tag__card">
+                        <span className="me-tag__hole" aria-hidden="true" />
+                        <TopicArt topic={item.id} />
+                        <span className="me-tag__title">{item.title}</span>
+                        {/* The line is kept even with no photos yet, so every tag's title sits at the same height. */}
+                        <span className="me-tag__count" aria-hidden={count ? undefined : true}>
+                          {count ? countLabel(count) : '\u00a0'}
+                        </span>
+                      </span>
+                    </a>
+                  </Reveal>
+                </li>
+              )
+            })}
           </ul>
-        )}
+          <a
+            className="me-cue"
+            href="#gallery"
+            onClick={(event) => {
+              event.preventDefault()
+              choose(null)
+            }}
+          >
+            <span>{me.everyPhoto}</span>
+            <Icon name="arrowDown" size={14} />
+          </a>
+        </section>
+
+        <nav className="me-dock" aria-label={me.gallery.dockLabel} data-shown={docked || undefined}>
+          <div className="me-dock__bar">
+            <button type="button" className="me-dock__pill" aria-pressed={topic === null} onClick={() => choose(null)} tabIndex={docked ? 0 : -1}>
+              {me.gallery.all}
+            </button>
+            {topics.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="me-dock__pill"
+                aria-pressed={topic === item.id}
+                onClick={() => choose(item.id)}
+                tabIndex={docked ? 0 : -1}
+              >
+                {item.title}
+              </button>
+            ))}
+          </div>
+        </nav>
+
+        <section id="gallery" className="me-gallery" ref={galleryRef} aria-labelledby="me-gallery-title">
+          <h2 className="visually-hidden" id="me-gallery-title">
+            {me.gallery.label}
+          </h2>
+          <p className="me-gallery__showing" aria-live="polite">
+            <span className="me-gallery__name">{current ? current.title : me.everyPhoto}</span>
+            <span className="me-gallery__count">{countLabel(shown.length)}</span>
+            {current ? (
+              <button type="button" className="me-gallery__all" onClick={() => choose(null)}>
+                {me.gallery.showAll}
+              </button>
+            ) : null}
+          </p>
+          {shown.length ? (
+            <Gallery photos={shown} onOpen={setOpened} label={current ? current.title : me.everyPhoto} />
+          ) : (
+            <p className="me-gallery__empty">{me.gallery.empty}</p>
+          )}
+        </section>
 
         {/* Back to the professional side on the left, onward to contact on the right. */}
         <nav className="page-onward" aria-label="Continue">
@@ -229,6 +193,8 @@ export function MePage() {
           ) : null}
         </nav>
       </main>
+
+      {opened !== null ? <PhotoViewer photos={shown} index={opened} onIndex={setOpened} onClose={() => setOpened(null)} /> : null}
     </div>
   )
 }

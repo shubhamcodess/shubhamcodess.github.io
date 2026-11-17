@@ -1,605 +1,430 @@
 /*
- * /me: a grid of framed tiles on the paper, each turned a degree or two, so the page reads as things
- * pinned up rather than cards in a system. Straightens on hover, so reading is never at an angle.
+ * /me: paper tags for what the owner does, then every photo hung on twine like prints drying.
+ * A step less formal than the rest of the site, made of the same paper, ink and type.
  */
-.me-grid {
+
+/* ── The tags: luggage tags on a loop of twine, each turned a little, straightening on hover. ── */
+.me-topics {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  /* Tiles fill the gaps, so the home tile can sit beside a wide one wherever it falls in the list. */
-  grid-auto-flow: row dense;
-  gap: var(--space-6) var(--space-5);
-  padding-block: var(--space-3);
+  justify-items: center;
+  gap: var(--space-6);
+  padding-block: var(--space-6) var(--space-7);
 }
 
-.me-tile {
-  grid-column: span 6;
-  min-height: var(--me-tile-min);
-  transform: rotate(var(--me-turn, 0deg));
-  transition: transform var(--duration-slow) var(--ease-out);
-}
-
-@media (hover: hover) {
-  .me-tile:hover {
-    transform: none;
-  }
-}
-
-.me-frame {
-  height: 100%;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-}
-
-.me-frame__inner {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: var(--space-4);
-  height: 100%;
-  min-height: var(--me-tile-min);
-  padding: clamp(var(--space-5), 3vw, var(--space-7));
-  overflow: hidden;
-  border-radius: inherit;
-}
-
-/* Sheet: a plain sheet of paper, a shade lighter than the page. */
-.me-frame--sheet .me-frame__inner {
-  background: var(--surface-raised);
-}
-
-/* Print: a photo print, with the white border and the slightly deeper image area of a real one. */
-.me-frame--print {
-  padding: var(--me-print-border) var(--me-print-border) calc(var(--me-print-border) * 3.2);
-  background: var(--surface-raised);
-}
-
-.me-frame--print .me-frame__inner {
-  background: var(--surface-sunken);
-  border-radius: var(--radius-sm);
-}
-
-/* Film: a strip of film, dark in both themes, with sprocket holes down both edges. */
-.me-frame--film {
-  --ink: var(--night-ink);
-  --ink-muted: var(--night-ink-muted);
-  position: relative;
-  padding: var(--space-3) var(--me-sprocket-band);
-  background: var(--night-surface);
-  color: var(--night-ink);
-}
-
-.me-frame--film::before,
-.me-frame--film::after {
-  content: '';
-  position: absolute;
-  top: var(--space-3);
-  bottom: var(--space-3);
-  width: var(--me-sprocket-band);
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0 calc(var(--me-sprocket-gap) / 2),
-    var(--me-sprocket) calc(var(--me-sprocket-gap) / 2) calc(var(--me-sprocket-gap) / 2 + var(--me-sprocket-size)),
-    transparent calc(var(--me-sprocket-gap) / 2 + var(--me-sprocket-size)) var(--me-sprocket-gap)
-  );
-  -webkit-mask: linear-gradient(to right, transparent 32%, #000 32% 68%, transparent 68%);
-  mask: linear-gradient(to right, transparent 32%, #000 32% 68%, transparent 68%);
-  pointer-events: none;
-}
-
-.me-frame--film::before {
-  left: 0;
-}
-
-.me-frame--film::after {
-  right: 0;
-}
-
-.me-frame--film .me-frame__inner {
-  background: radial-gradient(ellipse 80% 70% at 50% 20%, rgb(255 255 255 / 4%), transparent), #0b0d12;
-  border-radius: var(--radius-sm);
-}
-
-/* Art sits behind the words, filling the frame; the words keep a little shade beneath them. */
-.me-art {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.me-frame__inner:has(.me-art) .me-frame__text {
-  position: relative;
-  padding-top: var(--space-6);
-}
-
-.me-frame__title {
-  font-size: var(--me-title-size);
-  letter-spacing: -0.035em;
-  line-height: 0.95;
-}
-
-.me-frame__line {
-  max-width: 32rem;
-  margin-top: var(--space-3);
-  color: var(--ink-muted);
-}
-
-.me-frame__text {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.me-frame__details {
+.me-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3) var(--space-6);
-  margin: var(--space-3) 0 0;
+  justify-content: center;
+  gap: var(--space-7) var(--space-5);
+  margin: 0;
+  padding: var(--space-5) 0 0;
+  list-style: none;
 }
 
-.me-frame__details dt {
-  color: var(--ink-muted);
-  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.me-frame__details dd {
-  margin: var(--space-1) 0 0;
-}
-
-/* Home: the city set large, the region small beneath it. */
-.me-home__city {
-  font-size: var(--me-title-size);
-  letter-spacing: -0.035em;
-  line-height: 0.95;
-}
-
-.me-home__region {
-  color: var(--ink-muted);
-  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-@media (min-width: 720px) {
-  .me-tile--wide {
-    grid-column: span 6;
-  }
-
-  .me-tile--tall,
-  .me-tile--square,
-  .me-tile--home {
-    grid-column: span 3;
-  }
-
-  .me-tile--tall {
-    min-height: calc(var(--me-tile-min) * 1.5);
-  }
-}
-
-@media (min-width: 1000px) {
-  .me-tile--wide {
-    grid-column: span 4;
-  }
-
-  .me-tile--home {
-    grid-column: span 2;
-  }
-
-  .me-tile--tall {
-    grid-column: span 3;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .me-tile {
-    transform: none;
-  }
-}
-
-/*
- * The map behind the Work tile: fine ink lines, far back, sitting to the right so the words keep
- * clear paper. On hover the map comes forward a touch, the outline draws itself round the state,
- * and the marker on Bengaluru pulses once.
- */
-.me-map {
-  position: absolute;
-  top: 50%;
-  right: var(--space-3);
-  width: auto;
-  height: 94%;
-  color: var(--ink);
-  pointer-events: none;
-  transform: translateY(-50%) scale(1);
-  transform-origin: 70% 50%;
+.me-tags__item {
+  transform: rotate(var(--tag-turn, 0deg));
+  transform-origin: 50% 0;
   transition: transform var(--duration-slow) var(--ease-out);
 }
 
-.me-map__grid line {
-  stroke: currentColor;
-  stroke-opacity: var(--me-map-grid);
-  stroke-width: 1;
-  stroke-dasharray: 2 10;
-  vector-effect: non-scaling-stroke;
-}
-
-.me-map__outline,
-.me-map__echo {
-  fill: none;
-  stroke: currentColor;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.me-map__outline {
-  stroke-opacity: var(--me-map-line);
-  stroke-width: 1;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-
-.me-map__echo {
-  stroke-opacity: calc(var(--me-map-line) * 0.45);
-  stroke-width: 0.6;
-}
-
-.me-map__dot {
-  fill: currentColor;
-  fill-opacity: calc(var(--me-map-line) * 2.4);
-}
-
-.me-map__ring {
-  fill: none;
-  stroke: currentColor;
-  stroke-opacity: calc(var(--me-map-line) * 1.6);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
-.me-home .me-frame__text {
+.me-tag {
   position: relative;
-}
-
-@media (hover: hover) {
-  .me-tile:hover .me-map {
-    transform: translateY(-50%) scale(var(--me-map-grow));
-  }
-
-  .me-tile:hover .me-map__outline {
-    animation: me-map-trace 1.6s var(--ease-out) both;
-  }
-
-  .me-tile:hover .me-map__ring {
-    animation: me-map-pulse 1.6s var(--ease-out) both;
-  }
-}
-
-@keyframes me-map-trace {
-  from {
-    stroke-dashoffset: 1;
-  }
-}
-
-@keyframes me-map-pulse {
-  0% {
-    transform: scale(0.4);
-    stroke-opacity: 0;
-  }
-
-  40% {
-    stroke-opacity: calc(var(--me-map-line) * 2.4);
-  }
-
-  100% {
-    transform: scale(1.6);
-    stroke-opacity: 0;
-  }
-}
-
-/* A tile is a link to its own view. */
-a.me-frame {
   display: block;
-  /* The frame's own ink, so the film strip keeps its light words. */
+  width: var(--me-tag-width);
   color: var(--ink);
+  text-decoration: none;
+  /* The tag's cut corners clip a box shadow, so the shadow is drawn around its shape instead. */
+  filter: drop-shadow(0 1px 1px rgb(40 30 15 / 10%)) drop-shadow(0 8px 14px rgb(40 30 15 / 9%));
+  transition: transform var(--duration-base) var(--ease-out);
 }
 
-a.me-frame:focus-visible {
-  border-radius: var(--radius-lg);
+:root[data-theme='dark'] .me-tag {
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 40%)) drop-shadow(0 10px 18px rgb(0 0 0 / 35%));
 }
 
-/*
- * An opened tile. Wide screens: the other tiles fold into a rail on the left, the chosen one fills the rest.
- * Phones: the rail is a strip across the top that scrolls sideways, the chosen tile below.
- */
-.me-open {
+/* The loop of twine through the hole, rising above the tag. */
+.me-tag__string {
+  position: absolute;
+  top: calc(var(--space-5) * -1 - 4px);
+  left: 50%;
+  z-index: 1;
+  width: 20px;
+  height: 26px;
+  overflow: visible;
+  transform: translateX(-50%);
+}
+
+.me-tag__string path {
+  fill: none;
+  stroke: var(--rope-core);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+/* The tag itself: paper, the top corners cut away, a reinforced hole. */
+.me-tag__card {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-5);
-}
-
-.me-rail {
-  display: flex;
-  gap: var(--space-2);
-  margin-inline: calc(var(--page-gutter) * -1);
-  padding: var(--space-1) var(--page-gutter) var(--space-3);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.me-rail__tile {
-  display: grid;
-  flex: none;
-  gap: var(--space-2);
-  min-width: var(--me-rail-tile);
-  padding: var(--space-3) var(--space-4);
+  grid-template-rows: auto 1fr auto auto;
+  justify-items: start;
+  gap: var(--space-1);
+  aspect-ratio: 5 / 6;
+  padding: calc(var(--space-6) + 6px) var(--space-4) var(--space-4);
   background: var(--surface-raised);
-  border: var(--hairline) solid var(--line);
-  border-radius: var(--radius-md);
+  clip-path: polygon(22% 0, 78% 0, 100% 15%, 100% 100%, 0 100%, 0 15%);
+}
+
+/* A dotted rule just inside the paper, the same hand as the prints' frames. */
+.me-tag__card::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: var(--hairline) dotted var(--marker-lane);
+  clip-path: polygon(22% 0, 78% 0, 100% 15%, 100% 100%, 0 100%, 0 15%);
+  pointer-events: none;
+}
+
+.me-tag__hole {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  background: var(--surface);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 3px var(--surface-sunken),
+    0 0 0 3.6px var(--line);
+  transform: translateX(-50%);
+}
+
+.topic-art {
+  justify-self: center;
+  width: 78%;
+  height: auto;
+  margin-block: var(--space-1) auto;
+  overflow: visible;
+  color: var(--ink-muted);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   transition:
-    border-color var(--duration-fast) linear,
-    background-color var(--duration-fast) linear;
+    color var(--duration-fast) linear,
+    transform var(--duration-base) var(--ease-out);
 }
 
-.me-rail__tile[aria-current] {
-  background: var(--surface-sunken);
-  border-color: color-mix(in srgb, var(--ink) 45%, var(--line));
+.topic-art__faint {
+  opacity: 0.5;
 }
 
-.me-rail__tile:focus-visible {
-  border-radius: var(--radius-md);
-}
-
-.me-rail__title {
+.me-tag__title {
   font-size: var(--text-md);
-  font-weight: var(--weight-heading);
-  line-height: var(--leading-snug);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.me-tag__count {
+  color: var(--ink-muted);
+  font: 400 var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.me-tag:focus-visible {
+  outline: none;
+}
+
+.me-tag:focus-visible .me-tag__card {
+  background: var(--surface-sunken);
+}
+
+.me-tag:focus-visible .me-tag__title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 @media (hover: hover) {
-  .me-rail__tile:not([aria-current]):hover {
-    border-color: var(--ink-muted);
+  .me-tags__item:hover {
+    transform: none;
+  }
+
+  .me-tag:hover {
+    transform: translateY(-3px);
+  }
+
+  .me-tag:hover .topic-art {
+    color: var(--ink);
+    transform: translateY(-2px);
   }
 }
 
-.me-detail {
-  height: auto;
-  min-height: var(--me-detail-min);
-}
-
-.me-detail .me-frame__inner {
-  height: auto;
-  min-height: var(--me-detail-min);
-}
-
-.me-detail__story {
-  display: grid;
-  gap: var(--space-4);
-  max-width: var(--project-measure);
-  padding: var(--space-6) clamp(var(--space-5), 3vw, var(--space-7)) var(--space-7);
-  font-size: var(--text-lg);
-}
-
-.me-open__back {
-  margin: 0;
-}
-
-@media (max-width: 899px) {
-  .me-detail,
-  .me-detail .me-frame__inner {
-    min-height: var(--me-tile-min);
-  }
-}
-
-@media (min-width: 900px) {
-  .me-open {
-    grid-template-columns: var(--me-rail-width) minmax(0, 1fr);
-    /* The rail and the back link keep their own height; the tall panel's extra height goes below them. */
-    grid-template-rows: auto 1fr;
-    grid-template-areas:
-      'rail detail'
-      'back detail';
-    align-items: start;
-    gap: var(--space-5) var(--space-6);
-  }
-
-  .me-rail {
-    grid-area: rail;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-  }
-
-  .me-rail__tile {
-    min-width: 0;
-  }
-
-  .me-detail {
-    grid-area: detail;
-  }
-
-  .me-open__back {
-    grid-area: back;
-  }
-}
-
-/* Tiles become the panel and the panel becomes a tile: the move eases on the site's curve. */
-::view-transition-group(*) {
-  animation-duration: var(--duration-enter);
-  animation-timing-function: var(--ease-out);
-}
-
-/* The opened Work tile's heading: the places, not the city on the tile, and a tab for each city. */
-.me-places-head {
-  display: grid;
-  gap: var(--space-3);
-  padding: var(--place-pad) var(--place-pad) 0;
-}
-
-.me-detail {
-  --place-pad: clamp(var(--space-5), 3vw, var(--space-7));
-}
-
-.me-places-head__title {
-  font-size: var(--me-title-size);
-  letter-spacing: -0.035em;
-  line-height: 0.95;
-}
-
-/* The city tabs: each city with its role above, the open one in full ink and underlined. */
-.me-city-tabs {
-  display: flex;
-  gap: var(--space-2) var(--space-6);
-  margin-top: var(--space-5);
-  overflow-x: auto;
-  border-bottom: var(--hairline) solid var(--line);
-  scrollbar-width: none;
-}
-
-.me-city-tabs a {
-  position: relative;
-  display: grid;
-  flex: none;
-  gap: var(--space-1);
-  padding: var(--space-2) 0 var(--space-3);
+/* A quiet pointer to every photo, under the tags. */
+.me-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   color: var(--ink-muted);
+  font: 400 var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
   transition: color var(--duration-fast) linear;
 }
 
-.me-city-tabs a:hover,
-.me-city-tabs a[aria-current] {
+.me-cue:hover {
   color: var(--ink);
 }
 
-.me-city-tabs a[aria-current]::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: calc(var(--hairline) * -1);
-  left: 0;
-  height: 2px;
+.me-cue .icon {
+  animation: me-nudge 2.4s var(--ease-out) infinite;
+}
+
+@keyframes me-nudge {
+  0%,
+  60%,
+  100% {
+    transform: none;
+  }
+  30% {
+    transform: translateY(4px);
+  }
+}
+
+/* ── The dock: the tags as a small bar, kept at the top while the gallery is on screen. Solid: no blur. ── */
+.me-dock {
+  position: sticky;
+  top: var(--space-3);
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 0;
+  pointer-events: none;
+}
+
+.me-dock__bar {
+  display: flex;
+  gap: 2px;
+  max-width: 100%;
+  padding: 4px;
+  overflow-x: auto;
+  background: var(--surface-raised);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-card);
+  scrollbar-width: none;
+  opacity: 0;
+  transform: translateY(-12px) scale(0.97);
+  visibility: hidden;
+  transition:
+    opacity var(--duration-base) linear,
+    transform var(--duration-base) var(--ease-out),
+    visibility 0s var(--duration-base);
+}
+
+.me-dock[data-shown] .me-dock__bar {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity var(--duration-base) linear,
+    transform var(--duration-base) var(--ease-out),
+    visibility 0s;
+}
+
+.me-dock__pill {
+  flex: none;
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) linear,
+    background-color var(--duration-fast) linear;
+}
+
+.me-dock__pill:hover {
+  color: var(--ink);
+  background: var(--surface-sunken);
+}
+
+.me-dock__pill[aria-pressed='true'] {
+  color: var(--surface);
   background: var(--ink);
 }
 
-.me-city-tabs__role {
-  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+/* ── The gallery ── */
+.me-gallery {
+  padding-block: var(--space-8) var(--space-7);
+  scroll-margin-top: var(--space-8);
 }
 
-.me-city-tabs__name {
+/* What it shows: the topic or every photo, the count, and the way back to all of them. */
+.me-gallery__showing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-7);
+}
+
+.me-gallery__name {
   font-size: var(--text-lg);
-  font-weight: var(--weight-heading);
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
-/* A city's own page: its name and state large, the state drawn with the city marked, its photos below. */
-.me-city {
-  display: grid;
-  gap: var(--space-7);
-  padding: var(--space-6) var(--place-pad) calc(var(--place-pad) + var(--clothesline-sag));
-  animation: enter var(--duration-base) var(--ease-out);
-}
-
-.me-city__head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--me-city-map);
-  align-items: center;
-  gap: var(--space-5);
-}
-
-.me-city__text {
-  display: grid;
-  align-content: start;
-  gap: var(--space-2);
-}
-
-.me-city__name {
-  margin-top: var(--space-1);
-  font-size: var(--me-place-city);
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-
-.me-city__region {
+.me-gallery__count {
   color: var(--ink-muted);
-  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  font: 400 var(--text-xs) / 1 var(--font-mono);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.me-city__line {
-  margin-top: var(--space-3);
-  max-width: 36rem;
+.me-gallery__all {
+  padding: 0;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  background: none;
+  border: 0;
+  border-bottom: var(--hairline) dotted currentColor;
+  cursor: pointer;
+}
+
+.me-gallery__all:hover {
+  color: var(--ink);
+}
+
+.me-gallery__empty {
+  padding-block: var(--space-6);
   color: var(--ink-muted);
 }
 
-/* The state, large and in place: not the floating backdrop the tile uses. */
-.me-map.me-city__map {
-  position: static;
-  justify-self: end;
-  width: 100%;
-  height: var(--me-city-map);
-  transform: none;
-}
-
-/*
- * Clothesline: a gently sagging line across the row with prints pegged to it, each turned a little and
- * hanging lower toward the middle. Empty frames are dashed outlines, for judging the layout only.
- */
+/* One line and its prints. As many lines are strung as the photos need. */
 .clothesline {
   display: grid;
   gap: var(--clothesline-row-gap);
 }
 
-/* One line and its prints. As many rows are strung as the photos need. */
 .clothesline__row {
   position: relative;
   padding-top: var(--space-2);
 }
 
-.clothesline__line {
+.clothesline__prints {
+  display: grid;
+  grid-template-columns: repeat(var(--places), minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-5);
+  justify-items: center;
+  margin: 0;
+  padding: var(--space-2) 0 0;
+  list-style: none;
+}
+
+.clothesline__end {
+  height: 1px;
+}
+
+/* ── The rope: twisted twine, its shadow on the wall behind it. ── */
+.rope {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: var(--clothesline-sag);
+  height: calc(var(--clothesline-sag) + 20px);
   overflow: visible;
+  pointer-events: none;
 }
 
-.clothesline__line path {
+.rope path {
   fill: none;
-  stroke: var(--marker);
-  stroke-width: 1;
+  stroke-linecap: butt;
   vector-effect: non-scaling-stroke;
 }
 
-.clothesline__prints {
-  display: grid;
-  grid-template-columns: repeat(var(--per-line), minmax(0, 1fr));
-  gap: var(--space-5);
-  justify-items: center;
-  padding-top: var(--space-2);
+.rope .rope__shadow {
+  stroke: var(--rope-shadow);
+  stroke-width: 3.5;
 }
 
-.clothesline__print {
+.rope .rope__core {
+  stroke: var(--rope-core);
+  stroke-width: 3.2;
+}
+
+/* Two plies, dashed half a twist apart: together they draw the slanted wind of a cord. */
+.rope .rope__ply {
+  stroke-width: 1.5;
+  stroke-dasharray: 2.6 2.6;
+}
+
+.rope .rope__ply--dark {
+  stroke: var(--rope-dark);
+}
+
+.rope .rope__ply--light {
+  stroke: var(--rope-light);
+  stroke-dashoffset: 1.3;
+}
+
+/* ── A print: a polaroid in its photo's own shape, hanging lower toward the middle of the sagging line. ── */
+.print {
   position: relative;
   width: min(100%, var(--clothesline-print));
-  aspect-ratio: 4 / 5;
-  padding: var(--polaroid-edge) var(--polaroid-edge) var(--polaroid-foot);
-  background: var(--surface-raised);
-  border-radius: 2px;
-  box-shadow: var(--shadow-card);
   transform: translateY(calc(var(--print-drop) * var(--clothesline-sag) * 0.55)) rotate(var(--print-turn));
   transform-origin: 50% 0;
   transition: transform var(--duration-slow) var(--ease-out);
+  animation: print-hang var(--duration-slow) var(--ease-out) both;
+  animation-delay: calc(var(--print-order) * 70ms);
 }
 
-/* The faint polaroid frame: a dotted rule just inside the paper, the same dotted hand as the empty frames. */
-.clothesline__print::before {
+.print--wide {
+  grid-column: span 2;
+  width: min(100%, calc(var(--clothesline-print) * 2 + var(--space-5)));
+}
+
+@keyframes print-hang {
+  from {
+    opacity: 0;
+    translate: 0 -14px;
+  }
+}
+
+@media (hover: hover) {
+  .print:hover {
+    transform: translateY(calc(var(--print-drop) * var(--clothesline-sag) * 0.55)) rotate(0deg);
+  }
+}
+
+.print__open {
+  position: relative;
+  display: grid;
+  width: 100%;
+  padding: var(--polaroid-edge) var(--polaroid-edge) 0;
+  color: var(--ink-muted);
+  font: inherit;
+  text-align: center;
+  background: var(--surface-raised);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: var(--shadow-card);
+  cursor: zoom-in;
+}
+
+/* The faint polaroid frame: a dotted rule just inside the paper. */
+.print__open::before {
   content: '';
   position: absolute;
   inset: 2px;
@@ -608,31 +433,40 @@ a.me-frame:focus-visible {
   pointer-events: none;
 }
 
-.clothesline__open {
+.print__photo {
   position: relative;
   display: block;
-  width: 100%;
-  height: 100%;
-  padding: 0;
   overflow: hidden;
-  background: none;
-  border: 0;
   border-radius: 1px;
-  cursor: zoom-in;
 }
 
-.clothesline__open img {
+.print__photo img {
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: var(--print-ratio);
   object-fit: cover;
+  background: var(--surface-sunken);
 }
 
-/*
- * One glassy finish over every photo: a soft sheen from the top left and a bright hairline at the edge.
- * It sits on top and keeps each photo's own colours, so different photos read as one set.
- */
-.clothesline__glass {
+/* The short title, written on the polaroid's foot. */
+.print__title {
+  display: block;
+  overflow: hidden;
+  padding: var(--space-2) var(--space-1);
+  font-size: var(--text-xs);
+  line-height: var(--polaroid-foot);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.print__open:hover .print__title,
+.print__open:focus-visible .print__title {
+  color: var(--ink);
+}
+
+/* One glassy finish over every photo: a soft sheen from the top left and a bright hairline at the edge. */
+.photo-glass {
   position: absolute;
   inset: 0;
   background: var(--photo-glass);
@@ -641,93 +475,122 @@ a.me-frame:focus-visible {
   pointer-events: none;
 }
 
-
-/* The peg: a small upright clip where the print meets the line. */
-.clothesline__peg {
+/* ── The peg: its top over the rope, its jaw biting the print's top edge. A wide print has two. ── */
+.peg {
   position: absolute;
-  top: -7px;
+  top: -16px;
   left: 50%;
-  width: 4px;
-  height: 12px;
-  background: var(--marker);
-  border-radius: 1px;
-  transform: translateX(-50%);
+  z-index: 1;
+  width: 12px;
+  height: 34px;
+  transform: translateX(-50%) rotate(calc(var(--print-turn, 0deg) * -0.5));
+  transform-origin: 50% 40%;
+  filter: drop-shadow(0 1.5px 1px rgb(40 25 10 / 28%));
 }
 
-@media (hover: hover) {
-  .clothesline__print:hover {
-    transform: translateY(calc(var(--print-drop) * var(--clothesline-sag) * 0.55)) rotate(0deg);
-  }
+.peg svg {
+  display: block;
 }
 
-@media (max-width: 599px) {
-  .me-detail {
-    --place-pad: var(--space-4);
-  }
-
-  .me-city__head {
-    --me-city-map: 96px;
-    gap: var(--space-3);
-  }
-
-  .me-city {
-    gap: var(--space-6);
-  }
-
-  .me-city-tabs {
-    gap: var(--space-2) var(--space-5);
-  }
-
-  .me-city-tabs__name {
-    font-size: var(--text-md);
-  }
-
-  .clothesline__prints {
-    gap: var(--space-4);
-  }
+.print__peg--left {
+  left: 22%;
 }
 
-/*
- * The photo viewer: one photo large over a dimmed page, in the same polaroid frame, caption beneath.
- */
-.photo-viewer {
+.print__peg--right {
+  left: 78%;
+}
+
+.peg__wood {
+  fill: var(--peg-wood);
+}
+
+.peg__shade {
+  fill: var(--peg-wood-far);
+}
+
+.peg__grain {
+  fill: none;
+  stroke: var(--peg-grain);
+  stroke-width: 0.5;
+  stroke-linecap: round;
+}
+
+/* The groove the rope sits in. */
+.peg__groove {
+  stroke: rgb(70 45 15 / 40%);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+
+.peg__spring {
+  fill: var(--peg-steel);
+  stroke: var(--peg-steel-line);
+  stroke-width: 0.5;
+}
+
+.peg__coil {
+  stroke: var(--peg-steel-line);
+  stroke-width: 0.6;
+}
+
+/* ── The viewer: a darkroom. The print hangs from a rope across the top; the controls sit at the bottom. ── */
+.darkroom {
   width: 100%;
   max-width: none;
   height: 100%;
   max-height: none;
   margin: 0;
-  padding: var(--space-6);
+  padding: 0;
   color: var(--ink);
   background: none;
   border: 0;
   overflow: hidden;
 }
 
-.photo-viewer[open] {
+.darkroom[open] {
   display: grid;
-  place-items: center;
+  grid-template-rows: 1fr auto;
+  justify-items: center;
+  align-items: start;
 }
 
-.photo-viewer::backdrop {
-  background: var(--photo-viewer-dim);
-  backdrop-filter: blur(6px);
+/* A warm dark room with a little light falling on the print. No blur. */
+.darkroom::backdrop {
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 38%, rgb(70 55 35 / 55%), transparent 70%),
+    rgb(10 9 8 / 92%);
 }
 
-.photo-viewer__print {
+/* The site hides the system cursor for its comet, which the open viewer covers: the real one shows in here. */
+:root[data-cursor='comet'] .darkroom,
+:root[data-cursor='comet'] .darkroom * {
+  cursor: auto !important;
+}
+
+:root[data-cursor='comet'] .darkroom button {
+  cursor: pointer !important;
+}
+
+.darkroom__rope {
+  position: fixed;
+  top: 18px;
+  height: 26px;
+}
+
+.darkroom__print {
   position: relative;
   display: grid;
-  gap: var(--space-3);
   width: fit-content;
-  max-width: min(var(--photo-viewer-max), 100%);
-  margin: 0;
-  padding: var(--space-3) var(--space-3) var(--space-4);
+  max-width: min(var(--photo-viewer-max), 100% - var(--space-6) * 2);
+  margin: 46px 0 0;
+  padding: var(--space-4) var(--space-4) 0;
   background: var(--surface-raised);
   border-radius: 3px;
-  box-shadow: 0 30px 80px -20px rgb(0 0 0 / 50%);
-  animation: photo-in var(--duration-base) var(--ease-out);
+  box-shadow: 0 30px 80px -20px rgb(0 0 0 / 60%);
+  animation: darkroom-in var(--duration-base) var(--ease-out);
 }
 
-.photo-viewer__print::before {
+.darkroom__print::before {
   content: '';
   position: absolute;
   inset: 5px;
@@ -736,89 +599,128 @@ a.me-frame:focus-visible {
   pointer-events: none;
 }
 
-.photo-viewer__photo {
+.darkroom__print .peg {
+  top: -20px;
+  transform: translateX(-50%);
+}
+
+.darkroom__photo {
   position: relative;
   display: block;
   justify-self: center;
-  border-radius: 1px;
   overflow: hidden;
+  border-radius: 1px;
 }
 
-.photo-viewer__photo img {
+.darkroom__photo img {
   display: block;
   width: auto;
-  max-width: calc(min(var(--photo-viewer-max), 100vw - var(--space-6) * 2) - var(--space-3) * 2);
+  max-width: calc(min(var(--photo-viewer-max), 100vw - var(--space-6) * 2) - var(--space-4) * 2);
   height: auto;
-  max-height: var(--photo-viewer-img-h);
+  max-height: calc(100dvh - 230px);
 }
 
-.photo-viewer__print figcaption {
+.darkroom__caption {
   /* The caption never widens the print beyond its photo. */
   width: 0;
   min-width: 100%;
+  padding: var(--space-4) var(--space-1) var(--space-5);
+  font-size: var(--text-md);
+  line-height: 1.45;
+  text-align: center;
+}
+
+.darkroom__bar {
   display: flex;
-  justify-content: space-between;
-  gap: var(--space-4);
-  color: var(--ink-muted);
-  font: var(--weight-body) var(--text-xs) / var(--leading-snug) var(--font-mono);
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  padding: var(--space-1);
+  background: rgb(255 255 255 / 8%);
+  border: var(--hairline) solid rgb(255 255 255 / 14%);
+  border-radius: var(--radius-pill);
 }
 
-.photo-viewer__count {
-  flex: none;
-}
-
-.photo-viewer__close,
-.photo-viewer__step {
-  position: fixed;
+.darkroom__step,
+.darkroom__close {
   display: grid;
   place-items: center;
   width: var(--target-min);
   height: var(--target-min);
   color: var(--night-ink);
-  background: var(--night-glass);
-  border: var(--hairline) solid var(--night-glass-line);
+  background: none;
+  border: 0;
   border-radius: 50%;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
+  transition: background-color var(--duration-fast) linear;
 }
 
-.photo-viewer__close {
+.darkroom__step:hover,
+.darkroom__close:hover {
+  background: rgb(255 255 255 / 12%);
+}
+
+.darkroom__close {
+  position: fixed;
   top: var(--space-5);
   right: var(--space-5);
+  background: rgb(255 255 255 / 8%);
+  border: var(--hairline) solid rgb(255 255 255 / 14%);
 }
 
-.photo-viewer__step {
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.photo-viewer__step--back {
-  left: var(--space-5);
-}
-
-.photo-viewer__step--on {
-  right: var(--space-5);
-}
-
-@keyframes photo-in {
+@keyframes darkroom-in {
   from {
     opacity: 0;
-    transform: scale(0.97);
+    transform: translateY(-10px) scale(0.98);
   }
 }
 
+/* ── Phones ── */
 @media (max-width: 599px) {
-  .photo-viewer {
-    padding: var(--space-3);
+  .me-tags {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-7) var(--space-3);
+    width: 100%;
   }
 
-  .photo-viewer__photo img {
-    max-width: calc(100vw - var(--space-3) * 4);
+  .me-tag {
+    width: 100%;
   }
 
-  .photo-viewer__step {
+  .me-tag__card {
+    padding: calc(var(--space-5) + 4px) var(--space-3) var(--space-3);
+  }
+
+  .me-tag__title {
+    font-size: var(--text-sm);
+  }
+
+  .me-tag__count {
+    font-size: 10px;
+  }
+
+  .clothesline__prints {
+    gap: var(--space-4);
+  }
+
+  .darkroom__photo img {
+    max-width: calc(100vw - var(--space-3) * 2 - var(--space-4) * 2);
+  }
+
+  .darkroom__print {
+    max-width: calc(100% - var(--space-3) * 2);
+  }
+
+  /* On a phone the print fills the width, so close moves down beside the arrows, in reach of a thumb. */
+  .darkroom__close {
     top: auto;
     bottom: var(--space-5);
-    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .me-cue .icon,
+  .print,
+  .darkroom__print {
+    animation: none;
   }
 }

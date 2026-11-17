@@ -1,27 +1,21 @@
-// Turns new photos for a place into the site's two copies, with every bit of metadata (location, camera) removed.
+// Turns new photos for /me into the site's two copies, with every bit of metadata (location, camera) removed.
 //
-//   pnpm --filter @portfolio/app photos bengaluru
+//   pnpm --filter @portfolio/app photos
 //
-// Drop the originals into apps/portfolio/photo-inbox/<place>/ (JPEG, PNG or HEIC). Each becomes
-// public/me/places/<place>-<n>.webp (1600px on the long side, for the viewer) and <place>-<n>-print.webp
-// (560px tall, for the line), numbered after the ones already there. The originals move to
-// photo-inbox/<place>/done/. The inbox is ignored by git: originals carry location data and never leave
-// this machine. The script prints the entries for content/me.ts; each still needs its caption (alt).
+// Drop the originals into apps/portfolio/photo-inbox/ (JPEG, PNG or HEIC), named for what they show
+// ("night-ride.jpg"). Each becomes public/me/photos/<name>.webp (1600px on the long side, for the viewer)
+// and <name>-print.webp (560px tall, for the line). The originals move to photo-inbox/done/. The inbox is
+// ignored by git: originals carry location data and never leave this machine. The script prints the entries
+// for `photos` in src/content/me.ts; each still needs its title, caption and one or two topics.
 // Needs cwebp (brew install webp) and macOS's sips.
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readdirSync, renameSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const place = process.argv[2]
-if (!place || !/^[a-z-]+$/.test(place)) {
-  console.error('Usage: pnpm --filter @portfolio/app photos <place>   (for example bengaluru)')
-  process.exit(1)
-}
-
 const app = fileURLToPath(new URL('..', import.meta.url))
-const inbox = join(app, 'photo-inbox', place)
-const out = join(app, 'public', 'me', 'places')
+const inbox = join(app, 'photo-inbox')
+const out = join(app, 'public', 'me', 'photos')
 const done = join(inbox, 'done')
 if (!existsSync(inbox)) {
   console.error(`Nothing to do: put photos in ${inbox}`)
@@ -30,17 +24,17 @@ if (!existsSync(inbox)) {
 mkdirSync(out, { recursive: true })
 mkdirSync(done, { recursive: true })
 
-const taken = readdirSync(out)
-  .map((name) => new RegExp(`^${place}-(\\d+)\\.webp$`).exec(name)?.[1])
-  .filter(Boolean)
-  .map(Number)
-let next = taken.length ? Math.max(...taken) + 1 : 1
-
 const run = (cmd, args) => execFileSync(cmd, args, { stdio: ['ignore', 'pipe', 'pipe'] }).toString()
 const size = (file) => {
   const info = run('sips', ['-g', 'pixelWidth', '-g', 'pixelHeight', file])
   return { w: Number(/pixelWidth: (\d+)/.exec(info)?.[1]), h: Number(/pixelHeight: (\d+)/.exec(info)?.[1]) }
 }
+const slug = (name) =>
+  name
+    .replace(/\.[^.]+$/, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '') || 'photo'
 
 const photos = readdirSync(inbox).filter((name) => /\.(jpe?g|png|heic)$/i.test(name)).sort()
 if (!photos.length) {
@@ -49,24 +43,27 @@ if (!photos.length) {
 }
 
 const entries = []
-for (const name of photos) {
-  let source = join(inbox, name)
+for (const file of photos) {
+  let source = join(inbox, file)
   let temporary = null
-  if (/\.heic$/i.test(name)) {
-    temporary = join(inbox, `.${name}.jpg`)
+  if (/\.heic$/i.test(file)) {
+    temporary = join(inbox, `.${file}.jpg`)
     run('sips', ['-s', 'format', 'jpeg', source, '--out', temporary])
     source = temporary
   }
+  // Never overwrite a photo already on the site: a taken name gets a number.
+  let name = slug(file)
+  for (let n = 2; existsSync(join(out, `${name}.webp`)); n++) name = `${slug(file)}-${n}`
   const { w, h } = size(source)
-  const base = `${place}-${next}`
-  const large = w >= h ? ['-resize', '1600', '0'] : ['-resize', '0', '1600']
-  run('cwebp', ['-quiet', '-q', '76', '-metadata', 'none', ...large, source, '-o', join(out, `${base}.webp`)])
-  run('cwebp', ['-quiet', '-q', '72', '-metadata', 'none', '-resize', '0', '560', source, '-o', join(out, `${base}-print.webp`)])
+  const scale = Math.min(1, 1600 / Math.max(w, h))
+  const width = Math.round(w * scale)
+  const height = Math.round(h * scale)
+  run('cwebp', ['-quiet', '-q', '78', '-metadata', 'none', '-resize', String(width), String(height), source, '-o', join(out, `${name}.webp`)])
+  run('cwebp', ['-quiet', '-q', '76', '-metadata', 'none', '-resize', '0', '560', source, '-o', join(out, `${name}-print.webp`)])
   if (temporary) rmSync(temporary)
-  renameSync(join(inbox, name), join(done, name))
-  entries.push(`        { src: 'me/places/${base}.webp', print: 'me/places/${base}-print.webp', alt: '' }, // ${name}`)
-  next++
+  renameSync(join(inbox, file), join(done, file))
+  entries.push(`  { name: '${name}', width: ${width}, height: ${height}, title: '', caption: '', topics: [] }, // ${file}`)
 }
 
-console.log(`Made ${entries.length} photo(s) for ${place}. Add to its photos in src/content/me.ts, each with a caption:\n`)
+console.log(`Made ${entries.length} photo(s). Add to photos in src/content/me.ts, each with a title, a caption and its topics:\n`)
 console.log(entries.join('\n'))

@@ -1,123 +1,103 @@
-import type { StateKey } from './state-maps'
-
 /**
- * The /me page: life away from work. Only what the owner has said goes here; every optional field
- * stays out until they supply it, and the page shows nothing in its place.
- *
- * `art` is a path under /public: an SVG drawing, an image, or a looping video (.mp4 or .webm),
- * for example "me/bike.svg". `line` is one or two sentences in the owner's words.
+ * The /me page: life away from work. Small tags for what the owner does, then one gallery of every photo.
+ * Only what the owner has given goes here, in their words or in plain words about what a photo shows.
  */
 
-/** How a tile is framed, a nod to what it holds. */
-export type PursuitFrame = 'sheet' | 'print' | 'film'
+/** The things the owner does. Each is a tag at the top of the page and a category a photo can carry. */
+export const topics = [
+  { id: 'biking', title: 'Biking' },
+  { id: 'photography', title: 'Photography' },
+  { id: 'filmmaking', title: 'Filmmaking' },
+  { id: 'food', title: 'Food' },
+  { id: 'people', title: 'People' },
+  { id: 'places', title: 'Places' },
+] as const
 
-/** How much of the grid a tile takes on wide screens. */
-export type PursuitSize = 'wide' | 'tall' | 'square'
+export type Topic = (typeof topics)[number]
+export type TopicId = Topic['id']
 
-export interface Pursuit {
-  readonly id: string
+/**
+ * One photo in the gallery. Files are WebP under public/me/photos/, with all metadata stripped:
+ * `<name>.webp` (about 1600px on the long side, for the viewer) and `<name>-print.webp` (560px tall, for the line).
+ */
+export interface MePhoto {
+  /** The file name without its extension: me/photos/<name>.webp and <name>-print.webp. */
+  readonly name: string
+  /** The large copy's size, so a wide photo can hang across two places, uncropped. */
+  readonly width: number
+  readonly height: number
+  /** A few words, written on the print's foot on the line. */
   readonly title: string
-  readonly frame: PursuitFrame
-  readonly size: PursuitSize
-  readonly line?: string
-  readonly art?: string
-  /** Short facts shown as a list of mono label and value, such as the bike's make. */
-  readonly details?: readonly { readonly label: string; readonly value: string }[]
-  /** The tile's own page, shown when it is opened: paragraphs in the owner's words. */
-  readonly story?: readonly string[]
+  /** A sentence about the photo, on the print when it is opened. Also its description for screen readers. */
+  readonly caption: string
+  /** One or two of the topics; the tag of each shows it. */
+  readonly topics: readonly [TopicId] | readonly [TopicId, TopicId]
 }
 
-/** A place lived in, shown as its own page when the home tile is opened. */
-export interface Place {
-  /** Its address on the page: /me/#places/<id>. */
-  readonly id: string
-  /** What the place was to the owner, in a natural phrase, such as "What I call home". */
-  readonly role: string
-  readonly city: string
-  readonly region: string
-  /** The state drawn on the card, and where the city sits on it (latitude, longitude). */
-  readonly map: StateKey
-  readonly at: readonly [lat: number, lon: number]
-  /** A sentence or two in the owner's words. */
-  readonly line?: string
-  /** Photos hung on the place's clotheslines, in order. As many lines are strung as the photos need. */
-  readonly photos?: readonly PlacePhoto[]
-}
-
-/** One photo on a clothesline. Paths are under /public; metadata is stripped before a photo is added. */
-export interface PlacePhoto {
-  /** The large copy, shown when the print is opened (about 1600px on the long side). */
-  readonly src: string
-  /** The small copy hung on the line (about 560px tall). */
-  readonly print: string
-  /** What the photo shows. Also its caption when opened. */
-  readonly alt: string
-}
-
-export interface Home {
-  /** Its address on the page, /me/#<id>. */
-  readonly id: string
-  /** The small label above the city, such as "Work". */
-  readonly label: string
-  readonly city: string
-  readonly region: string
-  readonly line?: string
-  /** A drawing, as a path under /public. Leave out when `map` draws the place instead. */
-  readonly art?: string
-  /** A fine-line map drawn behind the city, with a marker on the city (latitude, longitude). */
-  readonly map?: StateKey
-  readonly at?: readonly [lat: number, lon: number]
-  /** The tile's own page, shown when it is opened. */
-  readonly story?: readonly string[]
-  /** The places lived in, in the order their tabs show: where the owner is now first. Each is a page of its own. */
-  readonly places?: readonly Place[]
-}
-
-export const pursuits: readonly Pursuit[] = [
-  { id: 'biking', title: 'Biking', frame: 'sheet', size: 'wide' },
-  { id: 'photography', title: 'Photography', frame: 'print', size: 'tall' },
-  { id: 'filmmaking', title: 'Filmmaking', frame: 'film', size: 'tall' },
+/** Every photo, in the order it hangs. Add a photo by adding its two files and one entry here. */
+export const photos: readonly MePhoto[] = [
+  {
+    name: 'office',
+    width: 1600,
+    height: 900,
+    title: 'The Innovation wall',
+    caption: 'A living wall of plants at the office in Bengaluru, under a perforated ceiling.',
+    topics: ['places'],
+  },
+  {
+    name: 'meal',
+    width: 1600,
+    height: 900,
+    title: 'On a banana leaf',
+    caption: 'A South Indian meal: rice, sambar, rasam, curries, curd and papad.',
+    topics: ['food'],
+  },
+  {
+    name: 'chaat',
+    width: 900,
+    height: 1600,
+    title: 'Chaat at dusk',
+    caption: 'Chaat and a glass of tea on a balcony at dusk.',
+    topics: ['food'],
+  },
+  {
+    name: 'bike-rain',
+    width: 1600,
+    height: 900,
+    title: 'After the rain',
+    caption: 'Rain on the handlebars and the dashboard of the bike.',
+    topics: ['biking'],
+  },
+  {
+    name: 'doughnuts',
+    width: 900,
+    height: 1600,
+    title: 'A box of doughnuts',
+    caption: 'Six glazed doughnuts in an open box, one with rainbow sprinkles.',
+    topics: ['food'],
+  },
+  {
+    name: 'figurine',
+    width: 1066,
+    height: 1600,
+    title: 'The figurine',
+    caption: 'A figurine in a striped shirt and chinos, standing on a desk.',
+    topics: ['people'],
+  },
+  {
+    name: 'christmas',
+    width: 1600,
+    height: 901,
+    title: 'Christmas lights',
+    caption: 'A rainbow-lit Christmas tree outside Phoenix Mall of Asia at night.',
+    topics: ['places'],
+  },
+  {
+    name: 'sandwich',
+    width: 900,
+    height: 1600,
+    title: 'Grilled sandwich',
+    caption: 'A grilled sandwich with cucumber and lettuce, by a window.',
+    topics: ['food'],
+  },
 ]
-
-export const home: Home = {
-  id: 'places',
-  label: 'Work',
-  city: 'Bengaluru',
-  region: 'Karnataka, India',
-  map: 'karnataka',
-  at: [12.9716, 77.5946],
-  places: [
-    {
-      id: 'bengaluru',
-      role: 'Where I work now',
-      city: 'Bengaluru',
-      region: 'Karnataka',
-      map: 'karnataka',
-      at: [12.9716, 77.5946],
-      photos: [
-        {
-          src: 'me/places/bengaluru-office.webp',
-          print: 'me/places/bengaluru-office-print.webp',
-          alt: 'The Innovation wall at the office, a living wall of plants under a perforated ceiling',
-        },
-        {
-          src: 'me/places/bengaluru-meal.webp',
-          print: 'me/places/bengaluru-meal-print.webp',
-          alt: 'A South Indian meal on a banana leaf: rice, sambar, rasam, curries, curd and papad',
-        },
-        {
-          src: 'me/places/bengaluru-chaat.webp',
-          print: 'me/places/bengaluru-chaat-print.webp',
-          alt: 'Chaat and a glass of tea on a balcony at dusk',
-        },
-        {
-          src: 'me/places/bengaluru-christmas.webp',
-          print: 'me/places/bengaluru-christmas-print.webp',
-          alt: 'A rainbow-lit Christmas tree outside Phoenix Mall of Asia at night',
-        },
-      ],
-    },
-    { id: 'jamshedpur', role: 'What I call home', city: 'Jamshedpur', region: 'Jharkhand', map: 'jharkhand', at: [22.8046, 86.2029] },
-    { id: 'bhubaneswar', role: 'Where I studied', city: 'Bhubaneswar', region: 'Odisha', map: 'odisha', at: [20.2961, 85.8245] },
-  ],
-}

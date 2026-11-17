@@ -276,17 +276,31 @@ export interface SiteConfig {
     /** The quiet link under the hero's role line, and in the footer. */
     readonly link: string
     readonly onward: string
-    /** The link from an opened tile back to all of them. */
-    readonly backToAll: string
-    /** Names the path of places for screen readers. */
-    readonly placesLabel: string
-    /** The heading of the opened home tile. */
-    readonly placesKicker: string
-    readonly placesTitle: string
     /** The link back to the professional side, at the foot of the page. */
     readonly back: string
-    /** The slight angle of each tile, in degrees, in order. The home tile takes the last. */
+    /** Names the row of tags for screen readers. */
+    readonly topicsLabel: string
+    /** The slight angle each tag hangs at, in degrees, in order. */
     readonly turns: readonly number[]
+    /** The cue under the tags that leads to every photo. */
+    readonly everyPhoto: string
+    /** How a tag counts its photos: "1 photo", "4 photos". */
+    readonly photo: { readonly one: string; readonly many: string }
+    readonly gallery: {
+      /** The gallery's heading for screen readers. */
+      readonly label: string
+      /** The small bar of tags kept at the top while the gallery is on screen, and its first pill. */
+      readonly dockLabel: string
+      readonly all: string
+      readonly showAll: string
+      /** Shown for a topic that has no photos yet. */
+      readonly empty: string
+    }
+    readonly viewer: {
+      readonly close: string
+      readonly previous: string
+      readonly next: string
+    }
   }
   readonly credentialsPage: {
     readonly title: string
