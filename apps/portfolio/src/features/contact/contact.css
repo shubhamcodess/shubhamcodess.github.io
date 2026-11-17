@@ -1,10 +1,7 @@
 .contact {
-  /*
-   * The last panel sits a few shades up from the frame (--contact-surface), with a shadow under its bottom
-   * edge only, so it reads as a card above the footer even at low screen brightness.
-   */
-  background: radial-gradient(ellipse 60% 70% at 78% 0%, rgb(20 60 140 / 26%), transparent 70%), var(--contact-surface);
-  box-shadow: 0 26px 34px -16px rgb(0 0 0 / 95%);
+  background: radial-gradient(ellipse 60% 70% at 78% 0%, rgb(20 60 140 / 26%), transparent 70%), var(--night-surface);
+  /* A drop shadow under the very bottom edge only, so the last panel lifts off the footer; its sides still bleed. */
+  box-shadow: 0 22px 30px -10px #000;
 }
 
 .contact__grid {

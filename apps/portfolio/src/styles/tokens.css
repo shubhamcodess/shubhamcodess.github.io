@@ -87,7 +87,6 @@
   /* Glass with no blur behind it (on the moving light), so it carries more of its own tint. */
   --night-glass-solid: rgb(14 18 24 / 62%);
   --night-glass-line: rgb(255 255 255 / 14%);
-  --contact-surface: #0d0d0d;
 
   /* Semantic: light theme */
   color-scheme: light;
@@ -273,8 +272,6 @@
   --night-ink-muted: #98a4bf;
   --night-glass: rgb(10 16 32 / 42%);
   --night-glass-solid: rgb(14 20 38 / 64%);
-  /* The contact panel: a few shades up from the frame, so the last panel stands off it. */
-  --contact-surface: #0c1019;
 
   --surface: #f3ede1;
   --surface-raised: #fbf8f1;
