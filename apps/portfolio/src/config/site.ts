@@ -88,9 +88,8 @@ export const site = {
   nav: [
     { label: 'Builds', to: 'builds', activeOn: ['featured'] },
     { label: 'Experience', to: 'experience', activeOn: ['experience'] },
-    { label: 'Gallery', to: 'me', more: true },
-    { label: 'Credentials', to: 'credentials', more: true },
-    { label: 'Contact', to: '#contact', activeOn: ['contact'], more: true },
+    { label: 'Gallery', to: 'me', fold: 'phone' },
+    { label: 'Contact', to: '#contact', activeOn: ['contact'], fold: 'narrow' },
   ],
   navMore: { label: 'More', sheetLabel: 'More pages' },
   notFound: {

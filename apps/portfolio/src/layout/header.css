@@ -78,12 +78,14 @@
 }
 
 
-/*
- * More: the secondary links (Gallery, Credentials, Contact) and the sound and theme switches, in one small
- * sheet, so the bar keeps the work first on every screen and never overflows.
- */
+/* More, on phones: the links that fold, and the sound and theme switches, in one small sheet. */
 .more-menu {
   position: relative;
+  display: none;
+}
+
+.site-header__switches {
+  display: contents;
 }
 
 /* The current dot under More, when the page or section in view is one of its links. */
@@ -217,5 +219,39 @@
 @media (prefers-reduced-motion: reduce) {
   .more-menu__sheet {
     animation: none;
+  }
+}
+
+/*
+ * Folding: from 600px up every link and both switches sit in the bar, and there's no More. Under 600px
+ * Gallery and the switches fold into More; under 430px Contact folds too. Each link is in exactly one place.
+ */
+.more-menu__item--fold-phone,
+.more-menu__item--fold-narrow {
+  display: none;
+}
+
+@media (max-width: 599px) {
+  .more-menu {
+    display: block;
+  }
+
+  .site-header__link--fold-phone,
+  .site-header__switches {
+    display: none;
+  }
+
+  .more-menu__item--fold-phone {
+    display: block;
+  }
+}
+
+@media (max-width: 429px) {
+  .site-header__link--fold-narrow {
+    display: none;
+  }
+
+  .more-menu__item--fold-narrow {
+    display: block;
   }
 }

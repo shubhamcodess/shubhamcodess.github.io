@@ -41,23 +41,29 @@ export function Header({ page }: HeaderProps) {
         {(site.logo as SiteConfig['logo']) === 'mark' ? <LogoMark /> : site.monogram}
       </a>
       <nav className="site-header__nav" aria-label="Main">
-        {links
-          .filter((item) => !item.more)
-          .map((item) => (
-            <a key={item.to} className="site-header__link" href={hrefTo(item.to)} {...current(item)}>
-              {item.label}
-            </a>
-          ))}
-        <MoreMenu items={links.filter((item) => item.more)} current={current} />
+        {links.map((item) => (
+          <a
+            key={item.to}
+            className={`site-header__link${item.fold ? ` site-header__link--fold-${item.fold}` : ''}`}
+            href={hrefTo(item.to)}
+            {...current(item)}
+          >
+            {item.label}
+          </a>
+        ))}
+        <span className="site-header__switches">
+          <Toggles />
+        </span>
+        <MoreMenu items={links.filter((item) => item.fold)} current={current} />
       </nav>
     </header>
   )
 }
 
 /**
- * The secondary links (`more` in the nav config) and the sound and theme switches, in a small sheet under a
- * "More" button, so the bar keeps the work first on every screen. The button carries the current dot when
- * one of its links is the page or section in view. Escape, a click outside or choosing a link closes it.
+ * Phones only: the links that fold (`fold` in the nav config) and the sound and theme switches, in a small
+ * sheet under a "More" button, so the bar keeps the work first and never overflows. The button carries the
+ * current dot when one of its links is in view. Escape, a click outside or choosing a link closes it.
  */
 function MoreMenu({
   items,
@@ -107,7 +113,7 @@ function MoreMenu({
       <div className="more-menu__sheet" id={sheetId} role="region" aria-label={site.navMore.sheetLabel} hidden={!open}>
         <ul>
           {items.map((item) => (
-            <li key={item.to}>
+            <li key={item.to} className={`more-menu__item--fold-${item.fold}`}>
               <a className="more-menu__link" href={hrefTo(item.to)} onClick={() => setOpen(false)} {...current(item)}>
                 <span className="more-menu__label">{item.label}</span>
                 <Icon name="arrowRight" size={14} />
