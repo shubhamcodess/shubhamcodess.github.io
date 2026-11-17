@@ -15,17 +15,17 @@ import './me.css'
 const topicIds = new Set<string>(topics.map((topic) => topic.id))
 const countOf = (id: TopicId) => photos.filter((photo) => photo.topics.some((topic) => topic === id)).length
 
-/** The topic named in the address: /me/#gallery/food. Plain #gallery, or anything else, is every photo. */
+/** The topic named in the address: /gallery/#food. #photos, or anything else, is every photo. */
 const readTopic = (): TopicId | null => {
-  const [section, id = ''] = decodeURIComponent(window.location.hash.slice(1)).split('/')
-  return section === 'gallery' && topicIds.has(id) ? (id as TopicId) : null
+  const id = decodeURIComponent(window.location.hash.slice(1))
+  return topicIds.has(id) ? (id as TopicId) : null
 }
 
 /**
  * Life away from work. Small paper tags for what the owner does, then one gallery of every photo, hung on
  * twine. A tag isn't a page: it shows that topic's photos and brings the gallery up. While the gallery is on
  * screen the tags wait at the top as a small bar, with All to see everything again. The address follows the
- * choice (/me/#gallery/food), so a link lands on it.
+ * choice (/gallery/#food, or #photos for all of them), so a link lands on it.
  */
 export function MePage() {
   const { me, features } = site
@@ -43,15 +43,15 @@ export function MePage() {
     (next: TopicId | null) => {
       setTopic(next)
       setOpened(null)
-      history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}#gallery${next ? `/${next}` : ''}`)
+      history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}#${next ?? 'photos'}`)
       galleryRef.current?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' })
     },
     [reducedMotion],
   )
 
-  // Landing on /me/#gallery or /me/#gallery/<topic> opens straight onto the gallery.
+  // Landing on /gallery/#photos or /gallery/#<topic> opens straight onto the photos.
   useEffect(() => {
-    if (window.location.hash.startsWith('#gallery')) galleryRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' })
+    if (readTopic() || window.location.hash === '#photos') galleryRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' })
     const onHash = () => setTopic(readTopic())
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
@@ -100,7 +100,7 @@ export function MePage() {
                   <Reveal index={index}>
                     <a
                       className="me-tag"
-                      href={`#gallery/${item.id}`}
+                      href={`#${item.id}`}
                       onClick={(event) => {
                         event.preventDefault()
                         choose(item.id)
@@ -128,7 +128,7 @@ export function MePage() {
           </ul>
           <a
             className="me-cue"
-            href="#gallery"
+            href="#photos"
             onClick={(event) => {
               event.preventDefault()
               choose(null)
@@ -159,7 +159,7 @@ export function MePage() {
           </div>
         </nav>
 
-        <section id="gallery" className="me-gallery" ref={galleryRef} aria-labelledby="me-gallery-title">
+        <section id="photos" className="me-gallery" ref={galleryRef} aria-labelledby="me-gallery-title">
           <h2 className="visually-hidden" id="me-gallery-title">
             {me.gallery.label}
           </h2>

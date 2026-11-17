@@ -74,13 +74,13 @@ Rules for both:
 - **Browser icon:** `public/favicon.svg`, the same mark on a solid tile in the light paper colour, or the dark surface when the browser is dark. The letters are a little larger there, so they hold at 16px.
 - The badge still sets SP in type.
 
-## Me
+## Gallery
 
-`/me/`, "Off the clock": life away from work. On (`features.mePage`); false takes away the page, its links and its place in the sitemap. A step less formal than the rest of the site, made of the same paper, ink and type. Built from prototype 35.
+`/gallery/` ("Gallery" in the header and footer; route id `me` in the code), "Off the clock": life away from work. On (`features.mePage`); false takes away the page, its links and its place in the sitemap. A step less formal than the rest of the site, made of the same paper, ink and type. Built from prototype 35.
 
-- **Reached from** the header ("Me", after the work links; in the More sheet on phones), a quiet mono "Off the clock →" under the contact profiles, and the footer index. Not the hero: its only calls to action are Featured builds and Experience.
+- **Reached from** the header ("Gallery", after the work links; in the More sheet on phones), a quiet mono "Off the clock →" under the contact profiles, and the footer index. Not the hero: its only calls to action are Featured builds and Experience.
 - **Tags:** one paper luggage tag per thing the owner does: Biking, Photography, Filmmaking, Food, People, Places. Each has its top corners cut, a reinforced punched hole with a loop of twine threaded through it (both ends run over the top edge into the hole), a dotted rule inside the paper, a small fine-line drawing in muted ink (a bike on the road, a camera in its viewfinder, a reel trailing film, a steaming bowl, three friends, a pin on a map), the name, on paper a shade lighter than the page in dark mode (`--me-tag-paper`), and how many photos it has in mono ("4 photos"; the line stays empty when there are none yet, so every name sits at the same height). Tags hang turned a degree or two (`me.turns`) and straighten on hover, lifting a little while the drawing darkens. 150px wide; three to a row on phones. A new tag is one more entry in `topics` in `content/me.ts` and one more drawing in `TopicArt`.
-- **A tag isn't a page.** It shows that topic's photos and brings the gallery up; "Every photo ↓" under the tags shows all of them. The address follows the choice (`/me/#gallery`, `/me/#gallery/food`), so a link lands on it.
+- **A tag isn't a page.** It shows that topic's photos and brings the gallery up; "Every photo ↓" under the tags shows all of them. The address follows the choice (`/gallery/#photos` for all of them, `/gallery/#food` for a topic), so a link lands on it.
 - **The dock:** once the tags scroll away and the gallery is on screen, the same names wait at the top as a small solid pill bar (no blur), with **All** first; the chosen one is ink on paper. It scrolls sideways on phones.
 - **The gallery:** every photo, hung on twine like prints drying. A line above says what's showing ("Every photo" or the topic), its count in mono, and "Show all" when a topic is chosen. A topic with no photos says "No photos here yet." Three lines are strung at first and two more as the visitor nears the end, each print fading in as it is pegged. Five places a line on wide screens, then four, three, and two on phones; each print up to 220px wide.
 - **The rope** is twisted twine: a core cord with two plies dashed half a twist apart and a soft shadow on the wall, drawn at its real width so the twist keeps its pitch. **Pegs** are wooden clothes pegs, one tapered piece with a little grain, a groove for the rope and a steel spring; the top sits over the rope and the jaw bites the print's top edge. Colours are the `--rope-*` and `--peg-*` tokens, lighter twine and deeper wood in dark mode.
@@ -196,17 +196,17 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 
 | Page | Header links |
 |---|---|
-| Home | Builds, Experience, Me, Contact |
-| All builds, a build | Experience, Me |
-| Experience | Builds, Me |
-| Credentials | Builds, Experience, Me |
-| Me | Builds, Experience |
+| Home | Builds, Experience, Gallery, Contact |
+| All builds, a build | Experience, Gallery |
+| Experience | Builds, Gallery |
+| Credentials | Builds, Experience, Gallery |
+| Gallery | Builds, Experience |
 
-- **Work first, then the person:** Me always comes after the work links. Secondary links (`more: true` in `nav`: Me, Contact) sit in the bar from 600px up. On phones they fold into a **More** sheet: a small panel under a "More" button with a drawn chevron, holding just the names, each with an arrow. It takes the panel's own colours, paper on paper pages and a shade up from the night surface on the hero. Escape, a click outside or choosing a link closes it. Writing joins the same way when it exists.
+- **Work first, then the person:** Gallery always comes after the work links. Secondary links (`more: true` in `nav`: Gallery, Contact) sit in the bar from 600px up. On phones they fold into a **More** sheet: a small panel under a "More" button with a drawn chevron, holding just the names, each with an arrow. It takes the panel's own colours, paper on paper pages and a shade up from the night surface on the hero. Escape, a click outside or choosing a link closes it. Writing joins the same way when it exists.
 
 - **The current link** is in full ink with a small ink dot beneath it. On home it follows the section being read: Builds over Featured, Experience over the experience teaser, Contact over contact.
 - **Hash in the address bar:** on home, the address follows the section being read (`/#featured`, `/#experience`, `/#contact`, nothing at the top), replacing the history entry rather than adding to it. Opening `/#contact` from any page lands on that section.
-- **Experience's foot:** "← All builds" on the left and "All credentials →" on the right.
+- **Experience's foot:** "← All builds" on the left and "All credentials →" on the right. **Credentials' foot:** "← All builds" on the left and the experience link on the right.
 - **Narrow phones (under 480px):** the sound and theme switches leave the header and live only in the footer, so the header links never overflow.
 - **The footer is the site index:** every page and Contact, from every page. It also carries the sound and theme switches, so they are in reach from anywhere. On phones they share a row with the copyright.
 - **All builds:** filter chips group it by kind; a kind needs at least two builds. At its foot: "← Professional experience" on the left and "Say hello →" on the right. In a two-link row the left link's arrow always points left.

@@ -317,7 +317,7 @@ export default defineConfig({
         builds: 'builds/index.html',
         experience: 'experience/index.html',
         credentials: 'credentials/index.html',
-        ...(site.features.mePage ? { me: 'me/index.html' } : {}),
+        ...(site.features.mePage ? { me: 'gallery/index.html' } : {}),
         project: template,
       },
     },

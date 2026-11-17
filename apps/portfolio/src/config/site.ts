@@ -38,10 +38,10 @@ export const site = {
         'Six years at IBM, from application developer to senior cloud full stack developer: what Shubham Prakash built in each role and what came of it.',
     },
     me: {
-      path: 'me/',
-      label: 'Me',
-      title: 'Off the clock | Shubham Prakash',
-      description: 'Shubham Prakash away from work: biking, photography, filmmaking, and the places Shubham has called home.',
+      path: 'gallery/',
+      label: 'Gallery',
+      title: 'Gallery: off the clock | Shubham Prakash',
+      description: 'Shubham Prakash away from work, in photos: rides on the bike, food, places and people.',
     },
     credentials: {
       path: 'credentials/',
@@ -89,25 +89,25 @@ export const site = {
     home: [
       { label: 'Builds', to: 'builds', activeOn: ['featured'] },
       { label: 'Experience', to: 'experience', activeOn: ['experience'] },
-      { label: 'Me', to: 'me', more: true },
+      { label: 'Gallery', to: 'me', more: true },
       { label: 'Contact', to: '#contact', activeOn: ['contact'], more: true },
     ],
     builds: [
       { label: 'Experience', to: 'experience' },
-      { label: 'Me', to: 'me', more: true },
+      { label: 'Gallery', to: 'me', more: true },
     ],
     project: [
       { label: 'Experience', to: 'experience' },
-      { label: 'Me', to: 'me', more: true },
+      { label: 'Gallery', to: 'me', more: true },
     ],
     experience: [
       { label: 'Builds', to: 'builds' },
-      { label: 'Me', to: 'me', more: true },
+      { label: 'Gallery', to: 'me', more: true },
     ],
     credentials: [
       { label: 'Builds', to: 'builds' },
       { label: 'Experience', to: 'experience' },
-      { label: 'Me', to: 'me', more: true },
+      { label: 'Gallery', to: 'me', more: true },
     ],
     me: [
       { label: 'Builds', to: 'builds' },

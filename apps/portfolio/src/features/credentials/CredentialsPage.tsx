@@ -107,12 +107,22 @@ export function CredentialsPage() {
           </div>
         ) : null}
 
-        {features.experience ? (
-          <p className="page-onward">
-            <ActionLink href={hrefTo('experience')} icon="arrowRight">
-              {experience.more}
-            </ActionLink>
-          </p>
+        {/* Back to the builds on the left, onward to experience on the right. */}
+        {features.experience || features.buildsPage ? (
+          <nav className="page-onward" aria-label="Continue">
+            {features.buildsPage ? (
+              <ActionLink href={hrefTo('builds')} icon="arrowLeft" iconFirst>
+                {site.buildsPage.title}
+              </ActionLink>
+            ) : (
+              <span />
+            )}
+            {features.experience ? (
+              <ActionLink href={hrefTo('experience')} icon="arrowRight">
+                {experience.more}
+              </ActionLink>
+            ) : null}
+          </nav>
         ) : null}
       </main>
     </div>
