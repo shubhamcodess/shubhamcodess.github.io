@@ -143,6 +143,15 @@ export const photos: readonly MePhoto[] = [
     topics: ['places', 'photography'],
   },
   {
+    name: 'desk-clock',
+    width: 1600,
+    height: 1200,
+    title: 'Desk clock',
+    caption: 'Quarter to eight, and the phone’s doubling as a desk clock.',
+    alt: 'A phone on a power-bank stand at a desk, showing an analogue clock and an August calendar, beside a clear mouse and a lunch box.',
+    topics: ['photography'],
+  },
+  {
     name: 'christmas',
     width: 1600,
     height: 901,
