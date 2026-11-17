@@ -20,3 +20,11 @@ node prototypes/36-phone-header-return/serve.mjs
 ```
 
 Open `/` on a phone on the same Wi-Fi (the address is printed), or in a phone-sized window.
+
+## Second pass
+
+The first pass floated the header as a rounded dark card with a shadow. That read as a separate box; the header should be the page's own.
+
+- **Look:** exactly the header at the top of home: the panel's own surface (with its grain), the links, one hairline under them, no box, no shadow, full width inside the frame. Content scrolls up to that line and goes behind it.
+- **Tone:** it matches the panel under it: paper over the builds and experience, night over the contact section.
+- **When:** past the hero, it hides while scrolling down and comes back when you stop (180ms) or scroll up.

@@ -1,34 +1,55 @@
-/* Prototype 36: the phone header, floating back in at the top once past the hero. */
+/*
+ * Prototype 36, second pass: the phone header comes back as the page's own header, not a card: the surface
+ * of the panel under it, the links, and one hairline. Content scrolls up to that line and disappears behind it.
+ */
+
+/* The page's own tones, read at the root before any night panel changes them. */
+:root {
+  --hr-paper-ink: var(--ink);
+  --hr-paper-muted: var(--ink-muted);
+  --hr-paper-line: var(--line);
+  --hr-paper-surface: var(--surface);
+}
+
 @media (max-width: 599px) {
   .site-header.hr-floating {
     position: fixed;
-    top: var(--frame-inset);
+    top: 0;
     right: var(--frame-inset);
     left: var(--frame-inset);
     z-index: 50;
     width: auto;
     max-width: none;
     margin: 0;
-    /* The header keeps the panel it came from: night on home, paper on paper pages. A shade solid, no blur. */
-    background: var(--hr-surface, var(--surface));
-    border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
-    border-radius: calc(var(--frame-radius) - 6px);
-    box-shadow: 0 14px 34px -14px rgb(0 0 0 / 55%);
-    transform: translateY(calc(-100% - var(--frame-inset) - 8px));
-    transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-
-  .panel--night .site-header.hr-floating {
-    --hr-surface: var(--night-surface);
+    /* The frame's dark edge above, then the panel's surface: the bar reads as the top of the page itself. */
+    border-top: var(--frame-inset) solid var(--backplate);
+    box-sizing: content-box;
+    transform: translateY(calc(-100% - var(--frame-inset)));
+    transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .site-header.hr-floating[data-dock='shown'] {
     transform: none;
   }
 
-  /* The hairline under the header belongs to the page, not to the floating bar. */
+  /* Over a paper panel: paper, with the page's ink. */
+  .site-header.hr-floating[data-tone='paper'] {
+    --ink: var(--hr-paper-ink);
+    --ink-muted: var(--hr-paper-muted);
+    --line: var(--hr-paper-line);
+    color: var(--hr-paper-ink);
+    background: var(--panel-texture), var(--hr-paper-surface);
+  }
+
+  /* Over a night panel (the contact section): night. */
+  .site-header.hr-floating[data-tone='night'] {
+    color: var(--night-ink);
+    background: var(--night-surface);
+  }
+
+  /* The one hairline, as on the page; content goes behind it. */
   .site-header.hr-floating::after {
-    display: none;
+    display: block;
   }
 }
 
