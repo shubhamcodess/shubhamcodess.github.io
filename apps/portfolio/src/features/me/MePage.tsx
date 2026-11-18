@@ -167,7 +167,7 @@ export function MePage() {
             <span className="me-gallery__name">{current ? current.title : me.everyPhoto}</span>
             <span className="me-gallery__count">{countLabel(shown.length)}</span>
             {current ? (
-              <button type="button" className="me-gallery__all" onClick={() => choose(null)}>
+              <button type="button" className="me-gallery__all link-dots" onClick={() => choose(null)}>
                 {me.gallery.showAll}
               </button>
             ) : null}

@@ -310,3 +310,62 @@ button {
 .eyebrow + :is(.section__title, h1, h2, h3) {
   margin-top: var(--space-3);
 }
+
+/*
+ * The dotted underline of a text link (`.link-dots` on the words). The dots are drawn, not the browser's, so a
+ * second row of the same dots in the theme's colour can sweep over them: in from the left while the link is
+ * hovered, focused or touched, and out to the right after. A parent turns it on by setting `--dots-on: 1`.
+ */
+.link-dots {
+  --dots-on: 0;
+  position: relative;
+  text-decoration: none;
+}
+
+.link-dots::before,
+.link-dots::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: -5px;
+  height: 1px;
+  pointer-events: none;
+  mask: repeating-linear-gradient(90deg, #000 0 1px, transparent 1px 3px);
+}
+
+.link-dots::before {
+  background: var(--link-underline);
+}
+
+/* The colour fills from the left edge and empties toward the right: the anchor flips with no transition. */
+.link-dots::after {
+  background: linear-gradient(var(--link-sweep), var(--link-sweep)) no-repeat;
+  background-position: calc((1 - var(--dots-on)) * 100%) 0;
+  background-size: calc(var(--dots-on) * 100%) 100%;
+  transition: background-size var(--link-sweep-out) var(--ease-out);
+}
+
+a:focus-visible .link-dots,
+button:focus-visible.link-dots,
+a:active .link-dots,
+button:active.link-dots {
+  --dots-on: 1;
+}
+
+@media (hover: hover) {
+  a:hover .link-dots,
+  button.link-dots:hover {
+    --dots-on: 1;
+  }
+}
+
+a:is(:hover, :focus-visible, :active) .link-dots::after,
+button.link-dots:is(:hover, :focus-visible, :active)::after {
+  transition-duration: var(--link-sweep-in);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-dots::after {
+    transition: none;
+  }
+}

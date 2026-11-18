@@ -53,7 +53,7 @@ export function CredentialCard({ name, issuer, level, href, image, fallbackLevel
         <span className="credcard__issuer">{issuer}</span>
         {href ? (
           <span className="credcard__verify">
-            <span>{verify}</span>
+            <span className="link-dots">{verify}</span>
             <Icon name="arrowUpRight" />
           </span>
         ) : null}

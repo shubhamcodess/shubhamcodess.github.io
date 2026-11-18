@@ -100,7 +100,7 @@ A barely-there film grain on the page panels, so the background reads as a surfa
 
 ## Text links
 
-A link that isn't a button (See all builds, Full experience, Credentials, Professional experience, Say hello, Code, Live, npm) carries a link's underline: dotted, 1px, very faded (`--link-underline`, muted ink at 45%), firming to 80% on hover. Only the words are underlined, never the arrow.
+A link that isn't a button (See all builds, Full experience, Credentials, Professional experience, Say hello, Code, Live, npm, a credential card's Verify, the gallery's Show all) carries a link's underline: `.link-dots` in `base.css`, our own dots (1px, every 3px) in very faded muted ink (`--link-underline`). On hover, keyboard focus or touch, a second row of the same dots in the theme's colour (`--link-sweep`, the accent) fills in from left to right (420ms), and when the pointer leaves it empties out to the right (320ms). Reduced motion: the colour switches without the sweep. Only the words are underlined, never the arrow.
 
 ## Buttons
 

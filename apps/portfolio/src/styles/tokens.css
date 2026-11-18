@@ -55,6 +55,10 @@
   /* The underline of a text link: dotted, very faded, a little firmer on hover. */
   --link-underline: color-mix(in srgb, var(--ink-muted) 45%, transparent);
   --link-underline-hover: color-mix(in srgb, var(--ink-muted) 80%, transparent);
+  /* On hover, focus or touch the dots fill with the theme's colour from left to right, and empty to the right after. */
+  --link-sweep: var(--accent);
+  --link-sweep-in: 420ms;
+  --link-sweep-out: 320ms;
 
   /* How a link or button looks while a finger is on it. */
   --press-opacity: 0.55;

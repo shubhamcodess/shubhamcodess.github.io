@@ -31,7 +31,7 @@ export function ActionLink({
       {...(label ? { 'aria-label': label } : {})}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
-      <span>{children}</span>
+      <span className={variant === 'text' ? 'link-dots' : undefined}>{children}</span>
       <Icon name={icon} size={14} />
     </a>
   )
