@@ -36,7 +36,9 @@ export function BuildCard({ build, variant, headingLevel }: BuildCardProps) {
         {stat}
         {build.logo ? (
           <span className="app-badge" style={{ '--app-badge-tile': build.logo.tile } as CSSProperties} aria-hidden="true">
-            <img src={`${import.meta.env.BASE_URL}${build.logo.src}`} alt="" width={28} height={28} loading="lazy" decoding="async" />
+            <span className="app-badge__tile">
+              <img src={`${import.meta.env.BASE_URL}${build.logo.src}`} alt="" width={24} height={24} loading="lazy" decoding="async" />
+            </span>
           </span>
         ) : null}
       </div>

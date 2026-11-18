@@ -35,30 +35,49 @@
 }
 
 /*
- * A build's logo as a small badge: its own dark tile, the mark lifted off it by a soft drop shadow, and the same
- * glass over it as the credential badges (`--glass-*`). A soft shadow under the badge seats it on the plate.
+ * A build's logo as a small badge in two layers. The mat: a soft raised square in the card's own paper, lighter
+ * at the top and melting into the plate at its foot, with a hairline edge and a soft shadow, so it sits on the
+ * plate as its own little plaque. On it, the build's own dark tile with the mark lifted by a drop shadow. The same
+ * glass as the credential badges (`--glass-*`) lies over the whole mat.
  */
 .app-badge {
-  --app-badge-size: 46px;
+  --app-badge-size: 58px;
   position: relative;
   display: grid;
   flex: none;
   place-items: center;
   width: var(--app-badge-size);
   height: var(--app-badge-size);
-  background:
-    radial-gradient(120% 90% at 30% 15%, rgb(255 255 255 / 9%), transparent 60%),
-    var(--app-badge-tile);
-  border-radius: 13px;
+  background: linear-gradient(
+    180deg,
+    var(--surface-raised) 0%,
+    color-mix(in srgb, var(--surface-raised) 45%, var(--surface-sunken)) 100%
+  );
+  border: var(--hairline) solid color-mix(in srgb, var(--ink) 9%, transparent);
+  border-radius: 17px;
   box-shadow:
-    0 1px 1px rgb(0 0 0 / 10%),
-    0 6px 14px -6px rgb(0 0 0 / 35%);
+    0 1px 1px color-mix(in srgb, var(--ink) 6%, transparent),
+    0 8px 18px -10px color-mix(in srgb, var(--ink) 35%, transparent);
   isolation: isolate;
 }
 
+.app-badge__tile {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  background:
+    radial-gradient(120% 90% at 30% 15%, rgb(255 255 255 / 10%), transparent 60%),
+    var(--app-badge-tile);
+  border-radius: 11px;
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 18%),
+    0 3px 7px -3px rgb(0 0 0 / 40%);
+}
+
 .app-badge img {
-  width: 58%;
-  height: 58%;
+  width: 60%;
+  height: 60%;
   object-fit: contain;
   filter: drop-shadow(0 1.5px 1.5px rgb(0 0 0 / 55%)) var(--glass-image);
 }
