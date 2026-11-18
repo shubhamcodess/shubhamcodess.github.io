@@ -96,6 +96,10 @@
     dock.dataset.tone = under?.closest('.panel--night, .hero, .site-footer') ? 'night' : 'paper'
   }
 
+  // Contact and the footer already hold every link, so the dock stays away once either comes into view.
+  const linksInView = () =>
+    [live('#contact'), live('.site-footer')].some((element) => element && element.getBoundingClientRect().top < window.innerHeight - 80)
+
   const headerGone = () => {
     const header = live('.site-header')
     return !header || header.getBoundingClientRect().bottom < 0
@@ -114,7 +118,7 @@
   }
 
   const onScroll = () => {
-    if (!headerGone()) {
+    if (!headerGone() || linksInView()) {
       if (!isOpen()) dock.dataset.state = 'away'
       return
     }
@@ -154,6 +158,16 @@
   dock.addEventListener('focusin', () => (dock.dataset.state = 'up'))
   dock.addEventListener('focusout', settle)
   dock.addEventListener('pointerleave', settle)
+  // A mouse heading for the dock keeps it up: moving in the bottom strip of the screen, near the middle, while it's up.
+  window.addEventListener(
+    'pointermove',
+    (event) => {
+      if (event.pointerType !== 'mouse' || dock.dataset.state !== 'up') return
+      const near = event.clientY > window.innerHeight - 160 && Math.abs(event.clientX - window.innerWidth / 2) < 260
+      if (near) settle()
+    },
+    { passive: true },
+  )
 
   const start = () => {
     if (!fill()) return requestAnimationFrame(start)
