@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { site } from '../../config/site'
 import type { Build, BuildLinkKind } from '../../content/types'
 import { hrefToBuild } from '../../lib/routes'
@@ -28,6 +29,19 @@ export function BuildCard({ build, variant, headingLevel }: BuildCardProps) {
     </p>
   ) : null
 
+  // Featured: the headline fact on the left of the plate, the build's own logo as a small glass badge on the right.
+  const plate =
+    variant === 'feature' && (stat || build.logo) ? (
+      <div className="build-plate">
+        {stat}
+        {build.logo ? (
+          <span className="app-badge" style={{ '--app-badge-tile': build.logo.tile } as CSSProperties} aria-hidden="true">
+            <img src={`${import.meta.env.BASE_URL}${build.logo.src}`} alt="" width={28} height={28} loading="lazy" decoding="async" />
+          </span>
+        ) : null}
+      </div>
+    ) : null
+
   return (
     <FolderCard
       label={build.kind}
@@ -35,7 +49,7 @@ export function BuildCard({ build, variant, headingLevel }: BuildCardProps) {
       headingLevel={headingLevel}
       summary={build.summary}
       {...(site.features.projectPages ? { href: hrefToBuild(build.slug), transitionName: `build-${build.slug}` } : {})}
-      {...(variant === 'feature' && stat ? { plate: stat } : {})}
+      {...(plate ? { plate } : {})}
       meta={
         <>
           {variant === 'compact' ? stat : null}

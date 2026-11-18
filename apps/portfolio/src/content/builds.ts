@@ -15,6 +15,7 @@ export const builds = [
     year: 2026,
     stack: ['TypeScript', 'Node.js', 'MCP', 'Ollama', 'TOON'],
     highlight: { value: '98.4%', label: 'tokens saved on a CI build log' },
+    logo: { src: 'logos/mcp-token-optimizer.svg', tile: '#0c0c0b' },
     links: [
       { kind: 'code', href: 'https://github.com/shubhamcodess/mcp-token-optimizer' },
       { kind: 'live', href: 'https://shubhamcodess.github.io/mcp-token-optimizer/' },
@@ -30,6 +31,7 @@ export const builds = [
     year: 2026,
     stack: ['TypeScript', 'Node.js', 'Ollama', 'zsh', 'bash'],
     highlight: { value: '217 ms', label: 'median end to end, on an M4 Pro' },
+    logo: { src: 'logos/whatcmd.svg', tile: '#0c0c0b' },
     links: [
       { kind: 'code', href: 'https://github.com/shubhamcodess/whatcmd' },
       { kind: 'live', href: 'https://shubhamcodess.github.io/whatcmd/' },
@@ -45,6 +47,7 @@ export const builds = [
     year: 2026,
     stack: ['Python', 'GitHub Actions', 'GitHub Pages'],
     highlight: { value: '45+', label: 'sources read overnight' },
+    logo: { src: 'logos/everything-tech.svg', tile: '#16181f' },
     links: [
       { kind: 'live', href: 'https://shubhamcodess.github.io/everything-tech-newsletter/' },
       { kind: 'code', href: 'https://github.com/shubhamcodess/everything-tech-newsletter' },

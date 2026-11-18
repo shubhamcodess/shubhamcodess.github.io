@@ -26,6 +26,54 @@
   font: var(--weight-body) var(--text-xs) / var(--leading-snug) var(--font-mono);
 }
 
+/* A featured card's plate: the fact on the left, the logo badge on the right, level with the number. */
+.build-plate {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+/*
+ * A build's logo as a small badge: its own dark tile, the mark lifted off it by a soft drop shadow, and the same
+ * glass over it as the credential badges (`--glass-*`). A soft shadow under the badge seats it on the plate.
+ */
+.app-badge {
+  --app-badge-size: 46px;
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--app-badge-size);
+  height: var(--app-badge-size);
+  background:
+    radial-gradient(120% 90% at 30% 15%, rgb(255 255 255 / 9%), transparent 60%),
+    var(--app-badge-tile);
+  border-radius: 13px;
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 10%),
+    0 6px 14px -6px rgb(0 0 0 / 35%);
+  isolation: isolate;
+}
+
+.app-badge img {
+  width: 58%;
+  height: 58%;
+  object-fit: contain;
+  filter: drop-shadow(0 1.5px 1.5px rgb(0 0 0 / 55%)) var(--glass-image);
+}
+
+.app-badge::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--glass-sheen);
+  border: var(--hairline) solid var(--glass-edge);
+  border-radius: inherit;
+  box-shadow: var(--glass-shadow);
+  pointer-events: none;
+}
+
 .build-stat--compact {
   flex-direction: row;
   align-items: baseline;

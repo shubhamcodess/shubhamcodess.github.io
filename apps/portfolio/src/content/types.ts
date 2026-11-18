@@ -32,6 +32,13 @@ export interface BuildStory {
   readonly limits?: readonly string[]
 }
 
+export interface BuildLogo {
+  /** A path under /public. */
+  readonly src: string
+  /** The tile colour behind the mark on the build's own site. */
+  readonly tile: string
+}
+
 export interface Build {
   /** Stable id, used for keys, anchors and later the project route. */
   readonly slug: string
@@ -44,6 +51,11 @@ export interface Build {
   readonly highlight?: BuildHighlight
   /** Private projects carry no links. The first link is the card's main action. */
   readonly links: readonly BuildLink[]
+  /**
+   * The build's own logo, from its own site: the mark alone (an SVG under /public, its tile left out) and the
+   * colour of the tile it sits on there. Shown as a small glass badge on the featured card.
+   */
+  readonly logo?: BuildLogo
   /** The build in motion: a recording or motion graphic, served from /public. */
   readonly media?: { readonly kind: 'video' | 'image'; readonly src: string; readonly alt: string }
 }
