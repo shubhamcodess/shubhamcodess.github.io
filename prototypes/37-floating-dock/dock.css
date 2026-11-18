@@ -1,0 +1,221 @@
+/*
+ * Prototype 37: the floating dock. A small solid pill at the bottom centre that floats over the page (nothing
+ * shifts under it). It rises while scrolling and settles away when scrolling stops. Its tone follows what's under it.
+ */
+
+.dock {
+  --dock-height: 44px;
+  --dock-pad: 4px;
+  --dock-bg: var(--surface-raised);
+  --dock-ink: var(--ink);
+  --dock-muted: var(--ink-muted);
+  --dock-line: var(--line);
+  --dock-shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 8px 24px -8px rgb(0 0 0 / 18%);
+
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  translate: -50% 0;
+  font-family: var(--font-sans);
+  color: var(--dock-ink);
+  transition:
+    transform 320ms var(--ease-out),
+    opacity 220ms var(--ease-out),
+    visibility 0s linear 0s;
+}
+
+.dock[data-tone='night'] {
+  --dock-bg: #0e1218;
+  --dock-ink: var(--night-ink);
+  --dock-muted: var(--night-ink-muted);
+  --dock-line: var(--night-line);
+  --dock-shadow: 0 8px 24px -8px rgb(0 0 0 / 60%);
+  /* The SP mark draws with the page's ink; over night it takes the night's. */
+  --ink: var(--night-ink);
+  --logo-mark-step: oklch(from #0e1218 calc(l + 0.13) calc(c * 1.6) h);
+}
+
+/* Away: dropped just below its place and faded, out of reach of taps and Tab. */
+.dock[data-state='away'] {
+  transform: translateY(calc(100% + 24px));
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    transform 420ms var(--ease-out),
+    opacity 320ms var(--ease-out),
+    visibility 0s linear 420ms;
+}
+
+.dock__bar {
+  display: flex;
+  align-items: center;
+  height: var(--dock-height);
+  padding: var(--dock-pad);
+  border: var(--hairline, 1px) solid var(--dock-line);
+  border-radius: var(--radius-pill);
+  background: var(--dock-bg);
+  box-shadow: var(--dock-shadow);
+  transition: background-color 200ms, border-color 200ms;
+}
+
+.dock__home {
+  display: grid;
+  place-items: center;
+  width: calc(var(--dock-height) - var(--dock-pad) * 2);
+  height: 100%;
+  border-radius: 50%;
+  color: inherit;
+}
+
+.dock__home .logo-mark {
+  width: 22px;
+  height: 22px;
+}
+
+.dock__rule {
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  background: var(--dock-line);
+}
+
+.dock__open {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 100%;
+  padding: 0 12px 0 10px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+}
+
+.dock__glyph {
+  width: 12px;
+  height: 12px;
+  fill: var(--dock-muted);
+  transition: rotate 320ms var(--ease-out), fill 200ms;
+}
+
+.dock[data-open='true'] .dock__glyph {
+  rotate: 45deg;
+  fill: currentColor;
+}
+
+@media (hover: hover) {
+  .dock__home:hover,
+  .dock__open:hover {
+    background: color-mix(in srgb, var(--dock-ink) 7%, transparent);
+  }
+  .dock__link:hover {
+    background: color-mix(in srgb, var(--dock-ink) 6%, transparent);
+  }
+}
+
+.dock :focus-visible {
+  outline: 2px solid var(--focus-ring, currentColor);
+  outline-offset: 2px;
+}
+
+/* The sheet: every page, above the bar, the same surface. */
+.dock__sheet {
+  width: min(260px, calc(100vw - 32px));
+  padding: 6px;
+  border: var(--hairline, 1px) solid var(--dock-line);
+  border-radius: var(--radius-lg);
+  background: var(--dock-bg);
+  box-shadow: var(--dock-shadow);
+  transform-origin: 50% 100%;
+  animation: dock-sheet-in 260ms var(--ease-out);
+}
+
+.dock__sheet[hidden] {
+  display: none;
+}
+
+@keyframes dock-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+
+.dock__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dock__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  color: var(--dock-muted);
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.dock__link svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.5;
+}
+
+/* The page you're on: full ink and a dot in place of the arrow. */
+.dock__link[aria-current='page'] {
+  color: var(--dock-ink);
+}
+
+.dock__link[aria-current='page'] svg {
+  display: none;
+}
+
+.dock__link[aria-current='page']::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent, currentColor);
+}
+
+.dock__switches {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 6px 4px 0;
+  border-top: var(--hairline, 1px) solid var(--dock-line);
+  color: var(--dock-muted);
+}
+
+.dock__switches:empty {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock,
+  .dock[data-state='away'] {
+    transform: none;
+  }
+  .dock__sheet {
+    animation: none;
+  }
+}
