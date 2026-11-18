@@ -33,10 +33,12 @@ export interface BuildStory {
 }
 
 export interface BuildLogo {
-  /** A path under /public. */
+  /** The mark for dark mode, light strokes: a path under /public. */
   readonly src: string
-  /** The tile colour behind the mark on the build's own site. */
+  /** The dark tile behind it, as on the build's own site. */
   readonly tile: string
+  /** The same mark for light mode, dark strokes on a light tile, as the build's own site does in its light theme. */
+  readonly light: { readonly src: string; readonly tile: string }
 }
 
 export interface Build {

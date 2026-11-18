@@ -35,9 +35,15 @@ export function BuildCard({ build, variant, headingLevel }: BuildCardProps) {
       <div className="build-plate">
         {stat}
         {build.logo ? (
-          <span className="app-badge" style={{ '--app-badge-tile': build.logo.tile } as CSSProperties} aria-hidden="true">
+          <span
+            className="app-badge"
+            style={{ '--app-badge-tile': build.logo.tile, '--app-badge-tile-light': build.logo.light.tile } as CSSProperties}
+            aria-hidden="true"
+          >
             <span className="app-badge__tile">
-              <img src={`${import.meta.env.BASE_URL}${build.logo.src}`} alt="" width={24} height={24} loading="lazy" decoding="async" />
+              {/* Both marks are in the page; the theme shows one, so it's right before any script runs. */}
+              <img className="app-badge__mark app-badge__mark--light" src={`${import.meta.env.BASE_URL}${build.logo.light.src}`} alt="" width={24} height={24} loading="lazy" decoding="async" />
+              <img className="app-badge__mark app-badge__mark--dark" src={`${import.meta.env.BASE_URL}${build.logo.src}`} alt="" width={24} height={24} loading="lazy" decoding="async" />
             </span>
           </span>
         ) : null}
