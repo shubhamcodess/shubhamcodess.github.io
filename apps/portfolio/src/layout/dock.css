@@ -119,7 +119,7 @@
 
   .dock__link:hover {
     color: var(--ink);
-    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
   }
 
   .dock__link:hover .icon {
@@ -178,20 +178,15 @@
 }
 
 /* The page you're on: full ink, and a dot in place of the arrow. */
-.dock__link[aria-current='page'] {
+/* The page you're on: full ink on a soft filled row, a step firmer than a hover, and no arrow. */
+.dock__link[aria-current='page'],
+.dock__link[aria-current='page']:hover {
   color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 10%, transparent);
 }
 
 .dock__link[aria-current='page'] .icon {
   display: none;
-}
-
-.dock__link[aria-current='page']::after {
-  content: '';
-  width: 5px;
-  height: 5px;
-  background: var(--marker-strong);
-  border-radius: 50%;
 }
 
 .dock__switches {
