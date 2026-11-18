@@ -16,17 +16,10 @@
 
 .build-stat__value {
   font-size: var(--card-stat-size);
-  font-weight: var(--weight-heading);
-  letter-spacing: -0.03em;
+  /* The body weight, a touch less tight than a heading: the number informs, it doesn't shout. */
+  font-weight: var(--weight-body);
+  letter-spacing: -0.02em;
   line-height: 1;
-}
-
-/* Wide screens: the number in the body weight, a touch less tight, so three side by side stay calm. */
-@media (min-width: 900px) {
-  .build-stat__value {
-    font-weight: var(--weight-body);
-    letter-spacing: -0.02em;
-  }
 }
 
 .build-stat__label {
