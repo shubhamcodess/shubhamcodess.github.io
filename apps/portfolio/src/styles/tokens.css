@@ -242,7 +242,8 @@
   --card-padding: clamp(18px, 2vw, 24px);
   --card-tab-height: 38px;
   --card-tab-radius: var(--radius-md);
-  --card-plate-height: clamp(140px, 16vw, 190px);
+  /* Just enough plate to hold the headline and the logo: it peeks out above the sheet like a folder's back. */
+  --card-plate-height: clamp(76px, 3.5vw + 56px, 104px);
   --card-lift: -4px;
   --card-stat-size: clamp(2.5rem, 2rem + 2vw, 3.5rem);
 }

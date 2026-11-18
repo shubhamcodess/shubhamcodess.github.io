@@ -20,7 +20,7 @@
   flex-direction: column;
   justify-content: center;
   min-height: calc(var(--card-plate-height) + var(--card-tab-height));
-  padding: var(--card-padding) var(--card-padding) calc(var(--card-padding) + var(--card-tab-height));
+  padding: var(--card-padding) var(--card-padding) calc(var(--space-5) + var(--card-tab-height));
 }
 
 .folder__sheet {
