@@ -35,44 +35,47 @@
 }
 
 /*
- * A build's logo as a small badge in two layers. The mat: a soft raised square in the card's own paper, lighter
- * at the top and melting into the plate at its foot, with a hairline edge and a soft shadow, so it sits on the
- * plate as its own little plaque. On it, the build's own dark tile with the mark lifted by a drop shadow. The same
- * glass as the credential badges (`--glass-*`) lies over the whole mat.
+ * A build's logo as a small badge. The well: a shallow indent pressed into the plate itself, in the plate's own
+ * colour, shaded inside at the top and catching light along its lower lip, only a few pixels wider than the tile.
+ * In it, the build's own dark tile with the mark lifted by a drop shadow, and the same glass over the tile as the
+ * credential badges (`--glass-*`).
  */
 .app-badge {
-  --app-badge-size: 58px;
-  position: relative;
+  --app-badge-tile-size: 40px;
+  --app-badge-rim: 4px;
   display: grid;
   flex: none;
   place-items: center;
-  width: var(--app-badge-size);
-  height: var(--app-badge-size);
-  background: linear-gradient(
-    180deg,
-    var(--surface-raised) 0%,
-    color-mix(in srgb, var(--surface-raised) 45%, var(--surface-sunken)) 100%
-  );
-  border: var(--hairline) solid color-mix(in srgb, var(--ink) 9%, transparent);
-  border-radius: 17px;
+  width: calc(var(--app-badge-tile-size) + 2 * var(--app-badge-rim));
+  height: calc(var(--app-badge-tile-size) + 2 * var(--app-badge-rim));
+  background: transparent;
+  border-radius: calc(11px + var(--app-badge-rim));
+  --app-badge-shade: rgb(0 0 0 / 15%);
+  --app-badge-lip: color-mix(in srgb, var(--surface-raised) 70%, transparent);
   box-shadow:
-    0 1px 1px color-mix(in srgb, var(--ink) 6%, transparent),
-    0 8px 18px -10px color-mix(in srgb, var(--ink) 35%, transparent);
-  isolation: isolate;
+    inset 0 1.5px 3px var(--app-badge-shade),
+    inset 0 -1px 0 var(--app-badge-lip),
+    0 1px 0 var(--app-badge-lip);
+}
+
+/* Dark: a deeper shade inside, and only a faint lip of light. */
+:root[data-theme='dark'] .app-badge {
+  --app-badge-shade: rgb(0 0 0 / 60%);
+  --app-badge-lip: rgb(255 255 255 / 5%);
 }
 
 .app-badge__tile {
+  position: relative;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: var(--app-badge-tile-size);
+  height: var(--app-badge-tile-size);
   background:
     radial-gradient(120% 90% at 30% 15%, rgb(255 255 255 / 10%), transparent 60%),
     var(--app-badge-tile);
   border-radius: 11px;
-  box-shadow:
-    0 1px 1px rgb(0 0 0 / 18%),
-    0 3px 7px -3px rgb(0 0 0 / 40%);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 25%);
+  isolation: isolate;
 }
 
 .app-badge img {
@@ -82,7 +85,7 @@
   filter: drop-shadow(0 1.5px 1.5px rgb(0 0 0 / 55%)) var(--glass-image);
 }
 
-.app-badge::after {
+.app-badge__tile::after {
   content: '';
   position: absolute;
   inset: 0;
