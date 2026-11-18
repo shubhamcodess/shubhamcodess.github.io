@@ -84,14 +84,13 @@ export const site = {
     projectTitle: '{title} | {kind} by Shubham Prakash',
     themeColor: { light: '#f3ede1', dark: '#0a0d14' },
   },
-  // Home carries all three. Elsewhere only the other main page: Contact is in every footer, and the logo goes home.
+  // The home page's anchors; each page leaves out its own. Gallery, Credentials and Home are in the dock and the footer.
   nav: [
     { label: 'Builds', to: 'builds', activeOn: ['featured'] },
     { label: 'Experience', to: 'experience', activeOn: ['experience'] },
-    { label: 'Gallery', to: 'me', fold: 'phone' },
-    { label: 'Contact', to: '#contact', activeOn: ['contact'], fold: 'narrow' },
+    { label: 'Contact', to: '#contact', activeOn: ['contact'] },
   ],
-  navMore: { label: 'More', sheetLabel: 'More pages' },
+  dock: { label: 'Pages', openHint: 'all pages', sheetLabel: 'Every page', lingerMs: 1400 },
   notFound: {
     code: '404',
     title: 'Page not found',
@@ -268,5 +267,6 @@ export const site = {
     projectPages: true,
     scrollLight: true,
     footer: true,
+    dock: true,
   },
 } as const satisfies SiteConfig

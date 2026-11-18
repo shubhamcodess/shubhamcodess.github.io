@@ -25,3 +25,29 @@ export function buildFromPath(pathname: string): Build | undefined {
   const slug = pathname.split('/').filter(Boolean).at(-1)
   return builds.find((build) => build.slug === slug)
 }
+
+/** One entry in the site index: a page, or the contact section on home. */
+export interface SitePage {
+  readonly id: RouteId | 'contact'
+  readonly label: string
+  readonly href: string
+}
+
+/**
+ * Every page that is switched on, in the site's order, then Contact. The footer and the dock both list these,
+ * so a new page joins both by being added here.
+ */
+export function sitePages(): readonly SitePage[] {
+  const { features, routes, contact } = site
+  const order: readonly RouteId[] = ['home', 'builds', 'experience', 'credentials', 'me']
+  const enabled: Readonly<Record<RouteId, boolean>> = {
+    home: true,
+    builds: features.buildsPage,
+    experience: features.experience,
+    credentials: features.credentials,
+    me: features.mePage,
+  }
+  const pages: SitePage[] = order.filter((id) => enabled[id]).map((id) => ({ id, label: routes[id].label, href: hrefTo(id) }))
+  if (features.contact) pages.push({ id: 'contact', label: contact.kicker, href: hrefTo(`#${contact.id}`) })
+  return pages
+}

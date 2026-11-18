@@ -78,180 +78,24 @@
 }
 
 
-/* More, on phones: the links that fold, and the sound and theme switches, in one small sheet. */
-.more-menu {
-  position: relative;
-  display: none;
-}
-
+/* The sound and theme switches end the bar from 600px up; on phones they are in the dock and the footer. */
 .site-header__switches {
   display: contents;
 }
 
-/* The current dot under More, when the page or section in view is one of its links. */
-.more-menu__button[data-current] {
-  color: var(--ink);
-}
-
-.more-menu__button[data-current]::after {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
-}
-
-.more-menu__button {
-  gap: 4px;
-  font: inherit;
-  font-size: var(--text-sm);
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-
-.more-menu__button[aria-expanded='true'] {
-  color: var(--ink);
-}
-
-/* A small drawn chevron: points down, and up while the sheet is open. */
-.more-menu__chevron {
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 2px;
-  border-right: 1.4px solid currentColor;
-  border-bottom: 1.4px solid currentColor;
-  transform: rotate(45deg);
-  transition: transform var(--duration-base) var(--ease-out);
-}
-
-.more-menu__button[aria-expanded='true'] .more-menu__chevron {
-  margin-top: 3px;
-  transform: rotate(-135deg);
-}
-
-/* The sheet: a small paper panel under the button, the dotted rule just inside it like the site's cards. */
-.more-menu__sheet {
-  position: absolute;
-  top: calc(100% + var(--space-2));
-  right: 0;
-  z-index: 20;
-  min-width: 168px;
-  padding: var(--space-1);
-  background: var(--surface-raised);
-  /* A clear edge, so the sheet reads as its own panel over the page. */
-  border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card), 0 18px 40px -18px rgb(0 0 0 / 30%);
-  transform-origin: 90% 0;
-  animation: more-menu-in var(--duration-base) var(--ease-out);
-}
-
-.more-menu__sheet[hidden] {
-  display: none;
-}
-
-.more-menu__sheet ul {
-  display: grid;
-  gap: 2px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.more-menu__link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-5);
-  min-height: var(--target-min);
-  padding: 0 var(--space-3);
-  color: var(--ink);
-  border-radius: calc(var(--radius-md) - var(--space-2));
-  transition: background-color var(--duration-fast) linear;
-}
-
-.more-menu__link:hover,
-.more-menu__link:focus-visible {
-  background: var(--surface-sunken);
-}
-
-.more-menu__label {
-  font-size: var(--text-sm);
-}
-
-.more-menu__link .icon {
-  color: var(--ink-muted);
-}
-
-.more-menu__link[aria-current] .more-menu__label {
-  text-decoration: underline;
-  text-decoration-color: var(--marker-strong);
-  text-underline-offset: 4px;
-}
-
-/* The sound and theme switches, in a row under the links, past a hairline. */
-.more-menu__switches {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-1);
-  margin-top: var(--space-1);
-  padding-top: var(--space-1);
-  border-top: var(--hairline) solid var(--line);
-}
-
-/* On a night panel (the hero, a project's title plate) the sheet is night too, a shade up from the surface. */
-.panel--night .more-menu__sheet {
-  background: color-mix(in srgb, var(--night-surface) 88%, white);
-  border-color: rgb(255 255 255 / 16%);
-  box-shadow: 0 18px 40px -16px rgb(0 0 0 / 70%);
-}
-
-.panel--night .more-menu__link:hover,
-.panel--night .more-menu__link:focus-visible {
-  background: rgb(255 255 255 / 7%);
-}
-
-@keyframes more-menu-in {
-  from {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.97);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .more-menu__sheet {
-    animation: none;
-  }
-}
-
-/*
- * Folding: from 600px up every link and both switches sit in the bar, and there's no More. Under 600px
- * Gallery and the switches fold into More; under 430px Contact folds too. Each link is in exactly one place.
- */
-.more-menu__item--fold-phone,
-.more-menu__item--fold-narrow {
-  display: none;
-}
-
 @media (max-width: 599px) {
-  .more-menu {
-    display: block;
-  }
-
-  .site-header__link--fold-phone,
   .site-header__switches {
     display: none;
   }
-
-  .more-menu__item--fold-phone {
-    display: block;
-  }
 }
 
-@media (max-width: 429px) {
-  .site-header__link--fold-narrow {
-    display: none;
+/* The smallest phones: the three links draw in a little so the bar fits with the logo. */
+@media (max-width: 359px) {
+  .site-header__nav {
+    gap: 0;
   }
 
-  .more-menu__item--fold-narrow {
-    display: block;
+  .site-header__link {
+    padding-inline: 6px;
   }
 }

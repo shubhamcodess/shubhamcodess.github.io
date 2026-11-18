@@ -23,11 +23,6 @@ export interface NavItem {
   readonly to: RouteId | `#${string}`
   /** Home page sections (by id) during which this link shows as current. */
   readonly activeOn?: readonly string[]
-  /**
-   * Where it folds into the More menu when the bar runs out of room: 'phone' under 600px, 'narrow' under 430px.
-   * Without it, the link is always in the bar.
-   */
-  readonly fold?: 'phone' | 'narrow'
 }
 
 export interface RouteConfig {
@@ -101,6 +96,19 @@ export interface FeatureFlags {
   /** The light bar that replaces the browser's scrollbar. Off brings the native one back. */
   readonly scrollLight: boolean
   readonly footer: boolean
+  /** The floating dock: rises while scrolling, holds the logo and the page you're on, opens every page. */
+  readonly dock: boolean
+}
+
+export interface DockConfig {
+  /** The dock's name for screen readers. */
+  readonly label: string
+  /** Read after the page name on the open button, for screen readers ("Experience, all pages"). */
+  readonly openHint: string
+  /** The open list's name for screen readers. */
+  readonly sheetLabel: string
+  /** How long the dock stays after scrolling stops, in ms. Long enough to reach it, short enough to stay out of the way. */
+  readonly lingerMs: number
 }
 
 export type Rgb = readonly [red: number, green: number, blue: number]
@@ -216,14 +224,14 @@ export interface SiteConfig {
   }
   readonly routes: Readonly<Record<RouteId, RouteConfig>>
   readonly seo: SeoConfig
-  /** The header's links on each page. Keep each short: on a phone the header holds the logo, these and two icons. */
   /**
-   * Every header link, in order. Each page shows all but its own. On phones the links with `fold` move into
-   * a More menu, with the sound and theme switches; on wider screens everything sits in the bar.
+   * The header's links, in order, at every width: the home page's own anchors. Each page leaves out its own link.
+   * Keep each short: on a phone the bar holds the logo and these.
+   * Every other page is in the dock and the footer.
    */
   readonly nav: readonly NavItem[]
-  /** The phone header's button for the secondary links (`more` in `nav`), and its sheet's name for screen readers. */
-  readonly navMore: { readonly label: string; readonly sheetLabel: string }
+  /** The floating dock at the foot of the screen: every page, from anywhere. */
+  readonly dock: DockConfig
   readonly hero: HeroConfig
   readonly notFound: NotFoundConfig
   readonly featured: {

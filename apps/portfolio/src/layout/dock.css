@@ -1,0 +1,213 @@
+/*
+ * The floating dock: a small solid pill at the foot of the screen, over the page. It rises while scrolling and
+ * settles away when still. Its tone follows what's under it: paper over paper, night over the night panels.
+ */
+.dock {
+  --dock-height: var(--target-min);
+  --dock-pad: 4px;
+  --dock-surface: var(--surface-raised);
+  --dock-edge: color-mix(in srgb, var(--ink) 14%, transparent);
+  --dock-shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 8px 24px -8px rgb(0 0 0 / 18%);
+
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--space-3));
+  left: 50%;
+  /* Under the comet cursor (30), so the pointer always shows on top of it; over link previews (20). */
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink);
+  translate: -50% 0;
+  transition:
+    transform var(--duration-slow) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out),
+    visibility 0s linear 0s;
+}
+
+/* Over a night panel (the hero, a project's title plate): night, a shade up from the surface. */
+.dock[data-tone='night'] {
+  --ink: var(--night-ink);
+  --ink-muted: var(--night-ink-muted);
+  --focus-ring: var(--night-ink);
+  --dock-surface: color-mix(in srgb, var(--night-surface) 88%, white);
+  --dock-edge: rgb(255 255 255 / 16%);
+  --dock-shadow: 0 8px 24px -8px rgb(0 0 0 / 60%);
+  --logo-mark-step: oklch(from var(--night-surface) calc(l + 0.13) calc(c * 1.6) h);
+}
+
+/* Away: just below its place and faded, out of reach of taps and Tab. */
+.dock[data-state='away'] {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(calc(100% + var(--space-5)));
+  transition:
+    transform var(--duration-slow) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out),
+    visibility 0s linear var(--duration-slow);
+}
+
+.dock__bar {
+  display: flex;
+  align-items: center;
+  height: var(--dock-height);
+  padding: var(--dock-pad);
+  background: var(--dock-surface);
+  border: 1px solid var(--dock-edge);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--dock-shadow);
+  transition:
+    background-color var(--duration-fast) linear,
+    border-color var(--duration-fast) linear;
+}
+
+.dock__home {
+  display: grid;
+  place-items: center;
+  width: calc(var(--dock-height) - var(--dock-pad) * 2);
+  height: 100%;
+  border-radius: 50%;
+}
+
+.dock__home .logo-mark {
+  width: 22px;
+  height: 22px;
+}
+
+.dock__rule {
+  width: 1px;
+  height: 18px;
+  margin-inline: var(--space-1);
+  background: var(--dock-edge);
+}
+
+.dock__open {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 100%;
+  padding: 0 var(--space-3) 0 10px;
+  color: inherit;
+  font: inherit;
+  font-size: var(--text-sm);
+  background: none;
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.dock__glyph {
+  width: 12px;
+  height: 12px;
+  fill: var(--ink-muted);
+  transition:
+    rotate var(--duration-slow) var(--ease-out),
+    fill var(--duration-fast) linear;
+}
+
+.dock[data-open='true'] .dock__glyph {
+  fill: currentColor;
+  rotate: 45deg;
+}
+
+@media (hover: hover) {
+  .dock__home:hover,
+  .dock__open:hover {
+    background: color-mix(in srgb, var(--ink) 7%, transparent);
+  }
+
+  .dock__link:hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+  }
+}
+
+/* Every page, above the bar, on the same surface. */
+.dock__sheet {
+  width: min(260px, calc(100vw - 2 * var(--space-4)));
+  padding: 6px;
+  background: var(--dock-surface);
+  border: 1px solid var(--dock-edge);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--dock-shadow);
+  transform-origin: 50% 100%;
+  animation: dock-sheet-in var(--duration-base) var(--ease-out);
+}
+
+.dock__sheet[hidden] {
+  display: none;
+}
+
+@keyframes dock-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+
+.dock__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dock__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--target-min);
+  padding-inline: var(--space-3);
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-md);
+  transition:
+    color var(--duration-fast) linear,
+    background-color var(--duration-fast) linear;
+}
+
+.dock__link .icon {
+  opacity: 0.5;
+}
+
+/* The page you're on: full ink, and a dot in place of the arrow. */
+.dock__link[aria-current='page'] {
+  color: var(--ink);
+}
+
+.dock__link[aria-current='page'] .icon {
+  display: none;
+}
+
+.dock__link[aria-current='page']::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--marker-strong);
+  border-radius: 50%;
+}
+
+.dock__switches {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  margin-top: 6px;
+  padding: 6px var(--space-1) 0;
+  color: var(--ink-muted);
+  border-top: var(--hairline) solid var(--dock-edge);
+}
+
+.dock__switches:empty {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock,
+  .dock[data-state='away'] {
+    transform: none;
+  }
+
+  .dock__sheet {
+    animation: none;
+  }
+}

@@ -55,7 +55,7 @@ if (page) {
   flushSync(() =>
     app.render(
       <StrictMode>
-        <App>{content}</App>
+        <App current={page.id === 'project' ? 'builds' : page.id === 'notFound' ? undefined : page.id}>{content}</App>
       </StrictMode>,
     ),
   )
