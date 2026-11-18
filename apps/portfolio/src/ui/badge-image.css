@@ -18,40 +18,17 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: saturate(0.9) brightness(var(--badge-glass-brightness, 1));
+  filter: var(--glass-image);
 }
 
+/* The pane: the `--glass-*` tokens, shared with the recognition certificate. */
 .badge-glass::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  /* A sheen across the top-left corner that fades out before the middle, so the badge itself stays clear. */
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, white 18%, transparent) 0%,
-    color-mix(in srgb, white 5%, transparent) 30%,
-    transparent 46%
-  );
-  border: var(--hairline) solid color-mix(in srgb, white 32%, transparent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 40%, transparent),
-    0 1px 2px color-mix(in srgb, var(--ink) 8%, transparent);
+  background: var(--glass-sheen);
+  border: var(--hairline) solid var(--glass-edge);
+  box-shadow: var(--glass-shadow);
   pointer-events: none;
-}
-
-/* Dark: the badge steps back a touch, and the edge and sheen are fainter. */
-:root[data-theme='dark'] .badge-glass {
-  --badge-glass-brightness: 0.94;
-}
-
-:root[data-theme='dark'] .badge-glass::after {
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, white 10%, transparent) 0%,
-    color-mix(in srgb, white 3%, transparent) 30%,
-    transparent 46%
-  );
-  border-color: color-mix(in srgb, white 12%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 14%, transparent);
 }

@@ -199,7 +199,7 @@ a.honour:focus-visible {
   border-radius: var(--radius-lg);
 }
 
-/* The certificate, matted in a small frame and toned down to sit with the page. Its true colours show on hover. */
+/* The certificate, matted in a small frame, in its own colours behind the same glass as the badges (`--glass-*`). */
 .honour__frame {
   position: relative;
   display: block;
@@ -217,18 +217,18 @@ a.honour:focus-visible {
   aspect-ratio: 10 / 7;
   object-fit: cover;
   border-radius: calc(var(--radius-md) - var(--space-2));
-  filter: var(--honour-tone);
-  transition: filter var(--duration-enter) var(--ease-out);
+  filter: var(--glass-image);
 }
 
 .honour__frame::after {
   content: '';
   position: absolute;
   inset: var(--space-2);
-  background: linear-gradient(160deg, color-mix(in srgb, var(--ink) 10%, transparent), transparent 60%);
+  background: var(--glass-sheen);
+  border: var(--hairline) solid var(--glass-edge);
   border-radius: calc(var(--radius-md) - var(--space-2));
-  mix-blend-mode: multiply;
-  transition: opacity var(--duration-enter) var(--ease-out);
+  box-shadow: var(--glass-shadow);
+  pointer-events: none;
 }
 
 .honour__text {
@@ -246,16 +246,6 @@ a.honour:focus-visible {
   font-size: var(--text-xl);
   font-weight: var(--weight-heading);
   line-height: var(--leading-snug);
-}
-
-@media (hover: hover) {
-  a.honour:hover .honour__frame img {
-    filter: none;
-  }
-
-  a.honour:hover .honour__frame::after {
-    opacity: 0;
-  }
 }
 
 @media (min-width: 640px) {
