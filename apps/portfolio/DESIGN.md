@@ -154,7 +154,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 
 - **Tab:** mono, uppercase, the kind of build only. No running numbers (they read as generated); `index` stays optional in the component for other uses. Its concave corner is built from fixed sizes, so it never stretches with the card.
 - **Sheet:** title, summary, stack in mono, then links under a hairline.
-- **Plate (feature variant):** the area above the sheet. It holds one headline fact now, and takes the project's drawing or screenshot later. It only peeks out above the sheet, like the back of a folder: just tall enough for the fact and the logo (`--card-plate-height`, 76 to 104px, plus the tab), with a little room under the fact before the tab. Not proportional to the sheet; the sheet keeps its room.
+- **Plate (feature variant):** the area above the sheet. It holds one headline fact now, and takes the project's drawing or screenshot later. It only peeks out above the sheet, like the back of a folder: just tall enough for the fact and the logo (`--card-plate-height`, 76 to 104px, plus the tab), with a little room under the fact before the tab. The fact's number is 40px on every screen (`--card-stat-size`), in the heading weight on phones and tablets and the body weight from 900px up, so three cards side by side stay calm. Not proportional to the sheet; the sheet keeps its room.
 - **Compact variant:** no plate. The fact, if any, sits inline above the stack. Used for the full index.
 - Links are plain words with an arrow: Code, Live, npm, Download. They open in a new tab.
 - Hover lifts the card 4px. Arrows nudge up and right. Nothing else moves.

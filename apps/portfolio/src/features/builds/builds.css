@@ -21,6 +21,14 @@
   line-height: 1;
 }
 
+/* Wide screens: the number in the body weight, a touch less tight, so three side by side stay calm. */
+@media (min-width: 900px) {
+  .build-stat__value {
+    font-weight: var(--weight-body);
+    letter-spacing: -0.02em;
+  }
+}
+
 .build-stat__label {
   color: var(--ink-muted);
   font: var(--weight-body) var(--text-xs) / var(--leading-snug) var(--font-mono);

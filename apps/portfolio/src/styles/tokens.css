@@ -245,7 +245,8 @@
   /* Just enough plate to hold the headline and the logo: it peeks out above the sheet like a folder's back. */
   --card-plate-height: clamp(76px, 3.5vw + 56px, 104px);
   --card-lift: -4px;
-  --card-stat-size: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  /* The featured card's headline number: the phone size on every screen, so it never shouts on wide ones. */
+  --card-stat-size: 2.5rem;
 }
 
 :root[data-theme='dark'] {
