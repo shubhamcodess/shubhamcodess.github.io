@@ -474,14 +474,17 @@ a.honour:focus-visible {
 }
 
 /*
- * The badge. Three abreast, credentialsPage.homeCard picks: "text" hides it; "badge" shows the issuer on top and the
- * badge in the middle, without the level and name. Stacked on a phone, every patch shows its text with the badge
- * on the right, whatever the setting.
+ * The badge, behind its glass (`BadgeImage`). Three abreast, credentialsPage.homeCard picks: "text" shows it small,
+ * 40px, under the issuer; "badge" shows the issuer on top and the badge in the middle, without the level and name.
+ * Stacked on a phone, every patch shows its text with the badge on the right, no taller than the text.
+ * The rules are scoped to `.patches` so they always win over the glass's own `display: grid`, whatever order
+ * the build puts the stylesheets in.
  */
-.patch__badge {
-  display: none;
-  width: 72px;
-  height: 72px;
+.patches .patch__badge {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  margin-top: var(--space-2);
 }
 
 @media (min-width: 480px) {
@@ -513,8 +516,10 @@ a.honour:focus-visible {
     text-transform: uppercase;
   }
 
-  .patch--badge .patch__badge {
-    display: grid;
+  .patches .patch--badge .patch__badge {
+    width: 56px;
+    height: 56px;
+    margin-top: 0;
   }
 }
 
@@ -529,13 +534,13 @@ a.honour:focus-visible {
     column-gap: var(--space-4);
   }
 
-  .patch__badge {
-    display: grid;
+  .patches .patch__badge {
     grid-column: 2;
     grid-row: 1 / span 3;
     align-self: center;
-    width: 60px;
-    height: 60px;
+    width: 44px;
+    height: 44px;
+    margin-top: 0;
   }
 }
 
