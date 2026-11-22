@@ -156,15 +156,17 @@ function PaperCard({ paper }: { readonly paper: Paper }) {
       </div>
       <a className="paper__sheet" href={paper.pdf} target="_blank" rel="noopener noreferrer" tabIndex={-1} aria-hidden="true">
         <span className="paper__page paper__page--behind" />
-        <img
-          className="paper__page"
-          src={`${import.meta.env.BASE_URL}${paper.preview.src}`}
-          width={paper.preview.width}
-          height={paper.preview.height}
-          alt=""
-          loading="lazy"
-          decoding="async"
-        />
+        {/* The front page, its bottom right corner folded over. */}
+        <span className="paper__page paper__page--front">
+          <img
+            src={`${import.meta.env.BASE_URL}${paper.preview.src}`}
+            width={paper.preview.width}
+            height={paper.preview.height}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </span>
       </a>
     </article>
   )

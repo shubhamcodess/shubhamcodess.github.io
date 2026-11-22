@@ -6,7 +6,7 @@
 /* The paper: words on the left, the printed page on the right. */
 .paper {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 400px);
   align-items: center;
   gap: clamp(var(--space-6), 5vw, var(--space-9));
   padding: clamp(var(--space-5), 3vw, var(--space-7));
@@ -193,13 +193,19 @@
   }
 }
 
-/* The printed page: page one of the PDF on white paper, a second sheet turned a little behind it. */
+/*
+ * The printed page: the top of page one (title, author, abstract), cropped and at twice the resolution so it can be
+ * read, on white paper with its bottom right corner folded over, and a second sheet turned a little behind it.
+ * Square on wide screens, so the whole abstract shows; shorter on phones, where it fades out under the title.
+ */
 .paper__sheet {
+  --fold: 22px;
   position: relative;
   display: block;
   align-self: center;
-  aspect-ratio: 778 / 1100;
+  aspect-ratio: 1;
   transform: rotate(1.2deg);
+  filter: drop-shadow(3px 6px 12px rgb(0 0 0 / 14%));
   transition: transform var(--duration-base) var(--ease-out);
 }
 
@@ -207,18 +213,39 @@
   position: absolute;
   inset: 0;
   display: block;
-  width: 100%;
-  height: 100%;
   background: #fff;
   border-radius: 3px;
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent),
-    3px 6px 18px -6px rgb(0 0 0 / 22%);
 }
 
 .paper__page--behind {
   transform: translate(10px, 8px) rotate(2.6deg);
-  background: #fbfaf7;
+  background: #f4f1ea;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+/* The front page, cut at its corner; the fold itself is drawn over the cut. */
+.paper__page--front {
+  overflow: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--fold)), calc(100% - var(--fold)) 100%, 0 100%);
+}
+
+.paper__page--front img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.paper__page--front::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--fold);
+  height: var(--fold);
+  background: linear-gradient(to top left, transparent 50%, #e7e2d6 50%, #f6f3ec 100%);
+  box-shadow: -2px -2px 4px rgb(0 0 0 / 8%);
 }
 
 @media (hover: hover) {
@@ -228,12 +255,16 @@
 }
 
 /* Dark: the page dims a touch so it doesn't glare off the night. */
-:root[data-theme='dark'] img.paper__page {
+:root[data-theme='dark'] .paper__page--front img {
   filter: brightness(0.86);
 }
 
+:root[data-theme='dark'] .paper__page--front {
+  background: #dbdbdb;
+}
+
 :root[data-theme='dark'] .paper__page--behind {
-  background: #d9d7d0;
+  background: #c9c7c0;
 }
 
 /* Writing: a short list under the paper, past a hairline. Each row: the title on one line, then where it lives and when. */
@@ -362,10 +393,18 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /* Phones and tablets: the full width of the card, shorter than it is wide, the abstract fading out below the title. */
   .paper__sheet {
+    --fold: 18px;
     order: -1;
-    justify-self: center;
-    width: min(200px, 60%);
+    justify-self: stretch;
+    aspect-ratio: 4 / 3;
+    margin-right: 10px;
+  }
+
+  .paper__page--front img {
+    -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
+    mask-image: linear-gradient(to bottom, #000 70%, transparent);
   }
 
   /* The actions as one finished block: the two links side by side, then the endorse chip the full width under them. */
