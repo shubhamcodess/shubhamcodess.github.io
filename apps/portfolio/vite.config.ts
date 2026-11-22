@@ -205,7 +205,7 @@ function sourcesOf(page: SeoPage): string[] {
     case 'credentials':
       return ['public/data/credentials.json', 'src/features/credentials']
     case 'me':
-      return ['src/content/me.ts', 'src/features/me', 'public/me']
+      return ['src/content/about.ts', 'src/content/me.ts', 'src/features/about', 'public/me']
     default:
       return ['src/content', 'src/features/home', 'src/features/hero', 'src/features/contact', 'src/features/experience']
   }
@@ -410,7 +410,7 @@ export default defineConfig({
         builds: 'builds/index.html',
         experience: 'experience/index.html',
         credentials: 'credentials/index.html',
-        ...(site.features.mePage ? { me: 'gallery/index.html' } : {}),
+        ...(site.features.mePage ? { me: 'about/index.html' } : {}),
         project: template,
         writing: writingTemplate,
         post: postTemplate,

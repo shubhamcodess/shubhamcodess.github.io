@@ -350,36 +350,23 @@ export interface SiteConfig {
       readonly recognitionLead: string
     }
   }
-  readonly me: {
+  /** The About page: the book, its controls and the links under it. */
+  readonly about: {
     readonly kicker: string
     readonly title: string
-    readonly lead: string
+    /** What the book is called to screen readers ("book"). */
+    readonly book: string
+    readonly previous: string
+    readonly next: string
+    /** The counter's word: "4–5 of 24". */
+    readonly of: string
+    /** Shown in the counter while the book is closed. */
+    readonly hint: string
+    /** The phone switch between one page and the spread. */
+    readonly modeLabel: string
+    readonly modes: { readonly single: string; readonly spread: string }
     readonly onward: string
-    /** The link back to the professional side, at the foot of the page. */
     readonly back: string
-    /** Names the row of tags for screen readers. */
-    readonly topicsLabel: string
-    /** The slight angle each tag hangs at, in degrees, in order. */
-    readonly turns: readonly number[]
-    /** The cue under the tags that leads to every photo. */
-    readonly everyPhoto: string
-    /** How a tag counts its photos: "1 photo", "4 photos". */
-    readonly photo: { readonly one: string; readonly many: string }
-    readonly gallery: {
-      /** The gallery's heading for screen readers. */
-      readonly label: string
-      /** The small bar of tags kept at the top while the gallery is on screen, and its first pill. */
-      readonly dockLabel: string
-      readonly all: string
-      readonly showAll: string
-      /** Shown for a topic that has no photos yet. */
-      readonly empty: string
-    }
-    readonly viewer: {
-      readonly close: string
-      readonly previous: string
-      readonly next: string
-    }
   }
   readonly credentialsPage: {
     readonly title: string

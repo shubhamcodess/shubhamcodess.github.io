@@ -9,7 +9,7 @@ import type { RouteId } from '../config/types'
 import { buildStories } from '../content/build-stories'
 import { builds } from '../content/builds'
 import { employers, featuredCredentials, recognition } from '../content/experience'
-import { photos as mePhotos } from '../content/me'
+import { book } from '../content/about'
 import { toolGroups } from '../content/tools'
 import type { Build, WritingMeta } from '../content/types'
 import { readFileSync } from 'node:fs'
@@ -548,7 +548,7 @@ export function pageMarkdown(page: SeoPage, context: SeoContext): string {
       lines.push(`## ${site.credentialsPage.title}`, '', site.credentialsPage.lead, '', ...credentialList(context.credentials), '')
       break
     case 'me':
-      lines.push(`## ${site.me.title}`, '', site.me.lead, '', ...mePhotos.map((photo) => `- ${photo.title}: ${photo.caption}`), '')
+      lines.push(...aboutBook())
       break
     case 'writing':
       lines.push(`## ${site.writing.title}`, '', site.writing.lead, '')
@@ -642,3 +642,29 @@ export function securityTxt(root: string, now = new Date()): string {
     '',
   ].join('\n')
 }
+
+/** The About book as plain text: its title, preface and every chapter, for readers that do not run the page. */
+function aboutBook(): string[] {
+  return [
+    `## ${book.title}`,
+    '',
+    book.subtitle,
+    '',
+    ...book.preface,
+    '',
+    ...book.chapters.flatMap((chapter, index) => [
+      `### ${index + 1}. ${chapter.title.replace(/\.$/, '')}`,
+      '',
+      chapter.dek,
+      '',
+      ...('facts' in chapter ? chapter.facts.map((fact) => `- ${fact.value}: ${fact.label}`) : []),
+      ...('stops' in chapter ? chapter.stops.map((stop) => `- ${stop.place} (${stop.when}): ${stop.what}`) : []),
+      ...('steps' in chapter ? chapter.steps.map((step) => `- ${step.title}: ${step.text}`) : []),
+      ...('builds' in chapter ? [...chapter.builds, ...chapter.more].map((slug) => `- ${builds.find((build) => build.slug === slug)?.title ?? slug}`) : []),
+      '',
+      ...chapter.story,
+      '',
+    ]),
+  ]
+}
+

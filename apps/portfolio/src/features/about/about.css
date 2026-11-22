@@ -1,0 +1,1332 @@
+/*
+ * The About book. Everything inside a page is sized in em from the page's own width, so a spread looks the same
+ * at any size: a phone shows the same page as a wide screen, only smaller.
+ */
+
+@property --leaf-t {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.about {
+  container-type: inline-size;
+  /* The book's materials, light. */
+  --paper: #fbf7ee;
+  --paper-ink: #1f1b16;
+  --paper-muted: #6b6255;
+  --paper-line: #e2d6c1;
+  --paper-accent: #a4480b;
+  --cloth: #1d2944;
+  --cloth-edge: #111a2e;
+  --foil: #e2ad52;
+  --foil-dim: rgb(226 173 82 / 0.72);
+  --endpaper: #efe4cf;
+  --endpaper-ink: rgb(164 72 11 / 0.2);
+  --print: #fdfcf8;
+  --print-ink: #3b342b;
+  --tape: rgb(236 222 186 / 0.66);
+  --stamp: #b4321e;
+  --stamp-blend: multiply;
+  --table-shadow: rgb(40 30 15 / 0.32);
+}
+
+:root[data-theme='dark'] .about {
+  --paper: #1c1f27;
+  --paper-ink: #ebe6dc;
+  --paper-muted: #a49e93;
+  --paper-line: #30343e;
+  --paper-accent: #f2a24e;
+  --cloth: #283350;
+  --cloth-edge: #161c2c;
+  --foil: #f0b75e;
+  --foil-dim: rgb(240 183 94 / 0.72);
+  --endpaper: #232733;
+  --endpaper-ink: rgb(242 162 78 / 0.16);
+  --print: #e8e4db;
+  --print-ink: #2f2a23;
+  --tape: rgb(220 205 165 / 0.5);
+  --stamp: #f07a5a;
+  --stamp-blend: screen;
+  --table-shadow: rgb(0 0 0 / 0.6);
+}
+
+.about.section {
+  padding-top: var(--space-5);
+}
+
+.about__header {
+  text-align: center;
+}
+
+.about__title {
+  margin: var(--space-1) 0 0;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+/* ---- The stage: as big as the screen allows, with room for the heading above and the controls below. */
+
+.book-stage {
+  --page-w: min(50cqw, max(17rem, calc((100svh - 18.5rem) * 0.7)));
+  --page-h: calc(var(--page-w) / 0.7);
+  position: relative;
+  width: calc(var(--page-w) * 2);
+  height: var(--page-h);
+  margin: var(--space-4) auto 0;
+}
+
+.book-stage[data-mode='single'] {
+  --page-w: min(100cqw, max(15rem, calc((100svh - 19rem) * 0.7)));
+  width: var(--page-w);
+  overflow-x: clip;
+}
+
+.book {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--page-w) * 2);
+  font-size: calc(var(--page-w) / 28);
+  line-height: 1.45;
+  color: var(--paper-ink);
+  perspective: calc(var(--page-w) * 5.5);
+  transform: translateX(var(--shift));
+  transition: transform 1050ms cubic-bezier(0.32, 0.08, 0.18, 1);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+
+.book:active {
+  cursor: grabbing;
+}
+
+/* The shadow the book casts on the table: the width of what's open. */
+.book::before {
+  content: '';
+  position: absolute;
+  inset: 3% 2% -2%;
+  left: calc(50% - var(--page-w) * (1 - var(--closed-left, 0)) + 2%);
+  border-radius: 1em;
+  background: var(--table-shadow);
+  filter: blur(1.4em);
+  opacity: 0.75;
+  transition: left 1050ms cubic-bezier(0.32, 0.08, 0.18, 1), right 1050ms cubic-bezier(0.32, 0.08, 0.18, 1);
+}
+
+.book[data-closed='front']::before {
+  left: 52%;
+}
+
+.book[data-closed='back']::before {
+  right: 52%;
+}
+
+/* ---- Leaves: one element per leaf, turning about the spine. */
+
+.leaf {
+  position: absolute;
+  top: 1.3%;
+  left: 50%;
+  width: 48.8%;
+  height: 97.4%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.leaf--board {
+  top: 0;
+  width: 50%;
+  height: 100%;
+}
+
+.leaf__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: visible;
+}
+
+.leaf__face--back {
+  transform: rotateY(180deg);
+}
+
+/* The paper: warm, faintly grained, with a few long fibres. */
+.book-page--paper {
+  background:
+    var(--panel-texture),
+    repeating-linear-gradient(97deg, transparent 0 7px, rgb(120 100 70 / 0.018) 7px 8px),
+    radial-gradient(ellipse at 70% 20%, rgb(255 255 255 / 0.32), transparent 60%),
+    var(--paper);
+  background-size: 260px, auto, auto, auto;
+}
+
+:root[data-theme='dark'] .book-page--paper {
+  background:
+    var(--panel-texture),
+    repeating-linear-gradient(97deg, transparent 0 7px, rgb(255 255 255 / 0.014) 7px 8px),
+    radial-gradient(ellipse at 70% 20%, rgb(255 255 255 / 0.03), transparent 60%),
+    var(--paper);
+  background-size: 260px, auto, auto, auto;
+}
+
+.leaf__face--front.book-page--paper {
+  border-radius: 0 0.35em 0.35em 0;
+  box-shadow: inset -1px 0 0 var(--paper-line);
+}
+
+.leaf__face--back.book-page--paper {
+  border-radius: 0.35em 0 0 0.35em;
+  box-shadow: inset 1px 0 0 var(--paper-line);
+}
+
+/* The gutter: the page curving down into the spine. */
+.leaf__face.book-page--paper::before,
+.leaf__face.book-page--endpaper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.leaf__face--front.book-page--paper::before,
+.leaf__face--front.book-page--endpaper::before {
+  background: linear-gradient(to right, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.06) 3%, transparent 10%);
+}
+
+.leaf__face--back.book-page--paper::before,
+.leaf__face--back.book-page--endpaper::before {
+  background: linear-gradient(to left, rgb(0 0 0 / 0.22), rgb(0 0 0 / 0.07) 3%, transparent 10%);
+}
+
+/* Shading while a leaf turns: the face swinging away darkens, with a sheen across the bend. */
+.leaf__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.leaf__face--front .leaf__shade {
+  background: linear-gradient(to right, rgb(0 0 0 / 0.05), rgb(255 255 255 / 0.12) 55%, rgb(0 0 0 / 0.5));
+  opacity: min(1, calc(var(--leaf-t) * 2.2));
+}
+
+.leaf__face--back .leaf__shade {
+  background: linear-gradient(to left, rgb(0 0 0 / 0.05), rgb(255 255 255 / 0.12) 55%, rgb(0 0 0 / 0.5));
+  opacity: min(1, calc((1 - var(--leaf-t)) * 2.2));
+}
+
+/* The stacks of pages under the open spread, thick on the side that has more of the book. */
+.book__block {
+  position: absolute;
+  top: 1.3%;
+  height: 97.4%;
+  width: 48.8%;
+  border-radius: 0.35em;
+  background: repeating-linear-gradient(to bottom, var(--paper) 0 2px, var(--paper-line) 2px 3px);
+  pointer-events: none;
+}
+
+.book__block--right {
+  left: 50%;
+  transform: translate(calc(var(--right-stack) * 0.55em), calc(var(--right-stack) * 0.45em));
+  opacity: min(1, calc(var(--right-stack) * 8));
+}
+
+.book__block--left {
+  right: 50%;
+  transform: translate(calc(var(--left-stack) * -0.55em), calc(var(--left-stack) * 0.45em));
+  opacity: min(1, calc(var(--left-stack) * 8));
+}
+
+.book[data-closed] .book__block {
+  opacity: 0;
+}
+
+/* A corner that lifts under the pointer, saying the page can be turned. */
+@media (hover: hover) {
+  .leaf__face:not([inert])::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    z-index: 21;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    transition: width 0.3s ease, height 0.3s ease;
+  }
+
+  .leaf__face--front:not([inert])::after {
+    right: 0;
+    border-radius: 0 0 0.35em 0;
+    background: linear-gradient(315deg, var(--surface) 49%, rgb(0 0 0 / 0.18) 50%, var(--paper) 58%, var(--paper-line));
+  }
+
+  .leaf__face--back:not([inert])::after {
+    left: 0;
+    border-radius: 0 0 0 0.35em;
+    background: linear-gradient(45deg, var(--surface) 49%, rgb(0 0 0 / 0.18) 50%, var(--paper) 58%, var(--paper-line));
+  }
+
+  .book-page--board::after {
+    display: none;
+  }
+
+  .book[data-open]:hover .leaf__face:not([inert])::after {
+    width: 1.6em;
+    height: 1.6em;
+  }
+}
+
+/* ---- The boards: cloth over board, foil on the cover. */
+
+.book-page--board {
+  border-radius: 0.3em 0.7em 0.7em 0.3em;
+  box-shadow: 0 0.2em 0.5em rgb(0 0 0 / 0.25);
+}
+
+.leaf__face--back.book-page--board {
+  border-radius: 0.7em 0.3em 0.3em 0.7em;
+}
+
+.cover {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.cover__cloth,
+.book-page--endpaper {
+  background-color: var(--cloth);
+  background-image:
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.04) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.08) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse at 35% 18%, rgb(255 255 255 / 0.12), transparent 62%),
+    radial-gradient(ellipse at 80% 100%, rgb(0 0 0 / 0.3), transparent 60%);
+}
+
+.cover__cloth {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 9% 9% 7% 15%;
+  border-radius: inherit;
+  text-align: center;
+  color: var(--foil);
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 0.3),
+    inset 0.5em 0 1em -0.4em rgb(0 0 0 / 0.5),
+    inset -0.15em -0.2em 0.3em rgb(0 0 0 / 0.25),
+    inset 0.1em 0.1em 0.15em rgb(255 255 255 / 0.08);
+}
+
+/* The hinge: a groove pressed into the cloth a little in from the spine. */
+.cover__cloth::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 7%;
+  width: 0.35em;
+  background: linear-gradient(to right, rgb(0 0 0 / 0.38), rgb(255 255 255 / 0.08) 70%, transparent);
+}
+
+.cover--back .cover__cloth {
+  padding: 14% 15% 9% 9%;
+  justify-content: center;
+}
+
+.cover--back .cover__cloth::before {
+  left: auto;
+  right: 7%;
+  transform: scaleX(-1);
+}
+
+.cover__author,
+.cover__foot {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6em;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--foil-dim);
+}
+
+.cover__foot {
+  margin-top: auto;
+}
+
+.cover__title,
+.cover__author,
+.cover__subtitle,
+.cover__foot,
+.cover__blurb {
+  text-shadow:
+    0 -1px 0 rgb(0 0 0 / 0.45),
+    0 1px 0 rgb(255 255 255 / 0.1);
+}
+
+.cover__window {
+  width: 50%;
+  margin: 8% 0 7%;
+  padding: 0.4em;
+  border-radius: 0.2em;
+  background: var(--cloth-edge);
+  box-shadow:
+    inset 0 0.15em 0.35em rgb(0 0 0 / 0.65),
+    0 1px 0 rgb(255 255 255 / 0.1);
+}
+
+.cover__window img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 0.1em;
+  filter: saturate(0.92) contrast(1.02);
+}
+
+.cover__title {
+  margin: 0;
+  font-size: 2.35em;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  background: linear-gradient(170deg, #fbe2a6, var(--foil) 45%, #b47a26 75%, var(--foil));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 -1px 0 rgb(0 0 0 / 0.5));
+}
+
+.cover__subtitle {
+  max-width: 19em;
+  margin: 0.9em 0 0;
+  font-size: 0.66em;
+  line-height: 1.5;
+  color: rgb(236 226 205 / 0.78);
+}
+
+.cover__blurb {
+  margin: 0 0 2em;
+  font-size: 0.82em;
+  line-height: 1.6;
+  color: rgb(236 226 205 / 0.84);
+  text-align: left;
+}
+
+/* ---- Endpapers: a pattern pasted inside each board, the cloth turned in round it. */
+
+.endpaper {
+  position: absolute;
+  overflow: hidden;
+  background: var(--endpaper);
+}
+
+.leaf__face--back .endpaper {
+  inset: 3.5% 0 3.5% 4%;
+  border-radius: 0.2em 0 0 0.2em;
+}
+
+.leaf__face--front .endpaper {
+  inset: 3.5% 4% 3.5% 0;
+  border-radius: 0 0.2em 0.2em 0;
+}
+
+.endpaper__pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.endpaper__pattern path,
+.endpaper__pattern circle {
+  fill: none;
+  stroke: var(--endpaper-ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ex-libris {
+  position: absolute;
+  top: 34%;
+  left: 18%;
+  right: 18%;
+  display: grid;
+  gap: 0.5em;
+  padding: 1.4em 1em;
+  text-align: center;
+  background: var(--paper);
+  border: 0.18em double var(--paper-accent);
+  transform: rotate(var(--turn));
+  box-shadow: 0 0.1em 0.3em rgb(0 0 0 / 0.15);
+}
+
+.ex-libris__label {
+  font-family: var(--font-mono);
+  font-size: 0.58em;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-muted);
+}
+
+.ex-libris__name {
+  font-size: 1.05em;
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* The pocket inside the back board, with a card to write to me. */
+.pocket {
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  bottom: 12%;
+  height: 34%;
+}
+
+.pocket__card {
+  position: absolute;
+  inset: -30% 9% 18%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  padding: 1em 1.1em;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 1.6em, rgb(60 110 170 / 0.18) 1.6em calc(1.6em + 1px)),
+    var(--print);
+  color: var(--print-ink);
+  transform: rotate(-2deg);
+  box-shadow: 0 0.1em 0.25em rgb(0 0 0 / 0.18);
+}
+
+.pocket__label {
+  font-family: var(--font-mono);
+  font-size: 0.62em;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.pocket__mail {
+  font-size: 0.95em;
+  font-weight: 600;
+  color: inherit;
+  width: fit-content;
+}
+
+.pocket__sleeve {
+  position: absolute;
+  inset: 32% 0 0;
+  background:
+    linear-gradient(to bottom, rgb(0 0 0 / 0.12), transparent 18%),
+    #c7a675;
+  clip-path: polygon(0 0, 38% 0, 50% 14%, 62% 0, 100% 0, 100% 100%, 0 100%);
+  box-shadow: inset 0 -0.2em 0.4em rgb(0 0 0 / 0.15);
+}
+
+:root[data-theme='dark'] .pocket__sleeve {
+  background:
+    linear-gradient(to bottom, rgb(0 0 0 / 0.2), transparent 18%),
+    #8c7350;
+}
+
+/* ---- Pages. */
+
+.page {
+  position: absolute;
+  inset: 0;
+  padding: 10% 10% 10% 12%;
+}
+
+.leaf__face--back .page {
+  padding: 10% 12% 10% 10%;
+}
+
+.page__kicker {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.58em;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-muted);
+}
+
+.page__heading {
+  margin: 0 0 1em;
+  font-size: 1.5em;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+.page__prose p {
+  margin: 0 0 0.95em;
+  font-size: 0.8em;
+  line-height: 1.62;
+  text-wrap: pretty;
+}
+
+.page__drop {
+  float: left;
+  margin: 0.08em 0.1em 0 0;
+  font-size: 3.3em;
+  font-weight: 700;
+  line-height: 0.84;
+  color: var(--paper-accent);
+}
+
+.page__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em 1.4em;
+  margin: 1em 0 0;
+  font-size: 0.72em;
+  font-weight: 550;
+}
+
+.page a {
+  color: inherit;
+}
+
+.page__folio {
+  position: absolute;
+  bottom: 4.6%;
+  font-family: var(--font-mono);
+  font-size: 0.56em;
+  color: var(--paper-muted);
+}
+
+.page__folio--left {
+  left: 10%;
+}
+
+.page__folio--right {
+  right: 10%;
+}
+
+/* The title page. */
+.page--title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 22%;
+  text-align: center;
+}
+
+.title-page__title {
+  margin: 0.4em 0 0;
+  font-size: 2.6em;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.title-page__subtitle {
+  max-width: 18em;
+  margin: 1em 0 0;
+  font-size: 0.72em;
+  color: var(--paper-muted);
+}
+
+.title-page__rule {
+  width: 3em;
+  height: 1px;
+  margin: 2em 0 1.4em;
+  background: var(--paper-accent);
+}
+
+.title-page__places {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.56em;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.title-page__foot {
+  margin: auto 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.56em;
+  color: var(--paper-muted);
+}
+
+/* Contents. */
+.contents {
+  display: grid;
+  gap: 0.3em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contents button {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  width: 100%;
+  padding: 0.35em 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.82em;
+  text-align: left;
+  cursor: pointer;
+}
+
+.contents__number,
+.contents__page {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  color: var(--paper-muted);
+}
+
+.contents__name {
+  font-weight: 550;
+}
+
+.contents__dots {
+  flex: 1;
+  border-bottom: 1px dotted var(--paper-muted);
+  transform: translateY(-0.25em);
+  opacity: 0.6;
+}
+
+.contents button:hover .contents__name,
+.contents button:focus-visible .contents__name {
+  color: var(--paper-accent);
+}
+
+.preface__signed {
+  margin: 1.4em 0 0;
+  font-size: 0.8em;
+  font-style: italic;
+  color: var(--paper-muted);
+}
+
+.preface__signed::before {
+  content: '— ';
+}
+
+/* A chapter's left page: the number, the title, then its facts. */
+.chapter__number {
+  margin: 0 0 0.1em;
+  font-size: 3.6em;
+  font-weight: 750;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  color: var(--paper-accent);
+}
+
+.chapter__title {
+  margin: 0.25em 0 0;
+  font-size: 1.85em;
+  font-weight: 680;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.chapter__dek {
+  margin: 0.55em 0 0;
+  font-size: 0.78em;
+  color: var(--paper-muted);
+}
+
+.chapter__facts {
+  display: grid;
+  gap: 0.75em;
+  margin: 1.4em 0 0;
+}
+
+.chapter__facts div {
+  display: grid;
+  gap: 0.1em;
+  padding-left: 0.8em;
+  border-left: 2px solid var(--paper-accent);
+}
+
+.chapter__facts dt {
+  font-size: 1.02em;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.chapter__facts dd {
+  margin: 0;
+  font-size: 0.68em;
+  color: var(--paper-muted);
+}
+
+/* The road from home to here. */
+.route {
+  position: relative;
+  display: grid;
+  gap: 1em;
+  margin: 1.5em 0 0;
+  padding: 0 0 0 1.6em;
+  list-style: none;
+}
+
+.route::before {
+  content: '';
+  position: absolute;
+  top: 0.5em;
+  bottom: 0.9em;
+  left: 0.35em;
+  border-left: 1.5px dashed var(--paper-muted);
+  opacity: 0.6;
+}
+
+.route li {
+  position: relative;
+  display: grid;
+}
+
+.route li::before {
+  content: '';
+  position: absolute;
+  top: 0.35em;
+  left: -1.5em;
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--paper-accent);
+}
+
+.route li:last-child::before {
+  background: var(--paper-accent);
+}
+
+.route__when {
+  font-family: var(--font-mono);
+  font-size: 0.56em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper-accent);
+}
+
+.route__place {
+  font-size: 1.05em;
+  font-weight: 650;
+}
+
+.route__what {
+  font-size: 0.68em;
+  color: var(--paper-muted);
+}
+
+/* Three steps, numbered in circles. */
+.steps {
+  display: grid;
+  gap: 0.9em;
+  margin: 1.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  display: grid;
+  grid-template-columns: 1.7em 1fr;
+  column-gap: 0.7em;
+}
+
+.steps__number {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 1.7em;
+  height: 1.7em;
+  border: 1.5px solid var(--paper-accent);
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  color: var(--paper-accent);
+}
+
+.steps__title {
+  font-size: 0.95em;
+  font-weight: 650;
+}
+
+.steps__text {
+  font-size: 0.68em;
+  color: var(--paper-muted);
+}
+
+/* A build, as a note on the page. */
+.build-note {
+  display: grid;
+  gap: 0.4em;
+  margin: 1.3em 0 0;
+}
+
+.page--builds-right .build-note {
+  margin-top: 0;
+}
+
+.build-note__title {
+  width: fit-content;
+  font-size: 1.15em;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.build-note__summary,
+.build-note__also {
+  margin: 0;
+  font-size: 0.72em;
+  line-height: 1.55;
+}
+
+.build-note__also {
+  color: var(--paper-muted);
+}
+
+.build-note__number {
+  margin: 0.2em 0;
+  font-size: 0.68em;
+  color: var(--paper-muted);
+}
+
+.build-note__number strong {
+  display: block;
+  font-size: 2.2em;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--paper-accent);
+}
+
+/* The last chapter: ruled lines still to be written on. */
+.next {
+  margin-top: 2em;
+}
+
+.next__chapter {
+  margin: 0 0 1em;
+  font-family: var(--font-mono);
+  font-size: 0.6em;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper-muted);
+}
+
+.next__lines {
+  display: block;
+  height: 14em;
+  background: repeating-linear-gradient(to bottom, transparent 0 1.75em, var(--paper-line) 1.75em calc(1.75em + 1px));
+}
+
+.say-hello {
+  display: grid;
+  gap: 0.6em;
+  padding-top: 20%;
+}
+
+.say-hello p {
+  margin: 0;
+  font-size: 0.8em;
+}
+
+.say-hello__mail {
+  width: fit-content;
+  font-size: 0.86em;
+  font-weight: 600;
+}
+
+.colophon {
+  display: grid;
+  gap: 0.6em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.colophon li {
+  font-size: 0.72em;
+  color: var(--paper-muted);
+}
+
+/* ---- Keepsakes: prints held on by tape, a pin, a clip or photo corners. */
+
+.keepsake {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 2;
+  width: var(--w);
+  margin: 0;
+  transform: rotate(var(--turn));
+  transition: transform 0.35s ease;
+}
+
+.keepsake__print {
+  display: block;
+  padding: 3.5% 3.5% 0;
+  background: var(--print);
+  box-shadow:
+    0 0.06em 0.12em rgb(0 0 0 / 0.18),
+    0 0.6em 1em -0.4em rgb(0 0 0 / 0.38);
+  transition: box-shadow 0.35s ease;
+}
+
+.keepsake__print img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+.keepsake--bare .keepsake__print {
+  padding: 0;
+  outline: 1px solid rgb(0 0 0 / 0.08);
+}
+
+.keepsake figcaption {
+  padding: 0.6em 0.3em 0.75em;
+  font-size: 0.56em;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--print-ink);
+}
+
+@media (hover: hover) {
+  .keepsake:hover {
+    transform: rotate(var(--turn)) translateY(-0.18em) scale(1.02);
+  }
+
+  .keepsake:hover .keepsake__print {
+    box-shadow:
+      0 0.08em 0.15em rgb(0 0 0 / 0.18),
+      0 1em 1.6em -0.5em rgb(0 0 0 / 0.45);
+  }
+}
+
+.keepsake__slot {
+  display: grid;
+  place-content: center;
+  gap: 0.3em;
+  aspect-ratio: 3 / 2;
+  border: 1px dashed rgb(0 0 0 / 0.3);
+  background: repeating-linear-gradient(-45deg, transparent 0 0.5em, rgb(0 0 0 / 0.035) 0.5em 1em);
+  color: var(--print-ink);
+  font-size: 0.6em;
+  font-weight: 600;
+  text-align: center;
+}
+
+.keepsake__slot--tall {
+  aspect-ratio: 3 / 4;
+}
+
+.keepsake__slot-note {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.keepsake__tape {
+  position: absolute;
+  top: -0.55em;
+  width: 32%;
+  height: 1.15em;
+  background: var(--tape);
+  box-shadow: 0 0.04em 0.08em rgb(0 0 0 / 0.1);
+  clip-path: polygon(3% 0, 97% 4%, 100% 30%, 97% 55%, 100% 80%, 96% 100%, 4% 96%, 0 70%, 3% 45%, 0 20%);
+}
+
+.keepsake__tape--a {
+  left: -8%;
+  transform: rotate(-32deg);
+}
+
+.keepsake__tape--b {
+  right: -8%;
+  transform: rotate(30deg);
+}
+
+.keepsake__pin {
+  position: absolute;
+  top: -0.3em;
+  left: 50%;
+  width: 0.85em;
+  height: 0.85em;
+  margin-left: -0.42em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff9c86, #d23c25 50%, #7a1a0e);
+  box-shadow:
+    0.12em 0.28em 0.22em rgb(0 0 0 / 0.32),
+    inset -0.05em -0.08em 0.1em rgb(0 0 0 / 0.3);
+}
+
+.keepsake__clip {
+  position: absolute;
+  top: -1.55em;
+  left: 14%;
+  width: 1em;
+  height: 2.7em;
+  overflow: visible;
+  filter: drop-shadow(0.08em 0.12em 0.06em rgb(0 0 0 / 0.3));
+}
+
+.keepsake__clip path {
+  fill: none;
+  stroke: #9aa3ab;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+:root[data-theme='dark'] .keepsake__clip path {
+  stroke: #c2c9cf;
+}
+
+.keepsake__corner {
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  background: #23211e;
+}
+
+.keepsake__corner--tl {
+  top: -0.25em;
+  left: -0.25em;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.keepsake__corner--tr {
+  top: -0.25em;
+  right: -0.25em;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+.keepsake__corner--bl {
+  bottom: -0.25em;
+  left: -0.25em;
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+}
+
+.keepsake__corner--br {
+  bottom: -0.25em;
+  right: -0.25em;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+/* ---- Stickers: die-cut vinyl, a white cut edge, and a corner that peels up when touched. */
+
+.sticker {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 3;
+  width: var(--size);
+  aspect-ratio: 1;
+  container-type: inline-size;
+  transform: rotate(var(--turn));
+  filter: drop-shadow(0 0.1em 0.1em rgb(0 0 0 / 0.3));
+  transition: transform 0.3s ease;
+}
+
+.sticker__face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 7cqw solid #fff;
+  border-radius: 28%;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.3), transparent 42%),
+    var(--tone);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 100% 100%, 0 100%);
+  transition: clip-path 0.35s ease;
+}
+
+.sticker__face svg {
+  width: 54%;
+  height: 54%;
+  fill: var(--mark);
+}
+
+.sticker__word {
+  font-size: 30cqw;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #fff;
+}
+
+/* The lifted corner: the cut is the sticker's own white back, folded over. */
+.sticker::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-radius: 0 0 28% 0;
+  background: linear-gradient(315deg, transparent 50%, #f3f2ee 50%, #dcdad4 78%, #c9c6bf);
+  filter: drop-shadow(-0.05em -0.05em 0.08em rgb(0 0 0 / 0.25));
+  transition: width 0.35s ease, height 0.35s ease;
+}
+
+@media (hover: hover) {
+  .sticker:hover {
+    transform: rotate(var(--turn)) translateY(-0.06em);
+  }
+
+  .sticker:hover .sticker__face {
+    clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%);
+  }
+
+  .sticker:hover::after {
+    width: 38%;
+    height: 38%;
+  }
+}
+
+.sticker-sheet {
+  position: absolute;
+  inset: 30% 6% 6%;
+}
+
+/* ---- The stamp, pressed in ink. */
+
+.stamp {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 1;
+  width: var(--size);
+  transform: rotate(var(--turn));
+  mix-blend-mode: var(--stamp-blend);
+  opacity: 0.82;
+  pointer-events: none;
+}
+
+.stamp__ink {
+  fill: var(--stamp);
+  stroke: var(--stamp);
+}
+
+.stamp text {
+  stroke: none;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.stamp__middle {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+/* ---- Under the book: the buttons and the page counter. */
+
+.book-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.book-controls__turn {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-raised);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.book-controls__turn:hover:not(:disabled) {
+  border-color: var(--ink-muted);
+  transform: translateY(-1px);
+}
+
+.book-controls__turn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.book-controls__where {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 13rem;
+  margin: 0;
+  text-align: center;
+}
+
+.book-controls__label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.book-controls__count {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+}
+
+.book-mode {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: var(--space-3);
+}
+
+.book-mode__option {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.book-mode__option[aria-pressed='true'] {
+  border-color: var(--ink);
+  color: var(--ink);
+  background: var(--surface-raised);
+}
+
+.about .page-onward {
+  margin-top: var(--space-7);
+}
+
+@media (max-width: 699px) {
+  .book-controls {
+    gap: var(--space-3);
+  }
+
+  .book-controls__where {
+    min-width: 0;
+    flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .book,
+  .book::before {
+    transition: none;
+  }
+}

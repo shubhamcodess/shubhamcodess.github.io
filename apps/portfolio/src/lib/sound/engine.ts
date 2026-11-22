@@ -1,11 +1,12 @@
 /**
  * The site's sound, made in the browser with Web Audio. No files: every voice is synthesised,
- * so it costs a few kilobytes. There are two voices, a tap for presses and a page-turn for scrolling,
+ * so it costs a few kilobytes. There are four voices: a tap for presses, a page-turn for scrolling, and a leaf
+ * and a cover for the About book's pages and boards,
  * sharing one small, warm room. Nothing plays unless the visitor does something.
  * Loaded only once the visitor turns sound on.
  */
 
-export type Voice = 'tap' | 'swish'
+export type Voice = 'tap' | 'swish' | 'leaf' | 'cover'
 
 export interface EngineOptions {
   /** Master level, 0 to 1. Each voice is already quiet; this scales them all. */
@@ -160,6 +161,18 @@ export function play(voice: Voice, strength = 1, direction = 1): void {
       paper(now, 0.01 + strength * 0.03, 0.1, 0.34, from, to)
       break
     }
+    case 'leaf':
+      // A page turning over: the lift (a quick rising rustle), the sweep through the air, and the soft landing.
+      paper(now, 0.018 + strength * 0.02, 0.03, 0.16, 2200, 4200)
+      paper(now + 0.12, 0.03 + strength * 0.03, 0.12, 0.3, 3600 * (direction > 0 ? 1 : 0.85), 1100)
+      breath(now + 0.42, 0.03, 0.004, 0.09, 900, 500, 0.12)
+      break
+    case 'cover':
+      // The hard board: a stiff creak of the hinge, then a low, padded thump as it lands.
+      paper(now, 0.02, 0.05, 0.22, 1400, 2600)
+      tone(120, 'sine', now + 0.36, 0.09, 0.004, 0.22, 0.2, 70)
+      breath(now + 0.36, 0.05, 0.003, 0.12, 700, 300, 0.2)
+      break
   }
 }
 

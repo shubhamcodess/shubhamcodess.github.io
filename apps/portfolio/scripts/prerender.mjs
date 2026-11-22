@@ -30,12 +30,16 @@ const types = {
   '.ico': 'image/x-icon',
 }
 
-/** Every HTML page in dist, as its address under the base. The 404 page is skipped: it is noindex. */
+/**
+ * Every HTML page in dist, as its address under the base. The 404 page is skipped: it is noindex. So is a page
+ * that only forwards to another (public/gallery/, the old address of the About page).
+ */
 function pages(dir = dist) {
   return readdirSync(dir).flatMap((name) => {
     const path = join(dir, name)
     if (statSync(path).isDirectory()) return pages(path)
     if (name !== 'index.html') return []
+    if (readFileSync(path, 'utf8').includes('http-equiv="refresh"')) return []
     return [`${base}${relative(dist, dir).split('\\').join('/')}${dir === dist ? '' : '/'}`.replace(/\/+/g, '/')]
   })
 }

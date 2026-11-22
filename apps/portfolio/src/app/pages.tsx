@@ -22,7 +22,7 @@ export function loadPage(page: Page): Promise<ReactElement> {
     case 'credentials':
       return import('../features/credentials/CredentialsPage').then(({ CredentialsPage }) => <CredentialsPage />)
     case 'me':
-      return import('../features/me/MePage').then(({ MePage }) => <MePage />)
+      return import('../features/about/AboutPage').then(({ AboutPage }) => <AboutPage />)
     case 'notFound':
       return import('../features/not-found/NotFoundPage').then(({ NotFoundPage }) => <NotFoundPage />)
     case 'project':
