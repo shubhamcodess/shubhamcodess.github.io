@@ -11,13 +11,13 @@ export const bodies = writing.bodies
 export const writingLive = site.features.writing && posts.length > 0
 
 /**
- * The posts on either side of one, in date order: previous is the one written before it, next the one after,
- * wrapping round at the ends. A post never appears twice: with only two posts, the other one is just Next.
+ * The posts on either side of one, in the order they were written (oldest first; on the same day, by title):
+ * previous is the one before it, next the one after. No wrapping: the first post has only Next, the last only
+ * Previous, and every post between has both.
  */
 export function neighbours(slug: string): { readonly previous?: WritingMeta | undefined; readonly next?: WritingMeta | undefined } {
-  const index = posts.findIndex((post) => post.slug === slug)
-  if (index < 0 || posts.length < 2) return {}
-  const previous = posts[(index + 1) % posts.length]
-  const next = posts[(index - 1 + posts.length) % posts.length]
-  return previous === next ? { next } : { previous, next }
+  const written = [...posts].sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title))
+  const index = written.findIndex((post) => post.slug === slug)
+  if (index < 0) return {}
+  return { previous: written[index - 1], next: written[index + 1] }
 }
