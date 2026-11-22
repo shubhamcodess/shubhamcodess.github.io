@@ -628,7 +628,8 @@
 .post-zoom {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  /* Over the page and the dock (25), under the comet cursor (30), so the pointer always shows on top of it. */
+  z-index: 29;
   display: grid;
   place-items: center;
   padding: clamp(var(--space-4), 4vw, var(--space-8));
