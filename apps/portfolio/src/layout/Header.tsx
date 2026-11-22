@@ -40,7 +40,7 @@ export function Header({ page }: HeaderProps) {
     section && item.activeOn?.includes(section) ? { 'aria-current': 'location' as const } : {}
 
   return (
-    <header className="site-header container">
+    <header className={`site-header container${page === 'home' ? ' site-header--home' : ''}`}>
       <a className="site-header__logo" href={hrefTo('home')} aria-label={`${site.owner}, home`}>
         {(site.logo as SiteConfig['logo']) === 'mark' ? <LogoMark /> : site.monogram}
       </a>

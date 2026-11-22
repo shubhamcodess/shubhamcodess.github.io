@@ -88,30 +88,33 @@
     display: none;
   }
 
-  /* Links marked phone: false in the config (Builds, Experience) leave the bar on phones. */
-  .site-header__link--wide {
+  /* On home only: links marked phone: false (Builds, Experience) leave the bar, as the hero's buttons lead to them. */
+  .site-header--home .site-header__link--wide {
     display: none;
   }
 }
 
-/* Phones: the four links draw in, closer to each other and to the logo, so the bar fits beside it. */
+/*
+ * Phones: on pages with three or four links they draw in, closer to each other and to the logo, so the bar fits.
+ * Home's two links keep their normal spacing.
+ */
 @media (max-width: 429px) {
-  .site-header {
+  .site-header:not(.site-header--home) {
     gap: var(--space-2);
   }
 
-  .site-header__nav {
+  .site-header:not(.site-header--home) .site-header__nav {
     gap: 0;
   }
 
-  .site-header__link {
+  .site-header:not(.site-header--home) .site-header__link {
     padding-inline: 5px;
   }
 }
 
-/* The smallest phones: a touch smaller type as well. */
+/* The smallest phones: a touch smaller type as well, where there are more than two links. */
 @media (max-width: 359px) {
-  .site-header__link {
+  .site-header:not(.site-header--home) .site-header__link {
     padding-inline: 3px;
     font-size: 0.8125rem;
   }

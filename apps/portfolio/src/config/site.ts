@@ -93,7 +93,7 @@ export const site = {
   },
   // The home page's anchors; each page leaves out its own. Gallery, Credentials and Home are in the dock and the footer.
   nav: [
-    // On phones the bar holds just Writing and Contact: Builds and Experience are the hero's own buttons and in the dock.
+    // On home, on phones, the bar holds just Writing and Contact: Builds and Experience are the hero's own buttons there.
     { label: 'Builds', to: 'builds', activeOn: ['featured'], phone: false },
     { label: 'Research', to: '#research', activeOn: ['research'] },
     { label: 'Experience', to: 'experience', activeOn: ['experience'], phone: false },
