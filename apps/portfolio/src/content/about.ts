@@ -80,7 +80,7 @@ export type Chapter = ChapterBase &
 export const book = {
   author: 'Shubham Prakash',
   title: 'Beyond Stack',
-  subtitle: 'An about-me in twelve chapters: the places, the work, the desk, the bike, the food, the films, and what comes next.',
+  subtitle: 'A memoir: the places, the work, the desk, the bike, the food, the films, and what comes next.',
   volume: 'Volume one',
   year: '2026',
   /** The postage stamp: the owner's initials, the three cities, the year it all started. */
@@ -90,7 +90,7 @@ export const book = {
   inscription: {
     to: 'For whoever opens this,',
     lines: [
-      'this is me, in twelve chapters. Where I come from, what I do all day, what I build at night, and the things that have nothing to do with code.',
+      'this is me. Where I come from, what I do all day, what I build at night, and the things that have nothing to do with code.',
       'Turn the pages, drag the corners, take your time. The photos are mine, and so are the words.',
     ],
     from: 'Shubham',
