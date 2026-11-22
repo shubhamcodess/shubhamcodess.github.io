@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" font-family="ui-monospace, 'Geist Mono', SFMono-Regular, Menlo, monospace" font-size="12">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#645b4e"/></marker></defs>
+  <g fill="#fbf8f1" stroke="#1c1915" stroke-width="1.2">
+    <rect x="20" y="40" width="128" height="56" rx="10"/>
+    <rect x="20" y="168" width="128" height="56" rx="10"/>
+    <rect x="220" y="104" width="140" height="56" rx="10" stroke="#a4480b"/>
+    <rect x="420" y="104" width="120" height="56" rx="10"/>
+    <rect x="596" y="104" width="104" height="56" rx="10"/>
+  </g>
+  <g fill="none" stroke="#645b4e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a)">
+    <path d="M148 68 216 120"/>
+    <path d="M148 196 216 144"/>
+    <path d="M360 132h56"/>
+    <path d="M540 132h52"/>
+  </g>
+  <g fill="#1c1915" text-anchor="middle">
+    <text x="84" y="65">browser</text><text x="84" y="82" fill="#645b4e" font-size="10">a session, no keys</text>
+    <text x="84" y="193">copilot</text><text x="84" y="210" fill="#645b4e" font-size="10">mcp, with a key</text>
+    <text x="290" y="129" fill="#a4480b">landskape</text><text x="290" y="146" fill="#645b4e" font-size="10">holds the credentials</text>
+    <text x="480" y="129">kubectl, helm</text><text x="480" y="146" fill="#645b4e" font-size="10">per-person config</text>
+    <text x="648" y="129">clusters</text><text x="648" y="146" fill="#645b4e" font-size="10">their own rbac</text>
+    <text x="360" y="264" fill="#645b4e" font-size="10">credentials stay on the server, in a private folder for each person</text>
+  </g>
+</svg>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" font-family="ui-monospace, 'Geist Mono', SFMono-Regular, Menlo, monospace" font-size="12">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#645b4e"/></marker></defs>
+  <g fill="#fbf8f1" stroke="#1c1915" stroke-width="1.2">
+    <rect x="20" y="40" width="128" height="44" rx="10"/>
+    <rect x="204" y="40" width="128" height="44" rx="10"/>
+    <rect x="388" y="40" width="128" height="44" rx="10"/>
+    <rect x="572" y="40" width="128" height="44" rx="10"/>
+    <rect x="20" y="164" width="128" height="56" rx="10"/>
+    <rect x="204" y="164" width="128" height="56" rx="10"/>
+    <rect x="388" y="164" width="128" height="56" rx="10" stroke="#a4480b"/>
+  </g>
+  <g fill="none" stroke="#645b4e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a)">
+    <path d="M148 62h52"/><path d="M332 62h52"/><path d="M516 62h52"/>
+    <path d="M148 192h52"/><path d="M332 192h52"/>
+  </g>
+  <g fill="#645b4e" font-size="10">
+    <text x="20" y="28">before, for every cluster</text>
+    <text x="20" y="152">now</text>
+  </g>
+  <g fill="#1c1915" text-anchor="middle">
+    <text x="84" y="66">cloud console</text>
+    <text x="268" y="66">credentials</text>
+    <text x="452" y="66">pick cluster</text>
+    <text x="636" y="66">switch account</text>
+    <text x="84" y="189">sign in</text><text x="84" y="206" fill="#645b4e" font-size="10">company account</text>
+    <text x="268" y="189">pick by name</text><text x="268" y="206" fill="#645b4e" font-size="10">saved once</text>
+    <text x="452" y="189" fill="#a4480b">cluster health</text><text x="452" y="206" fill="#645b4e" font-size="10">in under 5 seconds</text>
+    <text x="360" y="264" fill="#645b4e" font-size="10">five to ten minutes of setup per cluster before, a few seconds now</text>
+  </g>
+</svg>

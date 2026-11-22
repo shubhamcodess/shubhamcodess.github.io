@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" font-family="ui-monospace, 'Geist Mono', SFMono-Regular, Menlo, monospace" font-size="12">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#645b4e"/></marker></defs>
+  <g fill="#fbf8f1" stroke="#1c1915" stroke-width="1.2">
+    <rect x="20" y="36" width="140" height="56" rx="10"/>
+    <rect x="20" y="128" width="140" height="56" rx="10"/>
+    <rect x="216" y="82" width="128" height="56" rx="10" stroke="#a4480b"/>
+    <rect x="400" y="82" width="128" height="56" rx="10"/>
+    <rect x="584" y="82" width="116" height="56" rx="10"/>
+  </g>
+  <g fill="none" stroke="#645b4e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a)">
+    <path d="M160 64 212 104"/>
+    <path d="M160 156 212 116"/>
+    <path d="M344 110h52"/>
+    <path d="M528 110h52" stroke-dasharray="4 4"/>
+  </g>
+  <g fill="#1c1915" text-anchor="middle">
+    <text x="90" y="61">git branch</text><text x="90" y="78" fill="#645b4e" font-size="10">chart and values</text>
+    <text x="90" y="153">live release</text><text x="90" y="170" fill="#645b4e" font-size="10">what is running</text>
+    <text x="280" y="107" fill="#a4480b">compare</text><text x="280" y="124" fill="#645b4e" font-size="10">render, dry run</text>
+    <text x="464" y="107">difference</text><text x="464" y="124" fill="#645b4e" font-size="10">shown on screen</text>
+    <text x="642" y="107">resync</text><text x="642" y="124" fill="#645b4e" font-size="10">only on a click</text>
+    <text x="360" y="208" fill="#645b4e" font-size="10">a hand fix made in an emergency shows up before a release can wipe it</text>
+  </g>
+</svg>
