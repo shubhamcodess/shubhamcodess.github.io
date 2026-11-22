@@ -368,6 +368,33 @@
     width: min(200px, 60%);
   }
 
+  /* The actions as one finished block: the two links side by side, then the endorse chip the full width under them. */
+  .paper__actions {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-4);
+    margin-top: var(--space-5);
+  }
+
+  .paper__actions > .action-link {
+    min-height: var(--target-min);
+  }
+
+  .endorse {
+    grid-column: 1 / -1;
+  }
+
+  .endorse > .paper__primary {
+    justify-content: center;
+    width: 100%;
+    min-height: var(--target-min);
+  }
+
+  .endorse__note {
+    width: 100%;
+  }
+
   .writing__item {
     grid-template-columns: minmax(0, 1fr);
   }
