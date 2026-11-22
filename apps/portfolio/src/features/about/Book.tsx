@@ -388,13 +388,27 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
             const around = (at: number) => (single ? leaf >= at - 2 && leaf <= at + 2 : leaf >= at - 3 && leaf <= at + 2)
             const near = around(settled) || (leaf >= turned - 1 && leaf <= turned + 1)
             const board = leaf === 0 || leaf === leaves - 1
+            // One page at a time: only the page in view and the ones a turn can move exist at all, so a phone
+            // never holds more than three page layers (more runs it out of graphics memory and it blanks the screen).
+            if (single && (leaf < Math.min(turned, settled) - 1 || leaf > Math.max(turned, settled) + 1)) return null
             return (
               <div
                 key={sheet.front?.key ?? leaf}
                 ref={(element) => {
                   leafRefs.current[leaf] = element
+                  // A leaf that has just come back into the book is laid at rest for where the book is open.
+                  if (element && !element.style.transform) {
+                    const rest = restAngle(leaf, turnedRef.current)
+                    element.style.transform = rotate(rest)
+                    element.style.zIndex = restZ(leaf)
+                    element.toggleAttribute('data-away', rest === -180)
+                    const [front, back] = element.querySelectorAll<HTMLElement>(':scope > .leaf__face > .leaf__shade')
+                    if (front) front.style.opacity = String(shadeFront(rest))
+                    if (back) back.style.opacity = String(shadeBack(rest))
+                    angles.current[leaf] = rest
+                  }
                 }}
-                className={`leaf${board ? ' leaf--board' : ''}${leaf >= settled - 1 && leaf <= settled + 1 ? ' leaf--near' : ''}`}
+                className={`leaf${board ? ' leaf--board' : ''}`}
               >
                 <div
                   className={`leaf__face leaf__face--front book-page--${sheet.front?.tone ?? 'paper'}`}

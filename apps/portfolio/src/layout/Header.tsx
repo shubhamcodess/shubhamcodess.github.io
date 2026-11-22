@@ -33,14 +33,20 @@ export function Header({ page }: HeaderProps) {
   const nav: readonly NavItem[] = site.nav.map((item) =>
     writingLive && item.to === `#${site.research.id}` ? { ...item, label: site.routes.writing.label, to: 'writing', activeOn: [] } : item,
   )
-  const links: readonly NavItem[] = nav.filter((item) => item.to !== page && (enabled[item.to] ?? true))
+  // A post already has its own way back to Writing, so the bar leaves Writing out there.
+  const links: readonly NavItem[] = nav.filter(
+    (item) => item.to !== page && !(page === 'post' && item.to === 'writing') && (enabled[item.to] ?? true),
+  )
+  // On phones, home keeps only its marked links and About keeps only Contact; the dock has every page.
+  const compact = page === 'home' || page === 'me'
+  const leavesOnPhone = (item: NavItem) => (page === 'me' ? item.to !== `#${site.contact.id}` : item.phone === false)
 
   // On home, a link is current while its section is the one being read.
   const current = (item: NavItem) =>
     section && item.activeOn?.includes(section) ? { 'aria-current': 'location' as const } : {}
 
   return (
-    <header className={`site-header container${page === 'home' ? ' site-header--home' : ''}`}>
+    <header className={`site-header container${compact ? ' site-header--compact' : ''}`}>
       <a className="site-header__logo" href={hrefTo('home')} aria-label={`${site.owner}, home`}>
         {(site.logo as SiteConfig['logo']) === 'mark' ? <LogoMark /> : site.monogram}
       </a>
@@ -48,7 +54,7 @@ export function Header({ page }: HeaderProps) {
         {links.map((item) => (
           <a
             key={item.to}
-            className={`site-header__link${item.phone === false ? ' site-header__link--wide' : ''}`}
+            className={`site-header__link${leavesOnPhone(item) ? ' site-header__link--wide' : ''}`}
             href={hrefTo(item.to)}
             {...current(item)}
           >

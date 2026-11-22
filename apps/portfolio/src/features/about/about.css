@@ -49,15 +49,17 @@
   padding-top: var(--space-5);
 }
 
-.about__header {
-  text-align: center;
+.about .about__header {
+  margin-bottom: 0;
 }
 
 .about__title {
-  margin: var(--space-1) 0 0;
-  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
-  font-weight: 650;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+}
+
+.about__title-kind {
+  color: var(--ink-muted);
+  font-weight: 400;
 }
 
 /* ---- The stage: as big as the screen allows, with room for the heading above and the controls below. */
@@ -81,12 +83,6 @@
  * book every frame): a turned page swings off to the left, over the margin, and once down it is hidden.
  */
 .book-stage[data-mode='single'] .leaf[data-away] {
-  visibility: hidden;
-}
-
-/* The page just turned stays ready to come back: invisible, not hidden, so the phone keeps it drawn. */
-.book-stage[data-mode='single'] .leaf--near[data-away] {
-  visibility: visible;
   opacity: 0;
 }
 
@@ -101,6 +97,9 @@
  */
 .book-stage {
   --spine-t: calc(var(--page-w) * 0.11);
+  /* Painted above everything after it, so a page swinging out over the controls never makes them change layers. */
+  z-index: 2;
+  isolation: isolate;
   perspective: calc(var(--page-w) * 6);
   perspective-origin: 50% 40%;
 }
@@ -244,10 +243,10 @@
   transform-style: preserve-3d;
 }
 
-/* Only the leaves near the open page keep a layer of their own, which keeps memory low on phones. */
-.leaf--near {
-  will-change: transform;
-}
+/*
+ * No will-change, and nothing that adds or removes a layer after a turn: every leaf is already its own 3D
+ * layer, and changing the layer tree mid-read makes the browser redraw the whole page (a visible flicker).
+ */
 
 .leaf--board {
   top: 0;

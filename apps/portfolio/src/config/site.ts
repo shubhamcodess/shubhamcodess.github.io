@@ -240,7 +240,7 @@ export const site = {
   },
   about: {
     kicker: 'About',
-    title: 'A book about me.',
+    title: 'Book /',
     book: 'book',
     previous: 'Previous page',
     next: 'Next page',

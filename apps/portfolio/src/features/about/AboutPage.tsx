@@ -68,9 +68,14 @@ export function AboutPage() {
     <div className="panel panel--grow">
       <Header page="me" />
       <main id="main" className="section container about">
-        <header className="about__header enter">
-          <p className="eyebrow">{copy.kicker}</p>
-          <h1 className="about__title">{copy.title}</h1>
+        <header className="section__header about__header enter">
+          <div>
+            <p className="eyebrow">{copy.kicker}</p>
+            <h1 className="section__title about__title">
+              <span className="about__title-kind">{copy.title}</span> {book.title}
+            </h1>
+            <p className="section__lead">{book.subtitle}</p>
+          </div>
         </header>
 
         <Book
