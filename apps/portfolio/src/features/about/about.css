@@ -212,6 +212,7 @@
 /* The shadow the book casts on the table: the width of what's open. */
 .book::before {
   content: '';
+  pointer-events: none;
   position: absolute;
   inset: 3% 2% -2%;
   left: calc(50% - var(--page-w) * (1 - var(--closed-left, 0)) + 2%);
@@ -1271,6 +1272,9 @@
 /* ---- Under the book: the buttons and the page counter. */
 
 .book-controls {
+  /* Above the book's stage, so the book's shadow and spine never cover the buttons. */
+  position: relative;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
