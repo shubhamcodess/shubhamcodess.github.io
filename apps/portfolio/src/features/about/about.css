@@ -76,9 +76,23 @@
   width: var(--page-w);
 }
 
-/* One page at a time shows only the right half: a turned page lifts off to the left, out of view. Closed, the spine shows. */
-.book-stage[data-mode='single']:not([data-closed='front']) {
-  overflow-x: clip;
+/*
+ * One page at a time shows only the right half. Nothing is clipped (a clip makes the phone redraw the whole
+ * book every frame): a turned page swings off to the left, over the margin, and once down it is hidden.
+ */
+.book-stage[data-mode='single'] .leaf[data-away] {
+  visibility: hidden;
+}
+
+/* The page just turned stays ready to come back: invisible, not hidden, so the phone keeps it drawn. */
+.book-stage[data-mode='single'] .leaf--near[data-away] {
+  visibility: visible;
+  opacity: 0;
+}
+
+/* One page at a time, a page's back is never seen at rest: plain paper, nothing to draw. */
+.book-stage[data-mode='single'] .leaf__face--back.book-page--paper {
+  background: var(--paper);
 }
 
 /*
@@ -306,10 +320,15 @@
 /* Shading while a leaf turns: the face swinging away darkens, with a sheen across the bend. */
 .leaf__shade {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   z-index: 20;
+  /* Drawn at a tenth of the page and scaled up: a smooth gradient needs no detail, so its layer stays tiny. */
+  width: 10%;
+  height: 10%;
+  transform: scale(10);
+  transform-origin: 0 0;
   pointer-events: none;
-  border-radius: inherit;
 }
 
 .leaf__face--front .leaf__shade {
@@ -491,9 +510,7 @@
   object-fit: cover;
   object-position: 62% 18%;
   border-radius: inherit;
-  filter: grayscale(1) contrast(1.18) brightness(0.95);
-  mix-blend-mode: luminosity;
-  opacity: 0.9;
+  /* Toned to black-grey ahead of time (portrait-cover.webp): no filter or blend to redraw while it turns. */
   pointer-events: none;
 }
 
@@ -528,7 +545,7 @@
   color: transparent;
   -webkit-text-stroke: 0.022em var(--foil);
   paint-order: stroke;
-  filter: drop-shadow(0 0 0.04em rgb(0 0 0 / 0.6));
+  text-shadow: 0 0 0.05em rgb(0 0 0 / 0.5);
 }
 
 /* A thin foil rule round the board, inset like a stamped border. */
@@ -1120,7 +1137,6 @@
   width: 1em;
   height: 2.7em;
   overflow: visible;
-  filter: drop-shadow(0.08em 0.12em 0.06em rgb(0 0 0 / 0.3));
 }
 
 .keepsake__clip path {
@@ -1176,8 +1192,20 @@
   aspect-ratio: 1;
   container-type: inline-size;
   transform: rotate(var(--turn));
-  filter: drop-shadow(0 0.1em 0.1em rgb(0 0 0 / 0.3));
   transition: transform 0.3s ease;
+}
+
+/* The sticker's shadow: a box-shadow on a plain layer behind it (filters are costly to redraw while a page turns). */
+.sticker::before {
+  content: '';
+  position: absolute;
+  inset: 3%;
+  border-radius: 28%;
+  box-shadow: 0 0.1em 0.16em rgb(0 0 0 / 0.32);
+}
+
+.sticker--cutout::before {
+  display: none;
 }
 
 .sticker__face {
@@ -1217,7 +1245,7 @@
   height: 0;
   border-radius: 0 0 28% 0;
   background: linear-gradient(315deg, transparent 50%, #f3f2ee 50%, #dcdad4 78%, #c9c6bf);
-  filter: drop-shadow(-0.05em -0.05em 0.08em rgb(0 0 0 / 0.25));
+  box-shadow: -0.04em -0.04em 0.08em rgb(0 0 0 / 0.2);
   transition: width 0.35s ease, height 0.35s ease;
 }
 
@@ -1339,15 +1367,7 @@
   }
 }
 
-/* A character sticker (Bob), cut round its outline with a white edge. */
-.sticker--cutout {
-  filter:
-    drop-shadow(0.07em 0 0 #fff)
-    drop-shadow(-0.07em 0 0 #fff)
-    drop-shadow(0 0.07em 0 #fff)
-    drop-shadow(0 -0.07em 0 #fff)
-    drop-shadow(0 0.12em 0.1em rgb(0 0 0 / 0.32));
-}
+/* A character sticker (Bob): the white cut edge and shadow are baked into bob-sticker.webp. */
 
 .sticker--cutout img {
   display: block;
@@ -1373,7 +1393,6 @@
   z-index: 2;
   width: var(--size);
   transform: rotate(var(--turn));
-  filter: drop-shadow(0 0.06em 0.1em rgb(0 0 0 / 0.28));
 }
 
 .postage__paper {
@@ -1461,7 +1480,6 @@
   width: 115%;
   overflow: visible;
   pointer-events: none;
-  mix-blend-mode: var(--stamp-blend);
 }
 
 .postage__mark circle,
@@ -1769,7 +1787,6 @@
     linear-gradient(118deg, transparent 0 var(--sheen-at, 34%), rgb(255 255 255 / 0.16) calc(var(--sheen-at, 34%) + 6%), rgb(255 255 255 / 0.04) calc(var(--sheen-at, 34%) + 12%), transparent calc(var(--sheen-at, 34%) + 20%)),
     radial-gradient(ellipse 70% 45% at 22% 6%, rgb(255 255 255 / 0.14), transparent 70%),
     linear-gradient(to bottom, rgb(255 255 255 / 0.06), transparent 30%, transparent 80%, rgb(0 0 0 / 0.18));
-  mix-blend-mode: screen;
   transition: --sheen-at 1.2s cubic-bezier(0.32, 0.08, 0.18, 1);
 }
 
@@ -1790,4 +1807,48 @@
   background-image:
     linear-gradient(to right, transparent 40%, rgb(255 255 255 / 0.12) 50%, transparent 60%),
     linear-gradient(to right, #050506, #19191c 18%, #3a3a3f 46%, #2a2a2e 62%, #111113 86%, #060607);
+}
+
+/* A build's website, a small print taped at the right of its note, the note's words running round it. */
+.build-note {
+  display: block;
+}
+
+.build-note > * + * {
+  margin-top: 0.4em;
+}
+
+.build-note__shot {
+  position: relative;
+  float: right;
+  width: 44%;
+  margin: 0.2em 0 0.6em 0.9em;
+  padding: 0.25em;
+  background: var(--print);
+  transform: rotate(var(--turn));
+  box-shadow:
+    0 0.06em 0.12em rgb(0 0 0 / 0.18),
+    0 0.5em 0.9em -0.4em rgb(0 0 0 / 0.38);
+}
+
+.build-note__shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.build-note__shot .keepsake__tape {
+  width: 40%;
+  height: 0.9em;
+  top: -0.45em;
+  left: 30%;
+  transform: rotate(-4deg);
+}
+
+.build-note__number {
+  clear: none;
+}
+
+.book-stage[data-mode='single'] .book__block--left {
+  display: none;
 }

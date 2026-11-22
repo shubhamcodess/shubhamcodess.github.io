@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { book, type Chapter, type Keepsake, type Sticker } from '../../content/about'
 import { getBuild } from '../../content/builds'
 import { site } from '../../config/site'
 import { hrefToBuild } from '../../lib/routes'
 import { Icon, type IconName } from '../../ui/Icon'
-import portrait from '../../assets/portrait.webp'
+import portrait from '../../assets/portrait-cover.webp'
 import type { BookPage } from './Book'
 import { useBookNav } from './Book'
 import { Photo, PostageStamp, StickerMark } from './Keepsakes'
@@ -237,8 +237,8 @@ function LeftBody({ chapter }: { readonly chapter: Chapter }) {
     case 'builds':
       return (
         <div className="build-notes">
-          {chapter.builds.map((slug) => (
-            <BuildNote key={slug} slug={slug} />
+          {chapter.builds.map((slug, index) => (
+            <BuildNote key={slug} slug={slug} shot={chapter.shots[slug]} turn={index ? 3 : -3} />
           ))}
         </div>
       )
@@ -252,10 +252,27 @@ function LeftBody({ chapter }: { readonly chapter: Chapter }) {
   }
 }
 
-function BuildNote({ slug, feature = false }: { readonly slug: Parameters<typeof getBuild>[0]; readonly feature?: boolean }) {
+function BuildNote({
+  slug,
+  feature = false,
+  shot,
+  turn = 0,
+}: {
+  readonly slug: Parameters<typeof getBuild>[0]
+  readonly feature?: boolean
+  readonly shot?: string | undefined
+  readonly turn?: number
+}) {
   const build = getBuild(slug)
   return (
     <div className={`build-note${feature ? ' build-note--feature' : ''}`}>
+      {shot ? (
+        // The build's own website, taped beside its note; the words run round it.
+        <span className="build-note__shot" style={{ '--turn': `${turn}deg` } as CSSProperties}>
+          <img src={`${base}${shot}`} alt={`The ${build.title} website.`} width={640} height={336} decoding="async" draggable={false} />
+          <span className="keepsake__tape keepsake__tape--a" aria-hidden="true" />
+        </span>
+      ) : null}
       <a className="build-note__title link-dots" href={hrefToBuild(build.slug)}>
         {build.title}
       </a>
@@ -356,7 +373,7 @@ function BackCover() {
   return (
     <div className="cover cover--back">
       <div className="cover__cloth cover__cloth--front cover__cloth--back">
-        <img className="cover__backdrop" src={`${base}me/photos/by-the-water.webp`} alt="" width={1600} height={900} decoding="async" draggable={false} />
+        <img className="cover__backdrop" src={`${base}about/back-cover.webp`} alt="" width={1200} height={675} decoding="async" draggable={false} />
         <span className="cover__wash" aria-hidden="true" />
         <span className="cover__frame" aria-hidden="true" />
         <p className="cover__author">{book.author}</p>

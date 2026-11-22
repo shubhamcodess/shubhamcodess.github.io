@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { site } from '../../config/site'
 import { Header } from '../../layout/Header'
 import { hrefTo } from '../../lib/routes'
@@ -46,6 +46,14 @@ export function AboutPage() {
     },
     [pages],
   )
+
+  // Development only: report how smoothly pages turn on whichever device has the page open.
+  useEffect(() => {
+    if (!import.meta.env.DEV) return
+    let stop: (() => void) | undefined
+    void import('./perfProbe').then(({ startProbe }) => (stop = startProbe()))
+    return () => stop?.()
+  }, [])
 
   const choose = (next: BookMode) => {
     setMode(next)

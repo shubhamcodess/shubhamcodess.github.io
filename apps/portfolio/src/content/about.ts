@@ -71,7 +71,14 @@ export type Chapter = ChapterBase &
   (
     | { readonly kind: 'facts'; readonly facts: readonly Fact[] }
     | { readonly kind: 'route'; readonly stops: readonly { readonly place: string; readonly when: string; readonly what: string }[] }
-    | { readonly kind: 'builds'; readonly builds: readonly [BuildSlug, BuildSlug]; readonly feature: BuildSlug; readonly featureNote: string }
+    | {
+        readonly kind: 'builds'
+        readonly builds: readonly [BuildSlug, BuildSlug]
+        /** Each build's own website, taped beside its note. */
+        readonly shots: Readonly<Partial<Record<BuildSlug, string>>>
+        readonly feature: BuildSlug
+        readonly featureNote: string
+      }
     | { readonly kind: 'steps'; readonly steps: readonly { readonly title: string; readonly text: string }[] }
     | { readonly kind: 'stickers'; readonly sheet: readonly Sticker[]; readonly facts: readonly Fact[] }
     | { readonly kind: 'next' }
@@ -239,6 +246,7 @@ export const book = {
       dek: 'Open source work, in my own time.',
       kind: 'builds',
       builds: ['mcp-token-optimizer', 'whatcmd'],
+      shots: { 'mcp-token-optimizer': 'about/mcp-token-optimizer.webp', whatcmd: 'about/whatcmd.webp' },
       feature: 'everything-tech',
       featureNote: 'Its front page, as it printed on 22 November 2026.',
       story: [],

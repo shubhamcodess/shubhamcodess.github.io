@@ -1,5 +1,6 @@
 import {
   createContext,
+  startTransition,
   useCallback,
   useContext,
   useEffect,
@@ -102,6 +103,14 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
   )
   const reducedMotion = useReducedMotion()
   const [turned, setTurned] = useState(() => placeOf(start))
+  // Where the pages are prepared around: it catches up with `turned` only once a turn has landed, so mounting the
+  // next pages (their photos, their layers) never happens while a page is in the air.
+  const [settled, setSettled] = useState(turned)
+  useEffect(() => {
+    if (settled === turned) return
+    const timer = window.setTimeout(() => startTransition(() => setSettled(turned)), turnMs + 120)
+    return () => window.clearTimeout(timer)
+  }, [turned, settled])
   const bookRef = useRef<HTMLDivElement>(null)
   const leafRefs = useRef<(HTMLDivElement | null)[]>([])
   const angles = useRef<number[]>(Array.from({ length: leaves }, (_, leaf) => restAngle(leaf, turned)))
@@ -127,6 +136,7 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
       const from = duration ? drawnAngle(element, angles.current[leaf] ?? angle) : angle
       for (const running of element.getAnimations({ subtree: true })) running.cancel()
       angles.current[leaf] = angle
+      element.removeAttribute('data-away')
       const { front, back, frontTo, backTo } = shade(element, angle)
       element.style.transform = rotate(angle)
       if (front) front.style.opacity = String(frontTo)
@@ -146,6 +156,7 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
         leaf,
         window.setTimeout(() => {
           element.style.zIndex = restZ(leaf)
+          element.toggleAttribute('data-away', angles.current[leaf] === -180)
           flying.current.delete(leaf)
         }, duration + 30),
       )
@@ -165,16 +176,18 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
         if (front) front.style.opacity = String(frontTo)
         if (back) back.style.opacity = String(backTo)
         element.style.zIndex = restZ(leaf)
+        element.toggleAttribute('data-away', target === -180)
         angles.current[leaf] = target
         return
       }
       const from = angles.current[leaf] ?? target
       if (from === target) return
+      if (import.meta.env.DEV) window.dispatchEvent(new CustomEvent('about:turn', { detail: `${mode} leaf ${leaf}` }))
       put(leaf, target, Math.max(320, (turnMs * Math.abs(target - from)) / 180))
       play(leaf === 0 || leaf === leaves - 1 ? 'cover' : 'leaf', Math.abs(target - from) / 180, target < from ? 1 : -1)
     })
     first.current = false
-  }, [turned, leaves, put, restZ])
+  }, [turned, leaves, put, restZ, mode])
 
   const inView = single
     ? [turned]
@@ -372,7 +385,8 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
           <span className="book__block book__block--right" aria-hidden="true" />
           {sheets.map((sheet, leaf) => {
             // Only the leaves near the open page draw their pages and keep a layer of their own.
-            const near = single ? leaf >= turned - 2 && leaf <= turned + 2 : leaf >= turned - 3 && leaf <= turned + 2
+            const around = (at: number) => (single ? leaf >= at - 2 && leaf <= at + 2 : leaf >= at - 3 && leaf <= at + 2)
+            const near = around(settled) || (leaf >= turned - 1 && leaf <= turned + 1)
             const board = leaf === 0 || leaf === leaves - 1
             return (
               <div
@@ -380,7 +394,7 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
                 ref={(element) => {
                   leafRefs.current[leaf] = element
                 }}
-                className={`leaf${board ? ' leaf--board' : ''}${near ? ' leaf--near' : ''}`}
+                className={`leaf${board ? ' leaf--board' : ''}${leaf >= settled - 1 && leaf <= settled + 1 ? ' leaf--near' : ''}`}
               >
                 <div
                   className={`leaf__face leaf__face--front book-page--${sheet.front?.tone ?? 'paper'}`}

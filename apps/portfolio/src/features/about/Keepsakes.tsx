@@ -111,7 +111,7 @@ export function StickerMark({ item }: { readonly item: Sticker }) {
     // Bob is a character, so his sticker is cut round him rather than a square.
     return (
       <span className={`sticker sticker--cutout${wrap}`} style={style} role="img" aria-label="IBM Bob">
-        <img src={`${base}about/bob.webp`} alt="" width={512} height={512} draggable={false} decoding="async" />
+        <img src={`${base}about/bob-sticker.webp`} alt="" width={592} height={592} draggable={false} decoding="async" />
       </span>
     )
   }

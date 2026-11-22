@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { existsSync, readFileSync } from 'node:fs'
+import { appendFileSync, existsSync, readFileSync } from 'node:fs'
 import { extname, join } from 'node:path'
 import react from '@vitejs/plugin-react'
 import { defineConfig, type Plugin } from 'vite'
@@ -401,7 +401,24 @@ const base = process.env.PORTFOLIO_BASE ?? '/'
 export default defineConfig({
   base,
   appType: 'mpa',
-  plugins: [react(), projectPages(), writingPages(), renderBlocking(), seo(), preloadPage()],
+  plugins: [
+    // Development only: the About page's turn timings, posted by src/features/about/perfProbe.ts, printed here.
+    {
+      name: 'about-perf-log',
+      apply: 'serve',
+      configureServer(server) {
+        server.middlewares.use('/__about-perf', (request, response) => {
+          let body = ''
+          request.on('data', (chunk) => (body += chunk))
+          request.on('end', () => {
+            server.config.logger.info(`[about-perf] ${request.socket.remoteAddress ?? ''} ${body}`, { timestamp: true })
+            appendFileSync('node_modules/.about-perf.log', `${new Date().toISOString()} ${request.socket.remoteAddress ?? ''} ${body}\n`)
+            response.statusCode = 204
+            response.end()
+          })
+        })
+      },
+    },react(), projectPages(), writingPages(), renderBlocking(), seo(), preloadPage()],
   build: {
     target: 'es2022',
     rolldownOptions: {
