@@ -3,7 +3,6 @@ import { site } from '../../config/site'
 import { papers, writing } from '../../content/research'
 import type { Paper } from '../../content/types'
 import { ActionLink } from '../../ui/ActionLink'
-import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
 import './research.css'
 
@@ -233,10 +232,9 @@ function Endorse({ paper }: { readonly paper: Paper }) {
             </ActionLink>
           </>
         ) : null}
-        <a className="endorse__offer" href={offerMail(paper)}>
+        <ActionLink href={offerMail(paper)} icon="arrowRight">
           {copy.offer}
-          <Icon name="arrowRight" size={14} />
-        </a>
+        </ActionLink>
         <ActionLink href={copy.howHref} external>
           {copy.howLabel}
         </ActionLink>

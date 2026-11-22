@@ -84,7 +84,7 @@
   margin-top: var(--space-6);
 }
 
-/* The one solid action: asking for an arXiv endorsement. */
+/* The paper's one button: a quiet outlined pill, the only pill in the card. Hover and open firm it a little. */
 .endorse {
   position: relative;
 }
@@ -94,19 +94,27 @@
   align-items: center;
   min-height: var(--target-min);
   padding-inline: var(--space-5);
-  color: var(--surface-raised);
+  color: var(--ink);
   font: inherit;
   font-size: var(--text-sm);
-  background: var(--ink);
-  border: 0;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--ink) 26%, transparent);
   border-radius: var(--radius-pill);
   cursor: pointer;
-  transition: opacity var(--duration-fast) linear;
+  transition:
+    background-color var(--duration-fast) linear,
+    border-color var(--duration-fast) linear;
+}
+
+.paper__primary[aria-expanded='true'] {
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  border-color: color-mix(in srgb, var(--ink) 50%, transparent);
 }
 
 @media (hover: hover) {
   .paper__primary:hover {
-    opacity: 0.86;
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
+    border-color: color-mix(in srgb, var(--ink) 50%, transparent);
   }
 }
 
@@ -155,35 +163,6 @@
 
 .endorse__note .action-link {
   min-height: 0;
-}
-
-/* The note's main action: offer to endorse, by email. A small solid pill, like the button that opened it. */
-.endorse__offer {
-  display: inline-flex;
-  align-items: center;
-  justify-self: start;
-  gap: var(--space-2);
-  min-height: 36px;
-  padding-inline: var(--space-4);
-  color: var(--surface-raised);
-  font-size: var(--text-sm);
-  background: var(--ink);
-  border-radius: var(--radius-pill);
-  transition: opacity var(--duration-fast) linear;
-}
-
-.endorse__offer .icon {
-  transition: transform var(--duration-base) var(--ease-out);
-}
-
-@media (hover: hover) {
-  .endorse__offer:hover {
-    opacity: 0.86;
-  }
-
-  .endorse__offer:hover .icon {
-    transform: translateX(2px);
-  }
 }
 
 @keyframes endorse-in {
