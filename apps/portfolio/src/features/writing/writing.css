@@ -429,9 +429,9 @@
   font: var(--weight-body) var(--text-xs) / 1.4 var(--font-mono);
 }
 
+/* The note takes its own line under the numbers, however many there are. */
 .post-mast__note {
-  margin-left: auto;
-  max-width: 18rem;
+  flex-basis: 100%;
 }
 
 /* The reading column, with its sections in a quiet rail on wide screens. */
@@ -785,10 +785,6 @@
     padding: var(--space-4) 0 0;
     border-top: var(--hairline) solid var(--line);
     border-left: 0;
-  }
-
-  .post-mast__note {
-    margin-left: 0;
   }
 
   .post-onward {

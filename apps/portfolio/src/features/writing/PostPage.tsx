@@ -6,7 +6,7 @@ import { hrefTo } from '../../lib/routes'
 import { neighbours, posts } from '../../lib/writing'
 import { ActionLink } from '../../ui/ActionLink'
 import { Icon } from '../../ui/Icon'
-import { formatDate, postHref } from './WritingPage'
+import { formatDate, postHref, sameWords } from './WritingPage'
 import './writing.css'
 
 interface PostPageProps {
@@ -38,14 +38,14 @@ export function PostPage({ slug, html }: PostPageProps) {
   const rows = post.facts.length
     ? [
         { label: 'Category', value: post.category },
-        { label: 'Kind', value: copy.kinds[post.kind] },
+        ...(sameWords(post.category, copy.kinds[post.kind]) ? [] : [{ label: 'Kind', value: copy.kinds[post.kind] }]),
         ...post.facts,
         { label: copy.published, value: formatDate(post.date) },
         { label: copy.reading, value: copy.minutes.replace('{n}', String(post.minutes)).replace(' read', '') },
       ]
     : []
   const kicker = [
-    rows.length ? copy.kinds[post.kind] : `${post.category} · ${copy.kinds[post.kind]}`,
+    rows.length || sameWords(post.category, copy.kinds[post.kind]) ? post.category : `${post.category} · ${copy.kinds[post.kind]}`,
     post.private ? `${post.private} · ${copy.privateLabel}` : '',
     rows.length ? '' : formatDate(post.date),
     rows.length ? '' : copy.minutes.replace('{n}', String(post.minutes)),

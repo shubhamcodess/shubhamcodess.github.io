@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" font-family="ui-monospace, 'Geist Mono', SFMono-Regular, Menlo, monospace" font-size="12">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#939aa9"/></marker></defs>
+  <g fill="none" stroke="#1e2331" stroke-width="1.2" stroke-dasharray="4 4">
+    <path d="M100 64v168"/><path d="M360 64v168"/><path d="M620 64v168"/>
+  </g>
+  <g fill="#11151e" stroke="#e8ebf2" stroke-width="1.2">
+    <rect x="40" y="20" width="120" height="44" rx="10"/>
+    <rect x="300" y="20" width="120" height="44" rx="10" stroke="#f2a24e"/>
+    <rect x="560" y="20" width="120" height="44" rx="10"/>
+  </g>
+  <g fill="none" stroke="#939aa9" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a)">
+    <path d="M100 96h516"/>
+    <path d="M620 124H104" stroke-dasharray="4 4"/>
+    <path d="M100 152h256"/>
+    <path d="M100 184h516"/>
+    <path d="M620 212H104" stroke-dasharray="4 4"/>
+  </g>
+  <g fill="#e8ebf2" text-anchor="middle">
+    <text x="100" y="46">executor</text>
+    <text x="360" y="46" fill="#f2a24e">saved job id</text>
+    <text x="620" y="46">other system</text>
+    <text x="490" y="90" fill="#939aa9" font-size="10">start the job</text>
+    <text x="490" y="118" fill="#939aa9" font-size="10">accepted, here is its id</text>
+    <text x="230" y="146" fill="#939aa9" font-size="10">keep the id</text>
+    <text x="490" y="178" fill="#939aa9" font-size="10">is it done? (again and again)</text>
+    <text x="490" y="206" fill="#939aa9" font-size="10">done</text>
+    <text x="360" y="264" fill="#939aa9" font-size="10">on a retry the saved id is found first, so the job is never started twice</text>
+  </g>
+</svg>

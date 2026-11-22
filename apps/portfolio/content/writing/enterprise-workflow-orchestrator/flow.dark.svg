@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" font-family="ui-monospace, 'Geist Mono', SFMono-Regular, Menlo, monospace" font-size="12">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#939aa9"/></marker></defs>
+  <g fill="#11151e" stroke="#e8ebf2" stroke-width="1.2">
+    <rect x="20" y="36" width="128" height="56" rx="10"/>
+    <rect x="204" y="36" width="128" height="56" rx="10"/>
+    <rect x="388" y="36" width="128" height="56" rx="10"/>
+    <rect x="572" y="36" width="128" height="56" rx="10"/>
+    <rect x="296" y="168" width="128" height="56" rx="10" stroke="#f2a24e"/>
+  </g>
+  <g fill="none" stroke="#939aa9" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a)">
+    <path d="M148 64h52"/><path d="M332 64h52"/><path d="M516 64h52"/>
+    <path d="M636 92v104H428"/>
+    <path d="M296 196H268V96" stroke-dasharray="4 4"/>
+  </g>
+  <g fill="#e8ebf2" text-anchor="middle">
+    <text x="84" y="61">trigger</text><text x="84" y="78" fill="#939aa9" font-size="10">a click or a clock</text>
+    <text x="268" y="61">engine</text><text x="268" y="78" fill="#939aa9" font-size="10">finds ready jobs</text>
+    <text x="452" y="61">queue</text><text x="452" y="78" fill="#939aa9" font-size="10">holds the work</text>
+    <text x="636" y="61">worker</text><text x="636" y="78" fill="#939aa9" font-size="10">runs one job</text>
+    <text x="360" y="193" fill="#f2a24e">event log</text><text x="360" y="210" fill="#939aa9" font-size="10">only ever added to</text>
+    <text x="532" y="186" fill="#939aa9" font-size="10">writes what happened</text>
+    <text x="216" y="186" fill="#939aa9" font-size="10">reads it back</text>
+    <text x="360" y="264" fill="#939aa9" font-size="10">the live view, alerts and reports read the same log</text>
+  </g>
+</svg>

@@ -15,6 +15,9 @@ export const categorySlug = (category: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
 
+/** Whether two labels say the same thing (a post filed under "Case study" that is a case study). */
+export const sameWords = (a: string, b: string) => categorySlug(a) === categorySlug(b)
+
 const param = 'category'
 const categoryInAddress = () => new URLSearchParams(window.location.search).get(param) ?? ''
 
@@ -88,7 +91,8 @@ export function WritingPage() {
                     <a className="writing-row" href={postHref(post.slug)}>
                       <span className="writing-row__meta">
                         <span className="writing-row__kind">{post.category}</span>
-                        <span>{copy.kinds[post.kind]}</span>
+                        {/* The kind only when it says something the category doesn't. */}
+                        {sameWords(post.category, copy.kinds[post.kind]) ? null : <span>{copy.kinds[post.kind]}</span>}
                         {post.private ? (
                           <span className="writing-row__tag">
                             {post.private} · {copy.privateLabel}

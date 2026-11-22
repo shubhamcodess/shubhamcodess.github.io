@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" font-family="ui-monospace, 'Geist Mono', SFMono-Regular, Menlo, monospace" font-size="12">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#939aa9"/></marker></defs>
+  <g fill="#11151e" stroke="#e8ebf2" stroke-width="1.2">
+    <rect x="20" y="100" width="120" height="56" rx="10"/>
+    <rect x="196" y="100" width="140" height="56" rx="10"/>
+    <rect x="400" y="32" width="120" height="44" rx="10"/>
+    <rect x="400" y="106" width="120" height="44" rx="10"/>
+    <rect x="400" y="180" width="120" height="44" rx="10"/>
+    <rect x="580" y="100" width="120" height="56" rx="10" stroke="#f2a24e"/>
+  </g>
+  <g fill="none" stroke="#939aa9" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a)">
+    <path d="M140 128h52"/>
+    <path d="M336 120 396 56"/><path d="M336 128h60"/><path d="M336 136 396 200"/>
+    <path d="M520 54 576 116"/><path d="M520 128h56"/><path d="M520 202 576 140"/>
+  </g>
+  <g fill="#e8ebf2" text-anchor="middle">
+    <text x="80" y="125">set up</text><text x="80" y="142" fill="#939aa9" font-size="10">two jobs, in order</text>
+    <text x="266" y="125">twelve jobs</text><text x="266" y="142" fill="#939aa9" font-size="10">all at once</text>
+    <text x="460" y="58">chain a</text>
+    <text x="460" y="132">chain b</text>
+    <text x="460" y="206">chain c</text>
+    <text x="640" y="125" fill="#f2a24e">final pass</text><text x="640" y="142" fill="#939aa9" font-size="10">after a, b and c</text>
+    <text x="360" y="264" fill="#939aa9" font-size="10">one production run: start one job too early and the numbers downstream are wrong</text>
+  </g>
+</svg>
