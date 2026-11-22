@@ -810,16 +810,62 @@
     border-left: 0;
   }
 
+  /*
+   * Phones: a calmer foot. The tags become one quiet line of small text, and Previous and Next are compact rows,
+   * each a lean outlined bar with its label on the left and the slug on the right, on one line, cut short.
+   */
+  .post-foot {
+    gap: var(--space-4);
+  }
+
+  .post-tags {
+    gap: 0;
+  }
+
+  .post-tags li {
+    padding: 0;
+    border: 0;
+    font-size: 0.625rem;
+  }
+
+  .post-tags li + li::before {
+    content: '·';
+    margin-inline: var(--space-2);
+  }
+
   .post-onward {
     grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
   }
 
+  .post-onward__link,
   .post-onward__link--next {
     grid-column: auto;
-    justify-items: start;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: var(--target-min);
+    padding-inline: var(--space-4);
     text-align: left;
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-md);
   }
 
+  .post-onward__label {
+    flex: none;
+  }
+
+  .post-onward__link .link-dots {
+    padding-bottom: 0;
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+
+  .post-onward__link .link-dots::before,
+  .post-onward__link .link-dots::after {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
