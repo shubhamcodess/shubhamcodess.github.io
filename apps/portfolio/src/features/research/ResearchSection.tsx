@@ -52,9 +52,7 @@ export function ResearchSection() {
                 {posts.map((post) => (
                   <li key={post.href}>
                     <a className="writing__item" href={post.href} {...(post.where === 'here' ? {} : { target: '_blank', rel: 'noopener noreferrer' })}>
-                      <span className="writing__title">
-                        <span className="link-dots">{post.title}</span>
-                      </span>
+                      <WritingTitle title={post.title} />
                       <span className="writing__meta">
                         <span className="writing__where">{copy.where[post.where]}</span>
                         <time dateTime={post.date}>{dateFormat.format(new Date(post.date))}</time>
@@ -68,6 +66,38 @@ export function ResearchSection() {
         ) : null}
       </div>
     </section>
+  )
+}
+
+/**
+ * A post's title on one line. When it doesn't fit and ends in an ellipsis, hovering or focusing the row shows the
+ * whole title in a small raised label just above it (our own, not the browser's tooltip).
+ */
+function WritingTitle({ title }: { readonly title: string }) {
+  const words = useRef<HTMLSpanElement>(null)
+  const [cut, setCut] = useState(false)
+
+  useEffect(() => {
+    const element = words.current
+    if (!element) return
+    const measure = () => setCut(element.scrollWidth > element.clientWidth + 1)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <span className="writing__title" data-cut={cut || undefined}>
+      <span ref={words} className="link-dots">
+        {title}
+      </span>
+      {cut ? (
+        <span className="writing__full" aria-hidden="true">
+          {title}
+        </span>
+      ) : null}
+    </span>
   )
 }
 
