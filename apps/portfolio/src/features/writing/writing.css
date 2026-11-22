@@ -685,16 +685,22 @@
   }
 }
 
+/* One even step through the foot on every screen: the rule to the tags, the tags to the links, the links to the panel's end. */
 .post-foot {
+  --foot-step: var(--space-6);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-5);
+  gap: var(--foot-step);
   max-width: 42rem;
   margin-top: var(--space-8);
-  padding-top: var(--space-5);
+  padding-top: var(--foot-step);
   border-top: var(--hairline) solid var(--line);
+}
+
+main.post {
+  padding-bottom: var(--space-6);
 }
 
 @media (min-width: 1100px) {
@@ -814,18 +820,6 @@
    * Phones: a calmer foot. The tags become one quiet line of small text; Previous and Next stay plain links as on
    * wide screens (Previous on the left, Next on the right), with more room above them.
    */
-  /* One even step everywhere in the foot: the rule to the tags, the tags to the links, the links to the panel's end. */
-  .post-foot {
-    --foot-step: var(--space-6);
-    gap: var(--foot-step);
-    margin-top: var(--space-7);
-    padding-top: var(--foot-step);
-  }
-
-  main.post {
-    padding-bottom: var(--space-6);
-  }
-
   .post-tags {
     gap: 0;
   }
