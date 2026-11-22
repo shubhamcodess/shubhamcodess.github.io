@@ -80,7 +80,7 @@ export type Chapter = ChapterBase &
 export const book = {
   author: 'Shubham Prakash',
   title: 'Beyond Stack',
-  subtitle: 'A memoir: the places, the work, the desk, the bike, the food, the films, and what comes next.',
+  subtitle: 'A memoir of code, roads and everything in between.',
   volume: 'Volume one',
   year: '2026',
   /** The postage stamp: the owner's initials, the three cities, the year it all started. */

@@ -70,11 +70,7 @@ function Cover() {
       <div className="cover__cloth cover__cloth--front">
         <img className="cover__backdrop" src={portrait} alt="" width={1086} height={1448} decoding="async" draggable={false} />
         <span className="cover__wash" aria-hidden="true" />
-        <h2 className="cover__vertical" aria-label={book.title}>
-          {book.title.split(' ').map((word) => (
-            <span key={word}>{word}</span>
-          ))}
-        </h2>
+        <h2 className="cover__vertical">{book.title}</h2>
         <span className="cover__frame" aria-hidden="true" />
         <p className="cover__author">{book.author}</p>
         <p className="cover__subtitle">{book.subtitle}</p>
