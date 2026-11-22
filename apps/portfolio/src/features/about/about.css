@@ -3,12 +3,6 @@
  * at any size: a phone shows the same page as a wide screen, only smaller.
  */
 
-@property --leaf-t {
-  syntax: '<number>';
-  inherits: true;
-  initial-value: 0;
-}
-
 .about {
   container-type: inline-size;
   /* The book's materials, light. */
@@ -82,8 +76,8 @@
   width: var(--page-w);
 }
 
-/* One page at a time slides the open book sideways, so the half out of view is cut off; a closed book is whole. */
-.book-stage[data-mode='single']:not([data-closed]) {
+/* One page at a time shows only the right half: a turned page lifts off to the left, out of view. Closed, the spine shows. */
+.book-stage[data-mode='single']:not([data-closed='front']) {
   overflow-x: clip;
 }
 
@@ -209,9 +203,10 @@
   inset: 3% 2% -2%;
   left: calc(50% - var(--page-w) * (1 - var(--closed-left, 0)) + 2%);
   border-radius: 1em;
-  background: var(--table-shadow);
-  filter: blur(1.4em);
-  opacity: 0.75;
+  /* A soft shadow drawn as a gradient, not a blur filter, so it costs nothing while pages turn. */
+  background: radial-gradient(closest-side, var(--table-shadow), transparent);
+  transform: scale(1.12, 1.08);
+  opacity: 0.85;
   transition: left 1050ms cubic-bezier(0.32, 0.08, 0.18, 1), right 1050ms cubic-bezier(0.32, 0.08, 0.18, 1);
 }
 
@@ -233,6 +228,10 @@
   height: 97.4%;
   transform-origin: left center;
   transform-style: preserve-3d;
+}
+
+/* Only the leaves near the open page keep a layer of their own, which keeps memory low on phones. */
+.leaf--near {
   will-change: transform;
 }
 
@@ -315,12 +314,12 @@
 
 .leaf__face--front .leaf__shade {
   background: linear-gradient(to right, rgb(0 0 0 / 0.05), rgb(255 255 255 / 0.12) 55%, rgb(0 0 0 / 0.5));
-  opacity: min(1, calc(var(--leaf-t) * 2.2));
+  opacity: 0;
 }
 
 .leaf__face--back .leaf__shade {
   background: linear-gradient(to left, rgb(0 0 0 / 0.05), rgb(255 255 255 / 0.12) 55%, rgb(0 0 0 / 0.5));
-  opacity: min(1, calc((1 - var(--leaf-t)) * 2.2));
+  opacity: 0;
 }
 
 /* The stacks of pages under the open spread, thick on the side that has more of the book. */
