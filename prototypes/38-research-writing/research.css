@@ -1,0 +1,281 @@
+/*
+ * Prototype 38: Research & writing. Builds are folders; research is paper: a flat raised sheet of words beside a
+ * printed first page, with a second page peeking behind it. Writing is one quiet line under it.
+ */
+
+/* The paper: words on the left, the printed page on the right. */
+.paper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+  align-items: center;
+  gap: clamp(var(--space-6), 5vw, var(--space-9));
+  padding: clamp(var(--space-5), 3vw, var(--space-7));
+  background: var(--surface-raised);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.paper__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.paper__meta span + span::before {
+  content: '·';
+  margin-right: var(--space-2);
+}
+
+.paper__title {
+  margin-top: var(--space-4);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-heading);
+  letter-spacing: -0.02em;
+  line-height: var(--leading-tight);
+}
+
+.paper__subtitle {
+  max-width: 34rem;
+  margin-top: var(--space-2);
+  font-size: var(--text-md);
+  line-height: var(--leading-snug);
+}
+
+.paper__summary {
+  max-width: 36rem;
+  margin-top: var(--space-4);
+  color: var(--ink-muted);
+  line-height: var(--leading-body);
+}
+
+/* The headline number, in the featured cards' voice: body weight, a mono line under it. */
+.paper__stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+.paper__stat-value {
+  font-size: var(--card-stat-size);
+  font-weight: var(--weight-body);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.paper__stat-arrow {
+  color: var(--ink-muted);
+}
+
+.paper__stat-label {
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / var(--leading-snug) var(--font-mono);
+}
+
+.paper__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-6);
+  margin-top: var(--space-6);
+}
+
+/* The one solid action: asking for an arXiv endorsement. */
+.endorse {
+  position: relative;
+}
+
+.endorse__button {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  padding-inline: var(--space-5);
+  color: var(--surface-raised);
+  font: inherit;
+  font-size: var(--text-sm);
+  background: var(--ink);
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: opacity var(--duration-fast) linear;
+}
+
+@media (hover: hover) {
+  .endorse__button:hover {
+    opacity: 0.86;
+  }
+}
+
+.endorse__note {
+  position: absolute;
+  bottom: calc(100% + var(--space-2));
+  left: 0;
+  z-index: 5;
+  display: grid;
+  gap: var(--space-3);
+  width: min(320px, 80vw);
+  padding: var(--space-4);
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  background: var(--surface-raised);
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card), 0 18px 40px -18px rgb(0 0 0 / 30%);
+  animation: endorse-in var(--duration-base) var(--ease-out);
+}
+
+.endorse__note[hidden] {
+  display: none;
+}
+
+.endorse__note strong {
+  color: var(--ink);
+  font-weight: var(--weight-heading);
+}
+
+.endorse__kicker {
+  color: var(--ink);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.endorse__code {
+  font: var(--weight-body) var(--text-xs) / 1.4 var(--font-mono);
+}
+
+.endorse__code span {
+  color: var(--ink);
+}
+
+.endorse__links .action-link {
+  min-height: 0;
+}
+
+@keyframes endorse-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* The printed page: page one of the PDF on white paper, a second sheet turned a little behind it. */
+.paper__sheet {
+  position: relative;
+  display: block;
+  align-self: center;
+  aspect-ratio: 778 / 1100;
+  transform: rotate(1.2deg);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.paper__page {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border-radius: 3px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent),
+    3px 6px 18px -6px rgb(0 0 0 / 22%);
+}
+
+.paper__page--behind {
+  transform: translate(10px, 8px) rotate(2.6deg);
+  background: #fbfaf7;
+}
+
+@media (hover: hover) {
+  .paper:hover .paper__sheet {
+    transform: rotate(0deg) translateY(-4px);
+  }
+}
+
+/* Dark: the page dims a touch so it doesn't glare off the night. */
+:root[data-theme='dark'] img.paper__page {
+  filter: brightness(0.86);
+}
+
+:root[data-theme='dark'] .paper__page--behind {
+  background: #d9d7d0;
+}
+
+/* Writing: one quiet line under the paper. */
+.writing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3) var(--space-6);
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: var(--hairline) solid var(--line);
+}
+
+.writing__label {
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.writing__list {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.writing__item {
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+
+/* Where it lives, read right after the title and wrapping with it. */
+.writing__where {
+  display: inline-block;
+  margin-left: var(--space-2);
+  color: var(--ink-muted);
+  font: var(--weight-body) 0.625rem / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Tablets and phones: the page on top, smaller and centred, the words under it; writing stacks. */
+@media (max-width: 759px) {
+  .paper {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .paper__sheet {
+    order: -1;
+    justify-self: center;
+    width: min(200px, 60%);
+  }
+
+  .writing {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .writing__list {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paper__sheet,
+  .endorse__note {
+    transition: none;
+    animation: none;
+  }
+}
