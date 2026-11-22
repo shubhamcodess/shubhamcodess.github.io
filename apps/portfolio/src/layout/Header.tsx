@@ -31,7 +31,7 @@ export function Header({ page }: HeaderProps) {
   }
   // Once there is writing, Research (a section on home) gives way to Writing, the page it leads to.
   const nav: readonly NavItem[] = site.nav.map((item) =>
-    writingLive && item.to === `#${site.research.id}` ? { label: site.routes.writing.label, to: 'writing' } : item,
+    writingLive && item.to === `#${site.research.id}` ? { ...item, label: site.routes.writing.label, to: 'writing', activeOn: [] } : item,
   )
   const links: readonly NavItem[] = nav.filter((item) => item.to !== page && (enabled[item.to] ?? true))
 
@@ -46,7 +46,12 @@ export function Header({ page }: HeaderProps) {
       </a>
       <nav className="site-header__nav" aria-label="Main">
         {links.map((item) => (
-          <a key={item.to} className="site-header__link" href={hrefTo(item.to)} {...current(item)}>
+          <a
+            key={item.to}
+            className={`site-header__link${item.phone === false ? ' site-header__link--wide' : ''}`}
+            href={hrefTo(item.to)}
+            {...current(item)}
+          >
             {item.label}
           </a>
         ))}

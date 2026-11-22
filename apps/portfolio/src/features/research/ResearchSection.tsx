@@ -1,9 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { site } from '../../config/site'
 import { papers, writing } from '../../content/research'
-import type { Paper } from '../../content/types'
+import type { Paper, WritingPost } from '../../content/types'
 import { hrefTo } from '../../lib/routes'
-import { writingLive } from '../../lib/writing'
+import { posts as sitePosts, writingLive } from '../../lib/writing'
 import { ActionLink } from '../../ui/ActionLink'
 import { Reveal } from '../../ui/Reveal'
 import './research.css'
@@ -17,7 +17,7 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'sh
 export function ResearchSection() {
   const copy = site.research
   const headingId = `${copy.id}-title`
-  const posts = writing.slice(0, copy.writingCount)
+  const posts = latestWriting().slice(0, copy.writingCount)
 
   return (
     <section className="panel section" id={copy.id} aria-labelledby={headingId}>
@@ -108,6 +108,20 @@ function WritingTitle({ title }: { readonly title: string }) {
       ) : null}
     </span>
   )
+}
+
+const plainTitle = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+
+/**
+ * The writing list: posts on this site first (newest first), then the Substack posts, leaving out any Substack post
+ * that is the same piece as one here (its title starts with the site post's title).
+ */
+function latestWriting(): WritingPost[] {
+  const here: WritingPost[] = writingLive
+    ? sitePosts.map((post) => ({ title: post.title, href: `${hrefTo('writing')}${post.slug}/`, where: 'here', date: post.date }))
+    : []
+  const elsewhere = writing.filter((post) => !here.some((own) => plainTitle(post.title).startsWith(plainTitle(own.title))))
+  return [...here, ...elsewhere]
 }
 
 /** One paper: the words on the left, page one printed on the right with a second sheet behind it. */

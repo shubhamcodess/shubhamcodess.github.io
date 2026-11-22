@@ -87,6 +87,11 @@
   .site-header__switches {
     display: none;
   }
+
+  /* Links marked phone: false in the config (Builds, Experience) leave the bar on phones. */
+  .site-header__link--wide {
+    display: none;
+  }
 }
 
 /* Phones: the four links draw in, closer to each other and to the logo, so the bar fits beside it. */

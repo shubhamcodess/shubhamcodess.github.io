@@ -23,6 +23,8 @@ export interface NavItem {
   readonly to: RouteId | `#${string}`
   /** Home page sections (by id) during which this link shows as current. */
   readonly activeOn?: readonly string[]
+  /** False leaves the link out of the bar on phones (under 600px), where the dock and the hero already reach it. */
+  readonly phone?: boolean
 }
 
 export interface RouteConfig {
