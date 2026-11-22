@@ -7,6 +7,7 @@ import { App } from './app/App'
 import { loadPage, type Page } from './app/pages'
 import { site } from './config/site'
 import { buildFromPath, hrefTo, isRouteId } from './lib/routes'
+import { posts, writingLive } from './lib/writing'
 import './styles/tokens.css'
 import './styles/base.css'
 import './styles/buttons.css'
@@ -23,12 +24,19 @@ function resolvePage(route: string | undefined): Page | null {
   }
   if (route === 'not-found') return { id: 'notFound' }
   if (route === 'me' && !site.features.mePage) return null
+  if (route === 'writing' || route === 'post') {
+    if (!writingLive) return null
+    if (route === 'writing') return { id: 'writing' }
+    const slug = window.location.pathname.split('/').filter(Boolean).at(-1) ?? ''
+    return posts.some((post) => post.slug === slug) ? { id: 'post', slug } : null
+  }
   return isRouteId(route) ? { id: route } : null
 }
 
 const page = resolvePage(root.dataset.route)
 // An address that names no build goes to the index, which is the nearest true answer; a page that is switched off goes home.
-if (!page) window.location.replace(hrefTo(root.dataset.route === 'project' ? 'builds' : 'home'))
+const nearest = (route?: string) => (route === 'project' ? 'builds' : route === 'post' && writingLive ? 'writing' : 'home')
+if (!page) window.location.replace(hrefTo(nearest(root.dataset.route)))
 
 const { light } = site.hero
 document.documentElement.style.setProperty('--light-scroll-rate', String(light.parallax.scrollLight))
@@ -55,7 +63,7 @@ if (page) {
   flushSync(() =>
     app.render(
       <StrictMode>
-        <App current={page.id === 'project' ? 'builds' : page.id === 'notFound' ? undefined : page.id}>{content}</App>
+        <App current={page.id === 'project' ? 'builds' : page.id === 'post' ? 'writing' : page.id === 'notFound' ? undefined : page.id}>{content}</App>
       </StrictMode>,
     ),
   )

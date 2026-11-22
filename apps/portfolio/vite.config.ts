@@ -1,12 +1,13 @@
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { readFileSync } from 'node:fs'
-import { extname } from 'node:path'
+import { existsSync, readFileSync } from 'node:fs'
+import { extname, join } from 'node:path'
 import react from '@vitejs/plugin-react'
 import { defineConfig, type Plugin } from 'vite'
 import { site } from './src/config/site'
 import type { RouteId } from './src/config/types'
 import { builds } from './src/content/builds'
+import { loadWriting, materialTypes, metaOf, writingDir } from './src/content/writing-loader'
 import {
   headTags,
   indexablePages,
@@ -67,6 +68,86 @@ function projectPages(): Plugin {
   }
 }
 
+const writingTemplate = 'writing/index.html'
+const postTemplate = 'post/index.html'
+const postPath = /\/writing\/([a-z0-9-]+)\/?$/
+const materialPath = /\/writing\/([a-z0-9-]+)\/([^/]+)$/
+const virtualIndex = 'virtual:writing'
+const virtualPost = 'virtual:writing-post/'
+
+/** Whether the Writing pages are on the site: switched on and at least one published post. */
+const writingLive = (posts: readonly unknown[]) => site.features.writing && posts.length > 0
+
+/**
+ * The writing (src/content/writing-loader.ts): two virtual modules for the app (every post's front matter, and
+ * each post's HTML on its own, loaded only on its page), one real HTML file per post from the post template, and
+ * each post's pictures copied beside its page. In development everything is read fresh and served in place.
+ */
+function writingPages(): Plugin {
+  const read = () => loadWriting(base)
+  return {
+    name: 'portfolio-writing-pages',
+    resolveId: (id) => (id === virtualIndex || id.startsWith(virtualPost) ? `\0${id}` : undefined),
+    load(id) {
+      if (!id.startsWith('\0virtual:writing')) return undefined
+      const posts = writingLive(read()) ? read() : []
+      if (id === `\0${virtualIndex}`) {
+        const bodies = posts.map((post) => `${JSON.stringify(post.slug)}: () => import(${JSON.stringify(virtualPost + post.slug)})`)
+        return `export const posts = ${JSON.stringify(posts.map(metaOf))}\nexport const bodies = { ${bodies.join(', ')} }\n`
+      }
+      const slug = id.slice(`\0${virtualPost}`.length)
+      const post = posts.find((item) => item.slug === slug)
+      return `export default ${JSON.stringify(post?.html ?? '')}\n`
+    },
+    configureServer(server) {
+      server.watcher.add(writingDir.pathname)
+      // A change to any post reloads the page with the new text.
+      server.watcher.on('all', (_event, file) => {
+        if (!file.startsWith(writingDir.pathname)) return
+        for (const module of server.moduleGraph.idToModuleMap.values())
+          if (module.id?.startsWith('\0virtual:writing')) server.moduleGraph.invalidateModule(module)
+        server.ws.send({ type: 'full-reload' })
+      })
+      server.middlewares.use((request, response, next) => {
+        const [path = '', query] = (request.url ?? '').split('?')
+        const posts = read()
+        if (!writingLive(posts)) return next()
+        const material = materialPath.exec(path)
+        if (material) {
+          const [, slug = '', name = ''] = material
+          const file = join(writingDir.pathname, slug, name)
+          const type = materialTypes[extname(name).toLowerCase()]
+          if (type && posts.some((post) => post.slug === slug) && existsSync(file)) {
+            response.setHeader('content-type', type)
+            return response.end(readFileSync(file))
+          }
+        }
+        const suffix = query ? `?${query}` : ''
+        if (/\/writing\/?$/.test(path)) request.url = `${server.config.base}${writingTemplate}${suffix}`
+        const slug = postPath.exec(path)?.[1]
+        if (slug && posts.some((post) => post.slug === slug)) request.url = `${server.config.base}${postTemplate}${suffix}`
+        next()
+      })
+    },
+    generateBundle: {
+      order: 'post',
+      handler(_options, bundle) {
+        const posts = read()
+        const page = bundle[postTemplate]
+        if (writingLive(posts) && page?.type === 'asset') {
+          for (const post of posts) {
+            this.emitFile({ type: 'asset', fileName: `writing/${post.slug}/index.html`, source: String(page.source) })
+            for (const name of post.materials)
+              this.emitFile({ type: 'asset', fileName: `writing/${post.slug}/${name}`, source: readFileSync(join(writingDir.pathname, post.slug, name)) })
+          }
+        }
+        delete bundle[postTemplate]
+        if (!writingLive(posts)) delete bundle[writingTemplate]
+      },
+    },
+  }
+}
+
 /**
  * Keeps the app script render-blocking in the built pages (Vite rewrites the tag and drops the attribute),
  * so the browser paints each page only once it is fully drawn. See the note in src/main.tsx.
@@ -94,6 +175,12 @@ const readCredentials = (): SeoCredential[] => JSON.parse(readFileSync('public/d
 function seoPageOf(html: string, path: string): SeoPage | undefined {
   if (path === '404.html') return { id: 'notFound' }
   const route = routeOf(html)
+  if (route === 'post') {
+    const slug = /writing\/([a-z0-9-]+)\/?/.exec(path)?.[1]
+    // Read fresh, so a post added while the dev server runs gets its title too.
+    const post = loadWriting(base).find((item) => item.slug === slug)
+    return post ? { id: 'post', post: metaOf(post) } : undefined
+  }
   if (route === 'project') {
     const slug = /builds\/([a-z0-9-]+)\/?/.exec(path)?.[1]
     const build = builds.find((item) => item.slug === slug)
@@ -107,6 +194,10 @@ function sourcesOf(page: SeoPage): string[] {
   switch (page.id) {
     case 'project':
       return ['src/content/builds.ts', 'src/content/build-stories.ts', `src/motion/${page.build.slug}`, `public/motion/${page.build.slug}`]
+    case 'post':
+      return [`content/writing/${page.post.slug}`]
+    case 'writing':
+      return ['content/writing', 'src/features/writing']
     case 'builds':
       return ['src/content/builds.ts', 'src/features/builds']
     case 'experience':
@@ -264,6 +355,8 @@ const pageModules: Readonly<Record<string, string>> = {
   credentials: 'src/features/credentials/CredentialsPage.tsx',
   me: 'src/features/me/MePage.tsx',
   project: 'src/features/project/ProjectPage.tsx',
+  writing: 'src/features/writing/WritingPage.tsx',
+  post: 'src/features/writing/PostPage.tsx',
   'not-found': 'src/features/not-found/NotFoundPage.tsx',
 }
 
@@ -308,7 +401,7 @@ const base = process.env.PORTFOLIO_BASE ?? '/'
 export default defineConfig({
   base,
   appType: 'mpa',
-  plugins: [react(), projectPages(), renderBlocking(), seo(), preloadPage()],
+  plugins: [react(), projectPages(), writingPages(), renderBlocking(), seo(), preloadPage()],
   build: {
     target: 'es2022',
     rolldownOptions: {
@@ -319,6 +412,8 @@ export default defineConfig({
         credentials: 'credentials/index.html',
         ...(site.features.mePage ? { me: 'gallery/index.html' } : {}),
         project: template,
+        writing: writingTemplate,
+        post: postTemplate,
       },
     },
   },

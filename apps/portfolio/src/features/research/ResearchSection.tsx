@@ -2,6 +2,8 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { site } from '../../config/site'
 import { papers, writing } from '../../content/research'
 import type { Paper } from '../../content/types'
+import { hrefTo } from '../../lib/routes'
+import { writingLive } from '../../lib/writing'
 import { ActionLink } from '../../ui/ActionLink'
 import { Reveal } from '../../ui/Reveal'
 import './research.css'
@@ -44,9 +46,16 @@ export function ResearchSection() {
                 <h3 className="writing__label" id={`${copy.id}-writing`}>
                   {copy.writingLabel}
                 </h3>
-                <ActionLink href={copy.allWriting.href} icon="arrowRight" external>
-                  {copy.allWriting.label}
-                </ActionLink>
+                {/* Once the Writing pages exist, All writing leads there; until then to Substack. */}
+                {writingLive ? (
+                  <ActionLink href={hrefTo('writing')} icon="arrowRight">
+                    {copy.allWriting.label}
+                  </ActionLink>
+                ) : (
+                  <ActionLink href={copy.allWriting.href} icon="arrowRight" external>
+                    {copy.allWriting.label}
+                  </ActionLink>
+                )}
               </div>
               <ul className="writing__list">
                 {posts.map((post) => (

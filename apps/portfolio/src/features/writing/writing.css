@@ -1,0 +1,809 @@
+/*
+ * The Writing pages (from prototype 39): /writing/ lists every post by year; a post is a slim bar, a masthead of
+ * paper (a letter by default, or torn), a reading column with Contents, then tags and the previous and next posts.
+ */
+
+/* ——— /writing/ ——— */
+.writing-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-7);
+}
+
+/* The builds page's lean filter chips, the same look (the `--button-*` tokens). */
+.writing-filter__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--button-height);
+  padding-inline: var(--button-pad);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--button-text-size) / 1 var(--button-text-family);
+  letter-spacing: var(--button-text-tracking);
+  text-transform: var(--button-text-case);
+  background: none;
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) linear,
+    background-color var(--duration-fast) linear,
+    border-color var(--duration-fast) linear;
+}
+
+.writing-filter__chip span {
+  opacity: 0.6;
+}
+
+.writing-filter__chip[aria-pressed='true'] {
+  color: var(--ink);
+  background: var(--surface-raised);
+  border-color: color-mix(in srgb, var(--ink) 45%, var(--line));
+}
+
+.writing-filter__chip[aria-pressed='true'] span {
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .writing-filter__chip:not([aria-pressed='true']):hover {
+    color: var(--ink);
+    border-color: var(--ink-muted);
+  }
+}
+
+.writing-year {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: var(--space-5);
+  padding-block: var(--space-5);
+  border-top: var(--hairline) solid var(--line);
+}
+
+.writing-year[hidden] {
+  display: none;
+}
+
+.writing-year__label {
+  padding-top: var(--space-4);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+}
+
+.writing-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.writing-row {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4);
+  margin-inline: calc(-1 * var(--space-4));
+  border-radius: var(--radius-md);
+  transition: background-color var(--duration-fast) linear;
+}
+
+@media (hover: hover) {
+  .writing-row:hover {
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
+  }
+}
+
+.writing-row__meta,
+.writing-row__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-4);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.writing-row__kind {
+  color: var(--ink);
+}
+
+.writing-row__tag {
+  padding: 3px 8px;
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-pill);
+}
+
+.writing-row__title {
+  min-width: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-snug);
+  letter-spacing: -0.01em;
+}
+
+.writing-row__title .link-dots {
+  display: inline-block;
+  max-width: min(100%, 44rem);
+  padding-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+.writing-row__title .link-dots::before,
+.writing-row__title .link-dots::after {
+  bottom: 0;
+}
+
+.writing-row__summary {
+  max-width: 40rem;
+  color: var(--ink-muted);
+  line-height: var(--leading-body);
+}
+
+/* ——— a piece ——— */
+.post {
+  max-width: 64rem;
+}
+
+/* The bar above the masthead: back to the index, and on phones and tablets the contents. */
+.post-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.post-contents {
+  position: relative;
+}
+
+.post-contents__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--button-height);
+  padding-inline: var(--button-pad);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--button-text-size) / 1 var(--button-text-family);
+  letter-spacing: var(--button-text-tracking);
+  text-transform: var(--button-text-case);
+  background: none;
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--button-radius);
+  cursor: pointer;
+}
+
+.post-contents__button .icon {
+  transition: rotate var(--duration-base) var(--ease-out);
+}
+
+.post-contents__button[aria-expanded='true'] {
+  color: var(--ink);
+  background: var(--surface-raised);
+  border-color: color-mix(in srgb, var(--ink) 45%, var(--line));
+}
+
+.post-contents__button[aria-expanded='true'] .icon {
+  rotate: 180deg;
+}
+
+.post-contents__sheet {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 6;
+  display: grid;
+  width: min(260px, 80vw);
+  padding: 4px;
+  font-size: var(--text-sm);
+  background: var(--surface-raised);
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card), 0 18px 40px -18px rgb(0 0 0 / 30%);
+}
+
+.post-contents__sheet[hidden] {
+  display: none;
+}
+
+.post-contents__sheet a {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding-inline: 10px;
+  color: var(--ink-muted);
+  border-radius: 8px;
+}
+
+.post-contents__sheet a:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+
+@media (min-width: 1100px) {
+  .post-contents {
+    display: none;
+  }
+}
+
+/*
+ * Phones and tablets: the bar stays under the top edge while reading. No strip of its own: it sits on the page's
+ * paper, which fades out below it, so text slides softly underneath.
+ */
+@media (max-width: 1099px) {
+  .post-bar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    margin-inline: calc(var(--page-gutter) * -1);
+    padding: var(--space-3) var(--page-gutter);
+    margin-bottom: var(--space-3);
+    transition: background-color var(--duration-base) linear;
+  }
+
+  /* Only once it is stuck: the page's own paper and grain behind it, no fade and no blur, so text simply goes under. */
+  .post-bar[data-stuck] {
+    background: var(--panel-texture), var(--surface);
+  }
+}
+
+/*
+ * The masthead, as a piece of paper laid on the page (third pass). Two versions to judge:
+ *  - torn: a note torn from a pad, a strip of tape at the top, faint ruled lines, turned a little, a chunky offset shadow;
+ *  - letter (the default): a crisp sheet cut with pinking shears along its foot, a soft shadow.
+ * The edge is a clip-path on the paper; the shadow is a drop-shadow on its wrapper, so it follows the cut.
+ */
+.post-mast {
+  position: relative;
+}
+
+.post-mast__paper {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
+  gap: var(--space-6) var(--space-8);
+  padding: clamp(var(--space-6), 4vw, var(--space-8)) clamp(var(--space-5), 4vw, var(--space-8)) calc(clamp(var(--space-6), 4vw, var(--space-8)) + 14px);
+}
+
+/* With no facts in the front matter: one column, just the kicker, title and summary. */
+.post-mast--plain .post-mast__paper {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.post-mast--plain {
+  max-width: 46rem;
+}
+
+/* Torn note */
+.post-mast--torn {
+  --note-paper: color-mix(in srgb, var(--surface-raised) 82%, #fff3c4);
+  --note-rule: color-mix(in srgb, var(--accent) 9%, transparent);
+  max-width: 60rem;
+  rotate: -0.5deg;
+  filter: drop-shadow(5px 6px 0 color-mix(in srgb, var(--ink) 10%, transparent));
+}
+
+.post-mast--torn .post-mast__paper {
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 31px, var(--note-rule) 31px 32px),
+    var(--panel-texture, none),
+    var(--note-paper);
+}
+
+.post-mast__tape {
+  position: absolute;
+  z-index: 1;
+  top: -10px;
+  left: 50%;
+  width: 120px;
+  height: 26px;
+  translate: -50% 0;
+  rotate: 2deg;
+  background: color-mix(in srgb, var(--accent-warm) 16%, rgb(255 255 255 / 55%));
+  border-inline: 1px dashed color-mix(in srgb, var(--accent-warm) 25%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+}
+
+/* Letter */
+.post-mast--letter {
+  max-width: 60rem;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 6%)) drop-shadow(0 14px 22px color-mix(in srgb, var(--ink) 12%, transparent));
+}
+
+.post-mast--letter .post-mast__paper {
+  /* A step up from the page, not stark white: half the raised paper, half the page's own. */
+  --ridge: 14px;
+  background: var(--panel-texture, none), color-mix(in srgb, var(--surface-raised) 50%, var(--surface));
+  /* Even ridges along the foot, a fixed 14px apart whatever the width: pinking shears. */
+  -webkit-mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--ridge) / 2) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--ridge) calc(var(--ridge) / 2) repeat-x;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--ridge) / 2) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--ridge) calc(var(--ridge) / 2) repeat-x;
+}
+
+:root[data-theme='dark'] .post-mast--letter .post-mast__paper {
+  background: var(--panel-texture, none), var(--surface-raised);
+}
+
+/* Dark: the paper steps back so it doesn't glare, the tape and rules dimmer. */
+:root[data-theme='dark'] .post-mast--torn {
+  /* The page's own night, one step up, with the faintest warmth: the same family as the background. */
+  --note-paper: color-mix(in srgb, var(--surface-raised) 94%, #ffd9a0);
+  --note-rule: rgb(255 255 255 / 4%);
+  filter: drop-shadow(4px 5px 0 rgb(0 0 0 / 55%));
+}
+
+:root[data-theme='dark'] .post-mast__tape {
+  background: color-mix(in srgb, var(--accent-warm) 14%, rgb(255 255 255 / 6%));
+  border-inline-color: rgb(255 255 255 / 8%);
+}
+
+:root[data-theme='dark'] .post-mast--letter {
+  filter: drop-shadow(0 14px 22px rgb(0 0 0 / 55%));
+}
+
+.post-mast__kicker {
+  color: var(--ink);
+  font: var(--weight-body) var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.post-mast__title {
+  margin-top: var(--space-4);
+  font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.post-mast__dek {
+  max-width: 38rem;
+  margin-top: var(--space-4);
+  color: var(--ink-muted);
+  font-size: var(--text-md);
+  line-height: var(--leading-snug);
+}
+
+.post-mast__facts {
+  display: grid;
+  align-content: start;
+  margin: 0;
+  padding-left: var(--space-6);
+  border-left: var(--hairline) solid var(--line);
+}
+
+.post-mast__facts div {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  gap: var(--space-3);
+  padding-block: var(--space-2);
+}
+
+.post-mast__facts dt {
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1.6 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.post-mast__facts dd {
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.post-mast__numbers {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-5) var(--space-8);
+  padding-top: var(--space-5);
+  border-top: var(--hairline) solid var(--line);
+}
+
+.post-mast__numbers p {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.post-mast__value {
+  font-size: var(--card-stat-size);
+  font-weight: var(--weight-body);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.post-mast__label,
+.post-mast__note {
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1.4 var(--font-mono);
+}
+
+.post-mast__note {
+  margin-left: auto;
+  max-width: 18rem;
+}
+
+/* The reading column, with its sections in a quiet rail on wide screens. */
+.post-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7);
+  margin-top: var(--space-8);
+}
+
+.post-toc {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .post-layout {
+    grid-template-columns: 12rem minmax(0, 42rem);
+  }
+
+  .post-toc {
+    position: sticky;
+    top: var(--space-6);
+    display: grid;
+    align-self: start;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .post-toc a {
+    color: var(--ink-muted);
+    transition: color var(--duration-fast) linear;
+  }
+
+  .post-toc a:hover {
+    color: var(--ink);
+  }
+}
+
+.post-toc__label {
+  margin-bottom: var(--space-2);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.post-prose {
+  max-width: 42rem;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+
+.post-prose > * + * {
+  margin-top: var(--space-5);
+}
+
+.post-prose h2 {
+  margin-top: var(--space-8);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-snug);
+  letter-spacing: -0.01em;
+  scroll-margin-top: var(--space-6);
+}
+
+.post-prose a {
+  text-decoration: underline dotted;
+  text-decoration-color: var(--link-underline);
+  text-underline-offset: 5px;
+}
+
+.post-prose code {
+  padding: 2px 6px;
+  font: 0.9em var(--font-mono);
+  background: var(--surface-sunken);
+  border-radius: 6px;
+}
+
+.post-prose pre {
+  padding: var(--space-5);
+  overflow-x: auto;
+  font: 0.875rem / 1.6 var(--font-mono);
+  background: var(--surface-sunken);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.post-prose pre code {
+  padding: 0;
+  background: none;
+}
+
+.post-prose pre .c {
+  color: var(--ink-muted);
+}
+
+.post-prose blockquote {
+  padding-left: var(--space-5);
+  font-size: 1.1875rem;
+  line-height: 1.55;
+  border-left: 2px solid var(--accent-warm);
+}
+
+/* Lists and smaller headings in a post. */
+.post-prose ul,
+.post-prose ol {
+  padding-left: var(--space-5);
+}
+
+.post-prose li + li {
+  margin-top: var(--space-2);
+}
+
+.post-prose h3 {
+  margin-top: var(--space-7);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-heading);
+  scroll-margin-top: var(--space-8);
+}
+
+.post-prose h4 {
+  font-weight: var(--weight-heading);
+}
+
+.post-prose hr {
+  border: 0;
+  border-top: var(--hairline) solid var(--line);
+}
+
+/*
+ * Anything that scrolls sideways in a post (a long code line) gets a thin scrollbar in the theme's colour,
+ * not the browser's own.
+ */
+.post-prose pre {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--accent) 35%, transparent) transparent;
+}
+
+.post-prose pre::-webkit-scrollbar {
+  height: 4px;
+}
+
+.post-prose pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.post-prose pre::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: var(--radius-pill);
+}
+
+/* A picture, sketch or diagram: never wider than the column, never scrolling, a mono caption under it. */
+.post-figure {
+  display: grid;
+  gap: var(--space-3);
+  margin-block: var(--space-7);
+}
+
+.post-figure__open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  background: var(--surface-raised);
+  border: 0;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  cursor: zoom-in;
+}
+
+.post-figure img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+/* A drawing with a dark version: the theme shows one; a hidden lazy picture never downloads. */
+.post-figure img.post-figure__dark,
+:root[data-theme='dark'] .post-figure img.post-figure__light {
+  display: none;
+}
+
+:root[data-theme='dark'] .post-figure img.post-figure__dark {
+  display: block;
+}
+
+.post-figure figcaption {
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1.5 var(--font-mono);
+}
+
+/* A picture opened full size: over a dimmed page, as large as the screen allows, with a close button. */
+.post-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: clamp(var(--space-4), 4vw, var(--space-8));
+  background: color-mix(in srgb, var(--backplate) 86%, transparent);
+  animation: post-zoom-in var(--duration-base) var(--ease-out);
+}
+
+.post-zoom__image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  background: var(--surface-raised);
+  border-radius: var(--radius-md);
+  box-shadow: 0 24px 60px -20px rgb(0 0 0 / 60%);
+}
+
+.post-zoom__close {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: grid;
+  place-items: center;
+  width: var(--target-min);
+  height: var(--target-min);
+  color: var(--night-ink);
+  background: var(--night-glass-solid);
+  border: var(--hairline) solid var(--night-glass-line);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+@keyframes post-zoom-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.post-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  max-width: 42rem;
+  margin-top: var(--space-8);
+  padding-top: var(--space-5);
+  border-top: var(--hairline) solid var(--line);
+}
+
+@media (min-width: 1100px) {
+  .post-foot {
+    margin-left: calc(12rem + var(--space-7));
+  }
+}
+
+/* The previous and next posts, side by side; on phones one above the other. */
+.post-onward {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  width: 100%;
+}
+
+.post-onward__link {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.post-onward__link--next {
+  justify-items: end;
+  text-align: right;
+}
+
+.post-onward__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.post-onward__link .link-dots {
+  display: inline-block;
+  max-width: 100%;
+  padding-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.post-onward__link .link-dots::before,
+.post-onward__link .link-dots::after {
+  bottom: 0;
+}
+
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.post-tags li {
+  padding: 5px 10px;
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--button-text-size) / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-pill);
+}
+
+/* ——— phones ——— */
+@media (max-width: 759px) {
+  .writing-year {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .writing-year__label {
+    padding-top: 0;
+  }
+
+  .writing-row__title {
+    font-size: var(--text-md);
+  }
+
+  .writing-row__title .link-dots {
+    white-space: normal;
+  }
+
+  .post-prose {
+    font-size: 1rem;
+  }
+
+  .post-mast__paper {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .post-mast--torn {
+    rotate: -0.3deg;
+  }
+
+
+
+  .post-mast__facts {
+    padding: var(--space-4) 0 0;
+    border-top: var(--hairline) solid var(--line);
+    border-left: 0;
+  }
+
+  .post-mast__note {
+    margin-left: 0;
+  }
+
+  .post-onward {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .post-onward__link--next {
+    justify-items: start;
+    text-align: left;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-zoom {
+    animation: none;
+  }
+}

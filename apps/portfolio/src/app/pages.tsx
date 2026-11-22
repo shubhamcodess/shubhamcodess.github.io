@@ -3,8 +3,9 @@ import type { Build } from '../content/types'
 
 /** What a page load resolves to. A project page carries the build it is for. */
 export type Page =
-  | { readonly id: 'home' | 'builds' | 'experience' | 'credentials' | 'me' | 'notFound' }
+  | { readonly id: 'home' | 'builds' | 'experience' | 'credentials' | 'me' | 'writing' | 'notFound' }
   | { readonly id: 'project'; readonly build: Build }
+  | { readonly id: 'post'; readonly slug: string }
 
 /**
  * Each page is its own chunk, so a visitor downloads only the page they open (plus what every page shares).
@@ -26,5 +27,12 @@ export function loadPage(page: Page): Promise<ReactElement> {
       return import('../features/not-found/NotFoundPage').then(({ NotFoundPage }) => <NotFoundPage />)
     case 'project':
       return import('../features/project/ProjectPage').then(({ ProjectPage }) => <ProjectPage build={page.build} />)
+    case 'writing':
+      return import('../features/writing/WritingPage').then(({ WritingPage }) => <WritingPage />)
+    case 'post':
+      // The page's code and the post's body load side by side, so the post is drawn whole in one pass.
+      return Promise.all([import('../features/writing/PostPage'), import('../lib/writing').then(({ bodies }) => bodies[page.slug]?.())]).then(
+        ([{ PostPage }, body]) => <PostPage slug={page.slug} html={body?.default ?? ''} />,
+      )
   }
 }

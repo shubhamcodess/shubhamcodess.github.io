@@ -1,4 +1,5 @@
 import { site } from '../config/site'
+import { writingLive } from './writing'
 import type { RouteId } from '../config/types'
 import { builds, type BuildSlug } from '../content/builds'
 import type { Build } from '../content/types'
@@ -39,13 +40,14 @@ export interface SitePage {
  */
 export function sitePages(): readonly SitePage[] {
   const { features, routes, contact, research } = site
-  const order: readonly RouteId[] = ['home', 'builds', 'experience', 'credentials', 'me']
+  const order: readonly RouteId[] = ['home', 'builds', 'writing', 'experience', 'credentials', 'me']
   const enabled: Readonly<Record<RouteId, boolean>> = {
     home: true,
     builds: features.buildsPage,
     experience: features.experience,
     credentials: features.credentials,
     me: features.mePage,
+    writing: writingLive,
   }
   const pages: SitePage[] = order.filter((id) => enabled[id]).map((id) => ({ id, label: routes[id].label, href: hrefTo(id) }))
   if (features.research) {

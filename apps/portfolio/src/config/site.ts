@@ -43,6 +43,13 @@ export const site = {
       title: 'Gallery: off the clock | Shubham Prakash',
       description: 'Shubham Prakash away from work, in photos: rides on the bike, food, places and people.',
     },
+    writing: {
+      path: 'writing/',
+      label: 'Writing',
+      title: 'Writing: research, case studies and notes | Shubham Prakash',
+      description:
+        'Writing by Shubham Prakash: research on AI agents and tools, case studies of private work at IBM, and notes from building software.',
+    },
     credentials: {
       path: 'credentials/',
       label: 'Credentials',
@@ -115,6 +122,25 @@ export const site = {
       howHref: 'https://info.arxiv.org/help/endorsement.html',
       listed: 'Read on arXiv',
     },
+  },
+  writing: {
+    title: 'Writing',
+    lead: 'Research, case studies from private work, and notes from building things.',
+    kinds: { essay: 'Essay', 'case-study': 'Case study', research: 'Research' },
+    kindsPlural: { essay: 'Essays', 'case-study': 'Case studies', research: 'Research' },
+    all: 'All',
+    count: '{n} pieces',
+    back: 'All writing',
+    contents: 'Contents',
+    published: 'Published',
+    reading: 'Reading',
+    minutes: '{n} min read',
+    privateLabel: 'Private',
+    previous: 'Previous',
+    next: 'Next',
+    tags: 'Tags',
+    openPicture: 'Open the picture full size',
+    closePicture: 'Close',
   },
   dock: { label: 'Pages', openHint: 'all pages', sheetLabel: 'Every page', lingerMs: 1400 },
   notFound: {
@@ -295,5 +321,6 @@ export const site = {
     footer: true,
     dock: true,
     research: true,
+    writing: true,
   },
 } as const satisfies SiteConfig

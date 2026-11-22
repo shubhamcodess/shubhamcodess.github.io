@@ -3,6 +3,7 @@ import type { NavItem, NavPage, SiteConfig } from '../config/types'
 import { LogoMark } from '../ui/LogoMark'
 import { hrefTo } from '../lib/routes'
 import { useCurrentSection } from '../lib/sections'
+import { writingLive } from '../lib/writing'
 import { Toggles } from './Toggles'
 import './header.css'
 
@@ -28,7 +29,11 @@ export function Header({ page }: HeaderProps) {
     '#research': features.research,
     '#featured': features.featured,
   }
-  const links: readonly NavItem[] = site.nav.filter((item) => item.to !== page && (enabled[item.to] ?? true))
+  // Once there is writing, Research (a section on home) gives way to Writing, the page it leads to.
+  const nav: readonly NavItem[] = site.nav.map((item) =>
+    writingLive && item.to === `#${site.research.id}` ? { label: site.routes.writing.label, to: 'writing' } : item,
+  )
+  const links: readonly NavItem[] = nav.filter((item) => item.to !== page && (enabled[item.to] ?? true))
 
   // On home, a link is current while its section is the one being read.
   const current = (item: NavItem) =>

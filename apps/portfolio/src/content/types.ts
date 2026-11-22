@@ -32,6 +32,52 @@ export interface BuildStory {
   readonly limits?: readonly string[]
 }
 
+/** What a piece of writing is. One template for all of them (content/writing/_template/index.md). */
+export type WritingKind = 'essay' | 'case-study' | 'research'
+
+export interface WritingFact {
+  readonly label: string
+  readonly value: string
+}
+
+export interface WritingNumber {
+  readonly value: string
+  readonly label: string
+}
+
+/** One ## heading of a post: its address on the page and its words, for Contents. */
+export interface WritingSection {
+  readonly id: string
+  readonly title: string
+}
+
+/** A post's front matter, checked at build time, plus what the build works out (its slug, reading time, sections). */
+export interface WritingMeta {
+  /** The folder's name, and the address: /writing/<slug>/. */
+  readonly slug: string
+  readonly title: string
+  readonly summary: string
+  /** YYYY-MM-DD. */
+  readonly date: string
+  readonly kind: WritingKind
+  readonly tags: readonly string[]
+  readonly draft: boolean
+  readonly masthead: 'letter' | 'torn'
+  /** Where private work was done, such as "IBM"; such a post has no code or demo links. */
+  readonly private?: string | undefined
+  readonly facts: readonly WritingFact[]
+  readonly numbers: readonly WritingNumber[]
+  readonly note?: string | undefined
+  readonly minutes: number
+  readonly sections: readonly WritingSection[]
+}
+
+/** A post with its body: the Markdown made into HTML at build time, and the files beside it. */
+export interface WritingPiece extends WritingMeta {
+  readonly html: string
+  readonly materials: readonly string[]
+}
+
 /** A research paper. Every fact must come from the paper itself. */
 export interface Paper {
   readonly slug: string

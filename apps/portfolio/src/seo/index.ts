@@ -11,9 +11,21 @@ import { builds } from '../content/builds'
 import { employers, featuredCredentials, recognition } from '../content/experience'
 import { photos as mePhotos } from '../content/me'
 import { toolGroups } from '../content/tools'
-import type { Build } from '../content/types'
+import type { Build, WritingMeta } from '../content/types'
+import { readFileSync } from 'node:fs'
+import matter from 'gray-matter'
+import { loadWriting, metaOf, writingDir } from '../content/writing-loader'
 
-export type SeoPage = { readonly id: RouteId } | { readonly id: 'project'; readonly build: Build } | { readonly id: 'notFound' }
+export type SeoPage =
+  | { readonly id: RouteId }
+  | { readonly id: 'project'; readonly build: Build }
+  | { readonly id: 'post'; readonly post: WritingMeta }
+  | { readonly id: 'notFound' }
+
+/** The published posts; the Writing pages exist only when there is one and they are switched on. */
+const posts = loadWriting(process.env.PORTFOLIO_BASE ?? '/').map(metaOf)
+const writingOn = site.features.writing && posts.length > 0
+const postPath = (post: WritingMeta) => `${site.routes.writing.path}${post.slug}/`
 
 /** A credential as public/data/credentials.json stores it. */
 export interface SeoCredential {
@@ -45,26 +57,35 @@ const yearsAt = (from: number, to?: number) => (to ? `${from} to ${to}` : `${fro
 
 export function pathOf(page: SeoPage): string {
   if (page.id === 'project') return `${site.routes.builds.path}${page.build.slug}/`
+  if (page.id === 'post') return postPath(page.post)
   if (page.id === 'notFound') return '404.html'
   return site.routes[page.id].path
 }
 
 export function titleOf(page: SeoPage): string {
   if (page.id === 'project') return seo.projectTitle.replace('{title}', page.build.title).replace('{kind}', page.build.kind)
+  if (page.id === 'post') return `${page.post.title} | ${owner}`
   if (page.id === 'notFound') return `Page not found | ${owner}`
   return site.routes[page.id].title
 }
 
 export function descriptionOf(page: SeoPage): string {
   if (page.id === 'project') return page.build.summary
+  if (page.id === 'post') return page.post.summary
   if (page.id === 'notFound') return site.routes.home.description
   return site.routes[page.id].description
 }
 
 /** The pages search engines should know about: every route that is switched on, and every build. */
 export function indexablePages(): SeoPage[] {
-  const routes = (Object.keys(site.routes) as RouteId[]).filter((id) => id !== 'me' || site.features.mePage)
-  return [...routes.map((id) => ({ id })), ...builds.map((build) => ({ id: 'project' as const, build }))]
+  const routes = (Object.keys(site.routes) as RouteId[]).filter(
+    (id) => (id !== 'me' || site.features.mePage) && (id !== 'writing' || writingOn),
+  )
+  return [
+    ...routes.map((id) => ({ id })),
+    ...builds.map((build) => ({ id: 'project' as const, build })),
+    ...(writingOn ? posts.map((post) => ({ id: 'post' as const, post })) : []),
+  ]
 }
 
 /* ---------- Structured data ---------- */
@@ -248,6 +269,43 @@ export function jsonLd(page: SeoPage, context: SeoContext): object {
       graph.push(
         webPage(page, root, 'ProfilePage', { mainEntity: { '@id': personId(root) } }),
         breadcrumbs(root, [home, [site.routes.me.label, site.routes.me.path]]),
+        person(context),
+      )
+      break
+    case 'writing':
+      graph.push(
+        webPage(page, root, 'CollectionPage', {
+          mainEntity: {
+            '@type': 'ItemList',
+            numberOfItems: posts.length,
+            itemListElement: posts.map((post, index) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              url: `${root}${postPath(post)}`,
+              name: post.title,
+            })),
+          },
+          author: { '@id': personId(root) },
+        }),
+        breadcrumbs(root, [home, [site.routes.writing.label, site.routes.writing.path]]),
+        person(context),
+      )
+      break
+    case 'post':
+      graph.push(
+        webPage(page, root, 'WebPage', { mainEntity: { '@id': `${root}${pathOf(page)}#article` } }),
+        {
+          '@type': page.post.kind === 'essay' ? 'BlogPosting' : 'Article',
+          '@id': `${root}${pathOf(page)}#article`,
+          headline: page.post.title,
+          description: page.post.summary,
+          datePublished: page.post.date,
+          url: `${root}${pathOf(page)}`,
+          author: { '@id': personId(root) },
+          keywords: page.post.tags.join(', ') || undefined,
+          articleSection: site.writing.kinds[page.post.kind],
+        },
+        breadcrumbs(root, [home, [site.routes.writing.label, site.routes.writing.path], [page.post.title, pathOf(page)]]),
         person(context),
       )
       break
@@ -492,6 +550,16 @@ export function pageMarkdown(page: SeoPage, context: SeoContext): string {
     case 'me':
       lines.push(`## ${site.me.title}`, '', site.me.lead, '', ...mePhotos.map((photo) => `- ${photo.title}: ${photo.caption}`), '')
       break
+    case 'writing':
+      lines.push(`## ${site.writing.title}`, '', site.writing.lead, '')
+      lines.push(...posts.map((post) => `- [${post.title}](${root}${postPath(post)}): ${post.summary} (${site.writing.kinds[post.kind]}, ${post.date})`), '')
+      break
+    case 'post': {
+      // The post's own Markdown, as written.
+      const source = readFileSync(new URL(`${page.post.slug}/index.md`, writingDir), 'utf8')
+      lines.push(`${site.writing.kinds[page.post.kind]}, ${page.post.date}, by ${owner}`, '', matter(source).content.trim(), '')
+      break
+    }
   }
   return lines.join('\n')
 }

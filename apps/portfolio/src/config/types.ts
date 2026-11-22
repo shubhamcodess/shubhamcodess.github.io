@@ -13,10 +13,10 @@ export type ButtonStyle = 'pill' | 'lean'
 export type TextureName = 'grain' | 'none'
 
 /** Routes are a closed set. Add one here, add its HTML entry, and the compiler points at the rest. */
-export type RouteId = 'home' | 'builds' | 'experience' | 'credentials' | 'me'
+export type RouteId = 'home' | 'builds' | 'experience' | 'credentials' | 'me' | 'writing'
 
 /** Every kind of page, for choosing its header links. A project page is one per build. */
-export type NavPage = RouteId | 'project'
+export type NavPage = RouteId | 'project' | 'post'
 
 export interface NavItem {
   readonly label: string
@@ -100,6 +100,33 @@ export interface FeatureFlags {
   readonly dock: boolean
   /** Research & writing on home, after Featured builds: the paper and the latest writing. */
   readonly research: boolean
+  /**
+   * The Writing pages (/writing/ and one per post), made from content/writing/. They appear only once there is a
+   * published post; until then the header keeps Research and nothing about them is on the site.
+   */
+  readonly writing: boolean
+}
+
+export interface WritingConfig {
+  readonly title: string
+  readonly lead: string
+  /** Each kind's name, in the list, the filter and a post's heading. */
+  readonly kinds: { readonly essay: string; readonly 'case-study': string; readonly research: string }
+  /** Each kind's plural, for its filter chip. */
+  readonly kindsPlural: { readonly essay: string; readonly 'case-study': string; readonly research: string }
+  readonly all: string
+  readonly count: string
+  readonly back: string
+  readonly contents: string
+  readonly published: string
+  readonly reading: string
+  readonly minutes: string
+  readonly privateLabel: string
+  readonly previous: string
+  readonly next: string
+  readonly tags: string
+  readonly openPicture: string
+  readonly closePicture: string
 }
 
 export interface ResearchConfig {
@@ -266,6 +293,7 @@ export interface SiteConfig {
   /** The floating dock at the foot of the screen: every page, from anywhere. */
   readonly dock: DockConfig
   readonly research: ResearchConfig
+  readonly writing: WritingConfig
   readonly hero: HeroConfig
   readonly notFound: NotFoundConfig
   readonly featured: {
