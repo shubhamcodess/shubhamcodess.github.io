@@ -25,6 +25,7 @@ export function Header({ page }: HeaderProps) {
     credentials: features.credentials,
     me: features.mePage,
     '#contact': features.contact,
+    '#research': features.research,
     '#featured': features.featured,
   }
   const links: readonly NavItem[] = site.nav.filter((item) => item.to !== page && (enabled[item.to] ?? true))

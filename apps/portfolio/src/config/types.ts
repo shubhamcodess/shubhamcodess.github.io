@@ -98,6 +98,37 @@ export interface FeatureFlags {
   readonly footer: boolean
   /** The floating dock: rises while scrolling, holds the logo and the page you're on, opens every page. */
   readonly dock: boolean
+  /** Research & writing on home, after Featured builds: the paper and the latest writing. */
+  readonly research: boolean
+}
+
+export interface ResearchConfig {
+  /** The section's anchor on home. */
+  readonly id: string
+  /** The section's name, also its label in the dock and footer. */
+  readonly label: string
+  readonly title: string
+  readonly lead: string
+  readonly readPaper: string
+  readonly viewCode: string
+  /** How many posts the writing list shows. */
+  readonly writingCount: number
+  readonly writingLabel: string
+  readonly allWriting: { readonly label: string; readonly href: string }
+  /** Where each post lives, as its small tag. */
+  readonly where: { readonly substack: string; readonly here: string }
+  readonly endorse: {
+    readonly button: string
+    readonly kicker: string
+    readonly note: string
+    readonly codeLabel: string
+    /** Shown in place of the code until arXiv sends it. */
+    readonly codePending: string
+    readonly howLabel: string
+    readonly howHref: string
+    /** The button once the paper is listed on arXiv. */
+    readonly listed: string
+  }
 }
 
 export interface DockConfig {
@@ -232,6 +263,7 @@ export interface SiteConfig {
   readonly nav: readonly NavItem[]
   /** The floating dock at the foot of the screen: every page, from anywhere. */
   readonly dock: DockConfig
+  readonly research: ResearchConfig
   readonly hero: HeroConfig
   readonly notFound: NotFoundConfig
   readonly featured: {

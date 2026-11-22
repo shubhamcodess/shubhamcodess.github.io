@@ -32,6 +32,34 @@ export interface BuildStory {
   readonly limits?: readonly string[]
 }
 
+/** A research paper. Every fact must come from the paper itself. */
+export interface Paper {
+  readonly slug: string
+  readonly title: string
+  readonly subtitle: string
+  /** Shown in mono above the title: kind, year, arXiv category. */
+  readonly meta: readonly string[]
+  /** Two or three sentences on what was done and found, in the owner's voice. */
+  readonly summary: string
+  /** One headline result, the same voice as a featured build's fact. */
+  readonly stat: { readonly from: string; readonly to: string; readonly label: string }
+  readonly pdf: ExternalUrl
+  readonly code: ExternalUrl
+  /** Page one of the PDF, under /public, with its pixel size. */
+  readonly preview: { readonly src: string; readonly width: number; readonly height: number; readonly alt: string }
+  /** arXiv: the category submitted to, the endorsement code once arXiv sends it, and the abstract page once listed. */
+  readonly arxiv: { readonly category: string; readonly endorseCode?: string; readonly href?: ExternalUrl }
+}
+
+/** A piece of writing: on Substack now, on this site later. */
+export interface WritingPost {
+  readonly title: string
+  readonly href: string
+  readonly where: 'substack' | 'here'
+  /** YYYY-MM-DD. */
+  readonly date: string
+}
+
 export interface BuildLogo {
   /** The mark for dark mode, light strokes: a path under /public. */
   readonly src: string

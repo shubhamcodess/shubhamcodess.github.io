@@ -28,17 +28,17 @@ export function buildFromPath(pathname: string): Build | undefined {
 
 /** One entry in the site index: a page, or the contact section on home. */
 export interface SitePage {
-  readonly id: RouteId | 'contact'
+  readonly id: RouteId | 'research' | 'contact'
   readonly label: string
   readonly href: string
 }
 
 /**
- * Every page that is switched on, in the site's order, then Contact. The footer and the dock both list these,
+ * Every page that is switched on, in the site's order, with Research (a section on home) after Builds and Contact last. The footer and the dock both list these,
  * so a new page joins both by being added here.
  */
 export function sitePages(): readonly SitePage[] {
-  const { features, routes, contact } = site
+  const { features, routes, contact, research } = site
   const order: readonly RouteId[] = ['home', 'builds', 'experience', 'credentials', 'me']
   const enabled: Readonly<Record<RouteId, boolean>> = {
     home: true,
@@ -48,6 +48,10 @@ export function sitePages(): readonly SitePage[] {
     me: features.mePage,
   }
   const pages: SitePage[] = order.filter((id) => enabled[id]).map((id) => ({ id, label: routes[id].label, href: hrefTo(id) }))
+  if (features.research) {
+    const after = pages.findIndex((page) => page.id === 'builds')
+    pages.splice(after + 1, 0, { id: 'research', label: research.label, href: hrefTo(`#${research.id}`) })
+  }
   if (features.contact) pages.push({ id: 'contact', label: contact.kicker, href: hrefTo(`#${contact.id}`) })
   return pages
 }

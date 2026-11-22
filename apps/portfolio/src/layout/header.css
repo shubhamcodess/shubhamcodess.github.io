@@ -89,13 +89,25 @@
   }
 }
 
-/* The smallest phones: the three links draw in a little so the bar fits with the logo. */
-@media (max-width: 359px) {
+/* Phones: the four links draw in, closer to each other and to the logo, so the bar fits beside it. */
+@media (max-width: 429px) {
+  .site-header {
+    gap: var(--space-2);
+  }
+
   .site-header__nav {
     gap: 0;
   }
 
   .site-header__link {
-    padding-inline: 6px;
+    padding-inline: 5px;
+  }
+}
+
+/* The smallest phones: a touch smaller type as well. */
+@media (max-width: 359px) {
+  .site-header__link {
+    padding-inline: 3px;
+    font-size: 0.8125rem;
   }
 }

@@ -87,9 +87,32 @@ export const site = {
   // The home page's anchors; each page leaves out its own. Gallery, Credentials and Home are in the dock and the footer.
   nav: [
     { label: 'Builds', to: 'builds', activeOn: ['featured'] },
+    { label: 'Research', to: '#research', activeOn: ['research'] },
     { label: 'Experience', to: 'experience', activeOn: ['experience'] },
     { label: 'Contact', to: '#contact', activeOn: ['contact'] },
   ],
+  research: {
+    id: 'research',
+    label: 'Research',
+    title: 'Research & writing',
+    lead: 'A paper on what code-writing agents miss, and notes from the work.',
+    readPaper: 'Read the paper',
+    viewCode: 'View on GitHub',
+    writingCount: 3,
+    writingLabel: 'Writing',
+    allWriting: { label: 'All writing', href: 'https://theshubhamprakash.substack.com/' },
+    where: { substack: 'Substack', here: 'Here' },
+    endorse: {
+      button: 'Endorse on arXiv',
+      kicker: 'arXiv',
+      note: 'I’m an independent researcher submitting this paper to arXiv’s {category}. A first paper there needs one endorsement from someone who already publishes in the category.',
+      codeLabel: 'Endorsement code',
+      codePending: 'coming with the submission',
+      howLabel: 'How endorsement works',
+      howHref: 'https://info.arxiv.org/help/endorsement.html',
+      listed: 'Read on arXiv',
+    },
+  },
   dock: { label: 'Pages', openHint: 'all pages', sheetLabel: 'Every page', lingerMs: 1400 },
   notFound: {
     code: '404',
@@ -268,5 +291,6 @@ export const site = {
     scrollLight: true,
     footer: true,
     dock: true,
+    research: true,
   },
 } as const satisfies SiteConfig
