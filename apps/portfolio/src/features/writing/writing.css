@@ -814,8 +814,16 @@
    * Phones: a calmer foot. The tags become one quiet line of small text; Previous and Next stay plain links as on
    * wide screens (Previous on the left, Next on the right), with more room above them.
    */
+  /* One even step everywhere in the foot: the rule to the tags, the tags to the links, the links to the panel's end. */
   .post-foot {
-    gap: var(--space-6);
+    --foot-step: var(--space-6);
+    gap: var(--foot-step);
+    margin-top: var(--space-7);
+    padding-top: var(--foot-step);
+  }
+
+  main.post {
+    padding-bottom: var(--space-6);
   }
 
   .post-tags {
