@@ -127,7 +127,6 @@ export const site = {
     title: 'Writing',
     lead: 'Research, case studies from private work, and notes from building things.',
     kinds: { essay: 'Essay', 'case-study': 'Case study', research: 'Research' },
-    kindsPlural: { essay: 'Essays', 'case-study': 'Case studies', research: 'Research' },
     all: 'All',
     count: '{n} pieces',
     back: 'All writing',

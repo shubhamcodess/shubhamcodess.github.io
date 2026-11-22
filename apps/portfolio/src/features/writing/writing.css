@@ -587,7 +587,7 @@
 .post-figure {
   display: grid;
   gap: var(--space-3);
-  margin-block: var(--space-7);
+  margin: var(--space-7) 0;
 }
 
 .post-figure__open {

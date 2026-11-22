@@ -17,11 +17,12 @@ export const papers = [
     pdf: 'https://github.com/shubhamcodess/codemode-quiet-faults/blob/main/paper/main.pdf',
     code: 'https://github.com/shubhamcodess/codemode-quiet-faults',
     preview: {
-      // Page one cropped to the title, author line and abstract, at twice the resolution so the words can be read.
+      // Page one cropped to the title, author line and the abstract's first three paragraphs (ending between two of them),
+      // at twice the resolution so the words can be read.
       src: 'research/the-blind-script-abstract.webp',
       width: 1330,
-      height: 1330,
-      alt: 'The top of page one of the paper: its title, author and abstract.',
+      height: 930,
+      alt: 'The top of page one of the paper: its title, author and the start of its abstract.',
     },
     arxiv: { category: 'cs.AI' },
   },

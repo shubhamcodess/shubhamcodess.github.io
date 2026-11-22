@@ -37,6 +37,7 @@ export function PostPage({ slug, html }: PostPageProps) {
   const { previous, next } = neighbours(slug)
   const rows = post.facts.length
     ? [
+        { label: 'Category', value: post.category },
         { label: 'Kind', value: copy.kinds[post.kind] },
         ...post.facts,
         { label: copy.published, value: formatDate(post.date) },
@@ -44,7 +45,7 @@ export function PostPage({ slug, html }: PostPageProps) {
       ]
     : []
   const kicker = [
-    copy.kinds[post.kind],
+    rows.length ? copy.kinds[post.kind] : `${post.category} · ${copy.kinds[post.kind]}`,
     post.private ? `${post.private} · ${copy.privateLabel}` : '',
     rows.length ? '' : formatDate(post.date),
     rows.length ? '' : copy.minutes.replace('{n}', String(post.minutes)),

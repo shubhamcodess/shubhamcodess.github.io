@@ -6,7 +6,8 @@
 title: A short, plain title
 summary: One or two sentences, shown under the title, in the list and in search results.
 date: 2026-11-22          # YYYY-MM-DD, the day it is published
-kind: essay               # essay | case-study | research
+kind: essay               # essay | case-study | research (what the piece is: its label and how search engines read it)
+category: Agents          # the filter on /writing/ is made from these; reuse the same words to group posts (/writing/?category=agents)
 
 # Optional (delete any line you don't need)
 tags: [Design, Agents]    # small pills at the foot of the page
@@ -45,6 +46,8 @@ const answer = 42
 ## Pictures, sketches and diagrams
 
 Put the file in this folder and use its name. The text in quotes becomes the caption.
+For diagrams and sketches, follow DRAWING.md in this folder (give it to whichever AI draws them), and match
+sample-diagram.svg and sample-sketch.svg.
 
 ![What the picture shows, for screen readers](picture.webp "A caption under the picture")
 

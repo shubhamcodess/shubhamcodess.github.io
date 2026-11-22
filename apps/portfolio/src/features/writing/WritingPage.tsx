@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { site } from '../../config/site'
-import type { WritingKind } from '../../content/types'
 import { Header } from '../../layout/Header'
 import { hrefTo } from '../../lib/routes'
 import { posts } from '../../lib/writing'
@@ -9,16 +8,42 @@ import './writing.css'
 const dateFormat = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 export const formatDate = (date: string) => dateFormat.format(new Date(date))
 export const postHref = (slug: string) => `${hrefTo('writing')}${slug}/`
+/** A category's form in the address: ?category=<slug>. */
+export const categorySlug = (category: string) =>
+  category
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+
+const param = 'category'
+const categoryInAddress = () => new URLSearchParams(window.location.search).get(param) ?? ''
 
 /**
  * /writing/ (from prototype 39): every published post, newest first, grouped by year. The builds page's lean
- * filter chips choose a kind, once there is more than one kind. Only posts on this site are listed.
+ * filter chips choose a category (each post's `category` front matter), once there is more than one; the choice
+ * is kept in the address as ?category=<slug>, so a filtered list can be linked to. Only posts on this site are listed.
  */
 export function WritingPage() {
   const copy = site.writing
-  const kinds = (['research', 'case-study', 'essay'] as const).filter((kind) => posts.some((post) => post.kind === kind))
-  const [kind, setKind] = useState<WritingKind | 'all'>('all')
-  const shown = posts.filter((post) => kind === 'all' || post.kind === kind)
+  // Categories in order of their newest post, each with its address form.
+  const categories = [...new Map(posts.map((post) => [categorySlug(post.category), post.category])).entries()]
+  const known = (slug: string) => categories.some(([key]) => key === slug)
+  const [chosen, setChosen] = useState(() => (known(categoryInAddress()) ? categoryInAddress() : ''))
+  const shown = posts.filter((post) => !chosen || categorySlug(post.category) === chosen)
+
+  // The address follows the chip (replacing the history entry), and Back or Forward follow the address.
+  const choose = (slug: string) => {
+    setChosen(slug)
+    const url = new URL(window.location.href)
+    if (slug) url.searchParams.set(param, slug)
+    else url.searchParams.delete(param)
+    history.replaceState(history.state, '', url)
+  }
+  useEffect(() => {
+    const onPop = () => setChosen(known(categoryInAddress()) ? categoryInAddress() : '')
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  })
   const years = [...new Set(shown.map((post) => post.date.slice(0, 4)))]
 
   return (
@@ -33,18 +58,18 @@ export function WritingPage() {
           <p className="eyebrow">{copy.count.replace('{n}', String(posts.length))}</p>
         </header>
 
-        {kinds.length > 1 ? (
-          <div className="writing-filter" role="group" aria-label="Filter by kind">
-            {(['all', ...kinds] as const).map((item) => (
+        {categories.length > 1 ? (
+          <div className="writing-filter" role="group" aria-label="Filter by category">
+            {[['', copy.all] as const, ...categories].map(([slug, name]) => (
               <button
-                key={item}
+                key={slug || 'all'}
                 type="button"
                 className="writing-filter__chip"
-                aria-pressed={kind === item}
-                onClick={() => setKind(item)}
+                aria-pressed={chosen === slug}
+                onClick={() => choose(slug)}
               >
-                {item === 'all' ? copy.all : copy.kindsPlural[item]}{' '}
-                <span>{item === 'all' ? posts.length : posts.filter((post) => post.kind === item).length}</span>
+                {name}{' '}
+                <span>{slug ? posts.filter((post) => categorySlug(post.category) === slug).length : posts.length}</span>
               </button>
             ))}
           </div>
@@ -62,7 +87,8 @@ export function WritingPage() {
                   <li key={post.slug}>
                     <a className="writing-row" href={postHref(post.slug)}>
                       <span className="writing-row__meta">
-                        <span className="writing-row__kind">{copy.kinds[post.kind]}</span>
+                        <span className="writing-row__kind">{post.category}</span>
+                        <span>{copy.kinds[post.kind]}</span>
                         {post.private ? (
                           <span className="writing-row__tag">
                             {post.private} · {copy.privateLabel}

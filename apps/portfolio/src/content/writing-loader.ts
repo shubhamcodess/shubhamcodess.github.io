@@ -14,7 +14,7 @@ export const writingDir = new URL('../../content/writing/', import.meta.url)
 
 const kinds: readonly WritingKind[] = ['essay', 'case-study', 'research']
 const mastheads = ['letter', 'torn'] as const
-const allowed = new Set(['title', 'summary', 'date', 'kind', 'tags', 'draft', 'masthead', 'private', 'facts', 'numbers', 'note'])
+const allowed = new Set(['title', 'summary', 'date', 'kind', 'category', 'tags', 'draft', 'masthead', 'private', 'facts', 'numbers', 'note'])
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
 /** The files a post may use beside its index.md, and how the site serves them. */
@@ -79,6 +79,7 @@ function frontMatter(file: string, data: Record<string, unknown>) {
     summary: text(file, data, 'summary', true) as string,
     date: rawDate as string,
     kind: kind as WritingKind,
+    category: text(file, data, 'category', true) as string,
     tags: tags as string[],
     draft: data.draft === true,
     masthead: (data.masthead as 'letter' | 'torn' | undefined) ?? 'letter',

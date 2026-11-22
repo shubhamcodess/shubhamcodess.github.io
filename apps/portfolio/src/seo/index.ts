@@ -303,7 +303,7 @@ export function jsonLd(page: SeoPage, context: SeoContext): object {
           url: `${root}${pathOf(page)}`,
           author: { '@id': personId(root) },
           keywords: page.post.tags.join(', ') || undefined,
-          articleSection: site.writing.kinds[page.post.kind],
+          articleSection: page.post.category,
         },
         breadcrumbs(root, [home, [site.routes.writing.label, site.routes.writing.path], [page.post.title, pathOf(page)]]),
         person(context),

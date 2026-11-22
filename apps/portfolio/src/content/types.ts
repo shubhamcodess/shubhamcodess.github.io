@@ -60,6 +60,8 @@ export interface WritingMeta {
   /** YYYY-MM-DD. */
   readonly date: string
   readonly kind: WritingKind
+  /** The post's category, from its front matter: the filter on /writing/ is made from these (?category=<slug>). */
+  readonly category: string
   readonly tags: readonly string[]
   readonly draft: boolean
   readonly masthead: 'letter' | 'torn'

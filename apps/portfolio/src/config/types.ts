@@ -112,8 +112,6 @@ export interface WritingConfig {
   readonly lead: string
   /** Each kind's name, in the list, the filter and a post's heading. */
   readonly kinds: { readonly essay: string; readonly 'case-study': string; readonly research: string }
-  /** Each kind's plural, for its filter chip. */
-  readonly kindsPlural: { readonly essay: string; readonly 'case-study': string; readonly research: string }
   readonly all: string
   readonly count: string
   readonly back: string
