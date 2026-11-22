@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 220" fill="none" stroke="#1c1915" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" font-family="'Geist', sans-serif">
+  <path d="M40 160c30-6 60-4 92 2 30 6 64 6 96-2" />
+  <path d="M44 158c2-34 4-66 2-100 30 2 58 0 88 2 2 32 0 66 2 98" />
+  <path d="M62 80h52M62 98h40M62 116h46" stroke-opacity=".55"/>
+  <path d="M150 110c40-30 90-38 140-20" stroke-dasharray="3 6"/>
+  <path d="M284 84l10 8-12 6"/>
+  <circle cx="360" cy="104" r="44" />
+  <path d="M342 98c6 8 14 10 22 4M348 86h2M372 86h2" stroke-opacity=".7"/>
+  <path d="M404 104c26 0 46 8 70 30" />
+  <path d="M468 124l8 12-14 0" />
+  <text x="56" y="190" stroke="none" fill="#645b4e" font-size="13">the script</text>
+  <text x="326" y="172" stroke="none" fill="#645b4e" font-size="13">the model</text>
+  <text x="404" y="166" stroke="none" fill="#a4480b" font-size="13">sees only this</text>
+</svg>

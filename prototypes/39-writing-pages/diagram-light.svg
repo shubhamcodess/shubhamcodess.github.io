@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" font-family="ui-monospace, 'Geist Mono', monospace" font-size="12">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#645b4e"/></marker></defs>
+  <g fill="#fbf8f1" stroke="#1c1915" stroke-width="1.2">
+    <rect x="20" y="100" width="120" height="56" rx="10"/>
+    <rect x="200" y="100" width="130" height="56" rx="10"/>
+    <rect x="400" y="30" width="120" height="44" rx="10"/>
+    <rect x="400" y="106" width="120" height="44" rx="10"/>
+    <rect x="400" y="182" width="120" height="44" rx="10"/>
+    <rect x="580" y="100" width="120" height="56" rx="10" stroke="#a4480b"/>
+  </g>
+  <g fill="none" stroke="#645b4e" stroke-width="1.2" marker-end="url(#a)">
+    <path d="M140 128h56"/>
+    <path d="M330 120 396 56"/><path d="M330 128h66"/><path d="M330 136 396 200"/>
+    <path d="M520 52 576 116"/><path d="M520 128h56"/><path d="M520 204 576 140"/>
+    <path d="M640 160c0 70-560 70-560 0" stroke-dasharray="4 4"/>
+  </g>
+  <g fill="#1c1915" text-anchor="middle">
+    <text x="80" y="132">agent</text>
+    <text x="265" y="125">script</text><text x="265" y="142" fill="#645b4e" font-size="10">calls many tools</text>
+    <text x="460" y="56">tool A</text><text x="460" y="132">tool B</text><text x="460" y="208">tool C</text>
+    <text x="640" y="125" fill="#a4480b">digest</text><text x="640" y="142" fill="#645b4e" font-size="10">from the schemas</text>
+    <text x="360" y="246" fill="#645b4e" font-size="10">printed output + digest, back to the agent</text>
+  </g>
+</svg>
