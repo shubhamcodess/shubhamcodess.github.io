@@ -13,6 +13,8 @@ interface ActionLinkProps {
   readonly external?: boolean
   /** A fuller name for screen readers when the visible label is short, such as "Code". */
   readonly label?: string
+  /** An extra class, for a link that needs its own emphasis in one place. */
+  readonly className?: string
 }
 
 export function ActionLink({
@@ -23,10 +25,11 @@ export function ActionLink({
   iconFirst = false,
   external = false,
   label,
+  className,
 }: ActionLinkProps) {
   return (
     <a
-      className={`action-link action-link--${variant}${iconFirst ? ' action-link--back' : ''}`}
+      className={`action-link action-link--${variant}${iconFirst ? ' action-link--back' : ''}${className ? ` ${className}` : ''}`}
       href={href}
       {...(label ? { 'aria-label': label } : {})}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}

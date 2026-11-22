@@ -84,7 +84,11 @@
   margin-top: var(--space-6);
 }
 
-/* The paper's one button: a quiet outlined pill, the only pill in the card. Hover and open firm it a little. */
+/*
+ * The paper's one button, in the same lean chip as the builds filter: the `--button-*` tokens (round, slim, small
+ * mono capitals), a hairline edge, muted ink. Hover firms the text and edge; open, it sits on a raised surface with
+ * a firm edge, like a selected filter chip.
+ */
 .endorse {
   position: relative;
 }
@@ -92,29 +96,33 @@
 .paper__primary {
   display: inline-flex;
   align-items: center;
-  min-height: var(--target-min);
-  padding-inline: var(--space-5);
-  color: var(--ink);
-  font: inherit;
-  font-size: var(--text-sm);
-  background: transparent;
-  border: 1px solid color-mix(in srgb, var(--ink) 26%, transparent);
-  border-radius: var(--radius-pill);
+  gap: var(--space-2);
+  min-height: var(--button-height);
+  padding-inline: var(--button-pad);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--button-text-size) / 1 var(--button-text-family);
+  letter-spacing: var(--button-text-tracking);
+  text-transform: var(--button-text-case);
+  background: none;
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--button-radius);
   cursor: pointer;
   transition:
+    color var(--duration-fast) linear,
     background-color var(--duration-fast) linear,
     border-color var(--duration-fast) linear;
 }
 
 .paper__primary[aria-expanded='true'] {
-  background: color-mix(in srgb, var(--ink) 6%, transparent);
-  border-color: color-mix(in srgb, var(--ink) 50%, transparent);
+  color: var(--ink);
+  background: var(--surface);
+  border-color: color-mix(in srgb, var(--ink) 45%, var(--line));
 }
 
 @media (hover: hover) {
   .paper__primary:hover {
-    background: color-mix(in srgb, var(--ink) 5%, transparent);
-    border-color: color-mix(in srgb, var(--ink) 50%, transparent);
+    color: var(--ink);
+    border-color: var(--ink-muted);
   }
 }
 
@@ -163,6 +171,18 @@
 
 .endorse__note .action-link {
   min-height: 0;
+}
+
+/* The note's call: I'd like to endorse, in the theme's colour and a step heavier, so it stands out from the help link under it. */
+.endorse__offer.action-link {
+  --link-underline: color-mix(in srgb, var(--accent) 45%, transparent);
+  margin-top: var(--space-1);
+  color: var(--accent);
+  font-weight: var(--weight-heading);
+}
+
+.endorse__offer.action-link .icon {
+  color: var(--accent);
 }
 
 @keyframes endorse-in {

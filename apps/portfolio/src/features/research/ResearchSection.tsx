@@ -232,7 +232,7 @@ function Endorse({ paper }: { readonly paper: Paper }) {
             </ActionLink>
           </>
         ) : null}
-        <ActionLink href={offerMail(paper)} icon="arrowRight">
+        <ActionLink href={offerMail(paper)} icon="arrowRight" className="endorse__offer">
           {copy.offer}
         </ActionLink>
         <ActionLink href={copy.howHref} external>
