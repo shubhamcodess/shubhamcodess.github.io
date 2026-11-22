@@ -660,7 +660,7 @@ function aboutBook(): string[] {
       ...('facts' in chapter ? chapter.facts.map((fact) => `- ${fact.value}: ${fact.label}`) : []),
       ...('stops' in chapter ? chapter.stops.map((stop) => `- ${stop.place} (${stop.when}): ${stop.what}`) : []),
       ...('steps' in chapter ? chapter.steps.map((step) => `- ${step.title}: ${step.text}`) : []),
-      ...('builds' in chapter ? [...chapter.builds, ...chapter.more].map((slug) => `- ${builds.find((build) => build.slug === slug)?.title ?? slug}`) : []),
+      ...('builds' in chapter ? [...chapter.builds, chapter.feature].map((slug) => `- ${builds.find((build) => build.slug === slug)?.title ?? slug}`) : []),
       '',
       ...chapter.story,
       '',

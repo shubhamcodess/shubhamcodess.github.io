@@ -3,17 +3,43 @@ import { book, type Chapter, type Keepsake, type Sticker } from '../../content/a
 import { getBuild } from '../../content/builds'
 import { site } from '../../config/site'
 import { hrefToBuild } from '../../lib/routes'
+import { Icon, type IconName } from '../../ui/Icon'
 import portrait from '../../assets/portrait.webp'
 import type { BookPage } from './Book'
 import { useBookNav } from './Book'
-import { Photo, Stamp, StickerMark } from './Keepsakes'
+import { Photo, PostageStamp, StickerMark } from './Keepsakes'
 
 const base = import.meta.env.BASE_URL
 const href = (to: string) => (to.startsWith('http') || to.startsWith('mailto:') ? to : `${base}${to}`)
-const numberWords = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']
+const numberWords = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen']
 const two = (n: number) => String(n).padStart(2, '0')
+const plain = (title: string) => title.replace(/\.$/, '')
 
-/** A paragraph list whose first letter is set as a drop cap (only the letter, never the punctuation after it). */
+/** Page index of a chapter's left page: cover, inscription, title, contents and preface come first. */
+const chapterPage = (index: number) => 5 + index * 2
+const endPage = chapterPage(book.chapters.length)
+
+function Things({ photos = [], stickers = [] }: { photos?: readonly Keepsake[] | undefined; stickers?: readonly Sticker[] | undefined }) {
+  return (
+    <>
+      {photos.map((item, index) => (
+        <Photo key={`${item.photo ?? item.src ?? item.slot?.note ?? item.note?.title}-${index}`} item={item} />
+      ))}
+      {stickers.map((item, index) =>
+        item.wrap ? (
+          // Clipped at the board's edge, as if the rest of it is folded round the side.
+          <span key={`${item.id}-${index}`} className="sticker-fold">
+            <StickerMark item={item} />
+          </span>
+        ) : (
+          <StickerMark key={`${item.id}-${index}`} item={item} />
+        ),
+      )}
+    </>
+  )
+}
+
+/** Paragraphs; with `first`, the opening letter is a drop cap (only the letter, never the punctuation after it). */
 function Prose({ lines, first = false }: { readonly lines: readonly string[]; readonly first?: boolean }) {
   return (
     <div className="page__prose">
@@ -33,22 +59,6 @@ function Prose({ lines, first = false }: { readonly lines: readonly string[]; re
   )
 }
 
-/** Page index of a chapter's left page: cover, endpaper, title, contents and preface come first. */
-const chapterPage = (index: number) => 5 + index * 2
-
-function Things({ photos = [], stickers = [] }: { photos?: readonly Keepsake[] | undefined; stickers?: readonly Sticker[] | undefined }) {
-  return (
-    <>
-      {photos.map((item, index) => (
-        <Photo key={`${item.photo ?? item.src ?? item.slot?.note}-${index}`} item={item} />
-      ))}
-      {stickers.map((item, index) => (
-        <StickerMark key={`${item.id}-${index}`} item={item} />
-      ))}
-    </>
-  )
-}
-
 function Folio({ page }: { readonly page: number }) {
   return (
     <span className={`page__folio page__folio--${page % 2 ? 'left' : 'right'}`} aria-hidden="true">
@@ -57,21 +67,29 @@ function Folio({ page }: { readonly page: number }) {
   )
 }
 
+/**
+ * The front board: the portrait printed edge to edge under a navy wash, the title set up the spine side in tall
+ * foil letters that let the photo through (a double exposure), and stickers stuck on top, one folded over the edge.
+ */
 function Cover() {
   return (
     <div className="cover">
-      <div className="cover__cloth">
+      <div className="cover__cloth cover__cloth--front" style={{ '--cover-photo': `url(${portrait})` } as CSSProperties}>
+        <img className="cover__backdrop" src={portrait} alt="" width={1086} height={1448} decoding="async" draggable={false} />
+        <span className="cover__wash" aria-hidden="true" />
+        <h2 className="cover__vertical" aria-label={book.title}>
+          {book.title.split(' ').map((word) => (
+            <span key={word}>{word}</span>
+          ))}
+        </h2>
+        <span className="cover__frame" aria-hidden="true" />
         <p className="cover__author">{book.author}</p>
-        <div className="cover__window">
-          <img src={portrait} alt={`${book.author}.`} width={1086} height={1448} decoding="async" draggable={false} />
-        </div>
-        <h2 className="cover__title">{book.title}</h2>
         <p className="cover__subtitle">{book.subtitle}</p>
         <p className="cover__foot">
           {book.volume} · {book.year}
         </p>
       </div>
-      <Things photos={book.cover.hanging as readonly Keepsake[]} stickers={book.cover.stickers as readonly Sticker[]} />
+      <Things stickers={book.cover.stickers as readonly Sticker[]} />
     </div>
   )
 }
@@ -94,6 +112,23 @@ function Endpaper({ children }: { readonly children?: ReactNode }) {
   )
 }
 
+/** Inside the front board: a card tipped in and written on, the way a book is signed for someone. */
+function Inscription() {
+  const { inscription } = book
+  return (
+    <Endpaper>
+      <div className="inscription">
+        <p className="inscription__to">{inscription.to}</p>
+        {inscription.lines.map((line) => (
+          <p key={line.slice(0, 20)}>{line}</p>
+        ))}
+        <p className="inscription__from">{inscription.from}</p>
+        <p className="inscription__place">{inscription.place}</p>
+      </div>
+    </Endpaper>
+  )
+}
+
 function TitlePage() {
   return (
     <div className="page page--title">
@@ -105,7 +140,7 @@ function TitlePage() {
       <p className="title-page__foot">
         {book.volume} · {book.year}
       </p>
-      <Stamp {...book.stamp} x={58} y={58} size={34} turn={-14} />
+      <PostageStamp {...book.stamp} x={62} y={62} size={26} turn={-6} />
     </div>
   )
 }
@@ -118,6 +153,7 @@ function Contents() {
       <ol className="contents">
         <li>
           <button type="button" onClick={() => goTo(4)}>
+            <span className="contents__number" />
             <span className="contents__name">{book.prefaceTitle}</span>
             <span className="contents__dots" aria-hidden="true" />
             <span className="contents__page">4</span>
@@ -127,14 +163,13 @@ function Contents() {
           <li key={chapter.id}>
             <button type="button" onClick={() => goTo(chapterPage(index))}>
               <span className="contents__number">{two(index + 1)}</span>
-              <span className="contents__name">{chapter.title.replace(/\.$/, '')}</span>
+              <span className="contents__name">{plain(chapter.title)}</span>
               <span className="contents__dots" aria-hidden="true" />
               <span className="contents__page">{chapterPage(index)}</span>
             </button>
           </li>
         ))}
       </ol>
-      <StickerMark item={{ id: 'ollama', x: 72, y: 80, size: 13, turn: -9 }} />
       <Folio page={3} />
     </div>
   )
@@ -146,14 +181,12 @@ function Preface() {
       <h2 className="page__heading">{book.prefaceTitle}</h2>
       <Prose lines={book.preface} first />
       <p className="preface__signed">{book.signed}</p>
-      <StickerMark item={{ id: 'claude', x: 74, y: 80, size: 15, turn: 10 }} />
       <Folio page={4} />
     </div>
   )
 }
 
 function ChapterLeft({ chapter, index }: { readonly chapter: Chapter; readonly index: number }) {
-  const page = chapterPage(index)
   return (
     <div className={`page page--chapter-left page--${chapter.kind}`}>
       <p className="chapter__number" aria-hidden="true">
@@ -166,38 +199,29 @@ function ChapterLeft({ chapter, index }: { readonly chapter: Chapter; readonly i
       <p className="chapter__dek">{chapter.dek}</p>
       <LeftBody chapter={chapter} />
       <Things photos={chapter.left} stickers={chapter.stickers?.left} />
-      <Folio page={page} />
+      <Folio page={chapterPage(index)} />
     </div>
   )
+}
+
+function Facts({ facts }: { readonly facts: readonly { readonly value: string; readonly label: string }[] }) {
+  return facts.length ? (
+    <dl className="chapter__facts">
+      {facts.map((fact) => (
+        <div key={fact.label}>
+          <dt>{fact.value}</dt>
+          <dd>{fact.label}</dd>
+        </div>
+      ))}
+    </dl>
+  ) : null
 }
 
 function LeftBody({ chapter }: { readonly chapter: Chapter }) {
   switch (chapter.kind) {
     case 'facts':
-      return chapter.facts.length ? (
-        <dl className="chapter__facts">
-          {chapter.facts.map((fact) => (
-            <div key={fact.label}>
-              <dt>{fact.value}</dt>
-              <dd>{fact.label}</dd>
-            </div>
-          ))}
-        </dl>
-      ) : null
     case 'stickers':
-    case 'kit': {
-      const kit = chapter.kind === 'kit' ? chapter.kit : chapter.facts
-      return (
-        <dl className="chapter__facts chapter__facts--kit">
-          {kit.map((fact) => (
-            <div key={fact.label}>
-              <dt>{fact.value}</dt>
-              <dd>{fact.label}</dd>
-            </div>
-          ))}
-        </dl>
-      )
-    }
+      return <Facts facts={chapter.facts} />
     case 'route':
       return (
         <ol className="route">
@@ -223,22 +247,27 @@ function LeftBody({ chapter }: { readonly chapter: Chapter }) {
         </ol>
       )
     case 'builds':
-      return <BuildNote slug={chapter.builds[0]} more={chapter.more[0]} />
+      return (
+        <div className="build-notes">
+          {chapter.builds.map((slug) => (
+            <BuildNote key={slug} slug={slug} />
+          ))}
+        </div>
+      )
     case 'next':
       return (
         <div className="next">
-          <p className="next__chapter">Chapter ten</p>
+          <p className="next__chapter">Chapter {numberWords[book.chapters.length]}</p>
           <span className="next__lines" aria-hidden="true" />
         </div>
       )
   }
 }
 
-function BuildNote({ slug, more }: { readonly slug: Parameters<typeof getBuild>[0]; readonly more: Parameters<typeof getBuild>[0] }) {
+function BuildNote({ slug, feature = false }: { readonly slug: Parameters<typeof getBuild>[0]; readonly feature?: boolean }) {
   const build = getBuild(slug)
-  const also = getBuild(more)
   return (
-    <div className="build-note">
+    <div className={`build-note${feature ? ' build-note--feature' : ''}`}>
       <a className="build-note__title link-dots" href={hrefToBuild(build.slug)}>
         {build.title}
       </a>
@@ -248,30 +277,29 @@ function BuildNote({ slug, more }: { readonly slug: Parameters<typeof getBuild>[
           <strong>{build.highlight.value}</strong> {build.highlight.label}
         </p>
       ) : null}
-      <p className="build-note__also">
-        Also:{' '}
-        <a className="link-dots" href={hrefToBuild(also.slug)}>
-          {also.title}
-        </a>
-        , {also.summary.split('. ')[0]?.replace(/\.$/, '')}.
-      </p>
     </div>
   )
 }
 
 function ChapterRight({ chapter, index }: { readonly chapter: Chapter; readonly index: number }) {
-  const page = chapterPage(index) + 1
+  let body: ReactNode
+  if (chapter.kind === 'builds') {
+    body = (
+      <>
+        <BuildNote slug={chapter.feature} feature />
+        <p className="build-note__aside">{chapter.featureNote}</p>
+      </>
+    )
+  } else if (chapter.kind === 'next') {
+    body = <SayHello />
+  } else {
+    body = <Prose lines={chapter.story} first={index === 0} />
+  }
   return (
     <div className={`page page--chapter-right page--${chapter.kind}-right`}>
-      {chapter.kind === 'builds' ? (
-        <BuildNote slug={chapter.builds[1]} more={chapter.more[1]} />
-      ) : chapter.kind === 'next' ? (
-        <SayHello />
-      ) : (
-        <Prose lines={chapter.story} first={index === 0} />
-      )}
+      {body}
       {chapter.kind === 'stickers' ? (
-        <div className="sticker-sheet" aria-label="Tools I use">
+        <div className="sticker-sheet" role="group" aria-label="Tools I use">
           {chapter.sheet.map((item, sticker) => (
             <StickerMark key={`${item.id}-${sticker}`} item={item} />
           ))}
@@ -287,102 +315,90 @@ function ChapterRight({ chapter, index }: { readonly chapter: Chapter; readonly 
         </p>
       ) : null}
       <Things photos={chapter.right} stickers={chapter.stickers?.right} />
-      <Folio page={page} />
+      <Folio page={chapterPage(index) + 1} />
     </div>
   )
 }
 
+/** The last chapter's right page: mail first, then every profile, each with its mark. */
 function SayHello() {
   const contact = site.contact
   return (
     <div className="say-hello">
-      <h3 className="page__heading">{book.pocket.title}</h3>
-      <p>{book.pocket.text}</p>
-      <a className="say-hello__mail link-dots" href={`mailto:${contact.email}`}>
-        {contact.email}
+      <h3 className="page__heading">{book.hello.title}</h3>
+      <p>{book.hello.text}</p>
+      <a className="say-hello__mail" href={`mailto:${contact.email}`}>
+        <Icon name="mail" size={16} />
+        <span className="link-dots">{contact.email}</span>
       </a>
-    </div>
-  )
-}
-
-function Colophon() {
-  return (
-    <div className="page page--colophon">
-      <h2 className="page__heading">{book.colophon.title}</h2>
-      <ul className="colophon">
-        {book.colophon.lines.map((line) => (
-          <li key={line}>{line}</li>
+      <p className="say-hello__elsewhere">{book.hello.elsewhere}</p>
+      <ul className="socials">
+        {contact.links.map((link) => (
+          <li key={link.href}>
+            <a href={link.href} rel="me noopener" target="_blank">
+              <Icon name={link.icon as IconName} size={16} />
+              <span className="socials__name">{link.label}</span>
+              <span className="socials__handle">{link.detail}</span>
+            </a>
+          </li>
         ))}
       </ul>
-      <Stamp {...book.stamp} x={30} y={60} size={34} turn={9} />
-      <StickerMark item={{ id: 'react', x: 70, y: 40, size: 13, turn: 12 }} />
-      <Folio page={23} />
     </div>
   )
 }
 
-function BackEndpaper() {
+/** The last printed page: the end, for now, and the stamp again as a sign-off. */
+function TheEnd() {
   return (
-    <Endpaper>
-      <div className="pocket" data-no-turn>
-        <span className="pocket__card">
-          <span className="pocket__label">{book.pocket.title}</span>
-          <a className="pocket__mail link-dots" href={`mailto:${site.contact.email}`}>
-            {book.pocket.cta}
-          </a>
-        </span>
-        <span className="pocket__sleeve" aria-hidden="true" />
-      </div>
-    </Endpaper>
+    <div className="page page--end">
+      <p className="the-end__title">
+        {book.end.title}
+        <span>{book.end.note}</span>
+      </p>
+      <span className="title-page__rule" aria-hidden="true" />
+      <Prose lines={book.end.lines} />
+      <PostageStamp {...book.stamp} x={34} y={66} size={26} turn={5} />
+      <Folio page={endPage} />
+    </div>
   )
 }
 
+/** The back board: the same print-and-wash as the front, this time looking out over the water, with the blurb. */
 function BackCover() {
   return (
     <div className="cover cover--back">
-      <div className="cover__cloth">
+      <div className="cover__cloth cover__cloth--front cover__cloth--back">
+        <img className="cover__backdrop" src={`${base}me/photos/by-the-water.webp`} alt="" width={1600} height={900} loading="lazy" decoding="async" draggable={false} />
+        <span className="cover__wash" aria-hidden="true" />
+        <span className="cover__frame" aria-hidden="true" />
+        <p className="cover__author">{book.author}</p>
         <p className="cover__blurb">{book.back.blurb}</p>
-        <p className="cover__foot">{book.author}</p>
+        <p className="cover__foot">{book.places}</p>
       </div>
-      <StickerMark item={{ id: 'githubcopilot', x: 70, y: 74, size: 15, turn: -8 }} />
+      <StickerMark item={{ id: 'githubcopilot', x: 74, y: 8, size: 14, turn: 8 }} />
+      <StickerMark item={{ id: 'veg', x: 64, y: 14, size: 10, turn: -9 }} />
     </div>
   )
 }
 
-/** Every page of the book, in reading order: cover, endpaper, title, contents, preface, the chapters, colophon, endpaper, back. */
+/** Every page of the book, in reading order: cover, inscription, title, contents, preface, the chapters, the end, endpaper, back. */
 export function bookPages(): BookPage[] {
-  const chapterPages = book.chapters.flatMap((chapter, index): BookPage[] => [
-    {
-      key: `${chapter.id}-left`,
-      label: `Chapter ${index + 1}: ${chapter.title.replace(/\.$/, '')}`,
-      anchor: chapter.id,
-      node: <ChapterLeft chapter={chapter} index={index} />,
-    },
-    {
-      key: `${chapter.id}-right`,
-      label: `Chapter ${index + 1}: ${chapter.title.replace(/\.$/, '')}`,
-      anchor: chapter.id,
-      node: <ChapterRight chapter={chapter} index={index} />,
-    },
-  ])
+  const chapterPages = book.chapters.flatMap((chapter, index): BookPage[] => {
+    const label = `Chapter ${index + 1}: ${plain(chapter.title)}`
+    return [
+      { key: `${chapter.id}-left`, label, anchor: chapter.id, node: <ChapterLeft chapter={chapter} index={index} /> },
+      { key: `${chapter.id}-right`, label, anchor: chapter.id, node: <ChapterRight chapter={chapter} index={index} /> },
+    ]
+  })
   return [
     { key: 'cover', label: book.title, tone: 'board', node: <Cover /> },
-    { key: 'endpaper-front', label: book.title, tone: 'endpaper', node: <Endpaper><ExLibris /></Endpaper> },
+    { key: 'inscription', label: book.title, tone: 'endpaper', node: <Inscription /> },
     { key: 'title', label: book.title, node: <TitlePage /> },
     { key: 'contents', label: book.contents, node: <Contents /> },
     { key: 'preface', label: book.prefaceTitle, anchor: 'preface', node: <Preface /> },
     ...chapterPages,
-    { key: 'colophon', label: book.colophon.title, node: <Colophon /> },
-    { key: 'endpaper-back', label: book.pocket.title, tone: 'endpaper', node: <BackEndpaper /> },
+    { key: 'the-end', label: book.end.title, node: <TheEnd /> },
+    { key: 'endpaper-back', label: book.end.title, tone: 'endpaper', node: <Endpaper /> },
     { key: 'back', label: book.title, tone: 'board', node: <BackCover /> },
   ]
-}
-
-function ExLibris() {
-  return (
-    <div className="ex-libris" style={{ '--turn': '-3deg' } as CSSProperties}>
-      <span className="ex-libris__label">{book.endpaper.owner}</span>
-      <span className="ex-libris__name">{book.endpaper.name}</span>
-    </div>
-  )
 }

@@ -26,7 +26,7 @@
   --print: #fdfcf8;
   --print-ink: #3b342b;
   --tape: rgb(236 222 186 / 0.66);
-  --stamp: #b4321e;
+  --postmark: rgb(40 34 60 / 0.6);
   --stamp-blend: multiply;
   --table-shadow: rgb(40 30 15 / 0.32);
 }
@@ -46,7 +46,7 @@
   --print: #e8e4db;
   --print-ink: #2f2a23;
   --tape: rgb(220 205 165 / 0.5);
-  --stamp: #f07a5a;
+  --postmark: rgb(235 225 205 / 0.55);
   --stamp-blend: screen;
   --table-shadow: rgb(0 0 0 / 0.6);
 }
@@ -366,7 +366,6 @@
   margin-top: auto;
 }
 
-.cover__title,
 .cover__author,
 .cover__subtitle,
 .cover__foot,
@@ -376,39 +375,103 @@
     0 1px 0 rgb(255 255 255 / 0.1);
 }
 
-.cover__window {
-  width: 50%;
-  margin: 8% 0 7%;
-  padding: 0.4em;
-  border-radius: 0.2em;
-  background: var(--cloth-edge);
-  box-shadow:
-    inset 0 0.15em 0.35em rgb(0 0 0 / 0.65),
-    0 1px 0 rgb(255 255 255 / 0.1);
-}
-
-.cover__window img {
+/*
+ * The front board: the portrait printed edge to edge, washed into the cloth's navy, and the title running up the
+ * spine side in tall letters filled with the same photo in gold (a double exposure), outlined in foil.
+ */
+.cover__cloth--front {
   display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  border-radius: 0.1em;
-  filter: saturate(0.92) contrast(1.02);
+  padding: 0;
+  overflow: hidden;
 }
 
-.cover__title {
+.cover__backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 18%;
+  border-radius: inherit;
+  filter: grayscale(1) contrast(1.18) brightness(0.95);
+  mix-blend-mode: luminosity;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.cover__wash {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(to right, rgb(9 14 30 / 0.9), rgb(9 14 30 / 0.35) 42%, rgb(9 14 30 / 0.1) 65%, rgb(9 14 30 / 0.45)),
+    linear-gradient(to top, rgb(9 14 30 / 0.92), transparent 38%),
+    linear-gradient(to bottom, rgb(9 14 30 / 0.55), transparent 22%);
+}
+
+.cover__vertical {
+  position: absolute;
+  top: 5.5%;
+  bottom: 5.5%;
+  left: 11%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.02em;
   margin: 0;
-  font-size: 2.35em;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.035em;
-  background: linear-gradient(170deg, #fbe2a6, var(--foil) 45%, #b47a26 75%, var(--foil));
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 4.6em;
+  font-weight: 850;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background-image:
+    linear-gradient(160deg, rgb(255 226 160 / 0.62), rgb(214 146 52 / 0.58) 55%, rgb(120 70 20 / 0.6)),
+    var(--cover-photo);
+  background-size: cover;
+  background-position: 50% 30%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: none;
-  filter: drop-shadow(0 -1px 0 rgb(0 0 0 / 0.5));
+  -webkit-text-stroke: 0.012em rgb(250 214 140 / 0.75);
+  filter: contrast(1.25) brightness(1.2) drop-shadow(0 0.04em 0.06em rgb(0 0 0 / 0.55));
+}
+
+.cover__vertical span:last-child {
+  opacity: 0.86;
+}
+
+/* A thin foil rule round the board, inset like a stamped border. */
+.cover__frame {
+  position: absolute;
+  inset: 3.2% 3.6% 3.2% 9.5%;
+  border: 1px solid rgb(226 173 82 / 0.5);
+  border-radius: 0.2em;
+  pointer-events: none;
+}
+
+.cover__cloth--front .cover__author {
+  position: absolute;
+  top: 8%;
+  right: 10%;
+  text-align: right;
+}
+
+.cover__cloth--front .cover__subtitle {
+  position: absolute;
+  right: 10%;
+  bottom: 13%;
+  width: 50%;
+  margin: 0;
+  text-align: right;
+}
+
+.cover__cloth--front .cover__foot {
+  position: absolute;
+  right: 10%;
+  bottom: 7.5%;
+  margin: 0;
 }
 
 .cover__subtitle {
@@ -459,89 +522,6 @@
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-.ex-libris {
-  position: absolute;
-  top: 34%;
-  left: 18%;
-  right: 18%;
-  display: grid;
-  gap: 0.5em;
-  padding: 1.4em 1em;
-  text-align: center;
-  background: var(--paper);
-  border: 0.18em double var(--paper-accent);
-  transform: rotate(var(--turn));
-  box-shadow: 0 0.1em 0.3em rgb(0 0 0 / 0.15);
-}
-
-.ex-libris__label {
-  font-family: var(--font-mono);
-  font-size: 0.58em;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--paper-muted);
-}
-
-.ex-libris__name {
-  font-size: 1.05em;
-  font-weight: 600;
-  font-style: italic;
-}
-
-/* The pocket inside the back board, with a card to write to me. */
-.pocket {
-  position: absolute;
-  left: 20%;
-  right: 20%;
-  bottom: 12%;
-  height: 34%;
-}
-
-.pocket__card {
-  position: absolute;
-  inset: -30% 9% 18%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6em;
-  padding: 1em 1.1em;
-  background:
-    repeating-linear-gradient(to bottom, transparent 0 1.6em, rgb(60 110 170 / 0.18) 1.6em calc(1.6em + 1px)),
-    var(--print);
-  color: var(--print-ink);
-  transform: rotate(-2deg);
-  box-shadow: 0 0.1em 0.25em rgb(0 0 0 / 0.18);
-}
-
-.pocket__label {
-  font-family: var(--font-mono);
-  font-size: 0.62em;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.pocket__mail {
-  font-size: 0.95em;
-  font-weight: 600;
-  color: inherit;
-  width: fit-content;
-}
-
-.pocket__sleeve {
-  position: absolute;
-  inset: 32% 0 0;
-  background:
-    linear-gradient(to bottom, rgb(0 0 0 / 0.12), transparent 18%),
-    #c7a675;
-  clip-path: polygon(0 0, 38% 0, 50% 14%, 62% 0, 100% 0, 100% 100%, 0 100%);
-  box-shadow: inset 0 -0.2em 0.4em rgb(0 0 0 / 0.15);
-}
-
-:root[data-theme='dark'] .pocket__sleeve {
-  background:
-    linear-gradient(to bottom, rgb(0 0 0 / 0.2), transparent 18%),
-    #8c7350;
 }
 
 /* ---- Pages. */
@@ -931,36 +911,6 @@
   background: repeating-linear-gradient(to bottom, transparent 0 1.75em, var(--paper-line) 1.75em calc(1.75em + 1px));
 }
 
-.say-hello {
-  display: grid;
-  gap: 0.6em;
-  padding-top: 20%;
-}
-
-.say-hello p {
-  margin: 0;
-  font-size: 0.8em;
-}
-
-.say-hello__mail {
-  width: fit-content;
-  font-size: 0.86em;
-  font-weight: 600;
-}
-
-.colophon {
-  display: grid;
-  gap: 0.6em;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.colophon li {
-  font-size: 0.72em;
-  color: var(--paper-muted);
-}
-
 /* ---- Keepsakes: prints held on by tape, a pin, a clip or photo corners. */
 
 .keepsake {
@@ -1199,38 +1149,7 @@
 
 .sticker-sheet {
   position: absolute;
-  inset: 30% 6% 6%;
-}
-
-/* ---- The stamp, pressed in ink. */
-
-.stamp {
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  z-index: 1;
-  width: var(--size);
-  transform: rotate(var(--turn));
-  mix-blend-mode: var(--stamp-blend);
-  opacity: 0.82;
-  pointer-events: none;
-}
-
-.stamp__ink {
-  fill: var(--stamp);
-  stroke: var(--stamp);
-}
-
-.stamp text {
-  stroke: none;
-  font-family: var(--font-mono);
-  font-weight: 700;
-}
-
-.stamp__middle {
-  font-family: var(--font-sans);
-  font-weight: 800;
-  letter-spacing: -0.04em;
+  inset: 42% 8% 8%;
 }
 
 /* ---- Under the book: the buttons and the page counter. */
@@ -1329,4 +1248,429 @@
   .book::before {
     transition: none;
   }
+}
+
+/* A sticker stuck over the board's edge: what runs past the edge has gone round the side. */
+.sticker-fold {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.sticker-fold .sticker {
+  pointer-events: auto;
+}
+
+.sticker-fold::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 0.5em;
+  background: linear-gradient(to right, transparent, rgb(0 0 0 / 0.28));
+}
+
+/* A character sticker (Bob), cut round its outline with a white edge. */
+.sticker--cutout {
+  filter:
+    drop-shadow(0.07em 0 0 #fff)
+    drop-shadow(-0.07em 0 0 #fff)
+    drop-shadow(0 0.07em 0 #fff)
+    drop-shadow(0 -0.07em 0 #fff)
+    drop-shadow(0 0.12em 0.1em rgb(0 0 0 / 0.32));
+}
+
+.sticker--cutout img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sticker--cutout::after {
+  display: none;
+}
+
+.sticker--veg .sticker__face svg {
+  width: 62%;
+  height: 62%;
+}
+
+/* ---- The postage stamp: perforated paper, a printed face, and a postmark struck across a corner. */
+
+.postage {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 2;
+  width: var(--size);
+  transform: rotate(var(--turn));
+  filter: drop-shadow(0 0.06em 0.1em rgb(0 0 0 / 0.28));
+}
+
+.postage__paper {
+  --step: 0.42em;
+  --hole: 0.13em;
+  display: block;
+  padding: 0.27em;
+  background: #fbfaf5;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    radial-gradient(circle var(--hole), #0000 96%, #000) calc(var(--step) / -2) calc(var(--step) / -2) / var(--step) var(--step) round;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    radial-gradient(circle var(--hole), #0000 96%, #000) calc(var(--step) / -2) calc(var(--step) / -2) / var(--step) var(--step) round;
+}
+
+.postage__face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  aspect-ratio: 4 / 5;
+  padding: 0.45em 0.4em 0.5em;
+  border: 0.08em solid rgb(255 255 255 / 0.4);
+  outline: 0.25em solid #fbfaf5;
+  background:
+    radial-gradient(circle at 30% 20%, rgb(255 255 255 / 0.18), transparent 55%),
+    linear-gradient(165deg, #b4530f, #7a2c05);
+  color: #fbecd2;
+}
+
+.postage__top {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.5em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.postage__value {
+  font-weight: 700;
+}
+
+.postage__middle {
+  margin-top: 0.12em;
+  font-size: 2.3em;
+  font-weight: 850;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.postage__road {
+  width: 100%;
+  height: 1em;
+  margin-top: auto;
+  overflow: visible;
+}
+
+.postage__road path {
+  fill: none;
+  stroke: #fbecd2;
+  stroke-width: 1.6;
+  stroke-dasharray: 3 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.postage__road circle {
+  fill: #fbecd2;
+}
+
+.postage__caption {
+  margin-top: 0.3em;
+  font-family: var(--font-mono);
+  font-size: 0.34em;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.postage__mark {
+  position: absolute;
+  top: -22%;
+  right: -55%;
+  width: 115%;
+  overflow: visible;
+  pointer-events: none;
+  mix-blend-mode: var(--stamp-blend);
+}
+
+.postage__mark circle,
+.postage__mark path {
+  fill: none;
+  stroke: var(--postmark);
+  stroke-width: 1.6;
+}
+
+.postage__mark text {
+  fill: var(--postmark);
+  font-family: var(--font-mono);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* ---- The inscription inside the front board. */
+
+.inscription {
+  position: absolute;
+  top: 16%;
+  left: 13%;
+  right: 11%;
+  display: grid;
+  gap: 0.7em;
+  padding: 1.7em 1.6em 1.5em;
+  background: var(--paper);
+  color: var(--paper-ink);
+  transform: rotate(-1.4deg);
+  box-shadow:
+    0 0.08em 0.2em rgb(0 0 0 / 0.16),
+    0 0.8em 1.6em -0.8em rgb(0 0 0 / 0.35);
+}
+
+.inscription p {
+  margin: 0;
+  font-size: 0.8em;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.inscription .inscription__to {
+  font-weight: 600;
+}
+
+.inscription .inscription__from {
+  margin-top: 0.4em;
+  font-size: 1.4em;
+  font-weight: 600;
+  color: var(--paper-accent);
+  text-align: right;
+}
+
+.inscription .inscription__place {
+  font-family: var(--font-mono);
+  font-size: 0.56em;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-align: right;
+  text-transform: uppercase;
+  color: var(--paper-muted);
+}
+
+/* ---- An index card pinned to the page. */
+
+.keepsake__note {
+  display: grid;
+  gap: 0.15em;
+  padding: 0.9em 1.1em 1.2em;
+  background:
+    linear-gradient(to bottom, transparent 2.2em, rgb(200 60 50 / 0.45) 2.2em calc(2.2em + 1px), transparent calc(2.2em + 1px)),
+    repeating-linear-gradient(to bottom, transparent 0 1.45em, rgb(60 110 170 / 0.2) 1.45em calc(1.45em + 1px)),
+    var(--print);
+  color: var(--print-ink);
+}
+
+.keepsake__note-title {
+  margin-bottom: 0.5em;
+  font-size: 0.78em;
+  font-weight: 700;
+}
+
+.keepsake__note-line {
+  font-size: 0.74em;
+  font-style: italic;
+  line-height: 1.95;
+}
+
+.keepsake__note-line::before {
+  content: '□ ';
+  font-style: normal;
+  opacity: 0.6;
+}
+
+/* ---- Say hello, and the profiles. */
+
+.say-hello {
+  display: grid;
+  gap: 0.7em;
+  padding-top: 4%;
+}
+
+.say-hello p {
+  margin: 0;
+  font-size: 0.8em;
+  line-height: 1.6;
+}
+
+.say-hello__mail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  width: fit-content;
+  font-size: 0.86em;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+}
+
+.say-hello .say-hello__elsewhere {
+  margin-top: 1.2em;
+  font-family: var(--font-mono);
+  font-size: 0.58em;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper-muted);
+}
+
+.socials {
+  display: grid;
+  gap: 0.2em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.socials a {
+  display: grid;
+  grid-template-columns: 1.4em 1fr auto;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.55em 0;
+  border-bottom: 1px dashed var(--paper-line);
+  color: inherit;
+  text-decoration: none;
+}
+
+.socials__name {
+  font-size: 0.8em;
+  font-weight: 600;
+}
+
+.socials__handle {
+  font-family: var(--font-mono);
+  font-size: 0.6em;
+  color: var(--paper-muted);
+}
+
+.socials a:hover .socials__name,
+.socials a:focus-visible .socials__name {
+  color: var(--paper-accent);
+}
+
+/* ---- The last page. */
+
+.page--end {
+  display: flex;
+  flex-direction: column;
+  padding-top: 22%;
+}
+
+.the-end__title {
+  margin: 0;
+  font-size: 2.6em;
+  font-weight: 750;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.the-end__title span {
+  display: block;
+  margin-top: 0.35em;
+  font-family: var(--font-mono);
+  font-size: 0.24em;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--paper-muted);
+}
+
+.page--end .title-page__rule {
+  margin: 1.6em 0;
+}
+
+/* ---- Builds: two notes on the left, the newspaper with today's front page on the right. */
+
+.build-notes {
+  display: grid;
+  gap: 1.3em;
+  margin-top: 1.3em;
+}
+
+.build-notes .build-note {
+  margin: 0;
+}
+
+.build-note--feature .build-note__title {
+  font-size: 1.4em;
+}
+
+.build-note__aside {
+  margin: 0.2em 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.56em;
+  color: var(--paper-muted);
+}
+
+/* The book's frame fills the panel on phones, so a short spread doesn't leave the foot of the page empty. */
+.panel:has(> .about) {
+  display: flex;
+  flex-direction: column;
+}
+
+.about {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 699px) {
+  .about.section {
+    padding-bottom: var(--space-6);
+  }
+
+  .about .page-onward {
+    margin-top: var(--space-6);
+  }
+}
+
+/* The back board: the photo leans to the spine side (its right), the words sit low on the left. */
+.cover__cloth--back .cover__backdrop {
+  object-position: 30% 50%;
+}
+
+.cover__cloth--back .cover__wash {
+  background:
+    linear-gradient(to top, rgb(9 14 30 / 0.95), rgb(9 14 30 / 0.4) 45%, rgb(9 14 30 / 0.25)),
+    linear-gradient(to left, rgb(9 14 30 / 0.6), transparent 30%);
+}
+
+.cover__cloth--back .cover__frame {
+  inset: 3.2% 9.5% 3.2% 3.6%;
+}
+
+.cover__cloth--back .cover__author {
+  left: 10%;
+  right: auto;
+  text-align: left;
+}
+
+.cover__cloth--back .cover__blurb {
+  position: absolute;
+  left: 10%;
+  right: 16%;
+  bottom: 14%;
+  margin: 0;
+}
+
+.cover__cloth--back .cover__foot {
+  left: 10%;
+  right: auto;
 }

@@ -1,5 +1,5 @@
-import { useId, type CSSProperties } from 'react'
-import type { Keepsake, Sticker } from '../../content/about'
+import type { CSSProperties, ReactNode } from 'react'
+import type { Keepsake, OwnSticker, Sticker } from '../../content/about'
 import { photos } from '../../content/me'
 import { stickerMarks } from '../../content/sticker-marks'
 
@@ -8,34 +8,41 @@ const at = (x: number, y: number, extra: Record<string, string | number> = {}) =
   ({ '--x': `${x}%`, '--y': `${y}%`, ...extra }) as CSSProperties
 
 /**
- * A photo kept in the book: a print with a white foot, held by tape, a pin, a clip or photo corners, set a
- * little crooked. A slot is the same print, empty, for a photo still to come.
+ * Something kept in the book: a print with a white foot, a website's screenshot, or a written index card, held
+ * by tape, a pin, a clip or photo corners, set a little crooked. A slot is the same print, empty, for a photo to come.
  */
 export function Photo({ item }: { readonly item: Keepsake }) {
   const known = item.photo ? photos.find((photo) => photo.name === item.photo) : undefined
   const src = known ? `${base}me/photos/${known.name}-print.webp` : item.src ? `${base}${item.src}` : undefined
   const label = item.label ?? known?.title
   const style = at(item.x, item.y, { '--w': `${item.w}%`, '--turn': `${item.turn}deg` })
-  return (
-    <figure className={`keepsake keepsake--${item.mount}${item.bare ? ' keepsake--bare' : ''}`} style={style}>
-      <span className="keepsake__print">
-        {src ? (
-          <img
-            src={src}
-            alt={known?.alt ?? item.alt ?? ''}
-            width={known?.width}
-            height={known?.height}
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-          />
-        ) : (
-          <span className={`keepsake__slot keepsake__slot--${item.slot?.shape ?? 'wide'}`}>
-            <span>{item.slot?.note}</span>
-            <span className="keepsake__slot-note">photo to come</span>
+  let body: ReactNode
+  if (item.note) {
+    body = (
+      <span className="keepsake__note">
+        <span className="keepsake__note-title">{item.note.title}</span>
+        {item.note.lines.map((line) => (
+          <span key={line} className="keepsake__note-line">
+            {line}
           </span>
-        )}
-        {label && !item.bare ? <figcaption>{label}</figcaption> : null}
+        ))}
+      </span>
+    )
+  } else if (src) {
+    body = <img src={src} alt={known?.alt ?? item.alt ?? ''} width={known?.width} height={known?.height} loading="lazy" decoding="async" draggable={false} />
+  } else {
+    body = (
+      <span className={`keepsake__slot keepsake__slot--${item.slot?.shape ?? 'wide'}`}>
+        <span>{item.slot?.note}</span>
+        <span className="keepsake__slot-note">photo to come</span>
+      </span>
+    )
+  }
+  return (
+    <figure className={`keepsake keepsake--${item.mount}${item.bare || item.note ? ' keepsake--bare' : ''}`} style={style}>
+      <span className="keepsake__print">
+        {body}
+        {label && !item.bare && !item.note ? <figcaption>{label}</figcaption> : null}
       </span>
       <Mount kind={item.mount} />
     </figure>
@@ -77,73 +84,110 @@ const isLight = (hex: string) => {
   return 0.299 * r + 0.587 * g + 0.114 * b > 170
 }
 
+/** The book's own stickers: drawn here, on the same 24 grid as the tool marks. */
+const own: Record<Exclude<OwnSticker, 'bob' | 'veg'>, { name: string; tone: string; path: string }> = {
+  camera: {
+    name: 'A camera',
+    tone: '#1c1915',
+    path: 'M4 7h3.2l1.6-2.4h6.4L16.8 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zm8 2.6a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4zm0 2a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4zM18.6 9.2a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z',
+  },
+  bat: {
+    name: 'A bat',
+    tone: '#f2c230',
+    path: 'M12 9.4c.5-.8.8-1.8.9-2.8.7.6 1.1 1.5 1.2 2.6 1.5-1.1 3.6-1.6 5.9-1.3 1.6.9 2.9 2.6 3.3 4.6-1.3-.9-2.9-.9-3.9.1-.8-.9-2.2-1.2-3.4-.5-.9 1.4-2.4 3.5-4 6-1.6-2.5-3.1-4.6-4-6-1.2-.7-2.6-.4-3.4.5-1-1-2.6-1-3.9-.1.4-2 1.7-3.7 3.3-4.6 2.3-.3 4.4.2 5.9 1.3.1-1.1.5-2 1.2-2.6.1 1 .4 2 .9 2.8z',
+  },
+  flask: {
+    name: 'A lab flask',
+    tone: '#7c4dff',
+    path: 'M9 2.5h6v1.8h-1v5.1l5.6 9.3A2 2 0 0 1 17.9 21.5H6.1a2 2 0 0 1-1.7-2.8L10 9.4V4.3H9V2.5zm-1.4 12.3-1.7 2.9a.6.6 0 0 0 .5.9h11.2a.6.6 0 0 0 .5-.9l-1.7-2.9H7.6z',
+  },
+}
+
 /** A die-cut vinyl sticker: the mark on its colour, a white cut edge, and a corner that lifts when touched. */
 export function StickerMark({ item }: { readonly item: Sticker }) {
   const style = at(item.x, item.y, { '--size': `${item.size}%`, '--turn': `${item.turn}deg` })
+  const wrap = item.wrap ? ' sticker--wrap' : ''
   if (item.id === 'bob') {
+    // Bob is a character, so his sticker is cut round him rather than a square.
     return (
-      <span className="sticker sticker--word" style={{ ...style, '--tone': '#0f62fe' } as CSSProperties} role="img" aria-label="IBM Bob">
+      <span className={`sticker sticker--cutout${wrap}`} style={style} role="img" aria-label="IBM Bob">
+        <img src={`${base}about/bob.webp`} alt="" width={512} height={512} draggable={false} loading="lazy" decoding="async" />
+      </span>
+    )
+  }
+  if (item.id === 'veg') {
+    // India's vegetarian mark: a green dot in a green square.
+    return (
+      <span className={`sticker sticker--veg${wrap}`} style={{ ...style, '--tone': '#fff' } as CSSProperties} role="img" aria-label="Vegetarian">
         <span className="sticker__face">
-          <span className="sticker__word" aria-hidden="true">
-            Bob
-          </span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="3" y="3" width="18" height="18" rx="1.5" fill="none" stroke="#138a36" strokeWidth="2.2" />
+            <circle cx="12" cy="12" r="5" fill="#138a36" />
+          </svg>
         </span>
       </span>
     )
   }
-  const mark = stickerMarks[item.id]
+  const mark = item.id in own ? own[item.id as keyof typeof own] : stickerMarks[item.id as keyof typeof stickerMarks]
   return (
     <span
-      className="sticker"
+      className={`sticker${wrap}`}
       style={{ ...style, '--tone': mark.tone, '--mark': isLight(mark.tone) ? '#1c1915' : '#fff' } as CSSProperties}
       role="img"
       aria-label={mark.name}
     >
       <span className="sticker__face">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d={mark.path} />
+          <path d={mark.path} fillRule="evenodd" />
         </svg>
       </span>
     </span>
   )
 }
 
-/** The rubber stamp: three cities round the rim, initials in the middle, pressed a little unevenly. */
-export function Stamp({ ring, middle, foot, x, y, size, turn }: { ring: string; middle: string; foot: string; x: number; y: number; size: number; turn: number }) {
-  const id = useId().replace(/:/g, '')
+interface StampProps {
+  readonly country: string
+  readonly value: string
+  readonly middle: string
+  readonly caption: string
+  readonly postmark: string
+  readonly x: number
+  readonly y: number
+  readonly size: number
+  readonly turn: number
+}
+
+/**
+ * A postage stamp stuck on the page: perforated white edges, a printed face with the owner's initials and the
+ * three cities, and a round postmark struck across one corner.
+ */
+export function PostageStamp({ country, value, middle, caption, postmark, x, y, size, turn }: StampProps) {
   return (
-    <svg
-      className="stamp"
-      viewBox="0 0 200 200"
-      style={at(x, y, { '--size': `${size}%`, '--turn': `${turn}deg` })}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <defs>
-        <path id={`${id}-ring`} d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" />
-        <filter id={`${id}-ink`} x="-10%" y="-10%" width="120%" height="120%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="grain" />
-          <feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.4 1.55" result="holes" />
-          <feComposite in="SourceGraphic" in2="holes" operator="in" result="inked" />
-          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="1" seed="3" result="warp" />
-          <feDisplacementMap in="inked" in2="warp" scale="3" />
-        </filter>
-      </defs>
-      <g filter={`url(#${id}-ink)`} className="stamp__ink">
-        <circle cx="100" cy="100" r="94" fill="none" strokeWidth="4" />
-        <circle cx="100" cy="100" r="56" fill="none" strokeWidth="2" />
-        <text className="stamp__ring" fontSize="15.5" letterSpacing="2.2">
-          <textPath href={`#${id}-ring`} startOffset="0">
-            {ring.toUpperCase()}
-          </textPath>
+    <span className="postage" style={at(x, y, { '--size': `${size}%`, '--turn': `${turn}deg` })} aria-hidden="true">
+      <span className="postage__paper">
+        <span className="postage__face">
+          <span className="postage__top">
+            <span>{country}</span>
+            <span className="postage__value">{value}</span>
+          </span>
+          <span className="postage__middle">{middle}</span>
+          <svg className="postage__road" viewBox="0 0 100 24" preserveAspectRatio="none" focusable="false">
+            <path d="M0 20 C 20 20, 22 6, 50 8 S 80 18, 100 4" />
+            <circle cx="6" cy="20" r="2.6" />
+            <circle cx="50" cy="8" r="2.6" />
+            <circle cx="96" cy="5" r="2.6" />
+          </svg>
+          <span className="postage__caption">{caption}</span>
+        </span>
+      </span>
+      <svg className="postage__mark" viewBox="0 0 120 120" focusable="false">
+        <circle cx="60" cy="60" r="34" />
+        <circle cx="60" cy="60" r="26" />
+        <text x="60" y="64" textAnchor="middle">
+          {postmark}
         </text>
-        <text className="stamp__middle" x="100" y="110" textAnchor="middle" fontSize="40">
-          {middle}
-        </text>
-        <text className="stamp__foot" x="100" y="134" textAnchor="middle" fontSize="11" letterSpacing="2">
-          {foot.toUpperCase()}
-        </text>
-      </g>
-    </svg>
+        <path d="M96 44c8-4 14 4 22 0M96 56c8-4 14 4 22 0M96 68c8-4 14 4 22 0M96 80c8-4 14 4 22 0" />
+      </svg>
+    </span>
   )
 }
