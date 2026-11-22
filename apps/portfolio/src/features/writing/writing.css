@@ -257,7 +257,8 @@
  * The masthead, as a piece of paper laid on the page (third pass). Two versions to judge:
  *  - torn: a note torn from a pad, a strip of tape at the top, faint ruled lines, turned a little, a chunky offset shadow;
  *  - letter (the default): a crisp sheet cut with pinking shears along its foot, a soft shadow.
- * The edge is a clip-path on the paper; the shadow is a drop-shadow on its wrapper, so it follows the cut.
+ * The torn edge is a clip-path on the paper with a hard (unblurred) drop-shadow that follows the cut; the letter's
+ * ridges are a strip hanging under a plain box with a box shadow, so neither is costly to paint while scrolling.
  */
 .post-mast {
   position: relative;
@@ -268,7 +269,12 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
   gap: var(--space-6) var(--space-8);
-  padding: clamp(var(--space-6), 4vw, var(--space-8)) clamp(var(--space-5), 4vw, var(--space-8)) calc(clamp(var(--space-6), 4vw, var(--space-8)) + 14px);
+  padding: clamp(var(--space-6), 4vw, var(--space-8)) clamp(var(--space-5), 4vw, var(--space-8));
+}
+
+/* The torn edge is cut from inside the sheet, so it needs that much more room at the foot. */
+.post-mast--torn .post-mast__paper {
+  padding-bottom: calc(clamp(var(--space-6), 4vw, var(--space-8)) + 14px);
 }
 
 /* With no facts in the front matter: one column, just the kicker, title and summary. */
@@ -313,24 +319,35 @@
 /* Letter */
 .post-mast--letter {
   max-width: 60rem;
-  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 6%)) drop-shadow(0 14px 22px color-mix(in srgb, var(--ink) 12%, transparent));
 }
 
+/*
+ * Cheap to paint, so it never flickers while scrolling: the sheet is a plain box with an ordinary box shadow, and
+ * its ridges are a strip of small triangles in the paper's colour hanging under it (no mask, no filter).
+ */
 .post-mast--letter .post-mast__paper {
-  /* A step up from the page, not stark white: half the raised paper, half the page's own. */
   --ridge: 14px;
-  background: var(--panel-texture, none), color-mix(in srgb, var(--surface-raised) 50%, var(--surface));
-  /* Even ridges along the foot, a fixed 14px apart whatever the width: pinking shears. */
-  -webkit-mask:
-    linear-gradient(#000 0 0) top / 100% calc(100% - var(--ridge) / 2) no-repeat,
-    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--ridge) calc(var(--ridge) / 2) repeat-x;
-  mask:
-    linear-gradient(#000 0 0) top / 100% calc(100% - var(--ridge) / 2) no-repeat,
-    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--ridge) calc(var(--ridge) / 2) repeat-x;
+  /* A step up from the page, not stark white: half the raised paper, half the page's own. */
+  --letter-paper: color-mix(in srgb, var(--surface-raised) 50%, var(--surface));
+  background: var(--panel-texture, none), var(--letter-paper);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 6%),
+    0 14px 22px -12px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+
+/* Even ridges along the foot, a fixed 14px apart whatever the width: pinking shears. */
+.post-mast--letter .post-mast__paper::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  height: calc(var(--ridge) / 2);
+  background: conic-gradient(from 135deg at 50% 0, var(--letter-paper) 90deg, #0000 0) 0 0 / var(--ridge) 100% repeat-x;
 }
 
 :root[data-theme='dark'] .post-mast--letter .post-mast__paper {
-  background: var(--panel-texture, none), var(--surface-raised);
+  --letter-paper: var(--surface-raised);
+  box-shadow: 0 14px 22px -12px rgb(0 0 0 / 60%);
 }
 
 /* Dark: the paper steps back so it doesn't glare, the tape and rules dimmer. */
@@ -344,10 +361,6 @@
 :root[data-theme='dark'] .post-mast__tape {
   background: color-mix(in srgb, var(--accent-warm) 14%, rgb(255 255 255 / 6%));
   border-inline-color: rgb(255 255 255 / 8%);
-}
-
-:root[data-theme='dark'] .post-mast--letter {
-  filter: drop-shadow(0 14px 22px rgb(0 0 0 / 55%));
 }
 
 .post-mast__kicker {
