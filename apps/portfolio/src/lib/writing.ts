@@ -12,10 +12,12 @@ export const writingLive = site.features.writing && posts.length > 0
 
 /**
  * The posts on either side of one, in date order: previous is the one written before it, next the one after,
- * wrapping round at the ends so every post has both while there are at least two.
+ * wrapping round at the ends. A post never appears twice: with only two posts, the other one is just Next.
  */
 export function neighbours(slug: string): { readonly previous?: WritingMeta | undefined; readonly next?: WritingMeta | undefined } {
   const index = posts.findIndex((post) => post.slug === slug)
   if (index < 0 || posts.length < 2) return {}
-  return { previous: posts[(index + 1) % posts.length], next: posts[(index - 1 + posts.length) % posts.length] }
+  const previous = posts[(index + 1) % posts.length]
+  const next = posts[(index - 1 + posts.length) % posts.length]
+  return previous === next ? { next } : { previous, next }
 }

@@ -112,20 +112,25 @@ export function PostPage({ slug, html }: PostPageProps) {
               ))}
             </ul>
           ) : null}
-          {previous && next ? (
+          {/* Named by their slugs (short and calm), cut short when long; screen readers hear the full title. */}
+          {previous || next ? (
             <nav className="post-onward" aria-label="More writing">
-              <a className="post-onward__link" href={postHref(previous.slug)}>
-                <span className="post-onward__label">
-                  <Icon name="arrowLeft" size={14} /> {copy.previous}
-                </span>
-                <span className="link-dots">{previous.title}</span>
-              </a>
-              <a className="post-onward__link post-onward__link--next" href={postHref(next.slug)}>
-                <span className="post-onward__label">
-                  {copy.next} <Icon name="arrowRight" size={14} />
-                </span>
-                <span className="link-dots">{next.title}</span>
-              </a>
+              {previous ? (
+                <a className="post-onward__link" href={postHref(previous.slug)} aria-label={`${copy.previous}: ${previous.title}`}>
+                  <span className="post-onward__label">
+                    <Icon name="arrowLeft" size={14} /> {copy.previous}
+                  </span>
+                  <span className="link-dots post-onward__slug">{previous.slug}</span>
+                </a>
+              ) : null}
+              {next ? (
+                <a className="post-onward__link post-onward__link--next" href={postHref(next.slug)} aria-label={`${copy.next}: ${next.title}`}>
+                  <span className="post-onward__label">
+                    {copy.next} <Icon name="arrowRight" size={14} />
+                  </span>
+                  <span className="link-dots post-onward__slug">{next.slug}</span>
+                </a>
+              ) : null}
             </nav>
           ) : null}
         </footer>

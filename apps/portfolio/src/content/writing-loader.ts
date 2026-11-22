@@ -126,6 +126,17 @@ function sizeOf(path: string): { width: number; height: number } | undefined {
   return undefined
 }
 
+/** HTML made plain text again: tags dropped, entities (&#39;, &amp; and the like) turned back into characters. */
+const plainText = (html: string) =>
+  html
+    .replace(/<[^>]+>/g, '')
+    .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code: string) => String.fromCodePoint(Number.parseInt(code, 16)))
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+
 const escape = (value: string) => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;')
 const headingId = (title: string) =>
   title
@@ -154,7 +165,7 @@ function render(file: string, slug: string, folder: string, body: string, base: 
         if (!id) fail(file, `a heading has no letters to make an address from: "${inner}"`)
         if (ids.has(id)) fail(file, `two headings share the address "#${id}"; give one its own with {#another-id}`)
         ids.add(id)
-        if (depth === 2) sections.push({ id, title: inner.replace(/<[^>]+>/g, '') })
+        if (depth === 2) sections.push({ id, title: plainText(inner) })
         return `<h${depth} id="${id}">${inner}</h${depth}>\n`
       },
       code({ text: code, lang }: Tokens.Code) {

@@ -705,8 +705,14 @@
 }
 
 .post-onward__link--next {
+  grid-column: 2;
   justify-items: end;
   text-align: right;
+}
+
+/* The slug, in mono and a size down, so a long one stays a quiet single line. */
+.post-onward__slug {
+  font: var(--weight-body) var(--text-sm) / 1.4 var(--font-mono);
 }
 
 .post-onward__label {
@@ -796,6 +802,7 @@
   }
 
   .post-onward__link--next {
+    grid-column: auto;
     justify-items: start;
     text-align: left;
   }
