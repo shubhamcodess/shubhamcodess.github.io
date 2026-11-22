@@ -29,7 +29,7 @@ export function Photo({ item }: { readonly item: Keepsake }) {
       </span>
     )
   } else if (src) {
-    body = <img src={src} alt={known?.alt ?? item.alt ?? ''} width={known?.width} height={known?.height} loading="lazy" decoding="async" draggable={false} />
+    body = <img src={src} alt={known?.alt ?? item.alt ?? ''} width={known?.width} height={known?.height} decoding="async" draggable={false} />
   } else {
     body = (
       <span className={`keepsake__slot keepsake__slot--${item.slot?.shape ?? 'wide'}`}>
@@ -85,7 +85,7 @@ const isLight = (hex: string) => {
 }
 
 /** The book's own stickers: drawn here, on the same 24 grid as the tool marks. */
-const own: Record<Exclude<OwnSticker, 'bob' | 'veg'>, { name: string; tone: string; path: string }> = {
+const own: Record<Exclude<OwnSticker, 'bob' | 'veg' | 'ibm'>, { name: string; tone: string; path: string }> = {
   camera: {
     name: 'A camera',
     tone: '#1c1915',
@@ -106,12 +106,34 @@ const own: Record<Exclude<OwnSticker, 'bob' | 'veg'>, { name: string; tone: stri
 /** A die-cut vinyl sticker: the mark on its colour, a white cut edge, and a corner that lifts when touched. */
 export function StickerMark({ item }: { readonly item: Sticker }) {
   const style = at(item.x, item.y, { '--size': `${item.size}%`, '--turn': `${item.turn}deg` })
-  const wrap = item.wrap ? ' sticker--wrap' : ''
+  const wrap = ''
   if (item.id === 'bob') {
     // Bob is a character, so his sticker is cut round him rather than a square.
     return (
       <span className={`sticker sticker--cutout${wrap}`} style={style} role="img" aria-label="IBM Bob">
-        <img src={`${base}about/bob.webp`} alt="" width={512} height={512} draggable={false} loading="lazy" decoding="async" />
+        <img src={`${base}about/bob.webp`} alt="" width={512} height={512} draggable={false} decoding="async" />
+      </span>
+    )
+  }
+  if (item.id === 'ibm') {
+    // The employer: IBM's name in heavy capitals cut by horizontal bars, on IBM blue.
+    return (
+      <span className="sticker" style={{ ...style, '--tone': '#0f62fe' } as CSSProperties} role="img" aria-label="IBM">
+        <span className="sticker__face">
+          <svg className="sticker__ibm" viewBox="0 0 60 30" aria-hidden="true" focusable="false">
+            <defs>
+              <mask id="ibm-bars">
+                <rect width="60" height="30" fill="#fff" />
+                {[8.4, 11.4, 14.4, 17.4, 20.4].map((y) => (
+                  <rect key={y} y={y} width="60" height="1.1" fill="#000" />
+                ))}
+              </mask>
+            </defs>
+            <text x="30" y="23" textAnchor="middle" mask="url(#ibm-bars)">
+              IBM
+            </text>
+          </svg>
+        </span>
       </span>
     )
   }

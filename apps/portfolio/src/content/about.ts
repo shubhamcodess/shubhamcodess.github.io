@@ -35,7 +35,7 @@ export interface Keepsake {
 }
 
 /** Stickers drawn for the book itself, beside the tool marks. */
-export type OwnSticker = 'bob' | 'veg' | 'camera' | 'bat' | 'flask'
+export type OwnSticker = 'bob' | 'ibm' | 'veg' | 'camera' | 'bat' | 'flask'
 
 /** A die-cut sticker on a page or the cover. */
 export interface Sticker {
@@ -45,8 +45,6 @@ export interface Sticker {
   /** Size as a percentage of the page's width. */
   readonly size: number
   readonly turn: number
-  /** Stuck over the board's fore-edge and folded round it, so part of it disappears round the side. */
-  readonly wrap?: true
 }
 
 interface Fact {
@@ -81,18 +79,10 @@ export type Chapter = ChapterBase &
 
 export const book = {
   author: 'Shubham Prakash',
-  title: 'Between Commits',
+  title: 'Beyond Stack',
   subtitle: 'An about-me in twelve chapters: the places, the work, the desk, the bike, the food, the films, and what comes next.',
   volume: 'Volume one',
   year: '2026',
-  /** The stickers already on the cover while the book is closed; the portrait is the cover's backdrop. */
-  cover: {
-    stickers: [
-      { id: 'claude', x: 87, y: 30, size: 18, turn: 14, wrap: true },
-      { id: 'bob', x: 66, y: 50, size: 24, turn: -9 },
-      { id: 'bat', x: 50, y: 5, size: 12, turn: -12 },
-    ],
-  },
   /** The postage stamp: the owner's initials, the three cities, the year it all started. */
   stamp: { country: 'India', value: '2020', middle: 'SP', caption: 'Jamshedpur · Bhubaneswar · Bengaluru', postmark: 'Bengaluru · 2026' },
   places: 'Jamshedpur · Bhubaneswar · Bengaluru',
@@ -164,10 +154,10 @@ export const book = {
         'In October 2020 I moved to Bengaluru to join IBM, and I’ve been here since. It’s where the work happens, where most of the rides start, and where a lot of the photos in this book were taken.',
       ],
       right: [
-        { slot: { shape: 'wide', note: 'Jamshedpur' }, mount: 'tape', x: 8, y: 54, w: 50, turn: -3 },
-        { slot: { shape: 'tall', note: 'Bhubaneswar' }, mount: 'corners', x: 62, y: 50, w: 30, turn: 4 },
+        { photo: 'tatanagar', mount: 'tape', x: 6, y: 50, w: 52, turn: -3, label: 'Tatanagar Jn., Jamshedpur' },
+        { photo: 'iter', mount: 'corners', x: 40, y: 72, w: 52, turn: 3, label: 'ITER, Bhubaneswar' },
       ],
-      left: [{ photo: 'christmas', mount: 'tape', x: 12, y: 72, w: 46, turn: -2, label: 'Bengaluru, at Christmas' }],
+      left: [{ photo: 'bangalore-palace', mount: 'pin', x: 54, y: 54, w: 36, turn: 3, label: 'Bangalore Palace, Bengaluru' }],
     },
     {
       id: 'the-work',
@@ -191,8 +181,8 @@ export const book = {
       left: [{ photo: 'office', mount: 'tape', x: 8, y: 66, w: 56, turn: -2.5 }],
       stickers: {
         left: [
-          { id: 'openjdk', x: 72, y: 66, size: 14, turn: -8 },
-          { id: 'springboot', x: 76, y: 80, size: 13, turn: 9 },
+          { id: 'ibm', x: 70, y: 62, size: 17, turn: -6 },
+          { id: 'openjdk', x: 74, y: 79, size: 12, turn: 9 },
         ],
       },
     },
@@ -220,7 +210,7 @@ export const book = {
       ],
       left: [
         { photo: 'at-the-macbook', mount: 'tape', x: 8, y: 44, w: 62, turn: -2 },
-        { photo: 'desk-clock', mount: 'clip', x: 54, y: 72, w: 38, turn: 5 },
+        { photo: 'new-macbook', mount: 'clip', x: 46, y: 72, w: 46, turn: 4 },
       ],
     },
     {
@@ -283,7 +273,8 @@ export const book = {
           turn: -3,
         },
       ],
-      stickers: { right: [{ id: 'flask', x: 74, y: 76, size: 15, turn: 8 }] },
+      right: [{ photo: 'late-desk', mount: 'tape', x: 10, y: 66, w: 52, turn: -3, label: 'Where the lab happens, for now' }],
+      stickers: { right: [{ id: 'flask', x: 72, y: 72, size: 15, turn: 8 }] },
     },
     {
       id: 'right-now',
@@ -306,7 +297,7 @@ export const book = {
       right: [
         { src: 'research/the-blind-script-abstract.webp', alt: 'The first page of the paper The Blind Script.', mount: 'clip', x: 52, y: 56, w: 36, turn: 4, bare: true },
       ],
-      stickers: { left: [{ id: 'claude', x: 72, y: 78, size: 13, turn: 8 }] },
+      left: [{ photo: 'at-the-macbook-2', mount: 'pin', x: 18, y: 64, w: 54, turn: -2.5 }],
     },
     {
       id: 'through-the-lens',
@@ -323,7 +314,10 @@ export const book = {
         { photo: 'rooftop-sunset', mount: 'tape', x: 8, y: 46, w: 58, turn: -2 },
         { photo: 'yellow-taxi', mount: 'corners', x: 36, y: 70, w: 54, turn: 3 },
       ],
-      right: [{ photo: 'durga-puja', mount: 'pin', x: 54, y: 50, w: 34, turn: 4 }],
+      right: [
+        { photo: 'christmas', mount: 'tape', x: 6, y: 58, w: 46, turn: -3 },
+        { photo: 'durga-puja', mount: 'pin', x: 58, y: 48, w: 32, turn: 4 },
+      ],
       stickers: { left: [{ id: 'camera', x: 76, y: 28, size: 15, turn: 10 }] },
     },
     {
@@ -375,7 +369,6 @@ export const book = {
       dek: 'The next chapter is still being written.',
       kind: 'next',
       story: [],
-      stickers: { left: [{ id: 'nextdotjs', x: 74, y: 82, size: 12, turn: -10 }] },
     },
   ] satisfies readonly Chapter[] as readonly Chapter[],
 }

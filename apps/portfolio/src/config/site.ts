@@ -40,7 +40,7 @@ export const site = {
     me: {
       path: 'about/',
       label: 'About',
-      title: 'About: Between Commits, a book in twelve chapters | Shubham Prakash',
+      title: 'About: Beyond Stack, a book in twelve chapters | Shubham Prakash',
       description:
         'Who Shubham Prakash is, as a book you can leaf through: Jamshedpur, Bhubaneswar and Bengaluru, six years at IBM, the desk, the bike, his builds, the lab he is starting, photography, food and Batman.',
     },

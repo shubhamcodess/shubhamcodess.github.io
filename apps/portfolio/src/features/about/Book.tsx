@@ -52,6 +52,8 @@ interface BookProps {
   readonly onTurn?: (page: number) => void
   /** Sits between the buttons (the single or two-page switch on phones). */
   readonly children?: ReactNode
+  /** Printed down the spine, seen while the book is closed and turned a little towards the reader. */
+  readonly spine?: ReactNode
 }
 
 /** A leaf's angle in degrees: 0 lying on the right, -180 turned over onto the left. */
@@ -86,7 +88,7 @@ function pagesAt({ turned, side }: Place, leaves: number, mode: BookMode): numbe
  * edge. On phones, one page at a time: a swipe or a tap on either side moves on, and the book slides so the
  * page in view is centred.
  */
-export function Book({ pages, mode, start, labels, onTurn, children }: BookProps) {
+export function Book({ pages, mode, start, labels, onTurn, children, spine }: BookProps) {
   const leaves = pages.length / 2
   const reducedMotion = useReducedMotion()
   const [place, setPlace] = useState<Place>(() => placeOf(start, leaves))
@@ -316,7 +318,11 @@ export function Book({ pages, mode, start, labels, onTurn, children }: BookProps
 
   return (
     <NavContext.Provider value={nav}>
-      <div className="book-stage" data-mode={mode}>
+      <div className="book-stage" data-mode={mode} data-closed={atStart ? 'front' : atEnd ? 'back' : undefined}>
+        {/* The spine: the book's rounded back, turned to face the side, joined to the front board at the hinge. */}
+        <span className="book-spine" aria-hidden="true" style={{ '--shift-len': `calc(var(--page-w) * ${shift / 50})` } as React.CSSProperties}>
+          <span className="book-spine__label">{spine}</span>
+        </span>
         <div
           ref={bookRef}
           className="book"

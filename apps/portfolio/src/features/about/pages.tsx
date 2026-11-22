@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { book, type Chapter, type Keepsake, type Sticker } from '../../content/about'
 import { getBuild } from '../../content/builds'
 import { site } from '../../config/site'
@@ -25,16 +25,9 @@ function Things({ photos = [], stickers = [] }: { photos?: readonly Keepsake[] |
       {photos.map((item, index) => (
         <Photo key={`${item.photo ?? item.src ?? item.slot?.note ?? item.note?.title}-${index}`} item={item} />
       ))}
-      {stickers.map((item, index) =>
-        item.wrap ? (
-          // Clipped at the board's edge, as if the rest of it is folded round the side.
-          <span key={`${item.id}-${index}`} className="sticker-fold">
-            <StickerMark item={item} />
-          </span>
-        ) : (
-          <StickerMark key={`${item.id}-${index}`} item={item} />
-        ),
-      )}
+      {stickers.map((item, index) => (
+        <StickerMark key={`${item.id}-${index}`} item={item} />
+      ))}
     </>
   )
 }
@@ -68,13 +61,13 @@ function Folio({ page }: { readonly page: number }) {
 }
 
 /**
- * The front board: the portrait printed edge to edge under a navy wash, the title set up the spine side in tall
- * foil letters that let the photo through (a double exposure), and stickers stuck on top, one folded over the edge.
+ * The front board: the portrait printed edge to edge, washed into black-grey cloth, and the title set up the
+ * spine side in tall capitals drawn only as a gold foil outline, so the photo shows through the letters.
  */
 function Cover() {
   return (
     <div className="cover">
-      <div className="cover__cloth cover__cloth--front" style={{ '--cover-photo': `url(${portrait})` } as CSSProperties}>
+      <div className="cover__cloth cover__cloth--front">
         <img className="cover__backdrop" src={portrait} alt="" width={1086} height={1448} decoding="async" draggable={false} />
         <span className="cover__wash" aria-hidden="true" />
         <h2 className="cover__vertical" aria-label={book.title}>
@@ -89,7 +82,6 @@ function Cover() {
           {book.volume} · {book.year}
         </p>
       </div>
-      <Things stickers={book.cover.stickers as readonly Sticker[]} />
     </div>
   )
 }
@@ -368,15 +360,13 @@ function BackCover() {
   return (
     <div className="cover cover--back">
       <div className="cover__cloth cover__cloth--front cover__cloth--back">
-        <img className="cover__backdrop" src={`${base}me/photos/by-the-water.webp`} alt="" width={1600} height={900} loading="lazy" decoding="async" draggable={false} />
+        <img className="cover__backdrop" src={`${base}me/photos/by-the-water.webp`} alt="" width={1600} height={900} decoding="async" draggable={false} />
         <span className="cover__wash" aria-hidden="true" />
         <span className="cover__frame" aria-hidden="true" />
         <p className="cover__author">{book.author}</p>
         <p className="cover__blurb">{book.back.blurb}</p>
         <p className="cover__foot">{book.places}</p>
       </div>
-      <StickerMark item={{ id: 'githubcopilot', x: 74, y: 8, size: 14, turn: 8 }} />
-      <StickerMark item={{ id: 'veg', x: 64, y: 14, size: 10, turn: -9 }} />
     </div>
   )
 }

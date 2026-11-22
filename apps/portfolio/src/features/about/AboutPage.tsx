@@ -4,6 +4,7 @@ import { Header } from '../../layout/Header'
 import { hrefTo } from '../../lib/routes'
 import { ActionLink } from '../../ui/ActionLink'
 import { Book, type BookMode } from './Book'
+import { book } from '../../content/about'
 import { bookPages } from './pages'
 import './about.css'
 
@@ -70,6 +71,12 @@ export function AboutPage() {
           mode={mode}
           start={start}
           onTurn={onTurn}
+          spine={
+            <>
+              <span>{book.title}</span>
+              <span>{book.author}</span>
+            </>
+          }
           labels={{ previous: copy.previous, next: copy.next, book: copy.book, of: copy.of, hint: copy.hint }}
         >
           {phone ? (
