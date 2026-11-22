@@ -166,42 +166,214 @@
   max-width: 64rem;
 }
 
-.w-back {
-  margin-bottom: var(--space-6);
-}
-
-.w-head {
-  max-width: 44rem;
-}
-
-.w-head__meta {
+/* The bar above the masthead: back to the index, and on phones and tablets the contents. */
+.w-bar {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.w-contents {
+  position: relative;
+}
+
+.w-contents__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--button-height);
+  padding-inline: var(--button-pad);
   color: var(--ink-muted);
+  font: var(--weight-body) var(--button-text-size) / 1 var(--button-text-family);
+  letter-spacing: var(--button-text-tracking);
+  text-transform: var(--button-text-case);
+  background: none;
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--button-radius);
+  cursor: pointer;
+}
+
+.w-contents__button .icon {
+  transition: rotate var(--duration-base) var(--ease-out);
+}
+
+.w-contents__button[aria-expanded='true'] {
+  color: var(--ink);
+  background: var(--surface-raised);
+  border-color: color-mix(in srgb, var(--ink) 45%, var(--line));
+}
+
+.w-contents__button[aria-expanded='true'] .icon {
+  rotate: 180deg;
+}
+
+.w-contents__sheet {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 6;
+  display: grid;
+  width: min(260px, 80vw);
+  padding: 4px;
+  font-size: var(--text-sm);
+  background: var(--surface-raised);
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card), 0 18px 40px -18px rgb(0 0 0 / 30%);
+}
+
+.w-contents__sheet[hidden] {
+  display: none;
+}
+
+.w-contents__sheet a {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding-inline: 10px;
+  color: var(--ink-muted);
+  border-radius: 8px;
+}
+
+.w-contents__sheet a:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+
+@media (min-width: 1100px) {
+  .w-contents {
+    display: none;
+  }
+}
+
+/* Phones and tablets: the bar stays under the top edge while reading, like a project page's section chips. */
+@media (max-width: 1099px) {
+  .w-bar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    margin-inline: calc(var(--page-gutter) * -1);
+    padding: var(--space-2) var(--page-gutter);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+}
+
+/*
+ * The masthead: one raised paper plate, the editorial grid of a magazine opener. The title and dek on the left,
+ * the facts in a mono column on the right. The hero's two lights leak faintly in at its top edge, blue from the
+ * left and amber from the right, and a hairline of the same two colours runs under it.
+ */
+.w-mast {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
+  gap: var(--space-6) var(--space-8);
+  padding: clamp(var(--space-5), 4vw, var(--space-8));
+  overflow: hidden;
+  background:
+    radial-gradient(60% 70% at 0% 0%, color-mix(in srgb, var(--scroll-light-color) 9%, transparent), transparent 70%),
+    radial-gradient(50% 60% at 100% 0%, color-mix(in srgb, var(--accent-warm) 9%, transparent), transparent 70%),
+    var(--surface-raised);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.w-mast::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--scroll-light-color), color-mix(in srgb, var(--scroll-light-color) 40%, var(--accent-warm)) 55%, var(--accent-warm));
+  opacity: 0.55;
+}
+
+.w-mast__kicker {
+  color: var(--ink);
   font: var(--weight-body) var(--text-xs) / 1.2 var(--font-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
-.w-head__meta > :first-child {
-  color: var(--ink);
-}
-
-.w-head__title {
+.w-mast__title {
   margin-top: var(--space-4);
-  font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem);
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
   font-weight: var(--weight-heading);
   line-height: var(--leading-tight);
   letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
-.w-head__dek {
+.w-mast__dek {
+  max-width: 38rem;
   margin-top: var(--space-4);
   color: var(--ink-muted);
   font-size: var(--text-md);
   line-height: var(--leading-snug);
+}
+
+.w-mast__facts {
+  display: grid;
+  align-content: start;
+  margin: 0;
+  padding-left: var(--space-6);
+  border-left: var(--hairline) solid var(--line);
+}
+
+.w-mast__facts div {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  gap: var(--space-3);
+  padding-block: var(--space-2);
+}
+
+.w-mast__facts dt {
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1.6 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.w-mast__facts dd {
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.w-mast__numbers {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-5) var(--space-8);
+  padding-top: var(--space-5);
+  border-top: var(--hairline) solid var(--line);
+}
+
+.w-mast__numbers p {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.w-mast__value {
+  font-size: var(--card-stat-size);
+  font-weight: var(--weight-body);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.w-mast__label,
+.w-mast__note {
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1.4 var(--font-mono);
+}
+
+.w-mast__note {
+  margin-left: auto;
+  max-width: 18rem;
 }
 
 /* The reading column, with its sections in a quiet rail on wide screens. */
@@ -340,8 +512,11 @@
 }
 
 .w-foot {
-  display: grid;
-  gap: var(--space-6);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
   max-width: 42rem;
   margin-top: var(--space-8);
   padding-top: var(--space-5);
@@ -352,6 +527,18 @@
   .w-foot {
     margin-left: calc(12rem + var(--space-7));
   }
+}
+
+.w-next {
+  gap: var(--space-3);
+  margin-left: auto;
+}
+
+.w-next__label {
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .w-tags {
@@ -371,62 +558,6 @@
   text-transform: uppercase;
   border: var(--hairline) solid var(--line);
   border-radius: var(--radius-pill);
-}
-
-/* ——— a case study's "at a glance" card ——— */
-.w-facts {
-  display: grid;
-  gap: var(--space-5);
-  max-width: 54rem;
-  margin-top: var(--space-7);
-  padding: var(--space-5) var(--space-6);
-  background: var(--surface-raised);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-}
-
-.w-facts dl {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
-  gap: var(--space-4);
-  margin: 0;
-}
-
-.w-facts dt {
-  color: var(--ink-muted);
-  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.w-facts dd {
-  margin: var(--space-2) 0 0;
-}
-
-.w-facts__numbers {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-5) var(--space-8);
-  padding-top: var(--space-5);
-  border-top: var(--hairline) solid var(--line);
-}
-
-.w-facts__numbers p {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.w-facts__value {
-  font-size: var(--card-stat-size);
-  font-weight: var(--weight-body);
-  letter-spacing: -0.02em;
-  line-height: 1;
-}
-
-.w-facts__label,
-.w-facts__note {
-  color: var(--ink-muted);
-  font: var(--weight-body) var(--text-xs) / 1.4 var(--font-mono);
 }
 
 /* ——— phones ——— */
@@ -456,7 +587,21 @@
     padding: var(--space-3);
   }
 
-  .w-facts {
-    padding: var(--space-5);
+  .w-mast {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .w-mast__facts {
+    padding: var(--space-4) 0 0;
+    border-top: var(--hairline) solid var(--line);
+    border-left: 0;
+  }
+
+  .w-mast__note {
+    margin-left: 0;
+  }
+
+  .w-next {
+    margin-left: 0;
   }
 }

@@ -15,7 +15,7 @@ Open `/writing/`, `/writing/sample-post/` and `/writing/sample-case-study/`.
 ## The menu
 
 - The header's **Research** (an anchor on home) becomes **Writing**, the page: Builds, Writing, Experience, Contact. It fits phones at 320px, being shorter than Research.
-- On writing pages it is marked as the current page, and the dock reads "Writing".
+- Like every page, a writing page leaves its own link out of the bar (no current dot): Builds, Experience, Contact. The dock reads "Writing".
 - Home keeps its Research & writing section; its All writing goes to `/writing/` instead of Substack. The dock list and the footer gain Writing.
 
 ## The index, `/writing/`
@@ -26,21 +26,22 @@ Open `/writing/`, `/writing/sample-post/` and `/writing/sample-case-study/`.
 
 ## A piece, `/writing/<slug>/`
 
-- All writing ← at the top, then the kind, date and reading time in mono, the title (up to 48px), and the summary as a dek.
-- A reading column of about 66 characters (42rem, 17px, line height 1.7) in the site's own type; on wide screens its sections sit in a quiet sticky rail on the left ("On this page"), made from the post's `##` headings.
+- **The bar:** All writing ← on the left; on phones and tablets a lean **Contents** chip on the right that opens the sections in a small sheet (choosing one jumps there and closes it; Escape or a tap outside closes it). On phones and tablets the bar stays under the top edge while reading, like a project page's section chips. On wide screens Contents is the sticky rail instead.
+- **The masthead** (second pass, after Framer's editorial-grid blog openers): one raised paper plate. The kind, the title (up to 52px) and the summary on the left; the facts in a mono column on the right, past a hairline: Kind, Published, Reading, and for a case study Where, Role, When, Team and Stack. The hero's two lights leak faintly in at its top corners (blue from the left, amber from the right), and a 2px rule of the same blue and amber runs along its foot: the site's lighting, kept to a whisper. On phones the facts move under the title.
+- **A case study** adds its headline numbers and the line "A private project: no code, data or client names are shared." across the masthead's foot, so everything at a glance is one block.
+- **The reading column:** about 66 characters (42rem, 17px, line height 1.7) in the site's own type, with "On this page" as a sticky rail on the left on wide screens.
 - Pull quotes have an amber rule (`--accent-warm`); code sits on the sunken surface in Geist Mono; links carry the site's dotted line.
-- Pictures, sketches and diagrams are figures with a mono caption. Each loads only when it nears the screen (`loading="lazy"`) and has its true size, so nothing jumps. Drawings come in a light and a dark version; the theme shows one, and the hidden one never downloads.
-- The foot: tags as small outlined pills, then the next piece.
-
-## A case study
-
-- The same page, plus an **At a glance** card under the title: Where (IBM · Private), Role, When, Team, Stack, up to two headline numbers, and the line "A private project: no code, data or client names are shared."
-- Sections: Context, The problem, What I did, What changed, What I'd do differently. The sample's bracketed text marks where your words go.
-- Case studies carry no repository or demo link, as the site's rules require for private work.
+- Pictures, sketches and diagrams are figures with a mono caption. Each loads only when it nears the screen (`loading="lazy"`) at its true size, so nothing jumps. Drawings come in a light and a dark version; the theme shows one, and the hidden one never downloads.
+- **The foot:** one hairline, then the tags on the left and Next → on the right, in one row.
 
 ## How a post gets onto the site (to build next)
 
-One folder per piece in the repository, picked up on the next build. No admin screen and no service: Git is the CMS.
+One folder per piece, picked up on the next build. No admin screen and no service: Git is the CMS.
+
+- **The folder name is the slug:** `content/writing/the-blind-script-notes/` becomes `/writing/the-blind-script-notes/`.
+- **`index.md` is the post,** and its front matter is strictly typed: the build checks it against a schema and stops, naming the file and the field, if anything is missing or wrong.
+- **Everything else in the folder is the post's material:** images, sketches and diagram sources, referenced by their file names in the Markdown and published beside the page.
+- **Contents comes from the Markdown, typed:** the build reads the `##` headings into a typed list (`{ id, title }`), giving each a stable id from its text; that list draws both the wide-screen rail and the phone Contents sheet. A heading can set its own id with `## Title {#id}`; two headings with the same id fail the build.
 
 ```
 content/writing/

@@ -127,33 +127,44 @@
   }
 
   // ——— the article shared by a post and a case study ———
-  const article = (e, body, extra = '') => {
+  // facts: [label, value] rows for the masthead's right column; numbers: a case study's headline results.
+  const article = (e, body, { facts = [], numbers = [], note = '' } = {}) => {
     const sections = [...body.matchAll(/<h2 id="([^"]+)">([^<]+)<\/h2>/g)]
     const others = entries.filter((x) => x.where === 'here' && x.slug !== e.slug)
+    const rows = [['Kind', kinds[e.kind]], ...facts, ['Published', date(e.date)], ['Reading', `${e.minutes} min`]]
+    const toc = sections.map(([, id, t]) => `<a href="#${id}">${t}</a>`).join('')
     return `
       <div class="w-article">
-        <a class="action-link action-link--text action-link--back w-back" href="/writing/"><span class="link-dots">All writing</span>${icon(LEFT)}</a>
-        <header class="w-head enter">
-          <p class="w-head__meta">
-            <span>${kinds[e.kind]}</span>
-            ${e.private ? `<span>${e.private} · Private</span>` : ''}
-            <time datetime="${e.date}">${date(e.date)}</time>
-            <span>${e.minutes} min read</span>
-          </p>
-          <h1 class="w-head__title">${e.title}</h1>
-          <p class="w-head__dek">${e.summary}</p>
+        <div class="w-bar">
+          <a class="action-link action-link--text action-link--back" href="/writing/"><span class="link-dots">All writing</span>${icon(LEFT)}</a>
+          <div class="w-contents">
+            <button type="button" class="w-contents__button" aria-expanded="false" aria-controls="w-contents">Contents ${icon('M6 9l6 6 6-6')}</button>
+            <nav class="w-contents__sheet" id="w-contents" aria-label="On this page" hidden>${toc}</nav>
+          </div>
+        </div>
+        <header class="w-mast enter">
+          <div class="w-mast__main">
+            <p class="w-mast__kicker">${kinds[e.kind]}${e.private ? ` · ${e.private} · Private` : ''}</p>
+            <h1 class="w-mast__title">${e.title}</h1>
+            <p class="w-mast__dek">${e.summary}</p>
+          </div>
+          <dl class="w-mast__facts">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+          ${
+            numbers.length
+              ? `<div class="w-mast__numbers">${numbers.map(([v, l]) => `<p><span class="w-mast__value">${v}</span><span class="w-mast__label">${l}</span></p>`).join('')}${note ? `<p class="w-mast__note">${note}</p>` : ''}</div>`
+              : ''
+          }
         </header>
-        ${extra}
         <div class="w-layout">
           <nav class="w-toc" aria-label="On this page">
             <p class="w-toc__label">On this page</p>
-            ${sections.map(([, id, t]) => `<a href="#${id}">${t}</a>`).join('')}
+            ${toc}
           </nav>
           <div class="w-prose">${body}</div>
         </div>
         <footer class="w-foot">
           <ul class="w-tags" aria-label="Tags">${(e.tags ?? []).map((t) => `<li>${t}</li>`).join('')}</ul>
-          ${others.length ? `<nav class="page-onward" aria-label="More writing"><a class="action-link action-link--text" href="/writing/${others[0].slug}/"><span class="link-dots">${others[0].title}</span>${icon('M5 12h14 M12 5l7 7-7 7')}</a></nav>` : ''}
+          ${others.length ? `<a class="action-link action-link--text w-next" href="/writing/${others[0].slug}/"><span class="w-next__label">Next</span><span class="link-dots">${others[0].title}</span>${icon('M5 12h14 M12 5l7 7-7 7')}</a>` : ''}
         </footer>
       </div>`
   }
@@ -191,13 +202,6 @@ print(script.output + digest)</code></pre>
     )
 
   // ——— /writing/sample-case-study/ ———
-  const facts = [
-    ['Where', 'IBM · Private'],
-    ['Role', '[Your role]'],
-    ['When', '[Year to year]'],
-    ['Team', '[Team size]'],
-    ['Stack', '[Main tools]'],
-  ]
   const caseStudy = (e) =>
     article(
       e,
@@ -216,19 +220,24 @@ print(script.output + digest)</code></pre>
       <p>[The result, in plain terms.]</p>
       <h2 id="lessons">What I’d do differently</h2>
       <p>[One honest paragraph.]</p>`,
-      `
-      <aside class="w-facts" aria-label="At a glance">
-        <dl>${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
-        <div class="w-facts__numbers">
-          <p><span class="w-facts__value">[n]</span><span class="w-facts__label">a result that matters</span></p>
-          <p><span class="w-facts__value">[n]</span><span class="w-facts__label">another, if there is one</span></p>
-        </div>
-        <p class="w-facts__note">A private project: no code, data or client names are shared.</p>
-      </aside>`,
+      {
+        facts: [
+          ['Where', 'IBM · Private'],
+          ['Role', '[Your role]'],
+          ['When', '[Year to year]'],
+          ['Team', '[Team size]'],
+          ['Stack', '[Main tools]'],
+        ],
+        numbers: [
+          ['[n]', 'a result that matters'],
+          ['[n]', 'another, if there is one'],
+        ],
+        note: 'A private project: no code, data or client names are shared.',
+      },
     )
 
   // ——— header: the menu proposal ———
-  // "Research" (an anchor on home) becomes "Writing", the page. On writing pages it's the current page.
+  // "Research" (an anchor on home) becomes "Writing", the page. A writing page leaves it out, as every page does its own.
   const patchHeader = () => {
     const onWriting = location.pathname.startsWith('/writing')
     for (const a of document.querySelectorAll('.site-header__link')) {
@@ -237,7 +246,8 @@ print(script.output + digest)</code></pre>
         a.textContent = 'Writing'
         a.setAttribute('href', '/writing/')
         a.dataset.wPatched = '1'
-        if (onWriting) a.setAttribute('aria-current', 'page')
+        // Like every page, a writing page leaves its own link out of the bar.
+        if (onWriting) a.hidden = true
       }
     }
     // The shell is the experience page, whose header leaves out its own link; a writing page shows all four.
@@ -246,6 +256,7 @@ print(script.output + digest)</code></pre>
       const exp = writingLink.cloneNode(false)
       exp.removeAttribute('aria-current')
       exp.removeAttribute('data-w-patched')
+      exp.hidden = false
       exp.setAttribute('href', '/experience/')
       exp.textContent = 'Experience'
       writingLink.after(exp)
@@ -283,6 +294,17 @@ print(script.output + digest)</code></pre>
     } else if (entry) {
       main.innerHTML = entry.kind === 'case-study' ? caseStudy(entry) : post(entry)
       document.title = `${entry.title} | Shubham Prakash`
+      // Phones and tablets: Contents opens the sections in a small sheet; choosing one jumps there and closes it.
+      const button = main.querySelector('.w-contents__button')
+      const sheet = main.querySelector('.w-contents__sheet')
+      const set = (open) => {
+        button.setAttribute('aria-expanded', String(open))
+        sheet.hidden = !open
+      }
+      button.addEventListener('click', () => set(sheet.hidden))
+      sheet.addEventListener('click', (ev) => ev.target.closest('a') && set(false))
+      document.addEventListener('keydown', (ev) => ev.key === 'Escape' && !sheet.hidden && (set(false), button.focus()))
+      document.addEventListener('pointerdown', (ev) => !sheet.hidden && !main.querySelector('.w-contents').contains(ev.target) && set(false))
     } else {
       main.innerHTML = '<p class="w-missing">No piece by that name. <a href="/writing/">All writing</a></p>'
     }
