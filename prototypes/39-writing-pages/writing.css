@@ -248,48 +248,133 @@
   }
 }
 
-/* Phones and tablets: the bar stays under the top edge while reading, like a project page's section chips. */
+/*
+ * Phones and tablets: the bar stays under the top edge while reading. No strip of its own: it sits on the page's
+ * paper, which fades out below it, so text slides softly underneath.
+ */
 @media (max-width: 1099px) {
   .w-bar {
     position: sticky;
     top: 0;
     z-index: 5;
     margin-inline: calc(var(--page-gutter) * -1);
-    padding: var(--space-2) var(--page-gutter);
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    padding: var(--space-3) var(--page-gutter);
+    margin-bottom: var(--space-3);
+    transition: background-color var(--duration-base) linear;
+  }
+
+  /* Only once it is stuck: the page's own paper and grain behind it, no fade and no blur, so text simply goes under. */
+  .w-bar[data-stuck] {
+    background: var(--panel-texture, none), var(--surface);
   }
 }
 
 /*
- * The masthead: one raised paper plate, the editorial grid of a magazine opener. The title and dek on the left,
- * the facts in a mono column on the right. The hero's two lights leak faintly in at its top edge, blue from the
- * left and amber from the right, and a hairline of the same two colours runs under it.
+ * The masthead, as a piece of paper laid on the page (third pass). Two versions to judge:
+ *  - torn: a note torn from a pad, a strip of tape at the top, faint ruled lines, turned a little, a chunky offset shadow;
+ *  - letter (the default): a crisp sheet cut with pinking shears along its foot, a soft shadow.
+ * The edge is a clip-path on the paper; the shadow is a drop-shadow on its wrapper, so it follows the cut.
  */
 .w-mast {
+  position: relative;
+}
+
+.w-mast__paper {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
   gap: var(--space-6) var(--space-8);
-  padding: clamp(var(--space-5), 4vw, var(--space-8));
-  overflow: hidden;
-  background:
-    radial-gradient(60% 70% at 0% 0%, color-mix(in srgb, var(--scroll-light-color) 9%, transparent), transparent 70%),
-    radial-gradient(50% 60% at 100% 0%, color-mix(in srgb, var(--accent-warm) 9%, transparent), transparent 70%),
-    var(--surface-raised);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+  padding: clamp(var(--space-6), 4vw, var(--space-8)) clamp(var(--space-5), 4vw, var(--space-8)) calc(clamp(var(--space-6), 4vw, var(--space-8)) + 14px);
 }
 
-.w-mast::after {
-  content: '';
+/* With no facts in the front matter: one column, just the kicker, title and summary. */
+.w-mast--plain .w-mast__paper {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.w-mast--plain {
+  max-width: 46rem;
+}
+
+/* Torn note */
+.w-mast--torn {
+  --note-paper: color-mix(in srgb, var(--surface-raised) 82%, #fff3c4);
+  --note-rule: color-mix(in srgb, var(--accent) 9%, transparent);
+  max-width: 60rem;
+  rotate: -0.5deg;
+  filter: drop-shadow(5px 6px 0 color-mix(in srgb, var(--ink) 10%, transparent));
+}
+
+.w-mast--torn .w-mast__paper {
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 31px, var(--note-rule) 31px 32px),
+    var(--panel-texture, none),
+    var(--note-paper);
+}
+
+.w-mast__tape {
   position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--scroll-light-color), color-mix(in srgb, var(--scroll-light-color) 40%, var(--accent-warm)) 55%, var(--accent-warm));
-  opacity: 0.55;
+  z-index: 1;
+  top: -10px;
+  left: 50%;
+  width: 120px;
+  height: 26px;
+  translate: -50% 0;
+  rotate: 2deg;
+  background: color-mix(in srgb, var(--accent-warm) 16%, rgb(255 255 255 / 55%));
+  border-inline: 1px dashed color-mix(in srgb, var(--accent-warm) 25%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+}
+
+/* Letter */
+.w-mast--letter {
+  max-width: 60rem;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 6%)) drop-shadow(0 14px 22px color-mix(in srgb, var(--ink) 12%, transparent));
+}
+
+.w-mast--letter .w-mast__paper {
+  /* A step up from the page, not stark white: half the raised paper, half the page's own. */
+  --ridge: 14px;
+  background: var(--panel-texture, none), color-mix(in srgb, var(--surface-raised) 50%, var(--surface));
+  /* Even ridges along the foot, a fixed 14px apart whatever the width: pinking shears. */
+  -webkit-mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--ridge) / 2) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--ridge) calc(var(--ridge) / 2) repeat-x;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--ridge) / 2) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--ridge) calc(var(--ridge) / 2) repeat-x;
+}
+
+:root[data-theme='dark'] .w-mast--letter .w-mast__paper {
+  background: var(--panel-texture, none), var(--surface-raised);
+}
+
+/* Dark: the paper steps back so it doesn't glare, the tape and rules dimmer. */
+:root[data-theme='dark'] .w-mast--torn {
+  /* The page's own night, one step up, with the faintest warmth: the same family as the background. */
+  --note-paper: color-mix(in srgb, var(--surface-raised) 94%, #ffd9a0);
+  --note-rule: rgb(255 255 255 / 4%);
+  filter: drop-shadow(4px 5px 0 rgb(0 0 0 / 55%));
+}
+
+:root[data-theme='dark'] .w-mast__tape {
+  background: color-mix(in srgb, var(--accent-warm) 14%, rgb(255 255 255 / 6%));
+  border-inline-color: rgb(255 255 255 / 8%);
+}
+
+:root[data-theme='dark'] .w-mast--letter {
+  filter: drop-shadow(0 14px 22px rgb(0 0 0 / 55%));
+}
+
+.w-try {
+  margin-top: var(--space-4);
+  color: var(--ink-muted);
+  font: var(--weight-body) var(--text-xs) / 1 var(--font-mono);
+}
+
+.w-try a {
+  color: var(--ink);
+  text-decoration: underline dotted;
 }
 
 .w-mast__kicker {
@@ -301,7 +386,7 @@
 
 .w-mast__title {
   margin-top: var(--space-4);
-  font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+  font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
   font-weight: var(--weight-heading);
   line-height: var(--leading-tight);
   letter-spacing: -0.025em;
@@ -587,9 +672,15 @@
     padding: var(--space-3);
   }
 
-  .w-mast {
+  .w-mast__paper {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .w-mast--torn {
+    rotate: -0.3deg;
+  }
+
+
 
   .w-mast__facts {
     padding: var(--space-4) 0 0;

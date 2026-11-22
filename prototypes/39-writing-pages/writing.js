@@ -29,6 +29,19 @@
       tags: ['Sample', 'IBM'],
       private: 'IBM',
       sample: true,
+      // Optional front matter: leave any of these out and the masthead is just the kicker, title and summary.
+      facts: [
+        ['Where', 'IBM · Private'],
+        ['Role', '[Your role]'],
+        ['When', '[Year to year]'],
+        ['Team', '[Team size]'],
+        ['Stack', '[Main tools]'],
+      ],
+      numbers: [
+        ['[n]', 'a result that matters'],
+        ['[n]', 'another, if there is one'],
+      ],
+      note: 'A private project: no code, data or client names are shared.',
     },
     {
       slug: 'the-blind-script',
@@ -126,12 +139,35 @@
       </div>`
   }
 
+  // ——— masthead edges ———
+  // Torn: an irregular tear along the foot, the same every load (a fixed seed), 10–16px deep.
+  const tornEdge = () => {
+    let seed = 7
+    const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280)
+    const pts = ['0 0', '100% 0', '100% calc(100% - 12px)']
+    for (let x = 98; x > 0; x -= 1.6 + rnd() * 2.2) pts.push(`${x.toFixed(2)}% calc(100% - ${(2 + rnd() * 14).toFixed(1)}px)`)
+    pts.push('0 calc(100% - 9px)')
+    return `polygon(${pts.join(', ')})`
+  }
+  // Letter: its ridges are a CSS mask with a fixed tooth size (writing.css), so they look the same on any width.
+  // Which masthead: the site default (config), a post's own `masthead:` front matter, or ?mast= while judging.
+  const MASTHEAD_DEFAULT = 'letter'
+  const mastFor = (e) => {
+    const asked = new URLSearchParams(location.search).get('mast')
+    if (asked === 'torn' || asked === 'letter') return asked
+    return e.masthead ?? MASTHEAD_DEFAULT
+  }
+
   // ——— the article shared by a post and a case study ———
-  // facts: [label, value] rows for the masthead's right column; numbers: a case study's headline results.
-  const article = (e, body, { facts = [], numbers = [], note = '' } = {}) => {
+  // The masthead is only what the post's front matter gives: with no `facts`, it is the kicker, title and summary.
+  const article = (e, body) => {
+    const { facts = [], numbers = [], note = '' } = e
     const sections = [...body.matchAll(/<h2 id="([^"]+)">([^<]+)<\/h2>/g)]
     const others = entries.filter((x) => x.where === 'here' && x.slug !== e.slug)
-    const rows = [['Kind', kinds[e.kind]], ...facts, ['Published', date(e.date)], ['Reading', `${e.minutes} min`]]
+    const rows = facts.length ? [['Kind', kinds[e.kind]], ...facts, ['Published', date(e.date)], ['Reading', `${e.minutes} min`]] : []
+    const kicker = [kinds[e.kind], e.private ? `${e.private} · Private` : '', rows.length ? '' : date(e.date), rows.length ? '' : `${e.minutes} min read`]
+      .filter(Boolean)
+      .join(' · ')
     const toc = sections.map(([, id, t]) => `<a href="#${id}">${t}</a>`).join('')
     return `
       <div class="w-article">
@@ -142,19 +178,23 @@
             <nav class="w-contents__sheet" id="w-contents" aria-label="On this page" hidden>${toc}</nav>
           </div>
         </div>
-        <header class="w-mast enter">
+        <header class="w-mast w-mast--${mastFor(e)}${rows.length ? '' : ' w-mast--plain'} enter">
+          ${mastFor(e) === 'torn' ? '<span class="w-mast__tape" aria-hidden="true"></span>' : ''}
+          <div class="w-mast__paper"${mastFor(e) === 'torn' ? ` style="clip-path: ${tornEdge()}"` : ''}>
           <div class="w-mast__main">
-            <p class="w-mast__kicker">${kinds[e.kind]}${e.private ? ` · ${e.private} · Private` : ''}</p>
+            <p class="w-mast__kicker">${kicker}</p>
             <h1 class="w-mast__title">${e.title}</h1>
             <p class="w-mast__dek">${e.summary}</p>
           </div>
-          <dl class="w-mast__facts">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+          ${rows.length ? `<dl class="w-mast__facts">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>` : ''}
           ${
             numbers.length
               ? `<div class="w-mast__numbers">${numbers.map(([v, l]) => `<p><span class="w-mast__value">${v}</span><span class="w-mast__label">${l}</span></p>`).join('')}${note ? `<p class="w-mast__note">${note}</p>` : ''}</div>`
               : ''
           }
+          </div>
         </header>
+        <p class="w-try">Masthead: <a href="?mast=torn">torn note</a> · <a href="?mast=letter">letter</a></p>
         <div class="w-layout">
           <nav class="w-toc" aria-label="On this page">
             <p class="w-toc__label">On this page</p>
@@ -220,20 +260,6 @@ print(script.output + digest)</code></pre>
       <p>[The result, in plain terms.]</p>
       <h2 id="lessons">What I’d do differently</h2>
       <p>[One honest paragraph.]</p>`,
-      {
-        facts: [
-          ['Where', 'IBM · Private'],
-          ['Role', '[Your role]'],
-          ['When', '[Year to year]'],
-          ['Team', '[Team size]'],
-          ['Stack', '[Main tools]'],
-        ],
-        numbers: [
-          ['[n]', 'a result that matters'],
-          ['[n]', 'another, if there is one'],
-        ],
-        note: 'A private project: no code, data or client names are shared.',
-      },
     )
 
   // ——— header: the menu proposal ———
@@ -241,13 +267,16 @@ print(script.output + digest)</code></pre>
   const patchHeader = () => {
     const onWriting = location.pathname.startsWith('/writing')
     for (const a of document.querySelectorAll('.site-header__link')) {
-      if (a.dataset.wPatched) continue
+      if (a.dataset.wPatched) {
+        if (onWriting) a.style.display = 'none'
+        continue
+      }
       if (/#research$/.test(a.getAttribute('href') ?? '')) {
         a.textContent = 'Writing'
         a.setAttribute('href', '/writing/')
         a.dataset.wPatched = '1'
         // Like every page, a writing page leaves its own link out of the bar.
-        if (onWriting) a.hidden = true
+        if (onWriting) a.style.display = 'none'
       }
     }
     // The shell is the experience page, whose header leaves out its own link; a writing page shows all four.
@@ -256,7 +285,7 @@ print(script.output + digest)</code></pre>
       const exp = writingLink.cloneNode(false)
       exp.removeAttribute('aria-current')
       exp.removeAttribute('data-w-patched')
-      exp.hidden = false
+      exp.style.display = ''
       exp.setAttribute('href', '/experience/')
       exp.textContent = 'Experience'
       writingLink.after(exp)
@@ -295,6 +324,15 @@ print(script.output + digest)</code></pre>
       main.innerHTML = entry.kind === 'case-study' ? caseStudy(entry) : post(entry)
       document.title = `${entry.title} | Shubham Prakash`
       // Phones and tablets: Contents opens the sections in a small sheet; choosing one jumps there and closes it.
+      // The bar knows when it is stuck to the top, to lay the page's paper behind it only then.
+      const bar = main.querySelector('.w-bar')
+      // A marker where the bar sits in the page: once it has scrolled above the top edge, the bar is stuck.
+      const marker = document.createElement('span')
+      marker.setAttribute('aria-hidden', 'true')
+      bar.before(marker)
+      const onScroll = () => bar.toggleAttribute('data-stuck', marker.getBoundingClientRect().top < 0)
+      window.addEventListener('scroll', onScroll, { passive: true })
+      onScroll()
       const button = main.querySelector('.w-contents__button')
       const sheet = main.querySelector('.w-contents__sheet')
       const set = (open) => {
