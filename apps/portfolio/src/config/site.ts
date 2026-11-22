@@ -107,7 +107,10 @@ export const site = {
       kicker: 'arXiv',
       note: 'I’m an independent researcher submitting this paper to arXiv’s {category}. A first paper there needs one endorsement from someone who already publishes in the category.',
       codeLabel: 'Endorsement code',
-      codePending: 'coming with the submission',
+      offer: 'I’d like to endorse',
+      mailSubject: 'Endorsing “{title}” on arXiv ({category})',
+      mailBody:
+        'Hi Shubham,\n\nI’ve read your paper, “{title}”, and found it insightful. I’d be glad to help by endorsing it for arXiv’s {category} category.\n\nPlease send me your endorsement code.\n\nBest,\n',
       howLabel: 'How endorsement works',
       howHref: 'https://info.arxiv.org/help/endorsement.html',
       listed: 'Read on arXiv',

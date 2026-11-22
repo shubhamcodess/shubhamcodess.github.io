@@ -3,6 +3,7 @@ import { site } from '../../config/site'
 import { papers, writing } from '../../content/research'
 import type { Paper } from '../../content/types'
 import { ActionLink } from '../../ui/ActionLink'
+import { Icon } from '../../ui/Icon'
 import { Reveal } from '../../ui/Reveal'
 import './research.css'
 
@@ -161,9 +162,18 @@ function PaperCard({ paper }: { readonly paper: Paper }) {
   )
 }
 
+/** An email to the owner offering to endorse, with the subject and a short note already written. */
+function offerMail(paper: Paper): string {
+  const { endorse } = site.research
+  const fill = (text: string) => text.replaceAll('{title}', paper.title).replaceAll('{category}', paper.arxiv.category)
+  const query = `subject=${encodeURIComponent(fill(endorse.mailSubject))}&body=${encodeURIComponent(fill(endorse.mailBody))}`
+  return `mailto:${site.contact.email}?${query}`
+}
+
 /**
- * Asking for an arXiv endorsement: a button that opens a short note above it. With the code from arXiv it links
- * straight to arXiv's endorsement form; until then it says the code is coming. Escape or a press outside closes it.
+ * Asking for an arXiv endorsement: a button that opens a short note above it. Its main link, "I'd like to endorse",
+ * opens an email to the owner with the offer already written, so they can reply with the code. Once the code is in
+ * the content, the note also shows it and links to arXiv's form. Escape or a press outside closes it.
  */
 function Endorse({ paper }: { readonly paper: Paper }) {
   const copy = site.research.endorse
@@ -213,14 +223,20 @@ function Endorse({ paper }: { readonly paper: Paper }) {
           <strong>{category}</strong>
           {after}
         </p>
-        <p className="endorse__code">
-          {copy.codeLabel}: <span>{endorseCode ?? copy.codePending}</span>
-        </p>
         {endorseCode ? (
-          <ActionLink href={`https://arxiv.org/auth/endorse?x=${encodeURIComponent(endorseCode)}`} external>
-            {copy.button}
-          </ActionLink>
+          <>
+            <p className="endorse__code">
+              {copy.codeLabel}: <span>{endorseCode}</span>
+            </p>
+            <ActionLink href={`https://arxiv.org/auth/endorse?x=${encodeURIComponent(endorseCode)}`} external>
+              {copy.button}
+            </ActionLink>
+          </>
         ) : null}
+        <a className="endorse__offer" href={offerMail(paper)}>
+          {copy.offer}
+          <Icon name="arrowRight" size={14} />
+        </a>
         <ActionLink href={copy.howHref} external>
           {copy.howLabel}
         </ActionLink>

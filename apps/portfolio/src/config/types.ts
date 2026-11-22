@@ -122,8 +122,10 @@ export interface ResearchConfig {
     readonly kicker: string
     readonly note: string
     readonly codeLabel: string
-    /** Shown in place of the code until arXiv sends it. */
-    readonly codePending: string
+    /** The link that opens an email to the owner offering to endorse, and that email's subject and body. {title} and {category} are filled in. */
+    readonly offer: string
+    readonly mailSubject: string
+    readonly mailBody: string
     readonly howLabel: string
     readonly howHref: string
     /** The button once the paper is listed on arXiv. */
