@@ -811,11 +811,11 @@
   }
 
   /*
-   * Phones: a calmer foot. The tags become one quiet line of small text, and Previous and Next are compact rows,
-   * each a lean outlined bar with its label on the left and the slug on the right, on one line, cut short.
+   * Phones: a calmer foot. The tags become one quiet line of small text; Previous and Next stay plain links as on
+   * wide screens (Previous on the left, Next on the right), with more room above them.
    */
   .post-foot {
-    gap: var(--space-4);
+    gap: var(--space-6);
   }
 
   .post-tags {
@@ -834,37 +834,11 @@
   }
 
   .post-onward {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-2);
-  }
-
-  .post-onward__link,
-  .post-onward__link--next {
-    grid-column: auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     gap: var(--space-4);
-    min-height: var(--target-min);
-    padding-inline: var(--space-4);
-    text-align: left;
-    border: var(--hairline) solid var(--line);
-    border-radius: var(--radius-md);
-  }
-
-  .post-onward__label {
-    flex: none;
   }
 
   .post-onward__link .link-dots {
-    padding-bottom: 0;
     font-size: var(--text-xs);
-    color: var(--ink-muted);
-  }
-
-  .post-onward__link .link-dots::before,
-  .post-onward__link .link-dots::after {
-    display: none;
   }
 }
 
