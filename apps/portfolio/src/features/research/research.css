@@ -173,16 +173,17 @@
   min-height: 0;
 }
 
-/* The note's call: I'd like to endorse, in the theme's colour and a step heavier, so it stands out from the help link under it. */
+/* The note's call: I'd like to endorse, in the theme's warm amber (the hero light's) and a step heavier, so it stands out. */
 .endorse__offer.action-link {
-  --link-underline: color-mix(in srgb, var(--accent) 45%, transparent);
+  --link-underline: color-mix(in srgb, var(--accent-warm) 45%, transparent);
+  --link-sweep: var(--accent-warm);
   margin-top: var(--space-1);
-  color: var(--accent);
+  color: var(--accent-warm);
   font-weight: var(--weight-heading);
 }
 
 .endorse__offer.action-link .icon {
-  color: var(--accent);
+  color: var(--accent-warm);
 }
 
 @keyframes endorse-in {

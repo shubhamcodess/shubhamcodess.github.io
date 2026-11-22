@@ -101,6 +101,8 @@
   --ink-muted: #5c635e;
   --line: #dde1da;
   --accent: #1d4ed8;
+  /* The warm call: the hero light's amber, for the one thing on a card that asks the visitor to act. */
+  --accent-warm: #b4530f;
   --focus-ring: var(--accent);
   --shadow-card: 0 1px 2px rgb(20 24 20 / 4%), 0 12px 32px rgb(20 24 20 / 6%);
   /* A soft light from the top of every themed panel. None in the plain palette. */
@@ -273,6 +275,7 @@
   --ink-muted: #a2a8a2;
   --line: #2e312e;
   --accent: #8fb4ff;
+  --accent-warm: #f2a24e;
   --shadow-card: 0 1px 2px rgb(0 0 0 / 30%), 0 12px 32px rgb(0 0 0 / 30%);
   --logo-mark-step: oklch(from var(--surface) calc(l + 0.11) calc(c * 1.6) h);
 }
@@ -297,6 +300,7 @@
   --ink-muted: #645b4e;
   --line: #dccfb9;
   --accent: #1e40af;
+  --accent-warm: #a4480b;
   --shadow-card: 0 1px 2px rgb(70 50 20 / 5%), 0 14px 34px rgb(70 50 20 / 9%);
   --panel-wash: radial-gradient(120% 55% at 50% 0%, #fffaf0, transparent 62%);
   --scroll-light-track: rgb(160 185 255 / 12%);
@@ -310,6 +314,7 @@
   --ink-muted: #939aa9;
   --line: #1e2331;
   --accent: #8fb4ff;
+  --accent-warm: #f2a24e;
   --shadow-card: 0 1px 2px rgb(0 0 0 / 40%), 0 14px 34px rgb(0 2 10 / 50%);
   --panel-wash: radial-gradient(120% 55% at 50% 0%, rgb(60 90 170 / 8%), transparent 62%);
   --logo-mark-step: oklch(from var(--surface) calc(l + 0.11) calc(c * 1.6) h);

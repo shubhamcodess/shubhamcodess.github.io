@@ -41,7 +41,8 @@ Two palettes, chosen by `theme.palette` in the config. Each has a light and a da
 | `--ink` | `#1c1915` | `#e8ebf2` |
 | `--ink-muted` | `#645b4e` | `#939aa9` |
 | `--line` | `#dccfb9` | `#1e2331` |
-| `--accent` (focus ring only) | `#1e40af` | `#8fb4ff` |
+| `--accent` (focus ring, a text link's dot sweep) | `#1e40af` | `#8fb4ff` |
+| `--accent-warm` (the one call to act, e.g. I'd like to endorse) | `#a4480b` | `#f2a24e` |
 
 - Night surfaces (hero, project title, contact) are `#030409`: almost black, with the frame's blue in it. The light shader paints on that same colour.
 - Every themed panel has a soft wash of light from its top edge (`--panel-wash`): cream on paper, blue on midnight.
@@ -53,7 +54,7 @@ Rules for both:
 
 - The only strong colour on the site is the light: blue with about one warm lane in five, in the hero and the scroll light at the frame's edge. Nothing else is blue.
 - **Markers are ink.** Timelines, list dashes, years, icons and the current-link dot are drawn in the page's own ink (`--marker`, `--marker-strong`, `--marker-lane`), like a printed line. Bright blue timelines and glowing nodes were tried and removed: they read as generated.
-- The accent is for focus rings. Don't use it for text, fills or decoration.
+- The accent is for focus rings and a text link's dot sweep. The warm accent, the hero light's amber, is kept for the single thing that asks the visitor to act. Don't use either for fills or decoration.
 - Light is the default theme. The choice is saved, and restored before first paint.
 - A new palette is one more `:root[data-palette='…']` block in `tokens.css` and one more name in `PaletteName`. It may only re-point semantic tokens.
 
@@ -205,7 +206,7 @@ The site's one card. A tab rises out of a sheet, over an optional plate.
 - **Experience's foot:** "← All builds" on the left and "All credentials →" on the right. **Credentials' foot:** "← All builds" on the left and the experience link on the right.
 - **Research & writing** (decision 020, from prototype 38) sits on home after Featured builds, at `#research`.
   - **The paper:** one raised card (`--surface-raised`, `--radius-lg`, the card shadow). Left: kind, year and category in mono, the title at `--text-2xl`, the subtitle, a short summary in muted ink, one headline number in the featured cards' voice (40px, body weight, a mono line under it), then Read the paper and View on GitHub as text links and the card's only pill, **Endorse on arXiv**, in the same lean chip as the builds filter (the `--button-*` tokens: slim, small mono capitals, a hairline edge, muted ink); hover firms the text and edge, and while its note is open it sits on the surface with a firm edge, like a selected filter chip. Right: page one of the PDF on white paper, turned 1.2°, with a second sheet turned further behind it; hovering straightens and lifts it. In dark the page dims a touch. Under 760px the page sits on top, 200px wide and centred.
-  - **Endorse on arXiv** opens a small raised note above it: the category, one sentence asking for an endorsement, **I'd like to endorse →**, the note's call, as a text link in the theme's colour (`--accent`) and the heading weight so it stands out, then how endorsement works ↗ as a plain text link. The call opens an email to the owner with the subject and a short offer already written ("I've read your paper… found it insightful… please send me your endorsement code"; `research.endorse.mailSubject` and `mailBody`), so the owner replies with the code. Once the code is in the content, the note also shows it and links to arXiv's form; once listed, the button becomes Read on arXiv. Escape or a press outside closes it.
+  - **Endorse on arXiv** opens a small raised note above it: the category, one sentence asking for an endorsement, **I'd like to endorse →**, the note's call, as a text link in the theme's warm amber (`--accent-warm`, the hero light's second colour: deep amber on paper, a lighter amber at night) and the heading weight so it stands out, its dots sweeping in the same amber, then how endorsement works ↗ as a plain text link. The call opens an email to the owner with the subject and a short offer already written ("I've read your paper… found it insightful… please send me your endorsement code"; `research.endorse.mailSubject` and `mailBody`), so the owner replies with the code. Once the code is in the content, the note also shows it and links to arXiv's form; once listed, the button becomes Read on arXiv. Escape or a press outside closes it.
   - **Writing:** past a hairline, a mono "Writing" label with All writing on the right, then the latest posts as a vertical list, no lines between the rows: the title on one line (dotted, sweeping on hover), capped at 36rem and cut with an ellipsis when longer (a cut title shows in full on hover, keyboard focus or touch, in a small raised label just above it: our own, never the browser's tooltip), and, in mono, where it lives and the date. On phones the details sit under each title, which still keeps to one line. The posts come from the Substack feed (`pnpm data` writes `content/writing.json`).
 - **The footer is the site index:** every page and Contact, from every page. It also carries the sound and theme switches, so they are in reach from anywhere. On phones they share a row with the copyright.
 - **All builds:** filter chips group it by kind; a kind needs at least two builds. At its foot: "← Professional experience" on the left and "Say hello →" on the right. In a two-link row the left link's arrow always points left.
