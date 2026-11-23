@@ -105,23 +105,23 @@
 }
 
 .book-stage[data-closed='front'] .book {
-  --tilt-y: 25deg;
-  --tilt-x: -2deg;
+  --tilt-y: 9deg;
+  --tilt-x: -1deg;
 }
 
 @media (hover: hover) {
   .book-stage[data-closed='front'] .book:hover {
-    --tilt-y: 14deg;
+    --tilt-y: 6deg;
   }
 
   .book-stage[data-closed='front']:has(.book:hover) .book-spine {
-    --tilt-y: 14deg;
+    --tilt-y: 6deg;
   }
 }
 
 .book-spine {
-  --tilt-y: 25deg;
-  --tilt-x: -2deg;
+  --tilt-y: 9deg;
+  --tilt-x: -1deg;
   position: absolute;
   top: 0;
   left: calc(var(--page-w) - var(--spine-t));
@@ -1854,4 +1854,155 @@
 
 .book-stage[data-mode='single'] .book__block--left {
   display: none;
+}
+
+/* The profile marks scale with the page, like everything else in the book. */
+.socials svg,
+.say-hello__mail svg {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+/*
+ * The front board: dark leather with a pebbled grain, a stitched border, a circuit of traces and nodes pressed
+ * into it, the owner in a small gold medallion, and the title in one line of foil at the foot.
+ */
+.leather {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse 80% 55% at 30% 18%, rgb(255 240 220 / 0.07), transparent 70%),
+    radial-gradient(ellipse 90% 70% at 70% 100%, rgb(0 0 0 / 0.45), transparent 70%),
+    url('/about/leather.webp') center / cover,
+    #211c19;
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 0.5),
+    inset 0.5em 0 1em -0.4em rgb(0 0 0 / 0.6),
+    inset -0.15em -0.2em 0.35em rgb(0 0 0 / 0.35);
+  color: var(--foil);
+}
+
+/* The hinge groove by the spine. */
+.leather::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 6.5%;
+  width: 0.35em;
+  background: linear-gradient(to right, rgb(0 0 0 / 0.45), rgb(255 235 210 / 0.06) 70%, transparent);
+}
+
+.leather__stitch {
+  position: absolute;
+  inset: 3.4% 4% 3.4% 10%;
+  border: 0.09em dashed rgb(214 170 100 / 0.42);
+  border-radius: 0.35em;
+  box-shadow: 0 0.05em 0 rgb(0 0 0 / 0.5);
+  pointer-events: none;
+}
+
+.leather__circuit {
+  position: absolute;
+  top: 6%;
+  left: 13%;
+  width: 80%;
+  height: 64%;
+  pointer-events: none;
+}
+
+.leather__circuit path,
+.leather__circuit circle {
+  fill: none;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.leather__circuit-groove path,
+.leather__circuit-groove circle {
+  stroke: rgb(0 0 0 / 0.55);
+}
+
+.leather__circuit-light path,
+.leather__circuit-light circle {
+  stroke: rgb(255 228 190 / 0.1);
+}
+
+.leather__author {
+  position: relative;
+  margin: 13% 0 0 6%;
+  font-family: var(--font-mono);
+  font-size: 0.56em;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgb(214 170 100 / 0.75);
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 0.6);
+}
+
+/* The medallion: a gold portrait set into a pressed ring. */
+.leather__medallion {
+  position: relative;
+  width: 42%;
+  aspect-ratio: 1;
+  margin: 10% 0 0 6%;
+  padding: 0.35em;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #f3d595, #b07a2a 45%, #f0c878 70%, #8a5a1c);
+  box-shadow:
+    0 0 0 0.25em #1a1512,
+    0 0 0 0.32em rgb(214 170 100 / 0.35),
+    inset 0 0.1em 0.2em rgb(255 255 255 / 0.3),
+    0 0.3em 0.6em rgb(0 0 0 / 0.55);
+}
+
+.leather__medallion img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.leather__foot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto 0 11% 6%;
+  text-align: center;
+}
+
+.leather__title {
+  margin: 0;
+  font-size: 1.85em;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: linear-gradient(175deg, #fbe6b4, #e2ad52 40%, #a8701f 62%, #f0c878 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.leather__rule {
+  width: 2.4em;
+  height: 1px;
+  margin: 0.9em 0 0.8em;
+  background: rgb(214 170 100 / 0.6);
+}
+
+.leather__subtitle {
+  max-width: 17em;
+  margin: 0;
+  font-size: 0.6em;
+  font-style: italic;
+  line-height: 1.5;
+  color: rgb(236 220 196 / 0.72);
 }

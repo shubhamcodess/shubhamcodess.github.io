@@ -4,7 +4,6 @@ import { getBuild } from '../../content/builds'
 import { site } from '../../config/site'
 import { hrefToBuild } from '../../lib/routes'
 import { Icon, type IconName } from '../../ui/Icon'
-import portrait from '../../assets/portrait-cover.webp'
 import type { BookPage } from './Book'
 import { useBookNav } from './Book'
 import { Photo, PostageStamp, StickerMark } from './Keepsakes'
@@ -67,18 +66,64 @@ function Folio({ page }: { readonly page: number }) {
 function Cover() {
   return (
     <div className="cover">
-      <div className="cover__cloth cover__cloth--front">
-        <img className="cover__backdrop" src={portrait} alt="" width={1086} height={1448} decoding="async" draggable={false} />
-        <span className="cover__wash" aria-hidden="true" />
-        <h2 className="cover__vertical">{book.title}</h2>
-        <span className="cover__frame" aria-hidden="true" />
-        <p className="cover__author">{book.author}</p>
-        <p className="cover__subtitle">{book.subtitle}</p>
-        <p className="cover__foot">
-          {book.volume} · {book.year}
-        </p>
+      <div className="leather">
+        <span className="leather__stitch" aria-hidden="true" />
+        <CircuitPattern />
+        <p className="leather__author">{book.author}</p>
+        <span className="leather__medallion">
+          <img src={`${base}about/cover-medallion.webp`} alt={`${book.author}.`} width={560} height={560} decoding="async" draggable={false} />
+        </span>
+        <div className="leather__foot">
+          <h2 className="leather__title">{book.title}</h2>
+          <span className="leather__rule" aria-hidden="true" />
+          <p className="leather__subtitle">{book.subtitle}</p>
+        </div>
       </div>
     </div>
+  )
+}
+
+/**
+ * A circuit of traces and nodes pressed into the leather: each line drawn twice, a dark groove with a faint
+ * highlight under it, so it reads as debossed. Densest round the medallion, fading towards the edges.
+ */
+function CircuitPattern() {
+  const traces = [
+    'M50 40v40h30v50h-20', 'M150 20v30h40v40', 'M250 40v30h-30v40h20', 'M300 120h-40v40h-30', 'M20 170h40v-20h40',
+    'M110 140v40h60', 'M200 210h50v40h40', 'M30 260h60v40h30', 'M150 300v-30h60', 'M260 300h-30v50',
+    'M80 360h40v-30h40', 'M210 360v-40h60', 'M40 410h50v-30', 'M290 400h-60v-30', 'M140 410h40v-30h30',
+  ]
+  const nodes = [[60, 130], [190, 90], [240, 110], [230, 160], [100, 150], [170, 180], [290, 250], [120, 300], [210, 270], [230, 350], [160, 330], [270, 330], [90, 380], [210, 380]]
+  return (
+    <svg className="leather__circuit" viewBox="0 0 320 440" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="circuit-fade" cx="50%" cy="38%" r="62%">
+          <stop offset="0" stopColor="#fff" stopOpacity="1" />
+          <stop offset="1" stopColor="#fff" stopOpacity="0.15" />
+        </radialGradient>
+        <mask id="circuit-mask">
+          <rect width="320" height="440" fill="url(#circuit-fade)" />
+        </mask>
+      </defs>
+      <g mask="url(#circuit-mask)">
+        <g className="leather__circuit-light" transform="translate(0 0.8)">
+          {traces.map((d) => (
+            <path key={d} d={d} />
+          ))}
+          {nodes.map(([x, y]) => (
+            <circle key={`${x}-${y}`} cx={x} cy={y} r="3.2" />
+          ))}
+        </g>
+        <g className="leather__circuit-groove">
+          {traces.map((d) => (
+            <path key={d} d={d} />
+          ))}
+          {nodes.map(([x, y]) => (
+            <circle key={`${x}-${y}`} cx={x} cy={y} r="3.2" />
+          ))}
+        </g>
+      </g>
+    </svg>
   )
 }
 
