@@ -90,7 +90,7 @@ export function AboutPage() {
               <span>{book.author}</span>
             </>
           }
-          labels={{ previous: copy.previous, next: copy.next, book: copy.book, of: copy.of, hint: copy.hint }}
+          labels={{ previous: copy.previous, next: copy.next, book: copy.book, of: copy.of, hint: copy.hint, front: copy.front, back: copy.backCover }}
         >
           {phone ? (
             <div className="book-mode" role="group" aria-label={copy.modeLabel}>

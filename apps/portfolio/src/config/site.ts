@@ -247,6 +247,8 @@ export const site = {
     of: 'of',
     hint: 'Drag a corner, tap its edge, or use the arrows',
     modeLabel: 'Pages shown',
+    front: 'Front cover',
+    backCover: 'Back cover',
     modes: { single: 'One page', spread: 'Two pages' },
     onward: 'Say hello',
     back: 'Professional experience',

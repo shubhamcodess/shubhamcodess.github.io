@@ -364,6 +364,9 @@ export interface SiteConfig {
     readonly hint: string
     /** The phone switch between one page and the spread. */
     readonly modeLabel: string
+    /** The small buttons that shut the book on its front or back cover in one move. */
+    readonly front: string
+    readonly backCover: string
     readonly modes: { readonly single: string; readonly spread: string }
     readonly onward: string
     readonly back: string

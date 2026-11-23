@@ -42,7 +42,15 @@ interface BookProps {
   readonly mode: BookMode
   /** The page the book opens at (0, the closed cover, unless the address names a chapter). */
   readonly start: number
-  readonly labels: { readonly previous: string; readonly next: string; readonly book: string; readonly of: string; readonly hint: string }
+  readonly labels: {
+    readonly previous: string
+    readonly next: string
+    readonly book: string
+    readonly of: string
+    readonly hint: string
+    readonly front: string
+    readonly back: string
+  }
   /** Called with the first page in view after every turn. */
   readonly onTurn?: (page: number) => void
   /** Sits between the buttons (the single or two-page switch on phones). */
@@ -164,8 +172,10 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
     [reducedMotion, restZ],
   )
 
-  // Every change of place turns the leaves whose side changed, and only those.
+  // Every change of place turns the leaves whose side changed, and only those. A jump to a cover lays the pages
+  // between straight down and swings only the board, so the book shuts in one move.
   const first = useRef(true)
+  const jumping = useRef(false)
   useLayoutEffect(() => {
     leafRefs.current.forEach((element, leaf) => {
       if (!element) return
@@ -182,11 +192,14 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
       }
       const from = angles.current[leaf] ?? target
       if (from === target) return
+      const board = leaf === 0 || leaf === leaves - 1
+      if (jumping.current && !board) return put(leaf, target, 0)
       if (import.meta.env.DEV) window.dispatchEvent(new CustomEvent('about:turn', { detail: `${mode} leaf ${leaf}` }))
       put(leaf, target, Math.max(320, (turnMs * Math.abs(target - from)) / 180))
       play(leaf === 0 || leaf === leaves - 1 ? 'cover' : 'leaf', Math.abs(target - from) / 180, target < from ? 1 : -1)
     })
     first.current = false
+    jumping.current = false
   }, [turned, leaves, put, restZ, mode])
 
   const inView = single
@@ -215,6 +228,18 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
   const back = useCallback(() => {
     if (turnedRef.current > 0) go(turnedRef.current - 1)
   }, [go])
+
+  /** Shuts the book on its front or back cover in one move. */
+  const shut = useCallback(
+    (side: 'front' | 'back') => {
+      const target = side === 'front' ? 0 : last
+      if (turnedRef.current === target) return
+      jumping.current = true
+      wake()
+      go(target)
+    },
+    [go, last],
+  )
 
   /** Turns leaf by leaf to a page, a beat apart, like thumbing through. */
   const goTo = useCallback(
@@ -446,6 +471,14 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
         </p>
         <button type="button" className="book-controls__turn" onClick={forward} disabled={atEnd} aria-label={labels.next}>
           <Icon name="arrowRight" size={16} />
+        </button>
+      </div>
+      <div className="book-jump">
+        <button type="button" className="book-jump__button" onClick={() => shut('front')} disabled={atStart}>
+          <Icon name="arrowLeft" size={12} /> {labels.front}
+        </button>
+        <button type="button" className="book-jump__button" onClick={() => shut('back')} disabled={atEnd}>
+          {labels.back} <Icon name="arrowRight" size={12} />
         </button>
       </div>
       {children}

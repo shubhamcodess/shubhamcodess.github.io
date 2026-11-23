@@ -2252,3 +2252,37 @@
   font-size: 0.56em;
   color: rgb(236 233 228 / 0.7);
 }
+
+/* Shut the book on a cover in one move: two quiet text buttons under the controls. */
+.book-jump {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.book-jump__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  border: 0;
+  background: none;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.book-jump__button:hover:not(:disabled),
+.book-jump__button:focus-visible {
+  color: var(--ink);
+}
+
+.book-jump__button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
