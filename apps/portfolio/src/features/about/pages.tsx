@@ -4,7 +4,6 @@ import { getBuild } from '../../content/builds'
 import { site } from '../../config/site'
 import { hrefToBuild } from '../../lib/routes'
 import { Icon, type IconName } from '../../ui/Icon'
-import portrait from '../../assets/portrait-cover.webp'
 import type { BookPage } from './Book'
 import { useBookNav } from './Book'
 import { Photo, PostageStamp, StickerMark } from './Keepsakes'
@@ -71,8 +70,7 @@ function Cover() {
         <span className="leather__stitch" aria-hidden="true" />
         <CircuitPattern />
         <p className="leather__author">{book.author}</p>
-        {/* The owner, toned like the back cover, set into the lower part of the board and fading into the leather. */}
-        <img className="leather__photo" src={portrait} alt={`${book.author}.`} width={1086} height={1448} decoding="async" draggable={false} />
+        <NeuralMark />
         <div className="leather__foot">
           <h2 className="leather__title">{book.title}</h2>
           <span className="leather__rule" aria-hidden="true" />
@@ -122,6 +120,55 @@ function CircuitPattern() {
             <circle key={`${x}-${y}`} cx={x} cy={y} r="3.2" />
           ))}
         </g>
+      </g>
+    </svg>
+  )
+}
+
+/**
+ * The cover's centrepiece: a small neural network (inputs, two hidden layers, one output) inside a ring of
+ * circuit ticks, pressed into the leather like the circuit around it, with its nodes picked out in silver.
+ */
+function NeuralMark() {
+  const layers = [
+    [52, 84, 116, 148],
+    [44, 72, 100, 128, 156],
+    [60, 100, 140],
+    [100],
+  ]
+  const xs = [46, 82, 118, 154]
+  const nodes = layers.flatMap((ys, layer) => ys.map((y) => [xs[layer] ?? 0, y] as const))
+  const links = layers.slice(0, -1).flatMap((ys, layer) =>
+    ys.flatMap((y) => (layers[layer + 1] ?? []).map((next) => `M${xs[layer]} ${y}L${xs[layer + 1]} ${next}`)),
+  )
+  const ticks = Array.from({ length: 48 }, (_, i) => {
+    const a = (i / 48) * Math.PI * 2
+    const r1 = 88
+    const r2 = i % 4 ? 92 : 97
+    return `M${100 + r1 * Math.cos(a)} ${100 + r1 * Math.sin(a)}L${100 + r2 * Math.cos(a)} ${100 + r2 * Math.sin(a)}`
+  })
+  const draw = (className: string, shift: number) => (
+    <g className={className} transform={`translate(0 ${shift})`}>
+      <circle cx="100" cy="100" r="82" />
+      {ticks.map((d) => (
+        <path key={d} d={d} />
+      ))}
+      {links.map((d) => (
+        <path key={d} d={d} />
+      ))}
+      {nodes.map(([x, y]) => (
+        <circle key={`${x}-${y}`} cx={x} cy={y} r="4.2" />
+      ))}
+    </g>
+  )
+  return (
+    <svg className="leather__mark" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+      {draw('leather__mark-light', 0.9)}
+      {draw('leather__mark-groove', 0)}
+      <g className="leather__mark-nodes">
+        {nodes.map(([x, y]) => (
+          <circle key={`${x}-${y}`} cx={x} cy={y} r="2.2" />
+        ))}
       </g>
     </svg>
   )

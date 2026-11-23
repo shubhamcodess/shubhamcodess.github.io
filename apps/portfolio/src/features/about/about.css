@@ -1876,10 +1876,10 @@
   align-items: center;
   border-radius: inherit;
   background:
-    radial-gradient(ellipse 80% 55% at 30% 18%, rgb(255 240 220 / 0.07), transparent 70%),
+    radial-gradient(ellipse 80% 55% at 30% 18%, rgb(255 255 255 / 0.06), transparent 70%),
     radial-gradient(ellipse 90% 70% at 70% 100%, rgb(0 0 0 / 0.45), transparent 70%),
     url('/about/leather.webp') center / cover,
-    #211c19;
+    #18181a;
   box-shadow:
     inset 0 0 0 1px rgb(0 0 0 / 0.5),
     inset 0.5em 0 1em -0.4em rgb(0 0 0 / 0.6),
@@ -1895,7 +1895,7 @@
   bottom: 0;
   left: 6.5%;
   width: 0.35em;
-  background: linear-gradient(to right, rgb(0 0 0 / 0.45), rgb(255 235 210 / 0.06) 70%, transparent);
+  background: linear-gradient(to right, rgb(0 0 0 / 0.45), rgb(255 255 255 / 0.05) 70%, transparent);
 }
 
 .leather__stitch {
@@ -1945,19 +1945,38 @@
   text-shadow: 0 -1px 0 rgb(0 0 0 / 0.6);
 }
 
-/* The photo: smaller than the board, low down and to the fore-edge, its edges fading into the leather. */
-.leather__photo {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 78%;
-  height: 62%;
-  object-fit: cover;
-  object-position: 50% 15%;
-  opacity: 0.9;
-  -webkit-mask-image: radial-gradient(ellipse 58% 62% at 58% 60%, #000 30%, transparent 78%);
-  mask-image: radial-gradient(ellipse 58% 62% at 58% 60%, #000 30%, transparent 78%);
-  pointer-events: none;
+/* The neural mark, centred in the board's upper half. */
+.leather__mark {
+  position: relative;
+  width: 58%;
+  margin: 12% 0 0 6%;
+  overflow: visible;
+}
+
+.leather__mark path,
+.leather__mark circle {
+  fill: none;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.leather__mark-groove path,
+.leather__mark-groove circle {
+  stroke: rgb(0 0 0 / 0.7);
+}
+
+.leather__mark-light path,
+.leather__mark-light circle {
+  stroke: rgb(255 255 255 / 0.1);
+}
+
+.leather__mark-groove > path:not(:nth-of-type(-n + 48)) {
+  stroke-width: 0.8;
+}
+
+.leather__mark-nodes circle {
+  fill: rgb(225 228 234 / 0.72);
+  stroke: none;
 }
 
 .leather__foot {

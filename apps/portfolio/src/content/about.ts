@@ -329,6 +329,27 @@ export const book = {
       stickers: { left: [{ id: 'camera', x: 76, y: 28, size: 15, turn: 10 }] },
     },
     {
+      id: 'small-things',
+      title: 'Small things.',
+      dek: 'A few more from the camera roll.',
+      kind: 'facts',
+      facts: [],
+      story: [
+        'A rose with the rain still on it, one leaf that turned yellow before the rest, the wing over the clouds on the way somewhere, a café lit up behind the trees. These are the things I stop for.',
+      ],
+      left: [
+        { photo: 'white-rose', mount: 'tape', x: 6, y: 34, w: 28, turn: -3 },
+        { photo: 'yellow-leaf', mount: 'pin', x: 37, y: 42, w: 27, turn: 2 },
+        { photo: 'yellow-rose', mount: 'corners', x: 67, y: 34, w: 26, turn: 4 },
+      ],
+      right: [
+        { photo: 'cafe-at-night', mount: 'tape', x: 4, y: 34, w: 56, turn: -2.5 },
+        { photo: 'over-the-clouds', mount: 'clip', x: 66, y: 31, w: 26, turn: 3 },
+        { photo: 'cranes', mount: 'corners', x: 6, y: 66, w: 52, turn: 2 },
+        { photo: 'glass-tower', mount: 'pin', x: 66, y: 64, w: 25, turn: -3 },
+      ],
+    },
+    {
       id: 'food',
       title: 'Food.',
       dek: 'I cook, and I eat out. Vegetarian, always.',
