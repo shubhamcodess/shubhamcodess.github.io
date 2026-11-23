@@ -5,9 +5,11 @@
 .dock {
   --dock-height: var(--target-min);
   --dock-pad: 4px;
-  --dock-surface: var(--surface-raised);
-  --dock-edge: color-mix(in srgb, var(--ink) 14%, transparent);
-  --dock-shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 8px 24px -8px rgb(0 0 0 / 18%);
+  /* A step off the page: a touch of ink in the surface, a firmer edge, a lit top rim and a deeper shadow. */
+  --dock-surface: color-mix(in srgb, var(--surface-raised) 94%, var(--ink));
+  --dock-edge: color-mix(in srgb, var(--ink) 24%, transparent);
+  --dock-rim: inset 0 1px 0 color-mix(in srgb, white 14%, transparent);
+  --dock-shadow: 0 1px 2px rgb(0 0 0 / 10%), 0 14px 34px -10px rgb(0 0 0 / 32%);
 
   position: fixed;
   bottom: calc(env(safe-area-inset-bottom, 0px) + var(--space-3));
@@ -31,9 +33,10 @@
   --ink: var(--night-ink);
   --ink-muted: var(--night-ink-muted);
   --focus-ring: var(--night-ink);
-  --dock-surface: color-mix(in srgb, var(--night-surface) 88%, white);
-  --dock-edge: rgb(255 255 255 / 16%);
-  --dock-shadow: 0 8px 24px -8px rgb(0 0 0 / 60%);
+  --dock-surface: color-mix(in srgb, var(--night-surface) 82%, white);
+  --dock-edge: rgb(255 255 255 / 26%);
+  --dock-rim: inset 0 1px 0 rgb(255 255 255 / 12%);
+  --dock-shadow: 0 2px 4px rgb(0 0 0 / 40%), 0 14px 34px -10px rgb(0 0 0 / 75%);
   --logo-mark-step: oklch(from var(--night-surface) calc(l + 0.13) calc(c * 1.6) h);
 }
 
@@ -56,7 +59,7 @@
   background: var(--dock-surface);
   border: 1px solid var(--dock-edge);
   border-radius: var(--radius-pill);
-  box-shadow: var(--dock-shadow);
+  box-shadow: var(--dock-rim), var(--dock-shadow);
   transition:
     background-color var(--duration-fast) linear,
     border-color var(--duration-fast) linear;
