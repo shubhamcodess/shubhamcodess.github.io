@@ -125,6 +125,8 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
   const flying = useRef(new Map<number, number>())
   /** The leaf under the pointer while a page is dragged. */
   const held = useRef<number | null>(null)
+  /** The leaf a drag just turned, which may already lie where the turn ends. */
+  const dragged = useRef<number | null>(null)
   /** A drag's next angle, drawn once per frame. */
   const pending = useRef<{ leaf: number; angle: number; frame: number } | null>(null)
   const lift = useRef(0)
@@ -200,7 +202,14 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
         return
       }
       const from = angles.current[leaf] ?? target
-      if (from === target) return
+      if (from === target) {
+        // A page dragged all the way over is already in place: it still makes its sound and settles into its stack.
+        if (dragged.current === leaf) {
+          put(leaf, target, 0)
+          play(leaf === 0 || leaf === leaves - 1 ? 'cover' : 'leaf', 1, leaf < turned ? 1 : -1)
+        }
+        return
+      }
       const board = leaf === 0 || leaf === leaves - 1
       if (jumping.current && !board) return put(leaf, target, 0)
       if (import.meta.env.DEV) window.dispatchEvent(new CustomEvent('about:turn', { detail: `${mode} leaf ${leaf}` }))
@@ -209,6 +218,7 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
     })
     first.current = false
     jumping.current = false
+    dragged.current = null
   }, [turned, leaves, put, restZ, mode])
 
   const inView = single
@@ -403,7 +413,9 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
     const swung = state.ahead ? -angle : 180 + angle
     const flick = state.ahead ? -state.vx : state.vx
     const turn = flick > 0.35 || (swung > 90 && flick > -0.35)
+    dragged.current = state.leaf
     if (turn) return void (state.ahead ? forward() : back())
+    dragged.current = null
     put(state.leaf, restAngle(state.leaf, turnedRef.current), 420)
   }
 
