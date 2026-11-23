@@ -65,7 +65,7 @@
 /* ---- The stage: as big as the screen allows, with room for the heading above and the controls below. */
 
 .book-stage {
-  --page-w: min(50cqw, max(17rem, calc((100svh - 18.5rem) * 0.7)));
+  --page-w: min(50cqw, max(17rem, calc((100svh - 16rem) * 0.7)));
   --page-h: calc(var(--page-w) / 0.7);
   position: relative;
   width: calc(var(--page-w) * 2);

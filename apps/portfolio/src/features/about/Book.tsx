@@ -123,6 +123,10 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
   const leafRefs = useRef<(HTMLDivElement | null)[]>([])
   const angles = useRef<number[]>(Array.from({ length: leaves }, (_, leaf) => restAngle(leaf, turned)))
   const flying = useRef(new Map<number, number>())
+  /** The leaf under the pointer while a page is dragged. */
+  const held = useRef<number | null>(null)
+  /** A drag's next angle, drawn once per frame. */
+  const pending = useRef<{ leaf: number; angle: number; frame: number } | null>(null)
   const lift = useRef(0)
   const steps = useRef<number[]>([])
   const turnedRef = useRef(turned)
@@ -157,8 +161,13 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
         front?.animate(along.map((a) => ({ opacity: shadeFront(a) })), timing)
         back?.animate(along.map((a) => ({ opacity: shadeBack(a) })), timing)
       }
-      // In flight, a leaf rides over both stacks; once down, it takes its place in one of them.
+      // In flight, a leaf rides over both stacks; once down, it takes its place in one of them. A leaf held by the
+      // pointer stays on top for the whole drag and settles only once it is let go.
       window.clearTimeout(flying.current.get(leaf))
+      if (held.current === leaf) {
+        if (Number(element.style.zIndex) < 200) element.style.zIndex = String(200 + ++lift.current)
+        return
+      }
       element.style.zIndex = String(200 + ++lift.current)
       flying.current.set(
         leaf,
@@ -335,22 +344,49 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
     state.vx = state.vx * 0.6 + ((event.clientX - state.lastX) / dt) * 0.4
     state.lastX = event.clientX
     state.lastT = event.timeStamp
+    let angle: number
     if (single) {
       const progress = Math.min(1, Math.max(0, (state.ahead ? -dx : dx) / state.reach))
-      return put(state.leaf, state.ahead ? -180 * progress : -180 + 180 * progress, 0)
+      angle = state.ahead ? -180 * progress : -180 + 180 * progress
+    } else {
+      // The leaf's free edge follows the pointer: its shadow on the table is where the pointer is.
+      const grab = state.x0 - state.spine
+      const span = Math.sign(grab || 1) * Math.max(Math.abs(grab), state.reach * 0.4)
+      const reach = Math.min(1, Math.max(-1, (event.clientX - state.spine) / span))
+      const swung = (Math.acos(reach) * 180) / Math.PI
+      angle = state.ahead ? -swung : -180 + swung
     }
-    // The leaf's free edge follows the pointer: its shadow on the table is where the pointer is.
-    const grab = state.x0 - state.spine
-    const span = Math.sign(grab || 1) * Math.max(Math.abs(grab), state.reach * 0.4)
-    const reach = Math.min(1, Math.max(-1, (event.clientX - state.spine) / span))
-    const swung = (Math.acos(reach) * 180) / Math.PI
-    put(state.leaf, state.ahead ? -swung : -180 + swung, 0)
+    held.current = state.leaf
+    // Drawn once per frame, however often the pointer reports.
+    if (pending.current) pending.current = { ...pending.current, leaf: state.leaf, angle }
+    else
+      pending.current = {
+        leaf: state.leaf,
+        angle,
+        frame: requestAnimationFrame(() => {
+          const next = pending.current
+          pending.current = null
+          if (next && held.current === next.leaf) put(next.leaf, next.angle, 0)
+        }),
+      }
+  }
+
+  /** Lets go of a dragged leaf: drops any frame still to draw, and lets it settle into its stack again. */
+  const release = () => {
+    if (pending.current) {
+      cancelAnimationFrame(pending.current.frame)
+      const last = pending.current
+      pending.current = null
+      if (held.current === last.leaf) angles.current[last.leaf] = last.angle
+    }
+    held.current = null
   }
 
   const onPointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
     const state = drag.current
     if (!state || state.id !== event.pointerId) return
     drag.current = null
+    release()
     if (!state.moved) {
       if (single) {
         // One page: a tap on its left third goes back, anywhere else turns it.
@@ -374,6 +410,7 @@ export function Book({ pages, mode, start, labels, onTurn, children, spine }: Bo
   const onPointerCancel = () => {
     const state = drag.current
     drag.current = null
+    release()
     if (state?.moved) put(state.leaf, restAngle(state.leaf, turnedRef.current), 420)
   }
 

@@ -47,6 +47,16 @@ export function AboutPage() {
     [pages],
   )
 
+  // The page opens with the header just scrolled away, so the heading, the book and its controls fill the screen.
+  useEffect(() => {
+    if (window.scrollY > 0) return
+    // Measured from the page's own box, not the heading, whose entrance animation shifts it as the page opens.
+    const main = document.querySelector<HTMLElement>('main.about')
+    if (!main) return
+    const top = main.getBoundingClientRect().top + window.scrollY + parseFloat(getComputedStyle(main).paddingTop) - 16
+    window.scrollTo({ top, behavior: 'instant' })
+  }, [])
+
   // Development only: report how smoothly pages turn on whichever device has the page open.
   useEffect(() => {
     if (!import.meta.env.DEV) return
