@@ -2064,17 +2064,17 @@
   background: rgb(236 233 228 / 0.35);
 }
 
-/* A large </> pressed into the leather low on the left, behind the title. */
+/* A small </> pressed into the leather, heading the column of verbs. */
 .front__code {
   position: absolute;
-  left: 9%;
-  bottom: 17%;
+  left: 12.5%;
+  top: 20.5%;
   font-family: var(--font-mono);
-  font-size: 5.4em;
+  font-size: 1.9em;
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.08em;
-  color: rgb(255 255 255 / 0.07);
+  color: rgb(255 255 255 / 0.13);
   text-shadow:
     0 -1px 0 rgb(0 0 0 / 0.7),
     0 1px 0 rgb(255 255 255 / 0.04);
