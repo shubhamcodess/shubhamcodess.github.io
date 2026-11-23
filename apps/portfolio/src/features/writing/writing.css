@@ -81,7 +81,7 @@
 
 .writing-row {
   display: grid;
-  gap: var(--space-2);
+  gap: 0;
   padding: var(--space-4) var(--space-4);
   margin-inline: calc(-1 * var(--space-4));
   border-radius: var(--radius-md);
@@ -141,6 +141,8 @@
 
 .writing-row__summary {
   max-width: 40rem;
+  /* The title's dotted underline already leaves 6px under it. */
+  margin-top: var(--space-1);
   color: var(--ink-muted);
   line-height: var(--leading-body);
 }
@@ -847,5 +849,35 @@ main.post {
 @media (prefers-reduced-motion: reduce) {
   .post-zoom {
     animation: none;
+  }
+}
+
+/*
+ * One rhythm per row: the label line, then the title a step below, the summary a short step under it, and the
+ * date a step under that. The heading sits closer to the list, and on phones the year sits just above its rows.
+ */
+.writing-row__title {
+  margin-top: var(--space-3);
+}
+
+.writing-row__foot {
+  margin-top: var(--space-3);
+}
+
+.writing-index .section__header {
+  margin-bottom: var(--space-6);
+}
+
+.writing-list > li + li {
+  margin-top: var(--space-1);
+}
+
+@media (max-width: 599px) {
+  .writing-year {
+    padding-block: var(--space-4) var(--space-2);
+  }
+
+  .writing-year__label {
+    margin-bottom: var(--space-1);
   }
 }
