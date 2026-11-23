@@ -72,6 +72,8 @@ function Cover() {
   return (
     <div className="cover">
       <div className="leather leather--front">
+        <span className="board-corner board-corner--top" aria-hidden="true" />
+        <span className="board-corner board-corner--bottom" aria-hidden="true" />
         <p className="front__brand">
           <svg className="front__logo" viewBox="190 150 620 700" aria-hidden="true" focusable="false">
             <path d={logoLetters} fillRule="evenodd" />
@@ -398,6 +400,8 @@ function BackCover() {
   return (
     <div className="cover cover--back">
       <div className="leather leather--back">
+        <span className="board-corner board-corner--top" aria-hidden="true" />
+        <span className="board-corner board-corner--bottom" aria-hidden="true" />
         <img className="back__photo" src={`${base}about/back-cover.webp`} alt="" width={1200} height={675} decoding="async" draggable={false} />
         <div className="back__text">
           <p className="back__kicker">{book.title}</p>
