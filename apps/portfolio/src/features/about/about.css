@@ -1901,7 +1901,7 @@
 .leather__stitch {
   position: absolute;
   inset: 3.4% 4% 3.4% 10%;
-  border: 0.09em dashed rgb(214 170 100 / 0.42);
+  border: 0.09em dashed rgb(200 196 188 / 0.28);
   border-radius: 0.35em;
   box-shadow: 0 0.05em 0 rgb(0 0 0 / 0.5);
   pointer-events: none;
@@ -1931,7 +1931,7 @@
 
 .leather__circuit-light path,
 .leather__circuit-light circle {
-  stroke: rgb(255 228 190 / 0.1);
+  stroke: rgb(255 255 255 / 0.07);
 }
 
 .leather__author {
@@ -1941,31 +1941,23 @@
   font-size: 0.56em;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: rgb(214 170 100 / 0.75);
+  color: rgb(222 218 210 / 0.62);
   text-shadow: 0 -1px 0 rgb(0 0 0 / 0.6);
 }
 
-/* The medallion: a gold portrait set into a pressed ring. */
-.leather__medallion {
-  position: relative;
-  width: 42%;
-  aspect-ratio: 1;
-  margin: 10% 0 0 6%;
-  padding: 0.35em;
-  border-radius: 50%;
-  background: linear-gradient(150deg, #f3d595, #b07a2a 45%, #f0c878 70%, #8a5a1c);
-  box-shadow:
-    0 0 0 0.25em #1a1512,
-    0 0 0 0.32em rgb(214 170 100 / 0.35),
-    inset 0 0.1em 0.2em rgb(255 255 255 / 0.3),
-    0 0.3em 0.6em rgb(0 0 0 / 0.55);
-}
-
-.leather__medallion img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+/* The photo: smaller than the board, low down and to the fore-edge, its edges fading into the leather. */
+.leather__photo {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 78%;
+  height: 62%;
+  object-fit: cover;
+  object-position: 50% 15%;
+  opacity: 0.9;
+  -webkit-mask-image: radial-gradient(ellipse 58% 62% at 58% 60%, #000 30%, transparent 78%);
+  mask-image: radial-gradient(ellipse 58% 62% at 58% 60%, #000 30%, transparent 78%);
+  pointer-events: none;
 }
 
 .leather__foot {
@@ -1973,8 +1965,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: auto 0 11% 6%;
+  margin: auto 0 9% 6%;
   text-align: center;
+  z-index: 1;
 }
 
 .leather__title {
@@ -1985,17 +1978,17 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
   white-space: nowrap;
-  background: linear-gradient(175deg, #fbe6b4, #e2ad52 40%, #a8701f 62%, #f0c878 85%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #ece8e1;
+  text-shadow:
+    0 -1px 0 rgb(0 0 0 / 0.7),
+    0 0.08em 0.3em rgb(0 0 0 / 0.6);
 }
 
 .leather__rule {
   width: 2.4em;
   height: 1px;
   margin: 0.9em 0 0.8em;
-  background: rgb(214 170 100 / 0.6);
+  background: rgb(236 232 225 / 0.45);
 }
 
 .leather__subtitle {
@@ -2004,5 +1997,6 @@
   font-size: 0.6em;
   font-style: italic;
   line-height: 1.5;
-  color: rgb(236 220 196 / 0.72);
+  color: rgb(236 232 225 / 0.72);
+  text-shadow: 0 0.06em 0.25em rgb(0 0 0 / 0.7);
 }
