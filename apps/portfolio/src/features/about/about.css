@@ -2288,58 +2288,84 @@
 }
 
 /*
- * Hard-bound corners: blackened metal caps on the board's fore-edge corners, each held by a small rivet.
- * The front's fore-edge is on the right, the back's on the left.
+ * Hard-bound corners: small blackened metal caps folded over the fore-edge corners. Each is a thin strip along
+ * the two edges, rounded round the corner, with one small rivet set just inside it. The front's fore-edge is on
+ * the right, the back's on the left.
  */
 .board-corner {
   position: absolute;
   z-index: 5;
-  width: 15%;
+  width: 7.5%;
   aspect-ratio: 1;
-  background:
-    radial-gradient(circle at 70% 30%, #6c6c74 0 0.08em, #2a2a2f 0.17em, #08080a 0.21em 0.25em, transparent 0.25em),
-    linear-gradient(135deg, #5a5a61, #2b2b30 22%, #101012 58%, #26262b 92%, #6a6a72);
-  box-shadow: 0 0.06em 0.12em rgb(0 0 0 / 0.6);
+  border: 0 solid #1a1a1d;
   pointer-events: none;
+  filter: none;
+}
+
+.board-corner::after {
+  content: '';
+  position: absolute;
+  width: 0.34em;
+  height: 0.34em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #77777f, #2a2a2f 55%, #0b0b0d);
+  box-shadow: 0 0.04em 0.06em rgb(0 0 0 / 0.7);
 }
 
 .board-corner--top {
   top: 0;
   right: 0;
-  border-top-right-radius: 0.7em;
-  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  border-top-width: 0.3em;
+  border-right-width: 0.3em;
+  border-top-right-radius: 0.75em;
+  border-image: none;
+  border-color: #2c2c31 #232327 transparent transparent;
+  box-shadow: inset -0.05em 0.05em 0 rgb(255 255 255 / 0.12);
+}
+
+.board-corner--top::after {
+  top: 0.25em;
+  right: 0.25em;
 }
 
 .board-corner--bottom {
   bottom: 0;
   right: 0;
-  border-bottom-right-radius: 0.7em;
-  clip-path: polygon(100% 0, 100% 100%, 0 100%);
-  background:
-    radial-gradient(circle at 70% 70%, #6c6c74 0 0.08em, #2a2a2f 0.17em, #08080a 0.21em 0.25em, transparent 0.25em),
-    linear-gradient(45deg, #6a6a72, #26262b 8%, #101012 42%, #2b2b30 78%, #5a5a61);
+  border-bottom-width: 0.3em;
+  border-right-width: 0.3em;
+  border-bottom-right-radius: 0.75em;
+  border-color: transparent #1d1d21 #18181b transparent;
+  box-shadow: inset -0.05em -0.05em 0 rgb(255 255 255 / 0.08);
+}
+
+.board-corner--bottom::after {
+  bottom: 0.25em;
+  right: 0.25em;
 }
 
 .leather--back .board-corner--top,
 .leather--back .board-corner--bottom {
   right: auto;
   left: 0;
+  border-right-width: 0;
+  border-left-width: 0.3em;
 }
 
 .leather--back .board-corner--top {
-  border-radius: 0.7em 0 0 0;
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-  background:
-    radial-gradient(circle at 30% 30%, #6c6c74 0 0.08em, #2a2a2f 0.17em, #08080a 0.21em 0.25em, transparent 0.25em),
-    linear-gradient(225deg, #5a5a61, #2b2b30 22%, #101012 58%, #26262b 92%, #6a6a72);
+  border-radius: 0.75em 0 0 0;
+  border-color: #2c2c31 transparent transparent #232327;
+  box-shadow: inset 0.05em 0.05em 0 rgb(255 255 255 / 0.12);
 }
 
 .leather--back .board-corner--bottom {
-  border-radius: 0 0 0 0.7em;
-  clip-path: polygon(0 0, 100% 100%, 0 100%);
-  background:
-    radial-gradient(circle at 30% 70%, #6c6c74 0 0.08em, #2a2a2f 0.17em, #08080a 0.21em 0.25em, transparent 0.25em),
-    linear-gradient(315deg, #6a6a72, #26262b 8%, #101012 42%, #2b2b30 78%, #5a5a61);
+  border-radius: 0 0 0 0.75em;
+  border-color: transparent transparent #18181b #1d1d21;
+  box-shadow: inset 0.05em -0.05em 0 rgb(255 255 255 / 0.08);
+}
+
+.leather--back .board-corner::after {
+  right: auto;
+  left: 0.25em;
 }
 
 /* The verbs' accent follows the title's quieter blue. */
