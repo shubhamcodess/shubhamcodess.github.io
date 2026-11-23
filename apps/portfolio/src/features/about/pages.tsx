@@ -4,6 +4,7 @@ import { getBuild } from '../../content/builds'
 import { site } from '../../config/site'
 import { hrefToBuild } from '../../lib/routes'
 import { Icon, type IconName } from '../../ui/Icon'
+import portrait from '../../assets/portrait-cutout.webp'
 import type { BookPage } from './Book'
 import { useBookNav } from './Book'
 import { Photo, PostageStamp, StickerMark } from './Keepsakes'
@@ -12,6 +13,10 @@ const base = import.meta.env.BASE_URL
 const href = (to: string) => (to.startsWith('http') || to.startsWith('mailto:') ? to : `${base}${to}`)
 const numberWords = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen']
 const two = (n: number) => String(n).padStart(2, '0')
+/** The SP mark's letters (as in ui/LogoMark), drawn on its own in foil on the covers. */
+const logoLetters =
+  'M500 170 213 334 213 435 513 610 513 747 498 754 278 628 277 563 213 525 213 665 500 830 578 785 577 573 278 399 277 372 500 244 722 372 721 394 556 491 621 528 786 430 786 334Z' +
+  'M500 306 379 383 500 460 621 383Z'
 const plain = (title: string) => title.replace(/\.$/, '')
 
 /** Page index of a chapter's left page: cover, inscription, title, contents and preface come first. */
@@ -66,111 +71,39 @@ function Folio({ page }: { readonly page: number }) {
 function Cover() {
   return (
     <div className="cover">
-      <div className="leather">
-        <span className="leather__stitch" aria-hidden="true" />
-        <CircuitPattern />
-        <p className="leather__author">{book.author}</p>
-        <NeuralMark />
-        <div className="leather__foot">
-          <h2 className="leather__title">{book.title}</h2>
-          <span className="leather__rule" aria-hidden="true" />
-          <p className="leather__subtitle">{book.subtitle}</p>
+      <div className="leather leather--front">
+        <p className="front__brand">
+          <svg className="front__logo" viewBox="190 150 620 700" aria-hidden="true" focusable="false">
+            <path d={logoLetters} fillRule="evenodd" />
+          </svg>
+          <span className="front__divider" aria-hidden="true" />
+          <span>{book.handle}</span>
+        </p>
+        <span className="front__code" aria-hidden="true">
+          {'</>'}
+        </span>
+        <img className="front__portrait" src={portrait} alt={`${book.author}.`} width={900} height={1200} decoding="async" draggable={false} />
+        <ul className="front__verbs" aria-hidden="true">
+          {book.verbs.map((verb) => (
+            <li key={verb}>{verb}</li>
+          ))}
+          <li className="front__verbs-rule" />
+          <li className="front__verbs-last">Beyond</li>
+        </ul>
+        <div className="front__foot">
+          <h2 className="front__title">
+            <span>{book.title.split(' ')[0]}</span>
+            <span className="front__title-accent">{book.title.split(' ').slice(1).join(' ')}</span>
+          </h2>
+          <p className="front__subtitle">
+            <span className="front__subtitle-rule" aria-hidden="true" />
+            <span>{book.tagline}</span>
+            <span className="front__subtitle-rule" aria-hidden="true" />
+          </p>
+          <p className="front__author">{book.author}</p>
         </div>
       </div>
     </div>
-  )
-}
-
-/**
- * A circuit of traces and nodes pressed into the leather: each line drawn twice, a dark groove with a faint
- * highlight under it, so it reads as debossed. Densest round the medallion, fading towards the edges.
- */
-function CircuitPattern() {
-  const traces = [
-    'M50 40v40h30v50h-20', 'M150 20v30h40v40', 'M250 40v30h-30v40h20', 'M300 120h-40v40h-30', 'M20 170h40v-20h40',
-    'M110 140v40h60', 'M200 210h50v40h40', 'M30 260h60v40h30', 'M150 300v-30h60', 'M260 300h-30v50',
-    'M80 360h40v-30h40', 'M210 360v-40h60', 'M40 410h50v-30', 'M290 400h-60v-30', 'M140 410h40v-30h30',
-  ]
-  const nodes = [[60, 130], [190, 90], [240, 110], [230, 160], [100, 150], [170, 180], [290, 250], [120, 300], [210, 270], [230, 350], [160, 330], [270, 330], [90, 380], [210, 380]]
-  return (
-    <svg className="leather__circuit" viewBox="0 0 320 440" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
-      <defs>
-        <radialGradient id="circuit-fade" cx="50%" cy="38%" r="62%">
-          <stop offset="0" stopColor="#fff" stopOpacity="1" />
-          <stop offset="1" stopColor="#fff" stopOpacity="0.15" />
-        </radialGradient>
-        <mask id="circuit-mask">
-          <rect width="320" height="440" fill="url(#circuit-fade)" />
-        </mask>
-      </defs>
-      <g mask="url(#circuit-mask)">
-        <g className="leather__circuit-light" transform="translate(0 0.8)">
-          {traces.map((d) => (
-            <path key={d} d={d} />
-          ))}
-          {nodes.map(([x, y]) => (
-            <circle key={`${x}-${y}`} cx={x} cy={y} r="3.2" />
-          ))}
-        </g>
-        <g className="leather__circuit-groove">
-          {traces.map((d) => (
-            <path key={d} d={d} />
-          ))}
-          {nodes.map(([x, y]) => (
-            <circle key={`${x}-${y}`} cx={x} cy={y} r="3.2" />
-          ))}
-        </g>
-      </g>
-    </svg>
-  )
-}
-
-/**
- * The cover's centrepiece: a small neural network (inputs, two hidden layers, one output) inside a ring of
- * circuit ticks, pressed into the leather like the circuit around it, with its nodes picked out in silver.
- */
-function NeuralMark() {
-  const layers = [
-    [52, 84, 116, 148],
-    [44, 72, 100, 128, 156],
-    [60, 100, 140],
-    [100],
-  ]
-  const xs = [46, 82, 118, 154]
-  const nodes = layers.flatMap((ys, layer) => ys.map((y) => [xs[layer] ?? 0, y] as const))
-  const links = layers.slice(0, -1).flatMap((ys, layer) =>
-    ys.flatMap((y) => (layers[layer + 1] ?? []).map((next) => `M${xs[layer]} ${y}L${xs[layer + 1]} ${next}`)),
-  )
-  const ticks = Array.from({ length: 48 }, (_, i) => {
-    const a = (i / 48) * Math.PI * 2
-    const r1 = 88
-    const r2 = i % 4 ? 92 : 97
-    return `M${100 + r1 * Math.cos(a)} ${100 + r1 * Math.sin(a)}L${100 + r2 * Math.cos(a)} ${100 + r2 * Math.sin(a)}`
-  })
-  const draw = (className: string, shift: number) => (
-    <g className={className} transform={`translate(0 ${shift})`}>
-      <circle cx="100" cy="100" r="82" />
-      {ticks.map((d) => (
-        <path key={d} d={d} />
-      ))}
-      {links.map((d) => (
-        <path key={d} d={d} />
-      ))}
-      {nodes.map(([x, y]) => (
-        <circle key={`${x}-${y}`} cx={x} cy={y} r="4.2" />
-      ))}
-    </g>
-  )
-  return (
-    <svg className="leather__mark" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
-      {draw('leather__mark-light', 0.9)}
-      {draw('leather__mark-groove', 0)}
-      <g className="leather__mark-nodes">
-        {nodes.map(([x, y]) => (
-          <circle key={`${x}-${y}`} cx={x} cy={y} r="2.2" />
-        ))}
-      </g>
-    </svg>
   )
 }
 
@@ -464,13 +397,20 @@ function TheEnd() {
 function BackCover() {
   return (
     <div className="cover cover--back">
-      <div className="cover__cloth cover__cloth--front cover__cloth--back">
-        <img className="cover__backdrop" src={`${base}about/back-cover.webp`} alt="" width={1200} height={675} decoding="async" draggable={false} />
-        <span className="cover__wash" aria-hidden="true" />
-        <span className="cover__frame" aria-hidden="true" />
-        <p className="cover__author">{book.author}</p>
-        <p className="cover__blurb">{book.back.blurb}</p>
-        <p className="cover__foot">{book.places}</p>
+      <div className="leather leather--back">
+        <img className="back__photo" src={`${base}about/back-cover.webp`} alt="" width={1200} height={675} decoding="async" draggable={false} />
+        <div className="back__text">
+          <p className="back__kicker">{book.title}</p>
+          <p className="back__blurb">{book.back.blurb}</p>
+          <span className="back__rule" aria-hidden="true" />
+          <p className="back__places">{book.places}</p>
+          <p className="back__brand">
+            <svg className="front__logo" viewBox="190 150 620 700" aria-hidden="true" focusable="false">
+              <path d={logoLetters} fillRule="evenodd" />
+            </svg>
+            <span>{book.handle}</span>
+          </p>
+        </div>
       </div>
     </div>
   )

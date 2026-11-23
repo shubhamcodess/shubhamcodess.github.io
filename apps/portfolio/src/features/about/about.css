@@ -2019,3 +2019,236 @@
   color: rgb(236 232 225 / 0.72);
   text-shadow: 0 0.06em 0.25em rgb(0 0 0 / 0.7);
 }
+
+/*
+ * The covers, front and back: black leather. The front, after a modern memoir: the SP mark and handle at the
+ * head, the owner cut out in black and white, a pressed </> beside him, a column of verbs ending in BEYOND,
+ * then BEYOND STACK in heavy type (Stack in the site's blue), a tracked line and the name at the foot.
+ */
+.leather--front,
+.leather--back {
+  display: block;
+  color: #ece9e4;
+}
+
+.leather--front .leather__stitch,
+.leather--front::before,
+.leather--back::before {
+  display: none;
+}
+
+.front__brand {
+  position: absolute;
+  top: 5.5%;
+  left: 10%;
+  right: 4%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  margin: 0;
+  font-size: 0.62em;
+  letter-spacing: 0.02em;
+  color: rgb(236 233 228 / 0.82);
+}
+
+.front__logo {
+  width: 1.9em;
+  height: 1.9em;
+  fill: #ece9e4;
+}
+
+.front__divider {
+  width: 1px;
+  height: 1.8em;
+  background: rgb(236 233 228 / 0.35);
+}
+
+/* A large </> pressed into the leather behind the portrait's shoulder. */
+.front__code {
+  position: absolute;
+  top: 25%;
+  right: 6%;
+  font-family: var(--font-mono);
+  font-size: 4.2em;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.08em;
+  color: rgb(255 255 255 / 0.05);
+  text-shadow:
+    0 -1px 0 rgb(0 0 0 / 0.7),
+    0 1px 0 rgb(255 255 255 / 0.04);
+}
+
+.front__portrait {
+  position: absolute;
+  top: 12%;
+  left: 22%;
+  width: 72%;
+  height: auto;
+  /* The cut-out's straight sides fade into the leather, so only the figure stands out. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 16%, #000 84%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 16%, #000 84%, transparent);
+  pointer-events: none;
+}
+
+/* The front board is darker than the inside: black leather, lit only a little. */
+.leather--front,
+.leather--back {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 30%, rgb(255 255 255 / 0.04), transparent 70%),
+    linear-gradient(rgb(0 0 0 / 0.35), rgb(0 0 0 / 0.35)),
+    url('/about/leather.webp') center / cover,
+    #111113;
+}
+
+.front__verbs {
+  position: absolute;
+  top: 27%;
+  left: 13%;
+  display: grid;
+  gap: 0.55em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.52em;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgb(236 233 228 / 0.7);
+  text-shadow: 0 0.05em 0.3em rgb(0 0 0 / 0.9);
+}
+
+.front__verbs-rule {
+  width: 3.4em;
+  height: 1px;
+  margin-top: 0.6em;
+  background: #5b8def;
+}
+
+.front__verbs-last {
+  font-weight: 600;
+  color: #7aa7ff;
+}
+
+.front__foot {
+  position: absolute;
+  left: 10%;
+  right: 4%;
+  bottom: 6%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.front__title {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-size: 3.35em;
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  color: #f1efea;
+  text-shadow: 0 0.04em 0.18em rgb(0 0 0 / 0.75);
+}
+
+.front__title-accent {
+  background: linear-gradient(180deg, #9fc0ff, #3b74f0 70%, #2a5cd6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+}
+
+.front__subtitle {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  width: 100%;
+  margin: 1.4em 0 0;
+  font-size: 0.48em;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgb(236 233 228 / 0.78);
+}
+
+.front__subtitle span:not(.front__subtitle-rule) {
+  max-width: 22em;
+  line-height: 1.7;
+}
+
+.front__subtitle-rule {
+  flex: 1;
+  height: 1px;
+  background: rgb(236 233 228 / 0.28);
+}
+
+.front__author {
+  margin: 2.4em 0 0;
+  font-size: 0.66em;
+  font-weight: 500;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: rgb(236 233 228 / 0.88);
+}
+
+/* The back: the photo over the water across the top, fading into the leather, the blurb below it on plain leather. */
+.back__photo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 52%;
+  object-fit: cover;
+  object-position: 30% 45%;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+
+.back__text {
+  position: absolute;
+  left: 10%;
+  right: 14%;
+  bottom: 9%;
+  display: grid;
+  gap: 1em;
+}
+
+.back__kicker {
+  margin: 0;
+  font-size: 0.56em;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #7aa7ff;
+}
+
+.back__blurb {
+  margin: 0;
+  font-size: 0.86em;
+  line-height: 1.62;
+  color: #ece9e4;
+}
+
+.back__rule {
+  width: 2.6em;
+  height: 1px;
+  background: rgb(236 233 228 / 0.35);
+}
+
+.back__places {
+  margin: 0;
+  font-size: 0.5em;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgb(236 233 228 / 0.6);
+}
+
+.back__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: 0.8em 0 0;
+  font-size: 0.56em;
+  color: rgb(236 233 228 / 0.7);
+}

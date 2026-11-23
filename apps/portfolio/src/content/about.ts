@@ -87,6 +87,12 @@ export type Chapter = ChapterBase &
 export const book = {
   author: 'Shubham Prakash',
   title: 'Beyond Stack',
+  /** The GitHub handle, beside the logo on the covers. */
+  handle: 'shubhamcodess',
+  /** Down the front cover's left side, ending in BEYOND. */
+  verbs: ['Code', 'Build', 'Ship', 'Research', 'Ride'],
+  /** The line under the title on the front cover. */
+  tagline: 'A memoir of code, roads and everything in between',
   subtitle: 'A memoir of code, roads and everything in between.',
   volume: 'Volume one',
   year: '2026',
