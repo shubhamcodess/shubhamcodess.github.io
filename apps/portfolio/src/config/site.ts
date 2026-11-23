@@ -143,7 +143,7 @@ export const site = {
     openPicture: 'Open the picture full size',
     closePicture: 'Close',
   },
-  dock: { label: 'Pages', openHint: 'all pages', sheetLabel: 'Every page', lingerMs: 2400 },
+  dock: { label: 'Pages', openHint: 'all pages', sheetLabel: 'Every page', lingerMs: 3500 },
   notFound: {
     code: '404',
     title: 'Page not found',
