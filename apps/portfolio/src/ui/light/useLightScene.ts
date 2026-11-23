@@ -2,6 +2,7 @@ import { useEffect, type RefObject } from 'react'
 import type { HeroLightConfig } from '../../config/types'
 import { useReducedMotion } from '../../lib/useReducedMotion'
 import { createCoveLight } from './coveLight'
+import { afterPageArrives } from '../../lib/pageArrival'
 
 export interface LightSceneOptions {
   readonly light: boolean
@@ -32,6 +33,20 @@ export function useLightScene(
     const canvas = canvasRef.current
     if (!backdrop || !hero || !canvas) return
 
+    // The light starts (and its shaders compile) only once the page has finished arriving, so the page
+    // transition never stutters.
+    let stop: (() => void) | undefined
+    let cancelled = false
+    void afterPageArrives().then(() => {
+      if (!cancelled) stop = start(backdrop, hero, canvas)
+    })
+    return () => {
+      cancelled = true
+      stop?.()
+    }
+  }, [backdropRef, canvasRef, light, parallax, config, reducedMotion])
+
+  function start(backdrop: HTMLElement, hero: HTMLElement, canvas: HTMLCanvasElement): () => void {
     const scene = light ? createCoveLight(canvas, config) : null
     backdrop.dataset.light = scene ? 'on' : 'off'
     const depth = parallax && !reducedMotion
@@ -129,5 +144,5 @@ export function useLightScene(
       document.removeEventListener('visibilitychange', sync)
       scene?.dispose()
     }
-  }, [backdropRef, canvasRef, light, parallax, config, reducedMotion])
+  }
 }
